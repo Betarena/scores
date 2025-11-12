@@ -133,11 +133,11 @@
     | null
     | undefined;
   $: ({ author: sportstack } = widgetData);
-  
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
@@ -148,10 +148,10 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   $: getAuthor(sportstack?.uid);
   $: insertWidgets(contentContainer);
-  
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -188,7 +188,7 @@
         if (prevElement) {
           prevElement.style.marginBottom = "0";
         }
-    
+
       new widget({
         target: target as HTMLElement,
         props,
@@ -343,21 +343,11 @@
   ╰─────
   -->
   {#key $userSettings.theme}
+
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
-      {@html widgetData.article.data?.content.replaceAll(
-        /<img[^>]+src=["']([^"'>]+)["']/g,
-        (match, src) => {
-          return match.replace(
-            src,
-            getOptimizedImageUrl({
-              strImageUrl: src,
-              intQuality: 90,
-              intWidth: 1500,
-            })
-          );
-        }
-      )}
+      {@html widgetData.article.data?.content}
     </div>
+
   {/key}
 </div>
 
@@ -551,16 +541,16 @@
         [data-widget-id] {
           margin-top: 48px;
           margin-bottom: 32px;
-      
+
           + * {
             margin-top: 0 !important;
           }
-          
+
           * + & {
             margin-bottom: 0 !important;
           }
         }
-       
+
         h2 {
           /* 🎨 style */
           @include header;
