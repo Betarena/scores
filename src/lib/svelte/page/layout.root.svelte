@@ -671,7 +671,13 @@
   -->
 
   {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
-    <SplashScreen />
+    {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isDynamicImport}
+      <WrapperDynamicImport
+        importComponentPath='$lib/components/misc/Splash-Screen.svelte'
+      />
+    {:else}
+      <SplashScreen />
+    {/if}
   {/if}
 
   <!--

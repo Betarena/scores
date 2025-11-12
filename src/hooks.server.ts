@@ -50,22 +50,21 @@ dlog
 const
   /**
    * @description
-   * 📣 __filename constant.
+   * 📝 __filename constant.
    */
   __filename = fileURLToPath(import.meta.url),
-  /**
-   * @description
-   * 📣 __dirname constant.
-   */
-  __dirname = dirname(__filename),
   // ╭─────
   // │ NOTE:
-  // │ |:
+  // │ |: destructure assignment
   // ╰─────
   [
+    __dirname,
     mapHeadLinkCache,
+    objConfigModule,
   ] = [
+    dirname(__filename),
     new Map(),
+    config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')!
   ]
 ;
 
@@ -143,7 +142,7 @@ export const handle: Handle = sequence
   async (
     {
       event,
-      resolve
+      resolve,
     }
   ): Promise < Response > =>
   {
@@ -160,18 +159,6 @@ export const handle: Handle = sequence
         ],
       }
     );
-
-    const
-      // ╭─────
-      // │ NOTE:
-      // │ |: destructing assignments
-      // ╰─────
-      [
-        mapConfigModule,
-      ] = [
-        config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')!
-      ]
-    ;
 
     // if (event.url.pathname == '/api/misc/debug')
     //   return await resolve(event);
@@ -325,21 +312,23 @@ export const handle: Handle = sequence
     (
     ): Promise < void >
     {
-      const
-        /**
-         * @description
-         * 📝 fetch 'main.config' data.
-         */
-        dataRes2 = await event.fetch
-          (
-            `/api/data/main.config?type=hooks.server`
-          ),
-        /**
-         * @description
-         * 📝 fetch 'main.config' data (v2).
-         */
-        dataRes20 = (await dataRes2.json())
-      ;
+      return;
+
+      // const
+      //   /**
+      //    * @description
+      //    * 📝 fetch 'main.config' data.
+      //    */
+      //   dataRes2 = await event.fetch
+      //     (
+      //       `/api/data/main.config?type=hooks.server`
+      //     ),
+      //   /**
+      //    * @description
+      //    * 📝 fetch 'main.config' data (v2).
+      //    */
+      //   dataRes20 = (await dataRes2.json())
+      // ;
     }
 
     /**
@@ -359,21 +348,23 @@ export const handle: Handle = sequence
       // │ NOTE:
       // │ |: (re)set cookie.
       // ╰─────
-      dataRes0.headers.set
-      (
-        'Set-Cookie',
-        cookie.serialize
+      if (objConfigModule.isHeadersCookieEnabled && cookies.betarenaScoresCookie == null)
+        dataRes0.headers.set
         (
-          'betarenaScoresCookie',
-          parseObject(event.locals.user),
-          {
-            path: '/',
-            // httpOnly: true,
-            /* ─── 1 week ─── */
-            maxAge: 60 * 60 * 24 * 7
-          }
-        )
-      );
+          'Set-Cookie',
+          cookie.serialize
+          (
+            'betarenaScoresCookie',
+            parseObject(event.locals.user),
+            {
+              path: '/',
+              // httpOnly: true,
+              /* ─── 1 week ─── */
+              maxAge: 60 * 60 * 24 * 7
+            }
+          )
+        );
+      ;
 
       return;
     }
@@ -476,19 +467,19 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT CRITICAL
       // │ |: rutime injection :: stylesheets for A/B testing
       // ╰─────
-      if (mapConfigModule.objHtmlHeadABTestingInjection?.stylesheets.isEnabled)
+      if (objConfigModule.objHtmlHeadABTestingInjection?.stylesheets.isEnabled)
         html = html
           ?.replace
           (
-            mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strHtmlHeadForInjection!,
+            objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strHtmlHeadForInjection!,
             (
               _string
             ) =>
             {
-              if (mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'standard')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForStandard;
-              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'purged')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForPurged;
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'standard')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForStandard;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'purged')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForPurged;
               else
                 return '';
               ;
@@ -500,19 +491,19 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT CRITICAL
       // │ |: rutime injection :: fonts for A/B testing
       // ╰─────
-      if (mapConfigModule.objHtmlHeadABTestingInjection?.fonts.isEnabled)
+      if (objConfigModule.objHtmlHeadABTestingInjection?.fonts.isEnabled)
         html = html
           ?.replace
           (
-            mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strHtmlHeadForInjection!,
+            objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strHtmlHeadForInjection!,
             (
               _string
             ) =>
             {
-              if (mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'local')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForLocal;
-              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'cdn')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForCdn;
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'local')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForLocal;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'cdn')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForCdn;
               else
                 return '';
               ;
@@ -528,19 +519,19 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: rutime injection :: 3RD-PARTY for A/B testing (GOOGLE-TAG-MANAGER)
       // ╰─────
-      if (mapConfigModule.objHtmlHeadABTestingInjection?.googleTagManager.isEnabled)
+      if (objConfigModule.objHtmlHeadABTestingInjection?.googleTagManager.isEnabled)
         html = html
           ?.replace
           (
-            mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strHtmlHeadForInjection!,
+            objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strHtmlHeadForInjection!,
             (
               _string
             ) =>
             {
-              if (mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strLoadingType === 'local')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForLocal;
-              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strLoadingType === 'cdn')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForCdn;
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strLoadingType === 'local')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForLocal;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strLoadingType === 'cdn')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForCdn;
               else
                 return '';
               ;
@@ -552,19 +543,19 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: rutime injection :: 3RD-PARTY for A/B testing (TWITTER)
       // ╰─────
-      if (mapConfigModule.objHtmlHeadABTestingInjection?.twitter.isEnabled)
+      if (objConfigModule.objHtmlHeadABTestingInjection?.twitter.isEnabled)
         html = html
           ?.replace
           (
-            mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strHtmlHeadForInjection!,
+            objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strHtmlHeadForInjection!,
             (
               _string
             ) =>
             {
-              if (mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strLoadingType === 'local')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForLocal;
-              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strLoadingType === 'cdn')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForCdn;
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strLoadingType === 'local')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForLocal;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strLoadingType === 'cdn')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForCdn;
               else
                 return '';
               ;
@@ -576,17 +567,17 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: rutime injection :: 3RD-PARTY for A/B testing (POSTHOG)
       // ╰─────
-      if (mapConfigModule.objHtmlHeadABTestingInjection?.posthog.isEnabled)
+      if (objConfigModule.objHtmlHeadABTestingInjection?.posthog.isEnabled)
         html = html
           ?.replace
           (
-            mapConfigModule?.objHtmlHeadABTestingInjection?.posthog.strHtmlHeadForInjection!,
+            objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strHtmlHeadForInjection!,
             (
               _string
             ) =>
             {
-              if (mapConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdn;
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdn;
               else
                 return '';
               ;
@@ -598,17 +589,17 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: rutime injection :: 3RD-PARTY for A/B testing (LINKEDIN)
       // ╰─────
-      if (mapConfigModule.objHtmlHeadABTestingInjection?.linkedin.isEnabled)
+      if (objConfigModule.objHtmlHeadABTestingInjection?.linkedin.isEnabled)
         html = html
           ?.replace
           (
-            mapConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strHtmlHeadForInjection!,
+            objConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strHtmlHeadForInjection!,
             (
               _string
             ) =>
             {
-              if (mapConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strLoadingType === 'cdn')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strCodeSampleForCdn;
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strLoadingType === 'cdn')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strCodeSampleForCdn;
               else
                 return '';
               ;
@@ -620,17 +611,17 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: rutime injection :: 3RD-PARTY for A/B testing (FACEBOOK)
       // ╰─────
-      if (mapConfigModule.objHtmlHeadABTestingInjection?.facebook.isEnabled)
+      if (objConfigModule.objHtmlHeadABTestingInjection?.facebook.isEnabled)
         html = html
           ?.replace
           (
-            mapConfigModule?.objHtmlHeadABTestingInjection?.facebook.strHtmlHeadForInjection!,
+            objConfigModule?.objHtmlHeadABTestingInjection?.facebook.strHtmlHeadForInjection!,
             (
               _string
             ) =>
             {
-              if (mapConfigModule?.objHtmlHeadABTestingInjection?.facebook.strLoadingType === 'cdn')
-                return mapConfigModule?.objHtmlHeadABTestingInjection?.facebook.strCodeSampleForCdn;
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.facebook.strLoadingType === 'cdn')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.facebook.strCodeSampleForCdn;
               else
                 return '';
               ;
@@ -646,7 +637,7 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: inline CSS/JS to reduce number of HTTP requests
       // ╰─────
-      if (mapConfigModule?.objHtmlHeadABTestingInjection?.isInjectionEnabled)
+      if (objConfigModule?.objHtmlHeadABTestingInjection?.isInjectionEnabled)
         html = html
           .replaceAll
           (
@@ -733,7 +724,7 @@ export const handle: Handle = sequence
                   // │ |: for inlining of certain 'hrefs'
                   // ╰─────
                   (
-                    [...mapConfigModule.objHtmlHeadABTestingInjection.setInjectionLinkHrefExclude]
+                    [...objConfigModule.objHtmlHeadABTestingInjection.setInjectionLinkHrefExclude]
                       .some(_value => href.includes(_value))
                   ),
                   // ╭─────
@@ -748,8 +739,8 @@ export const handle: Handle = sequence
                   // │ |: for 'compression' of inlined 'hrefs'
                   // ╰─────
                   (
-                    mapConfigModule?.objHtmlHeadABTestingInjection.isInjectionCompressed
-                    && ![...mapConfigModule.objHtmlHeadABTestingInjection.setInjectionCompressedExclude]
+                    objConfigModule?.objHtmlHeadABTestingInjection.isInjectionCompressed
+                    && ![...objConfigModule.objHtmlHeadABTestingInjection.setInjectionCompressedExclude]
                       .some(_value => href.includes(_value))
                   ),
                 ]
@@ -782,14 +773,18 @@ export const handle: Handle = sequence
                 }
               );
 
-              if (!isCondition2)
-                strInlined = strInlined.replace
-                  (
-                    /\s+/g,
-                    ''
-                  )
-                ;
-              ;
+              // ╭─────
+              // │ NOTE: WARNING:
+              // │ |: disabled for now, causes issues with CSS parsing
+              // ╰─────
+              // if (objConfigModule.objHtmlHeadABTestingInjection.isInjectionInlineSingleLineEnabled && !isCondition2)
+              //   strInlined = strInlined.replace
+              //     (
+              //       /\s+/g,
+              //       ''
+              //     )
+              //   ;
+              // ;
 
               // ╭─────
               // │ CHECK:
@@ -835,7 +830,7 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: loop over ALL '<img src="*">' tags found in 'preloaded' data & inject as 'preload' links.
       // ╰─────
-      if (mapConfigModule?.objHtmlHeadABTestingInjection?.isInjectionImagePreload)
+      if (objConfigModule?.objHtmlHeadABTestingInjection?.isInjectionImagePreload)
         for (const element of html?.matchAll(/\\u003Cimg[^>]+src=\\["']([^\\"'>]+)[\\"']/g))
         {
           // [🐞]
