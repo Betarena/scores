@@ -62,8 +62,16 @@
   $: ({ seo, detectedLang } = $create_article_store);
 
   $: radioButtons = [
-    { id: "pt_PT", value: "pt", label: translations?.pt || "Portuguese Portugal" },
-    { id: "pt_BR", value: "br", label: translations?.["pt-br"] || "Portuguese Brazil" },
+    {
+      id: "pt_PT",
+      value: "pt",
+      label: translations?.pt || "Portuguese Portugal",
+    },
+    {
+      id: "pt_BR",
+      value: "br",
+      label: translations?.["pt-br"] || "Portuguese Brazil",
+    },
   ];
 
   // #endregion ➤ 📌 VARIABLES
@@ -171,17 +179,22 @@
 
         {#if ["pt", "br"].includes(detectedLang?.lang || "")}
           <div class="confirm-lang-box">
-            <span>{translations?.lang_preference || "Confirm the article language:"} </span>
+            <span
+              >{translations?.lang_preference ||
+                "Confirm the article language:"}
+            </span>
             <div class="checkboxes-wrapper">
               {#each radioButtons as radio}
                 <div
                   class="radio-button-wrapper"
+                  class:active={$create_article_store.detectedLang?.iso ===
+                    radio.id}
                   on:click={() => checkRadio(radio)}
                 >
                   <div
                     class="radio-input"
-                    class:active={$create_article_store.detectedLang
-                      ?.iso === radio.id}
+                    class:active={$create_article_store.detectedLang?.iso ===
+                      radio.id}
                   >
                     <div class="input-inset" />
                   </div>
@@ -196,11 +209,11 @@
     <Container style="height: unset">
       <div class="buttons-wrapper">
         <Button
-          full={viewportType !== "mobile"}
-          type="secondary-gray"
+          full={true}
+          type="secondary"
           on:click={goBack}>{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}
+        <Button full={true} on:click={save}
           >{translations?.save || "Save"}</Button
         >
       </div>
@@ -220,7 +233,7 @@
 
 <style lang="scss">
   .page-container {
-    background-color: var(--colors-background-bg-main);
+    background: var(--colors-background-bg-secondary_alt, #1f1f1f);
     position: absolute;
     top: 0;
     display: flex;
@@ -245,7 +258,7 @@
       align-items: center;
       gap: var(--spacing-2xl, 20px);
       flex-grow: 1;
-      min-height: 0; 
+      min-height: 0;
       align-self: stretch;
 
       .content {
@@ -256,9 +269,6 @@
         flex-shrink: 1;
 
         .content-header-border {
-          border-bottom: 1px solid
-            var(--colors-border-border-secondary, #3b3b3b);
-
           .header-info {
             display: flex;
             flex-direction: column;
@@ -267,15 +277,14 @@
             padding-bottom: var(--spacing-xl, 16px);
 
             h2 {
-              color: var(--colors-text-text-primary, #fbfbfb);
-
-              /* Display xs/Semibold */
-              font-family: var(--font-family-font-family-display, Roboto);
-              font-size: var(--font-size-display-xs, 24px);
+              color: var(--colors-text-text-primary-900, #fbfbfb);
+              margin: 0;
+              /* Text lg/Semibold */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-lg, 18px);
               font-style: normal;
               font-weight: 600;
-              margin: 0;
-              line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+              line-height: var(--line-height-text-lg, 28px); /* 155.556% */
             }
 
             .info-desc {
@@ -303,6 +312,7 @@
           .confirm-lang-box {
             display: flex;
             flex-direction: column;
+            width: 100%;
             gap: var(--spacing-2xl, 20px);
             color: var(--colors-text-text-secondary-700, #d2d2d2);
 
@@ -315,14 +325,25 @@
 
             .checkboxes-wrapper {
               display: flex;
-              gap: var(--spacing-4xl, 32px);
+              flex-direction: column;
+              gap: var(--spacing-xl, 16px);
+              width: 100%;
 
               .radio-button-wrapper {
+                cursor: pointer;
                 display: flex;
+                width: 100%;
+                padding: var(--spacing-xl, 16px);
+                align-items: flex-start;
+                align-self: stretch;
+                display: flex;
+                align-items: flex-start;
                 gap: var(--spacing-lg, 12px);
-                align-items: center;
-                cursor:pointer;
-
+                flex: 1 0 0;
+                border-radius: var(--radius-xl, 12px);
+                border-radius: var(--radius-xl, 12px);
+                border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+                background: var(--colors-background-bg-primary, #1f1f1f);
                 .radio-input {
                   display: flex;
                   width: 16px;
@@ -354,6 +375,10 @@
                     }
                   }
                 }
+
+                &.active {
+                  border: 2px solid var(--colors-border-border-brand, #f5620f);
+                }
               }
             }
           }
@@ -363,9 +388,10 @@
       .buttons-wrapper {
         display: flex;
         align-items: flex-start;
-        gap: 20px;
+        flex-direction: column-reverse;
+        gap: var(--spacing-lg, 12px);
         align-self: stretch;
-        
+
         :global(.button) {
           flex-grow: 1;
           flex-shrink: 0;
@@ -404,9 +430,14 @@
             display: flex;
             justify-content: space-between;
             h2 {
-              font-size: var(--font-size-text-lg, 18px);
+              color: var(--colors-text-text-primary-900, #fbfbfb);
+
+              /* Text xl/Semibold */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-xl, 20px);
+              font-style: normal;
               font-weight: 600;
-              line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+              line-height: var(--line-height-text-xl, 30px); /* 150% */
             }
 
             .info-desc {
@@ -427,7 +458,9 @@
         }
 
         .buttons-wrapper {
-          flex-direction: column-reverse;
+          height: 110px;
+          flex-direction: row;
+          align-items: end;
           gap: var(--spacing-lg, 12px);
         }
       }
