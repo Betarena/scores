@@ -132,6 +132,20 @@ export const config = {
             isHidden: false,
           }
         ],
+        [
+          'src/lib/components/section/authors/page/author/content/Author-Widget.svelte',
+          {
+            objMeta:
+            {
+              cname: 'page/author/content/author-widget',
+              // intDeviceThresholdsInPx: [ 575, 1160 ],
+            },
+            isDynamicImport: false,
+            isHidden: false,
+            isSeoBoxEnabled: true,
+            intComponentConfigVersion: 1,
+          }
+        ]
       ]
     )
   },
