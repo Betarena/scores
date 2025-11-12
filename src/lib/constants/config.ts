@@ -21,6 +21,13 @@ export const config = {
   // ╰─────
   objApp:
   {
+    /**
+     * @description
+     */
+    isServiceWorkerEnabled: true,
+    /**
+     * @description
+     */
     listLazyLoadComponents: new Map
     (
       [
@@ -116,19 +123,65 @@ export const config = {
           }
         ],
         // ╭──────────────────────────────────────────────────────────────────────────────────╮
-        // │ 📌 │ LAYOUTS / PAGES                                                             │
+        // │ 📌 │ SVELTE // LAYOUTS - PAGES                                                   │
         // ╰──────────────────────────────────────────────────────────────────────────────────╯
         [
           'src/routes/+layout.svelte',
           {
             isDynamicImport: false,
             isHidden: false,
+            isBetareAgEngineEnabled: true,
+            /**
+             * @description
+             * 📝 Holds target `component(s)` of dynamic nature.
+             */
+            mapStrDebugPreifix: new Map <
+              | 'beforeNavigate'
+              | 'afterNavigate',
+              string
+            >
+            (
+              [
+                [ 'beforeNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)' ],
+                [ 'afterNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)' ]
+              ]
+            )
           }
         ],
         [
           'src/routes/(authors)/a/[...permalink]/+page.svelte',
           {
             isDynamicImport: false,
+            isHidden: false,
+          }
+        ],
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 💠 │ SVELTE // COMPONENTS                                                        │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+        [
+          'src/lib/components/misc/Splash-Screen.svelte',
+          {
+            isHidden: true,
+          }
+        ],
+        [
+          'src/lib/components/misc/banner/Banner-Offline-Alert.svelte',
+          {
+            isDynamicImport: true,
+            isHidden: false,
+          }
+        ],
+        [
+          'src/lib/components/misc/banner/Banner-Platform-Alert.svelte',
+          {
+            isDynamicImport: true,
+            isHidden: false,
+          }
+        ],
+        [
+          'src/lib/components/misc/modal/Modal-Email-Subscribe.svelte',
+          {
+            isDynamicImport: true,
             isHidden: false,
           }
         ],

@@ -46,6 +46,8 @@
   import { page } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
 
+  import { loginStore } from '$lib/components/section/login/login-store';
+  import { config } from '$lib/constants/config.js';
   import
     {
       routeIdContent,
@@ -59,65 +61,47 @@
     } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
+  import history_store from '$lib/store/history.js';
   import sessionStore from '$lib/store/session.js';
   import { initiateSubscribtions } from '$lib/store/subscribtions.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { initWalletStore } from '$lib/store/wallets';
   import { dlogv2 } from '$lib/utils/debug';
   import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
   import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
   import { setUserGeoLocation } from '$lib/utils/geo.js';
+  import { Intercom } from '$lib/utils/service.intercom.js';
   import { parseObject } from '$lib/utils/string.2.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
+  import { gotoSW } from '$lib/utils/sveltekitWrapper';
 
+  import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
   import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
   import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
   import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
   import SplashScreen from '$lib/components/misc/Splash-Screen.svelte';
+  import WrapperDynamicImport from '$lib/components/misc/WrapperDynamicImport.svelte';
   import DevInfoBox from '$lib/components/misc/admin/Dev-Info-Box.svelte';
+  import OfflineAlert from '$lib/components/misc/banner/Banner-Offline-Alert.svelte';
+  import PlatformAlert from '$lib/components/misc/banner/Banner-Platform-Alert.svelte';
+  import EmailSubscribe from '$lib/components/misc/modal/Modal-Email-Subscribe.svelte';
   import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
   import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-  import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 // import '@betarena/ad-engine';
   // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
-  import { loginStore } from '$lib/components/section/login/login-store';
-  import history_store from '$lib/store/history.js';
-  import { initWalletStore } from '$lib/store/wallets';
-  import { gotoSW } from '$lib/utils/sveltekitWrapper';
-  import WidgetAdEngine from '@betarena/ad-engine';
-  // import { partytownSnippet } from '@qwik.dev/partytown/integration';
+  // import WidgetAdEngine from '@betarena/ad-engine';
+
+  import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // ╭─────
-  // │ WARNING:
-  // │ |: Disable, if Dynamic Import is Enabled.
+  // │ IMPORTANT:
+  // │ |: Global Styles Import
   // ╰─────
-  // import OfflineAlert from '$lib/components/Offline-Alert.svelte';
-  // import PlatformAlert from '$lib/components/Platform-Alert.svelte';
-  // import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
-
-  // ╭─────
-  // │ NOTE:
-  // │ |: moved to static/
-  // ╰─────
-  // import '../app.css';
+  import '../../../../static/app.scss';
 
   // #endregion ➤ 📦 Package Imports
-
-  // #region ➤ 📌 TYPES
-
-  /**
-   * @description
-   *  📣 Component `Type`.
-   */
-   type IDynamicComponentMap =
-    | 'OfflineAlertDynamic'
-    | 'PlatformAlertDynamic'
-    | 'EmailSubscribeDynamic'
-  ;
-
-  // #endregion ➤ 📌 TYPES
 
   // #region ➤ 📌 VARIABLES
 
@@ -156,34 +140,16 @@
               threshold: 1160,
               state: true,
             }
-          },
-        /**
-         * @description
-         * 📝 Holds target `component(s)` of dynamic nature.
-         */
-        mapStrDebugPreifix: new Map
-          <
-            'beforeNavigate' | 'afterNavigate',
-            string
-          >
-          (
-            [
-              [ 'beforeNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)' ],
-              [ 'afterNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)' ]
-            ]
-          ),
-        /**
-         * @description
-         * 📝 Holds target `component(s)` of dynamic nature.
-         */
-        isDynamicImport: true,
-        /**
-         * @description
-         *  📝 Holds target `component(s)` of dynamic nature.
-         */
-        mapComponentDynamicLoading: new Map < IDynamicComponentMap, any >()
-      }
+          }
+      },
+    /**
+     * @description
+     * 📝 `this` component **main** `id` and `data-testid` prefix.
+     */
+    objConfig
+      = config.objApp.listLazyLoadComponents.get('src/routes/+layout.svelte')!
   ;
+
   /**
    * @description
    *  📝 Page unsubscribe to remove inside onDestroy.
@@ -220,14 +186,98 @@
   ;
 
   $sessionStore.deviceType = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
-  $sessionStore.userAgent  = $page.data.userAgent as string ?? navigator.userAgent;
+  $sessionStore.userAgent  = $page.data.userAgent as string;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
   /**
+   * @author
+   *  @izobov
    * @description
+   *  📣 Update CSS Variable `--vh` to handle viewport height changes on mobile devices with dynamic toolbars.
+   * @return { void }
+   */
+  function updateVh
+  (
+  ): void
+  {
+    const
+      vv = window.visualViewport
+    ;
+
+    if (!browser || !vv) return;
+
+    const
+      effectiveHeight = vv.height + vv.offsetTop,
+      isKeyboardOpen = window.innerHeight - effectiveHeight > 100,
+      height = isKeyboardOpen
+        ? vv.height + vv.offsetTop
+        : window.innerHeight
+    ;
+
+    document.body.style.setProperty('--vh', `${height * 0.01}px`);
+
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @description
+   *  📣 Service Worker Initialization Helper
+   */
+  function initiateServiceWorker
+  (
+  ): void
+  {
+    if (config.objApp.isServiceWorkerEnabled && ('serviceWorker' in navigator))
+      navigator.serviceWorker
+        .register
+        (
+          '/progressier.js'
+        )
+        .then
+        (
+          (
+            registration
+          ) =>
+          {
+            // [🐞]
+            // eslint-disable-next-line no-console
+            console.log
+            (
+              'Service Worker registered with scope:',
+              registration.scope
+            );
+          }
+        )
+        .catch
+        (
+          (
+            error
+          ) =>
+          {
+            // [🐞]
+            // eslint-disable-next-line no-console
+            console.error
+            (
+              'Service Worker registration failed:',
+              error
+            );
+          }
+        )
+      ;
+    ;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @description
+   *  📣 Pre-Mount Initialization Helper
+   * @return { Promise < void > }
    */
   async function herlperPreMountInitialize
   (
@@ -241,21 +291,41 @@
     return;
   }
 
-  async function redirectToOnBoard (register = true)
+  /**
+   * @author
+   *  @migbash
+   * @description
+   *  📣 Redirect to OnBoarding Page
+   * @param { boolean } [register=true]
+   *  📝 Whether to redirect to 'register' (true) or 'login' (false) page.
+   * @return { Promise < void > }
+   */
+  async function redirectToOnBoard
+  (
+    register: boolean = true
+  ): Promise < void >
   {
-    const lang = $userBetarenaSettings.lang || $page.params.lang ;
-    let path = '';
-    if(lang && lang !== 'en')
+    const
+      lang = ($userBetarenaSettings.lang ?? $page.params.lang )
+    ;
 
-      path += `/${lang}`
+    let path = '';
+
+    if (lang && lang !== 'en')
+      path += `/${lang}`;
+    ;
 
     path += register ? '/register' : '/login';
-    if(register && uid)
 
+    if(register && uid)
       $loginStore.isExistedUser = true;
+    ;
 
     await gotoSW(path);
+
+    return;
   }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -272,7 +342,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // ╭─────
-  // │ NOTE: IMPORTANT CRITICAL
+  // │ CRITICAL
   // │ │: [instant] [once]
   // │ │: Instant critical data initialization.
   // ╰─────
@@ -281,7 +351,7 @@
   ;
 
   // ╭─────
-  // │ NOTE: IMPORTANT CRITICAL
+  // │ CRITICAL
   // │ │: Hijack the 'console' object.
   // ╰─────
   $: if (browser && document)
@@ -289,98 +359,85 @@
   ;
 
   // ╭─────
-  // │ NOTE: IMPORTANT CRITICAL
-  // │ |: [3rd-party] Intercom Logic [show/hide]
+  // │ NOTE: IMPORTANT
+  // │ |: [3rd-party] // Intercom [show/hide]
   // ╰─────
   $: if (browser && pageRouteId == routeIdPageProfile)
-  {
-    // const
-    //   /**
-    //    * @description
-    //    */
-    //   intercom: HTMLElement = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
-    // ;
-
-    // if (intercom != undefined)
-    //   intercom.style.display = 'unset';
-    // ;
-  }
+    new Intercom().toggle(true);
   else if (browser)
-  {
-    // const
-    //   /**
-    //    * @description
-    //    * 📝 HTLMElement instance of 'Intercom'
-    //    */
-    //   instanceIntercom = document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
-    // ;
-
-    // if (instanceIntercom)
-    //   instanceIntercom.style.display = 'none';
-    // ;
-  }
+    new Intercom().toggle(false);
+  ;
 
   // ╭─────
-  // │ NOTE: IMPORTANT CRITICAL
-  // │ |: [3rd-party] Intercom Data Persistance
+  // │ NOTE: IMPORTANT
+  // │ |: [3rd-party] // Intercom [update launcher visibility]
   // ╰─────
-  // $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
-  // {
-  //   const intercomSettings
-  //     = {
-  //       api_base: 'https://api-iam.intercom.io',
-  //       app_id: 'yz9qn6p3',
-  //       name: username ?? '',
-  //       email: email ?? `${uid}-unkown@gmail.com`,
-  //       uid,
-  //       lang: lang ?? 'en',
-  //       competition_number: competition_number ?? 0,
-  //     }
-  //   ;
-  //   window.intercomSettings = intercomSettings
-  //   window.Intercom?.('boot', {
-  //     ...intercomSettings,
-  //     hide_default_launcher: true
-  //   });
+  $: if (browser)
+    // eslint-disable-next-line new-cap
+    window.Intercom
+    (
+      'update',
+      {
+        hide_default_launcher: currentPageRouteId != 'ProfilePage',
+      }
+    );
+  ;
 
-  //   page_unsub = page.subscribe(() =>
-  //   {
-  //     window.Intercom?.('update', {
-  //       hide_default_launcher: $sessionStore.currentPageRouteId !== 'ProfilePage',
-  //       last_request_at: Math.floor(Date.now() / 1000)
-  //     })
-  //   })
-  // }
+  // ╭─────
+  // │ NOTE: IMPORTANT
+  // │ |: [3rd-party] // Intercom [update user data]
+  // ╰─────
+  $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
+  {
+    new Intercom().update
+    (
+      {
+        uid,
+        email: email,
+        username,
+        lang: lang,
+        competition_number: competition_number,
+      }
+    );
+
+    // eslint-disable-next-line camelcase
+    page_unsub
+      = page.subscribe
+      (
+        () =>
+        {
+          // eslint-disable-next-line new-cap
+          window.Intercom
+            ?.(
+              'update',
+              {
+                hide_default_launcher: $sessionStore.currentPageRouteId !== 'ProfilePage',
+                last_request_at: Math.floor(Date.now() / 1000)
+              }
+            )
+          ;
+        }
+      )
+    ;
+  }
 
   $: if (currentActiveModal === 'Auth_Modal'&& ![routeIdLogin, routeIdRegister].includes(pageRouteId|| ''))
-
     redirectToOnBoard(false);
-
-
+  ;
 
   $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| '') && uid && !verified && isInitializationFinished)
-
     redirectToOnBoard();
-
+  ;
 
   $: if (browser)
   {
-    // eslint-disable-next-line new-cap
-    // window.Intercom
-    // (
-    //   'update',
-    //   {
-    //     hide_default_launcher: currentPageRouteId != 'ProfilePage',
-    //   }
-    // );
     updateVh();
     window.visualViewport?.addEventListener('resize', updateVh);
   }
 
   $: if (browser && uid)
-
     initWalletStore(uid);
-
+  ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -393,12 +450,18 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onDestroy(() =>
-  {
-    if (!browser) return
-    window.visualViewport?.removeEventListener('resize', updateVh);
-    page_unsub();
-  })
+  onDestroy
+  (
+    () =>
+    {
+      if (!browser) return;
+      window.visualViewport
+        ?.removeEventListener('resize', updateVh)
+      ;
+      page_unsub();
+      return;
+    }
+  );
 
   onMount
   (
@@ -406,91 +469,15 @@
     ): Promise < void > =>
     {
       // ╭─────
-      // │ IMPORTANT CRITICAL
+      // │ CRITICAL
       // ╰─────
       initiateSubscribtions();
-
-      if ('serviceWorker' in navigator)
-        navigator.serviceWorker
-          .register
-          (
-            '/progressier.js'
-          )
-          .then
-          (
-            (
-              registration
-            ) =>
-            {
-              // [🐞]
-              // eslint-disable-next-line no-console
-              console.log
-              (
-                'Service Worker registered with scope:',
-                registration.scope
-              );
-            }
-          )
-          .catch
-          (
-            (
-              error
-            ) =>
-            {
-              // [🐞]
-              // eslint-disable-next-line no-console
-              console.error
-              (
-                'Service Worker registration failed:',
-                error
-              );
-            }
-          )
-        ;
-      ;
-
       // ╭─────
-      // │ NOTE:
-      // │ |: Dynamic Import Logic
+      // │ CRITICAL
       // ╰─────
-      if (objComponentStandardState.isDynamicImport)
-      {
-        objComponentStandardState.mapComponentDynamicLoading.set
-        (
-          'OfflineAlertDynamic',
-          (
-            await import
-            (
-              '$lib/components/misc/banner/Banner-Offline-Alert.svelte'
-            )
-          ).default
-        );
-
-        objComponentStandardState.mapComponentDynamicLoading.set
-        (
-          'PlatformAlertDynamic',
-          (
-            await import
-            (
-              '$lib/components/misc/banner/Banner-Platform-Alert.svelte'
-            )
-          ).default
-        );
-
-        objComponentStandardState.mapComponentDynamicLoading.set
-        (
-          'EmailSubscribeDynamic',
-          (
-            await import
-            (
-              '$lib/components/misc/modal/Modal-Email-Subscribe.svelte'
-            )
-          ).default
-        );
-      }
-
+      initiateServiceWorker();
       // ╭─────
-      // │ NOTE: IMPORTANT
+      // │ IMPORTANT
       // │ |: Set initial values of 'windowWidth'.
       // ╰─────
       sessionStore.updateData
@@ -499,7 +486,6 @@
           ['windowWidth', document.documentElement.clientWidth]
         ]
       );
-
       // ╭─────
       // │ NOTE: IMPORTANT
       // │ |: Check if the current device is a PWA.
@@ -512,15 +498,8 @@
 
       setUserGeoLocation(navbarTranslationData!);
 
-      const
-        /**
-         * @description
-         */
-        adminSet = $page.url.searchParams.get('admin')
-      ;
-
-      if (adminSet)
-        scoresAdminStore.toggleAdminState(adminSet == 'true' ? true : false);
+      if ($page.url.searchParams.get('admin'))
+        scoresAdminStore.toggleAdminState($page.url.searchParams.get('admin') == 'true' ? true : false);
       ;
 
       return;
@@ -538,7 +517,7 @@
       // [🐞]
       dlogv2
       (
-        `${objComponentStandardState.mapStrDebugPreifix.get('beforeNavigate')} // START`,
+        `${objConfig.mapStrDebugPreifix?.get('beforeNavigate')} // START`,
         [
           `🔹 [var] ➤ _event :: ${JSON.stringify(_event)}`
         ]
@@ -549,7 +528,7 @@
         // [🐞]
         dlogv2
         (
-          `${objComponentStandardState.mapStrDebugPreifix.get('beforeNavigate')} // IsAnonymousNewBurner`,
+          `${objConfig.mapStrDebugPreifix?.get('beforeNavigate')} // IsAnonymousNewBurner`,
           []
         );
 
@@ -559,17 +538,13 @@
         );
       }
 
+      if (_event.from)
+        $history_store.push(_event.from.url.pathname);
+      ;
+
       return;
     }
   );
-
-
-  beforeNavigate(({ from }) =>
-  {
-    if (!from) return;
-    const { url } = from;
-    $history_store.push(url.pathname);
-  })
 
   afterNavigate
   (
@@ -589,7 +564,7 @@
       // [🐞]
       dlogv2
       (
-        '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)',
+        `${objConfig.mapStrDebugPreifix?.get('afterNavigate')}`,
         [
           `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`
         ]
@@ -601,23 +576,6 @@
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
-  function updateVh ()
-  {
-    const vv = window.visualViewport;
-    if (!browser || !vv) return;
-
-    const effectiveHeight = vv.height + vv.offsetTop,
-      isKeyboardOpen = window.innerHeight - effectiveHeight > 100, // ← ключевой фикс
-
-
-      height = isKeyboardOpen
-        ? vv.height + vv.offsetTop
-        : window.innerHeight;
-
-
-    document.body.style.setProperty('--vh', `${height * 0.01}px`);
-  }
-
 </script>
 
 <!--
@@ -628,25 +586,18 @@
 
 <svelte:head>
 
-  <!-- {@html '<script>' + partytownSnippet() + '</script>'} -->
-
   {#if theme === 'Dark'}
-  <meta
-    name="theme-color"
-    content="#1f1f1f"
+    <meta
+      name="theme-color"
+      content="#1f1f1f"
     />
   {:else}
     <meta
       name="theme-color"
-      content="#ffffff" />
+      content="#ffffff"
+    />
   {/if}
 
-  <script
-    async
-    src="https://platform.twitter.com/widgets.js"
-    charset="utf-8"
-  >
-  </script>
 </svelte:head>
 
 <svelte:document
@@ -708,6 +659,7 @@
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
+  <!--
   {#key pageRouteId}
     <WidgetAdEngine
       authorId={$page.data.dataArticle?.author?.id}
@@ -716,9 +668,13 @@
       strTranslationTarget={lang ?? 'en'}
     />
   {/key}
+  -->
 
-  <SplashScreen />
-<!--
+  {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
+    <SplashScreen />
+  {/if}
+
+  <!--
   {#if currentActiveModal == 'Auth_Modal'}
     <AuthMain />
   {/if} -->
@@ -735,28 +691,28 @@
     <ModalError />
   {/if}
 
-  {#if objComponentStandardState.isDynamicImport}
-    <svelte:component
-      this={objComponentStandardState.mapComponentDynamicLoading.get('OfflineAlertDynamic')}
+  {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
+    <WrapperDynamicImport
+      importComponentPath="$lib/components/misc/banner/Banner-Offline-Alert.svelte"
     />
   {:else}
-    <!-- <OfflineAlert /> -->
+    <OfflineAlert />
   {/if}
 
-  {#if objComponentStandardState.isDynamicImport}
-    <svelte:component
-      this={objComponentStandardState.mapComponentDynamicLoading.get('PlatformAlertDynamic')}
+  {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
+    <WrapperDynamicImport
+      importComponentPath="$lib/components/misc/banner/Banner-Offline-Alert.svelte"
     />
   {:else}
-    <!-- <PlatformAlert /> -->
+    <PlatformAlert />
   {/if}
 
-  {#if objComponentStandardState.isDynamicImport}
-    <svelte:component
-      this={objComponentStandardState.mapComponentDynamicLoading.get('EmailSubscribeDynamic')}
+  {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
+    <WrapperDynamicImport
+      importComponentPath="$lib/components/misc/modal/Modal-Email-Subscribe.svelte"
     />
   {:else}
-    <!-- <EmailSubscribe /> -->
+    <EmailSubscribe />
   {/if}
 
   {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || '' ) || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== 'mobile') }
@@ -766,7 +722,7 @@
   <main
     class:dark-mode={theme == 'Dark'}
     class:light-mode={theme == 'Light'}
-    class:standard={currentPageRouteId == null }
+    class:standard={currentPageRouteId == null}
     class:page-profile={currentPageRouteId == 'ProfilePage'}
     class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || pageRouteId === routeIdSearch }
     class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || '')}
@@ -786,6 +742,7 @@
     {/if}
 
   </main>
+
   <InfoMessages />
   <ModalMain />
 
@@ -799,10 +756,10 @@
     />
   {/if}
 
-
 </div>
 
 <AndroidPwaBanner />
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
@@ -814,6 +771,11 @@
 -->
 
 <style lang="scss">
+
+  :global
+  {
+    @import 'static/scss/themes/index.scss';
+  }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
