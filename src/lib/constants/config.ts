@@ -131,6 +131,7 @@ export const config = {
             isDynamicImport: false,
             isHidden: false,
             isBetareAgEngineEnabled: true,
+            is3rdPartyIntercomEnabled: false,
             /**
              * @description
              * 📝 Holds target `component(s)` of dynamic nature.

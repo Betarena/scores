@@ -46,9 +46,9 @@
   export let
     /**
      * @description
-     *  📝 threshold start + state for 📱 MOBILE
+     *  📝 path component to be dynamically imported.
      */
-    importComponentPath: string
+    importComponentPath: string = ''
   ;
 
   let _DynamicComponent;
@@ -69,6 +69,18 @@
     async (
     ) =>
     {
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: 'WrapperDynamicImport ⮕ onMount',
+          msgs:
+          [
+            `importComponentPath: ${importComponentPath}`
+          ]
+        }
+      );
+
       _DynamicComponent
         = (
           await import
@@ -77,14 +89,6 @@
           )
         ).default
       ;
-
-      // [🐞]
-      log_v3
-      (
-        {
-          strGroupName: 'WrapperDynamicImport ⮕ onMount',
-        }
-      );
 
       return;
     }

@@ -346,7 +346,7 @@
   // │ │: [instant] [once]
   // │ │: Instant critical data initialization.
   // ╰─────
-  $: if (browser && !isInitliazed)
+  $: if (objConfig.is3rdPartyIntercomEnabled && browser && !isInitliazed)
     herlperPreMountInitialize();
   ;
 
@@ -359,20 +359,20 @@
   ;
 
   // ╭─────
-  // │ NOTE: IMPORTANT
-  // │ |: [3rd-party] // Intercom [show/hide]
+  // │ NOTE:
+  // │ |: [3rd-party] // Intercom - SHOW/HIDE
   // ╰─────
-  $: if (browser && pageRouteId == routeIdPageProfile)
+  $: if (objConfig.is3rdPartyIntercomEnabled && browser && pageRouteId == routeIdPageProfile)
     new Intercom().toggle(true);
   else if (browser)
     new Intercom().toggle(false);
   ;
 
   // ╭─────
-  // │ NOTE: IMPORTANT
-  // │ |: [3rd-party] // Intercom [update launcher visibility]
+  // │ NOTE:
+  // │ |: [3rd-party] // Intercom - update launcher visibility
   // ╰─────
-  $: if (browser)
+  $: if (objConfig.is3rdPartyIntercomEnabled && browser)
     // eslint-disable-next-line new-cap
     window.Intercom
     (
@@ -384,10 +384,10 @@
   ;
 
   // ╭─────
-  // │ NOTE: IMPORTANT
-  // │ |: [3rd-party] // Intercom [update user data]
+  // │ NOTE:
+  // │ |: [3rd-party] // Intercom - update user data
   // ╰─────
-  $: if (browser && (deepReactListenStore1 || deepReactListenStore2))
+  $: if (objConfig.is3rdPartyIntercomEnabled && browser && (deepReactListenStore1 || deepReactListenStore2))
   {
     new Intercom().update
     (
@@ -693,23 +693,23 @@
 
   {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath="$lib/components/misc/banner/Banner-Offline-Alert.svelte"
+      importComponentPath='$lib/components/misc/banner/Banner-Offline-Alert.svelte'
     />
   {:else}
     <OfflineAlert />
   {/if}
 
-  {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
+  {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath="$lib/components/misc/banner/Banner-Offline-Alert.svelte"
+      importComponentPath='$lib/components/misc/banner/Banner-Platform-Alert.svelte'
     />
   {:else}
     <PlatformAlert />
   {/if}
 
-  {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
+  {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/modal/Modal-Email-Subscribe.svelte')?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath="$lib/components/misc/modal/Modal-Email-Subscribe.svelte"
+      importComponentPath='$lib/components/misc/modal/Modal-Email-Subscribe.svelte'
     />
   {:else}
     <EmailSubscribe />
