@@ -63,7 +63,7 @@ const
   // │ |:
   // ╰─────
   [
-    cssCache,
+    mapHeadLinkCache,
   ] = [
     new Map(),
   ]
@@ -169,7 +169,7 @@ export const handle: Handle = sequence
       [
         mapConfigModule,
       ] = [
-        config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')
+        config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')!
       ]
     ;
 
@@ -231,7 +231,7 @@ export const handle: Handle = sequence
         // @ts-expect-error :: <?>
         event.locals.user = stringToObject<IBetarenaUserCookie>(cookies.betarenaScoresCookie);
         event.locals.user.state = 'IsAnonymousReturning';
-        event.locals.setState.add('IsAnonymousReturning');
+        event.locals.setState!.add('IsAnonymousReturning');
       }
       // ╭─────
       // │ CHECK:
@@ -277,7 +277,7 @@ export const handle: Handle = sequence
         if (event.url.pathname === '/' && event.route.id === '/(scores)/[[lang=lang]]')
         {
           event.locals.user.state = 'IsAnonymousNew';
-          event.locals.setState.add('IsAnonymousNew');
+          event.locals.setState!.add('IsAnonymousNew');
           if (listLanguages.length > 0 && listLanguages[0].code && listLanguages[0].region)
             event.locals.user.lang = convertLocaleToLang(`${listLanguages[0].code}-${listLanguages[0].region}`);
           else
@@ -291,7 +291,7 @@ export const handle: Handle = sequence
         else
         {
           event.locals.user.state = 'IsAnonymousNewBurner';
-          event.locals.setState.add('IsAnonymousNewBurner');
+          event.locals.setState!.add('IsAnonymousNewBurner');
           event.locals.user.lang = event.params.lang ?? 'en';
 
           // if (event.url.searchParams.get('lang'))
@@ -308,7 +308,7 @@ export const handle: Handle = sequence
       {
         event.locals.uid = event.locals.user.uid;
         event.locals.user.state = 'IsBetarenaUser';
-        event.locals.setState.add('IsBetarenaUser');
+        event.locals.setState!.add('IsBetarenaUser');
       }
 
       return;
@@ -428,12 +428,19 @@ export const handle: Handle = sequence
     /**
      * @author
      *  @migbash
+     * @summary
+     *  ♦️ MAIN
+     *  🔹 HELPER
      * @description
      *  📝 Helper to transform page chunk.
-     * @param param0
-     * @param param0.html
-     * @param param0.done
+     * @param { object } _
+     *
+     * @param { string } _.html
+     *
+     * @param { boolean } _.done
+     *
      * @return { string }
+     *  📤 Mutated final HTML string
      */
     function _helperTransformPageChunk
     (
@@ -461,18 +468,192 @@ export const handle: Handle = sequence
         }
       );
 
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 🏗️ │ CRITICAL INJECTION                                                          │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+      // ╭─────
+      // │ NOTE: IMPORTANT CRITICAL
+      // │ |: rutime injection :: stylesheets for A/B testing
+      // ╰─────
+      if (mapConfigModule.objHtmlHeadABTestingInjection?.stylesheets.isEnabled)
+        html = html
+          ?.replace
+          (
+            mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'standard')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForStandard;
+              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'purged')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForPurged;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT CRITICAL
+      // │ |: rutime injection :: fonts for A/B testing
+      // ╰─────
+      if (mapConfigModule.objHtmlHeadABTestingInjection?.fonts.isEnabled)
+        html = html
+          ?.replace
+          (
+            mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'local')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForLocal;
+              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'cdn')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForCdn;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ ⛩️ │ 3RD-PARTY INJECTION                                                         │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: rutime injection :: 3RD-PARTY for A/B testing (GOOGLE-TAG-MANAGER)
+      // ╰─────
+      if (mapConfigModule.objHtmlHeadABTestingInjection?.googleTagManager.isEnabled)
+        html = html
+          ?.replace
+          (
+            mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strLoadingType === 'local')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForLocal;
+              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strLoadingType === 'cdn')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForCdn;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: rutime injection :: 3RD-PARTY for A/B testing (TWITTER)
+      // ╰─────
+      if (mapConfigModule.objHtmlHeadABTestingInjection?.twitter.isEnabled)
+        html = html
+          ?.replace
+          (
+            mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strLoadingType === 'local')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForLocal;
+              else if (mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strLoadingType === 'cdn')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForCdn;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: rutime injection :: 3RD-PARTY for A/B testing (POSTHOG)
+      // ╰─────
+      if (mapConfigModule.objHtmlHeadABTestingInjection?.posthog.isEnabled)
+        html = html
+          ?.replace
+          (
+            mapConfigModule?.objHtmlHeadABTestingInjection?.posthog.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (mapConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdn;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: rutime injection :: 3RD-PARTY for A/B testing (LINKEDIN)
+      // ╰─────
+      if (mapConfigModule.objHtmlHeadABTestingInjection?.linkedin.isEnabled)
+        html = html
+          ?.replace
+          (
+            mapConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (mapConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strLoadingType === 'cdn')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strCodeSampleForCdn;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: rutime injection :: 3RD-PARTY for A/B testing (FACEBOOK)
+      // ╰─────
+      if (mapConfigModule.objHtmlHeadABTestingInjection?.facebook.isEnabled)
+        html = html
+          ?.replace
+          (
+            mapConfigModule?.objHtmlHeadABTestingInjection?.facebook.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (mapConfigModule?.objHtmlHeadABTestingInjection?.facebook.strLoadingType === 'cdn')
+                return mapConfigModule?.objHtmlHeadABTestingInjection?.facebook.strCodeSampleForCdn;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 🚄 │ PERFORMANCE                                                                 │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
       // ╭─────
       // │ NOTE: IMPORTANT
       // │ |: inline CSS/JS to reduce number of HTTP requests
       // ╰─────
-      if (!event.locals.isPrerenderingRequest && mapConfigModule?.isHtmlHeadLinksInlineInjection)
+      if (mapConfigModule?.objHtmlHeadABTestingInjection?.isInjectionEnabled)
         html = html
           .replaceAll
           (
             /<link\b[^>]*?\bhref\s*=\s*["']([^"']+)["'][^>]*>/g,
             // /<link\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/g, # ➤ ❌ does not capture the '.js' link tags
             // /<link\b(?=[^>]*\bhref="[^"]*")[^>]*>/g, # ➤ ❌ does not capture href value
-            // /<link.*href=\"(.*?)\".*>$/g, # ➤ ???
+            // /<link.*href=\"(.*?)\".*>$/g, # ➤ ??? unknown issue
             (
               _substring: string,
               href: string,
@@ -493,23 +674,23 @@ export const handle: Handle = sequence
               ;
 
               // ╭─────
-              // │ NOTE:
-              // │ |: determine if 'script' or 'style' injection
+              // │ CHECK:
+              // │ |: for '<script>/<style>' injection, or skip parsing.
               // ╰─────
-
               if (_substring.includes('as="script"'))
                 injectionType = 'script'
               else if (_substring.includes('rel="stylesheet"'))
                 injectionType = 'style';
+              else if (_substring.includes('.html'))
+                injectionType = 'html';
               else
                 return _substring;
               ;
 
               // ╭─────
-              // │ NOTE:
-              // │ |: fix pathing for hrefs that point to '_app' folder
+              // │ CHECK:
+              // │ |: for given 'hrefs' path, adjust for correct path
               // ╰─────
-
               if (hrefValid.includes('../../_app'))
                 hrefValid = hrefValid.replace('../../', '../../client/');
               else if (hrefValid.includes('/_app'))
@@ -525,8 +706,8 @@ export const handle: Handle = sequence
               // │ CHECK:
               // │ |: for, injectable-override presence in local memory-cache
               // ╰─────
-              if (!cssCache.has(href))
-                cssCache.set
+              if (!mapHeadLinkCache.has(href))
+                mapHeadLinkCache.set
                 (
                   href,
                   fs.readFileSync
@@ -548,74 +729,87 @@ export const handle: Handle = sequence
                   isCondition3,
                 ] = [
                   // ╭─────
-                  // │ NOTE:
-                  // │ |: (1) inline and (2) compress certain hrefs
+                  // │ CHECK:
+                  // │ |: for inlining of certain 'hrefs'
                   // ╰─────
                   (
-                    mapConfigModule?.isHtmlHeadInlineCompressed
-                    && ![...mapConfigModule.isHtmlHeadInlineCompressedExclude]
-                      .some(v => href.includes(v))
+                    [...mapConfigModule.objHtmlHeadABTestingInjection.setInjectionLinkHrefExclude]
+                      .some(_value => href.includes(_value))
                   ),
                   // ╭─────
-                  // │ NOTE:
-                  // │ |: skip inlining of certain hrefs
+                  // │ CHECK:
+                  // │ |: for inlining of HTML templates
                   // ╰─────
                   (
-                    [...mapConfigModule.isHtmlHeadLinkHrefExclude]
-                      .some(v => href.includes(v))
-                    || (
-                        href.includes('html.head.fonts.css')
-                        && mapConfigModule?.isHtmlHeadFontInjection != 'local'
-                      )
-                    || (
-                        href.includes('html.head.google-cdn.html')
-                        && mapConfigModule?.isHtmlHeadFontInjection != 'google-cdn'
-                      )
+                    href.endsWith('.html')
                   ),
                   // ╭─────
-                  // │ NOTE:
-                  // │ |: handle 'google-cdn' font injection option
+                  // │ CHECK:
+                  // │ |: for 'compression' of inlined 'hrefs'
                   // ╰─────
                   (
-                    (
-                      href.includes('html.head.google-cdn.html')
-                      && mapConfigModule?.isHtmlHeadFontInjection === 'google-cdn'
-                    )
-                  )
+                    mapConfigModule?.objHtmlHeadABTestingInjection.isInjectionCompressed
+                    && ![...mapConfigModule.objHtmlHeadABTestingInjection.setInjectionCompressedExclude]
+                      .some(_value => href.includes(_value))
+                  ),
                 ]
+              ;
+
+              let
+                /**
+                 * @description
+                 * 📝 inlined string content.
+                 */
+                strInlined = mapHeadLinkCache.get(href) as string
               ;
 
               // [🐞]
               log_v3
               (
                 {
-                  strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts // INSIGTH`,
+                  strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts // (step) isInjectionEnabled INSIGTH`,
                   msgs:
                   [
                     `🔹 [var] ➤ href :: ${href}`,
                     `🔹 [var] ➤ hrefValid :: ${hrefValid}`,
-                    `🔹 [var] ➤ cssCache.size :: ${cssCache.size}`,
+                    `🔹 [var] ➤ mapHeadLinkCache.size :: ${mapHeadLinkCache.size}`,
                     // `🔹 [var] ➤ _substring :: ${_substring}`,
                     `🔹 [var] ➤ __dirname :: ${__dirname}`,
-                    `🔹 [var] ➤ isCondition1 (inline & compress) :: ${isCondition1}`,
-                    `🔹 [var] ➤ isCondition2 (skip inline) :: ${isCondition2}`,
+                    `🔹 [var] ➤ isCondition1 (skip inline) :: ${isCondition1}`,
+                    `🔹 [var] ➤ isCondition2 (inline raw html) :: ${isCondition2}`,
+                    `🔹 [var] ➤ isCondition3 (inline & compress) :: ${isCondition3}`,
                   ]
                 }
               );
 
+              if (!isCondition2)
+                strInlined = strInlined.replace
+                  (
+                    /\s+/g,
+                    ''
+                  )
+                ;
+              ;
+
               // ╭─────
               // │ CHECK:
-              // │ |: for desired inlining injection
+              // │ |: for, desired inlining injection
               // ╰─────
-
               if (isCondition1)
+                return ``;
+              else if (isCondition2)
+                return `
+                  <!-- inlined HTML-TEMPLATE for ${href} -->
+                  ${strInlined}
+                `;
+              else if (isCondition3)
                 return `
                   <!-- inlined COMPRESSED ${injectionType} for ${href} -->
                   <script>
                     (
                       () =>
                       {
-                        const compressed = ${LZString.compress(cssCache.get(href))};
+                        const compressed = ${LZString.compress(strInlined)};
                         const decompressed = LZString.decompress(compressed);
                         const style = document.createElement('style');
                         style.textContent = decompressed;
@@ -624,18 +818,11 @@ export const handle: Handle = sequence
                     )();
                   </script>
                 `;
-              else if (isCondition2)
-                return ``;
-              else if (isCondition3)
-                return `
-                  <!-- inlined HTML-TEMPLATE for ${href} -->
-                  ${cssCache.get(href)}
-                `;
               else
                 return `
                   <!-- inlined ${injectionType} for ${href} -->
                   <${injectionType}>
-                    ${cssCache.get(href)}
+                    ${strInlined}
                   </${injectionType}>
                 `;
               ;
@@ -646,13 +833,22 @@ export const handle: Handle = sequence
 
       // ╭─────
       // │ NOTE: IMPORTANT
-      // │ |: loop over all <img src="..."> tags to inject 'preload' links
+      // │ |: loop over ALL '<img src="*">' tags found in 'preloaded' data & inject as 'preload' links.
       // ╰─────
-      if (mapConfigModule?.isHtmlHeadInjectImagePreload)
+      if (mapConfigModule?.objHtmlHeadABTestingInjection?.isInjectionImagePreload)
         for (const element of html?.matchAll(/\\u003Cimg[^>]+src=\\["']([^\\"'>]+)[\\"']/g))
         {
           // [🐞]
-          console.log('isHtmlHeadInjectImagePreload', element[1]);
+          log_v3
+          (
+            {
+              strGroupName: `🚏 checkpoint ➤ Hooks | src/hooks.server.ts // (step) isInjectionImagePreload INSIGTH`,
+              msgs:
+              [
+                `🔹 [var] ➤ element[1] :: ${element[1]}`,
+              ]
+            }
+          );
 
           html = html
             .replace
@@ -660,7 +856,7 @@ export const handle: Handle = sequence
               `</head>`,
               `
                 <link rel="preload" as="image" href="${element[1]}" fetchpriority="high">
-                </head>
+              </head>
               `
             )
           ;

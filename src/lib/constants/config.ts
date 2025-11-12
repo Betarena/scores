@@ -17,6 +17,35 @@
 export const config = {
   // ╭─────
   // │ NOTE:
+  // │ |: Toggle 'countdown' component
+  // ┣───
+  // │ |: WARNING:
+  // │ |: [production] => true
+  // ╰─────
+  objDebug:
+  {
+    isEnabled: false,
+      // process.env.VITE_PROD_LOGS === 'true'
+      //   ? false
+      //   : true,
+    listSegmentsOverrideEnabled:
+    [
+      'instrumentation.server.middleware.ts',
+    ]
+  },
+  // ╭─────
+  // │ NOTE:
+  // │ |: Toggle 'countdown' component
+  // ┣───
+  // │ |: WARNING:
+  // │ |: [production] => true
+  // ╰─────
+  objSentry:
+  {
+    // url: process.env.VITE_SENTRY_URL
+  },
+  // ╭─────
+  // │ NOTE:
   // │ |: Configuration for Lazy Load Components in Application
   // ╰─────
   objApp:
@@ -38,6 +67,27 @@ export const config = {
           'src/hooks.server.ts',
           {
             // ╭──────────────────────────────────────────────────────────────────────────────────╮
+            // │ 💠 │ configuration                                                               │
+            // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+            /**
+             * @description
+             * 📝 Debug Level for Hook Operations
+             */
+            isDebugEnabled: false,
+
+            /**
+             * @description
+             * 📝 Performance Threshold in ms for Hook Operations
+             */
+            intPerformanceThresholdMs: 1,
+
+            customErrorHandler:
+            {
+
+            },
+
+            // ╭──────────────────────────────────────────────────────────────────────────────────╮
             // │ 💠 │ configuration // resolve.preload(..                                         │
             // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
@@ -53,54 +103,188 @@ export const config = {
 
             /**
              * @description
-             * 📝 Enable Inline Head Links Injection
+             * 📝 AB-Testing Injection Configuration
              */
-            isHtmlHeadLinksInlineInjection: true,
-            /**
-             * @description
-             * 📝 Skip/Exlcude Target Head Links Parsing
-             */
-            isHtmlHeadLinkHrefExclude: new Set
-            (
-              [
-                'https://fonts.googleapis.com/',
-                '__app-styles',
-              ]
-            ),
-            /**
-             * @description
-             * 📝 Enable Image Preload Injection in HTML Head
-             */
-            isHtmlHeadInjectImagePreload: true,
+            objHtmlHeadABTestingInjection:
+            {
+              /**
+               * @description
+               *  📝 Enable inline HTML head links injection
+               * @example
+               *  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" />
+               *  -> becomes ->
+               *  <style> {inlined CSS content} </style>
+               */
+              isInjectionEnabled: true,
+              /**
+               * @description
+               *  📝 Skip (exlcude) matching '<head> <link href="{.}" >' parsing
+               */
+              setInjectionLinkHrefExclude: new Set
+              (
+                [
+                  'https://fonts.googleapis.com/', // google fonts
+                  '__app-styles', // custom identifier to exclude app styles
+                ]
+              ),
 
-            /**
-             * @description
-             * 📝 Enable Inline Head Styles Injection (compression-js-logic)
-             * @note
-             * ❗️ This means, it will resolve at 'document-load-time'.
-             */
-            isHtmlHeadInlineCompressed: false,
-            /**
-             * @description
-             * 📝 Skip/Exclude Target Head Styles from Inline Compression
-             */
-            isHtmlHeadInlineCompressedExclude: new Set
-            (
-              [
-                '__app-styles'
-              ]
-            ),
+              /**
+               * @description
+               * 📝 Enable Inline Head Styles Injection (compression-js-logic)
+               * @note
+               * ❗️ WARNING: This means, compressed injection will ONLY resolve at 'document-load-time' (client-side).
+               */
+              isInjectionCompressed: false,
+              /**
+               * @description
+               * 📝 Skip (exclude) Target Head Styles from Inline Compression
+               */
+              setInjectionCompressedExclude: new Set
+              (
+                [
+                  '__app-styles'
+                ]
+              ),
 
-            /**
-             * @description
-             * 📝 Enable Font-Face Inline Injection
-             * @note
-             * Used for debugging purposes mainly, and comparing with/without font-display swap.
-             */
-            isHtmlHeadFontInjection: 'google-cdn' as
-              | 'none'
-              | 'google-cdn'
-              | 'local',
+              /**
+               * @description
+               * 📝 Enable Image Preload Injection in HTML Head
+               */
+              isInjectionImagePreload: true,
+
+              stylesheets:
+              {
+                isEnabled: true,
+                strLoadingType: 'purged' as
+                  | 'none'      // disable, same as 'isEnabled: false'
+                  | 'purged'    // load purged CSS
+                  | 'standard', // load standard CSS, not purged version
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-STYLESHEETS :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForPurged: `
+                  <link
+                    href="css/app.purged.clean.css"
+                    rel="stylesheet"
+                    text="text/css"
+                  />
+                `,
+                strCodeSampleForStandard: `
+                  <link
+                    href="app.css"
+                    rel="stylesheet"
+                    text="text/css"
+                  />
+                `,
+              },
+
+              fonts:
+              {
+                isEnabled: true,
+                strLoadingType: 'local' as
+                  | 'none'  // disable, same as 'isEnabled: false'
+                  | 'local' // load from local
+                  | 'cdn',  // load from cdn
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-FONTS :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForLocal: `
+                  <link
+                    href="template/html.head.fonts.local.html"
+                  />
+                `,
+                strCodeSampleForCdn: `
+                  <link
+                    href="template/html.head.fonts.cdn.html"
+                  />
+                `,
+              },
+
+              googleTagManager:
+              {
+                isEnabled: true,
+                strLoadingType: 'local' as
+                  | 'none'  // disable, same as 'isEnabled: false'
+                  | 'local' // load from local
+                  | 'cdn',  // load from cdn
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-GOOGLE-ANALYTICS :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForLocal: `
+                  <link
+                    href="scripts/service.googletagmanager.js"
+                    as="script"
+                  />
+                `,
+                strCodeSampleForCdn: `
+                  <link
+                    href="template/html.head.googletagmanager.cdn.html"
+                  />
+                `
+              },
+
+              twitter:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn' as
+                  | 'none'  // disable, same as 'isEnabled: false'
+                  | 'local' // load from local
+                  | 'cdn',  // load from cdn
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-TWITTER :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForLocal: `
+                  <link
+                    href="scripts/service.twitter.js"
+                    as="script"
+                  />
+                `,
+                strCodeSampleForCdn: `
+                  <link
+                    href="template/html.head.twitter.cdn.html"
+                  />
+                `
+              },
+
+              posthog:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn' as
+                  | 'none'  // disable, same as 'isEnabled: false'
+                  // | 'local' // ❌ load from local
+                  | 'cdn',  // load from cdn
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-POSTHOG :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForCdn: `
+                  <link
+                    href="template/html.head.posthog.cdn.html"
+                  />
+                `
+              },
+
+              facebook:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn' as
+                  | 'none'  // disable, same as 'isEnabled: false'
+                  // | 'local' // ❌ load from local
+                  | 'cdn',  // load from cdn
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-FACEBOOK :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForCdn: `
+                  <link
+                    href="template/html.head.facebook.cdn.html"
+                  />
+                `
+              },
+
+              linkedin:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn' as
+                  | 'none'  // disable, same as 'isEnabled: false'
+                  // | 'local' // ❌ load from local
+                  | 'cdn',  // load from cdn
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-LINKEDIN :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForCdn: `
+                  <link
+                    href="template/html.head.linkedin.cdn.html"
+                  />
+                `
+              },
+
+              // progressier: // TODO: implement progressier
+            }
           }
         ],
         // ╭──────────────────────────────────────────────────────────────────────────────────╮
