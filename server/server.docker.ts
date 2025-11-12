@@ -18,7 +18,8 @@
 
 import express from 'express';
 
-import { handler } from '../build/handler.js';
+// @ts-expect-error -- SvelteKit Adapter Node Handler
+import { handler } from './build/handler.js';
 
 // #endregion ➤ 📦 Package Imports
 

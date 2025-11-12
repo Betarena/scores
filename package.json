@@ -27,7 +27,7 @@
 		"vite/preview/debug": "cross-env NODE_OPTIONS='--inspect' vite preview",
 		"vite/start": "cross-env NODE_OPTIONS='-r dotenv/config' nodemon build/index.js",
 		"vite/start/express/local": "cross-env NODE_OPTIONS='-r dotenv/config' nodemon server/server.local.js",
-		"vite/start/express/docker": "cross-env NODE_OPTIONS='-r dotenv/config' nodemon server/server.docker.js",
+		"vite/start/express/docker": "cross-env NODE_OPTIONS='-r dotenv/config' nodemon server.docker.js",
 		"__DEPENDENCY__": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────",
 		"npm/init": "npm run clean/node_modules && npm install",
 		"npm/pkg/next/@betarena/scores-lib": "npm i @betarena/scores-lib@latest",
