@@ -159,7 +159,6 @@
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -205,7 +204,9 @@
               placeholder="Search for tabs"
               bind:value={search}
               on:keydown={keyHandler}
-            />
+            >
+              <span slot="info">{selectedTags.length}/{translations?.five_tags_selected || "5 tags selected"}</span>
+            </Input>
             {#if selectedTags.length}
               <div class="seleted-tags">
                 {#each selectedTags as tag (tag)}
@@ -259,7 +260,7 @@
               }}
             >
               <Badge
-                size={viewportType === "mobile" ? "xl" : "xxl"}
+                size="lg"
                 active={isActive}
                 color={isActive ? "brand" : "gray"}
                 on:click={() => select(tag)}>{tag}</Badge
@@ -272,11 +273,11 @@
     <Container style="height: unset">
       <div class="buttons-wrapper">
         <Button
-          type="secondary-gray"
-          full={viewportType !== "mobile"}
+          type="secondary"
+          full={true}
           on:click={goBack}>{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}
+        <Button full={true} on:click={save}
           >{translations?.save || "Save"}</Button
         >
       </div>
@@ -296,7 +297,7 @@
 
 <style lang="scss">
   .page-container {
-    background-color: var(--colors-background-bg-main);
+    background: var(--colors-background-bg-secondary_alt, #1f1f1f);
     position: absolute;
     top: 0;
     display: flex;
@@ -347,9 +348,6 @@
         flex-grow: 1;
 
         .content-header-border {
-          border-bottom: 1px solid
-            var(--colors-border-border-secondary, #3b3b3b);
-
           .content-header {
             display: flex;
             flex-direction: column;
@@ -365,26 +363,25 @@
               align-self: stretch;
 
               h2 {
-                color: var(--colors-text-text-primary, #fbfbfb);
+                color: var(--colors-text-text-primary-900, #fbfbfb);
 
-                /* Display xs/Semibold */
-                font-family: var(--font-family-font-family-display, Roboto);
-                font-size: var(--font-size-display-xs, 24px);
+                /* Text lg/Semibold */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-lg, 18px);
                 font-style: normal;
                 font-weight: 600;
-                margin: 0;
-                line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+                line-height: var(--line-height-text-lg, 28px); /* 155.556% */
               }
 
               .info-desc {
-                color: var(--colors-text-text-quaternary, #8c8c8c);
+                color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
-                /* Text sm/Regular */
+                /* Text md/Regular */
                 font-family: var(--font-family-font-family-body, Roboto);
-                font-size: var(--font-size-text-sm, 14px);
+                font-size: var(--font-size-text-md, 16px);
                 font-style: normal;
                 font-weight: 400;
-                line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+                line-height: var(--line-height-text-md, 24px); /* 150% */
               }
             }
             .seleted-tags {
@@ -450,7 +447,8 @@
       .buttons-wrapper {
         display: flex;
         align-items: flex-start;
-        gap: 20px;
+        flex-direction: column-reverse;
+        gap: var(--spacing-lg, 12px);
         align-self: stretch;
 
         :global(.button) {
@@ -506,9 +504,14 @@
               }
 
               h2 {
-                font-size: var(--font-size-text-lg, 18px);
+                color: var(--colors-text-text-primary-900, #fbfbfb);
+
+                /* Text xl/Semibold */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-xl, 20px);
+                font-style: normal;
                 font-weight: 600;
-                line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+                line-height: var(--line-height-text-xl, 30px); /* 150% */
               }
 
               .info-desc {
@@ -528,8 +531,8 @@
         }
 
         .buttons-wrapper {
+          flex-direction: row;
           gap: var(--spacing-lg, 12px);
-          flex-direction: column-reverse;
         }
       }
     }

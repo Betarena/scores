@@ -32,6 +32,10 @@
   import Badge from "$lib/components/ui/Badge.svelte";
   import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
+  import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
+  import { modalStore } from "$lib/store/modal.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,14 +58,12 @@
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
 
+  const dispatch = createEventDispatcher();
 
-    const dispatch = createEventDispatcher();
-
-    $: ({ seo, tags } = $create_article_store);
-    $: ({ viewportType } = $session);
+  $: ({ seo, tags } = $create_article_store);
+  $: ({ viewportType } = $session);
 
   // #endregion ➤ 📌 VARIABLES
-
 
   // #region ➤ 🛠️ METHODS
 
@@ -107,6 +109,9 @@
   out:chooseTransition={{ easing: cubicIn, out: true }}
 >
   <div class="option-wrapper" on:click={() => changeView("tags")}>
+    <FeaturedIcon color="gray" size="md" type="modern">
+      <Tag2 />
+    </FeaturedIcon>
     <div class="info">
       <h3>{translations?.tags || "Tags"}</h3>
       {#if tags.length}
@@ -121,7 +126,9 @@
           </ExpandDataWrapper>
         </div>
       {:else}
-        <div class="info-message">{translations?.no_tags_added || "No tags added"}</div>
+        <div class="info-message">
+          {translations?.no_tags_added || "No tags added"}
+        </div>
       {/if}
     </div>
     <svg
@@ -140,14 +147,20 @@
       />
     </svg>
   </div>
-  <div class="separator" />
   <div class="option-wrapper" on:click={() => changeView("seo")}>
+    <FeaturedIcon color="gray" size="md" type="modern">
+      <FileSearch3 />
+    </FeaturedIcon>
     <div class="info">
       <h3>{translations?.seo || "SEO"}</h3>
       {#if seo.title || seo.description}
-        <!-- content here -->
+        <div class="info-message">
+          {translations?.add_title_seo || " Add a title and description to SEO"}
+        </div>
       {:else}
-        <div class="info-message">{translations?.add_title_seo ||" Add a title and description to SEO"}</div>
+        <div class="info-message">
+          {translations?.add_title_seo || " Add a title and description to SEO"}
+        </div>
       {/if}
     </div>
     <svg
@@ -166,7 +179,17 @@
       />
     </svg>
   </div>
-  <Button full={true} on:click={cb}>{translations?.publish_now || "Publish now"}</Button>
+  <div class="buttons-wrapper">
+    <Button
+      full={true}
+      type="secondary"
+      on:click={() => ($modalStore.show = false)}
+      >{translations?.cancel || "Cancel"}</Button
+    >
+    <Button full={true} on:click={cb}
+      >{translations?.publish_now || "Publish now"}</Button
+    >
+  </div>
 </div>
 
 <!--
@@ -206,7 +229,7 @@
 
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: var(--spacing-xl, 16px);
     border-radius: var(--radius-2xl, 16px) var(--radius-2xl, 16px)
       var(--radius-none, 0px) var(--radius-none, 0px);
     background: var(--colors-background-bg-primary, #fff);
@@ -218,11 +241,15 @@
     }
     .option-wrapper {
       display: flex;
-      width: 100%;
-      justify-content: space-between;
+      padding: var(--spacing-sm, 6px) var(--spacing-lg, 12px);
+      justify-content: center;
       align-items: center;
-      gap: 16px;
+      gap: var(--spacing-none, 0);
+      align-self: stretch;
       cursor: pointer;
+
+      border-radius: 14px;
+      background: var(--colors-background-bg-secondary_subtle, #232323);
 
       :global(svg path) {
         stroke: var(--colors-foreground-fg-quaternary_hover) !important;
@@ -232,6 +259,9 @@
         flex-direction: column;
         overflow: hidden;
         flex-grow: 1;
+        padding: 0 var(--spacing-xl, 16px);
+        height: 60px;
+        justify-content: center;
 
         h3 {
           color: var(--colors-text-text-primary, #fbfbfb);
@@ -269,6 +299,16 @@
         }
       }
     }
+    .buttons-wrapper {
+      display: flex;
+      width: 100%;
+      padding-top: var(--spacing-lg, 12px);
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      gap: var(--spacing-lg, 12px);
+      align-self: stretch;
+    }
 
     &.tablet,
     &.desktop {
@@ -280,6 +320,10 @@
       border-radius: var(--radius-2xl, 16px);
 
       bottom: unset;
+
+      .buttons-wrapper {
+        flex-direction: row;
+      }
     }
   }
 </style>

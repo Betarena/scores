@@ -665,7 +665,7 @@
           margin-top: 0;
         }
         :global(img) {
-          max-width: 100%;
+          max-width: 100% !important;
           width: 100%;
           height: auto;
           user-select: none;
