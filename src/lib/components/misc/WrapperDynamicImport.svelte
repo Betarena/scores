@@ -23,10 +23,9 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { config } from '$lib/constants/config.js';
+  import { onMount } from 'svelte';
 
-  import WrapperDynamicImport from '$lib/components/misc/WrapperDynamicImport.svelte';
-  import Page from '$lib/svelte/page/page.author.svelte';
+  import { log_v3 } from '$lib/utils/debug.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -44,16 +43,54 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
+  export let
     /**
      * @description
-     * 📝 `this` component **main** `id` and `data-testid` prefix.
+     *  📝 threshold start + state for 📱 MOBILE
      */
-    objConfig
-      = config.objApp.listLazyLoadComponents.get('src/routes/(authors)/a/[...permalink]/+page.svelte')
+    importComponentPath: string
   ;
 
+  let _DynamicComponent;
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount
+  (
+    async (
+    ) =>
+    {
+      _DynamicComponent
+        = (
+          await import
+          (
+            importComponentPath
+          )
+        ).default
+      ;
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: 'WrapperDynamicImport ⮕ onMount',
+        }
+      );
+
+      return;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -66,14 +103,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-{#if !objConfig?.isHidden}
-
-  {#if objConfig?.isDynamicImport}
-    <WrapperDynamicImport
-      importComponentPath="$lib/svelte/page/page.author.svelte"
-    />
-  {:else}
-    <Page />
-  {/if}
-
-{/if}
+<svelte:component
+  this={_DynamicComponent}
+>
+  <slot/>
+</svelte:component>
