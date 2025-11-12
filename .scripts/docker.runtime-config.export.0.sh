@@ -15,13 +15,15 @@
 # │ |: Aggregate list of '__run-time-config*.js' configuration files in 'build' directory.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-# [🐞]
-echo "[docker.runtime-config.export.0.sh] ────────────────────────────────────────────────────────────────"
-
+strDebugPrefix="[docker.runtime-config.export.0.sh]"
 configFile=/app/runtime-config-files.txt
 
 # [🐞]
-echo "[docker.runtime-config.export.0.sh] EXPORTING RUNTIME CONFIG FILES LIST 🟨 // START"
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+# [🐞]
+echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILES LIST 🟨 // START"
+# [🐞]
+cat $configFile
 
 # ╭─────
 # │ NOTE:
@@ -34,9 +36,6 @@ find build \
 #
 
 # [🐞]
-cat $configFile
-
+echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILES LIST 🟨 // END"
 # [🐞]
-echo "[docker.runtime-config.export.0.sh] EXPORTING RUNTIME CONFIG FILES LIST 🟨 // END"
-# [🐞]
-echo "[docker.runtime-config.export.0.sh] ────────────────────────────────────────────────────────────────"
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"

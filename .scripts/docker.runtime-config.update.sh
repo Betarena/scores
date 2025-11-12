@@ -19,17 +19,24 @@
 # │ |: The script is executed during the 'docker build' process.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+strDebugPrefix="[docker.runtime-config.update.sh]"
 dockerContainer=betarena-scores-scores-staging-1
 dockerRuntimeConfigFilePath=./.docker/scores.staging/runtime-config-files.txt
 outputDirClient=./.docker/scores.staging/__run-time-config.client.js
 outputDirServer=./.docker/scores.staging/__run-time-config.server.js
+
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+# [🐞]
+echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // START"
 
 # ╭─────
 # │ NOTE:
 # │ |: loop through all the files listed in the runtime-config-files.txt
 # ╰─────
 for i in $(cat $dockerRuntimeConfigFilePath); do
-  echo "🟧 UPDATING: $i"
+  # [🐞]
+  echo "\n$strDebugPrefix 🟧 UPDATING :: $i // INSIGHT\n"
   if [[ "$i" == *"/client/"* ]]; then
     # echo "it contains /client/"
     docker cp \
@@ -45,3 +52,10 @@ for i in $(cat $dockerRuntimeConfigFilePath); do
     #
   fi
 done
+
+# [🐞]
+echo ""
+# [🐞]
+echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // END"
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"

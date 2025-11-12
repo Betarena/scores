@@ -15,14 +15,17 @@
 # │ |: Copy '__run-time-config*.js' configuration files from docker-container to host-machine.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-# [🐞]
-echo "[docker.runtime-config.export.1.sh] ────────────────────────────────────────────────────────────────"
-
+strDebugPrefix="[docker.runtime-config.export.1.sh]"
 dockerContainer=betarena-scores-scores-staging-1
 dockerRuntimeConfigFilePath=/app/runtime-config-files.txt
 hostRuntimeConfigFilePath=./.docker/scores.staging/runtime-config-files.txt
 outputDirClient=./.docker/scores.staging/__run-time-config.client.js
 outputDirServer=./.docker/scores.staging/__run-time-config.server.js
+
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+# [🐞]
+echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILE TO HOST 🟨 // START"
 
 # ╭─────
 # │ NOTE:
@@ -38,7 +41,7 @@ docker cp \
 # ╰─────
 for i in $(cat $hostRuntimeConfigFilePath); do
   # [🐞]
-  echo "📝 $i"
+  echo "\n$strDebugPrefix 📝 $i // INSIGHT"
   if [[ "$i" == *"/client/"* ]]; then
     # echo "it contains /client/"
     docker cp \
@@ -52,3 +55,8 @@ for i in $(cat $hostRuntimeConfigFilePath); do
     #
   fi
 done
+
+# [🐞]
+echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILE TO HOST 🟨 // END"
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"

@@ -72,8 +72,7 @@ do
   #
   find build \
     -type f \
-    ! -name '*.txt' \
-    ! -name '*.xml' \
+    -name '*.js' \
     -exec sed \
     -i "s|${key}|${value_adjusted}|g" '{}' +
   #
