@@ -328,17 +328,17 @@ export default defineConfig
         // │ │: [6] Push to `Production`.
         // ╰─────
         objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.isEnabled && cssInjectedByJsPlugin
-          (
-            {
-              // relativeCSSInjection: true,
+        (
+          {
+            // relativeCSSInjection: true,
 
-              // topExecutionPriority: true,
+            // topExecutionPriority: true,
 
-              // jsAssetsFilterFunction: function customJsAssetsfilterFunction
-              // (
-              //   outputChunk
-              // )
-              // {
+            // jsAssetsFilterFunction: function customJsAssetsfilterFunction
+            // (
+            //   outputChunk
+            // )
+            // {
             // ╭─────
             // │ NOTE:
             // │ |: It appears, the 'outputChunk.filename' is of type:
@@ -346,19 +346,19 @@ export default defineConfig
             // │ |: - _app/immutable/chunks/index.8e8ca4ce.js
             // ╰─────
             // console.log(outputChunk.fileName);
-              //   return outputChunk.fileName == 'index.js';
-              // }
+            //   return outputChunk.fileName == 'index.js';
+            // }
 
             // ╭─────
             // │ NOTE:
             // │ |: 🟩 definitive 'HACK' (solution) for 'single CSS file' output chunk.
             // ╰─────
-              injectCode:
-              (
-                cssCode,
-                options
-              ): string =>
-              {
+            injectCode:
+            (
+              cssCode,
+              options
+            ): string =>
+            {
               // [🐞]
               console.log('🚦 Running cssInjectedByJsPlugin :: injectCode ...');
 
@@ -381,20 +381,20 @@ export default defineConfig
               // │ NOTE:
               // │ |: output to file-system.
               // ╰─────
-                  fs.writeFile
-                  (
+              fs.writeFile
+              (
                 objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.outputPath,
-                    cssCodeMod,
-                    err =>
-                    {
-                      if (err) console.error(err);
-                    }
-                  );
+                cssCodeMod,
+                err =>
+                {
+                  if (err) console.error(err);
+                }
+              );
 
-                return '';
+              return '';
 
-                // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
-              }
+              // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
+            }
           }
         ),
         // ╭─────
@@ -411,8 +411,8 @@ export default defineConfig
             filename: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/${isSSR ? 'ssr' : 'csr'}.visualizer.stats.${mode}.${objViteConfigOptions.objPluginConfig.visualizer.objConfig.type}.html`,
             title: '[metrics] scores - vite.visualizer',
             template: objViteConfigOptions.objPluginConfig.visualizer.objConfig.type,
-            }
-          ),
+          }
+        ),
         // ╭─────
         // │ NOTE:
         // │ |: custom 'vite' plugin.
@@ -620,11 +620,11 @@ export default defineConfig
       {
         host: '0.0.0.0',
         port: 3050,
-      // ╭─────
-      // │ NOTE:
+        // ╭─────
+        // │ NOTE:
         // ┣─────
-      // │ 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
-      // ╰─────
+        // │ 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
+        // ╰─────
         // https:
         // {
         //   key: fs.readFileSync(`${__dirname}/cert/key.pem`),
