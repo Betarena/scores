@@ -37,7 +37,7 @@
   import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
   import { modalStore } from "$lib/store/modal.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Tag2  from '$lib/components/ui/assets/tag2.svelte';
+  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -63,6 +63,7 @@
 
   $: ({ seo, tags } = $create_article_store);
   $: ({ viewportType } = $session);
+  let hoverItem = "";
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -89,6 +90,12 @@
     return scale(node, { duration: out ? 400 : 700, easing });
   }
 
+  function mouseenter(option) {
+    hoverItem = option;
+  }
+  function mouseleave() {
+    hoverItem = "";
+  }
   // #endregion ➤ 🛠️ METHODS
 </script>
 
@@ -140,8 +147,18 @@
       />
     </svg>
   </div>
-  <div class="option-wrapper" on:click={() => changeView("tags")}>
-    <FeaturedIcon color="gray" size="md" type="modern">
+  <div
+    class="option-wrapper"
+    class:hover={hoverItem === "tags"}
+    on:mouseleave={() => mouseleave()}
+    on:mouseenter={() => mouseenter("tags")}
+    on:click={() => changeView("tags")}
+  >
+    <FeaturedIcon
+      color={hoverItem === "tags" ? "brand" : "gray"}
+      size="md"
+      type="modern"
+    >
       <Tag2 />
     </FeaturedIcon>
     <div class="info">
@@ -179,8 +196,18 @@
       />
     </svg>
   </div>
-  <div class="option-wrapper" on:click={() => changeView("seo")}>
-    <FeaturedIcon color="gray" size="md" type="modern">
+  <div
+    class="option-wrapper"
+    class:hover={hoverItem === "seo"}
+    on:mouseleave={() => mouseleave()}
+    on:mouseenter={() => mouseenter("seo")}
+    on:click={() => changeView("seo")}
+  >
+    <FeaturedIcon
+      color={hoverItem === "seo" ? "brand" : "gray"}
+      size="md"
+      type="modern"
+    >
       <FileSearch3 />
     </FeaturedIcon>
     <div class="info">
@@ -283,9 +310,6 @@
       border-radius: 14px;
       background: var(--colors-background-bg-secondary_subtle, #232323);
 
-      :global(svg path) {
-        stroke: var(--colors-foreground-fg-quaternary_hover) !important;
-      }
       .info {
         display: flex;
         flex-direction: column;
@@ -329,6 +353,11 @@
             flex-shrink: 0;
           }
         }
+      }
+      &:hover,
+      &.hover {
+        border-radius: 14px;
+        background: var(--colors-background-bg-primary_hover, #3b3b3b);
       }
     }
     .buttons-wrapper {
