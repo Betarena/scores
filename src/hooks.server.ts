@@ -306,7 +306,7 @@ export const handle: Handle = sequence
      *  @migbash
      * @description
      *  📝 Helper inject metadata into 'locals'.
-     * @returns { Promise<void> }
+     * @returns { Promise < void > }
      */
     async function _helperInjectMetaData
     (
@@ -344,11 +344,37 @@ export const handle: Handle = sequence
     (
     ): void
     {
+      const
+        // ╭─────
+        // │ NOTE:
+        // │ |: destructure assignment
+        // ╰─────
+        [
+          isCondition1,
+        ] = [
+          (objConfigModule.isHeadersCookieEnabled && cookies.betarenaScoresCookie == null),
+        ]
+      ;
+
+      // [🐞]
+      log_v3
+      (
+        {
+          strGroupName: '🚏 checkpoint ➤ Hooks | src/hooks.server.ts handle(..) // _helperSetHeaders(..) INSIGHT',
+          msgs:
+          [
+            `🔹 [var] ➤ cookies :: ${parseObject(cookies)}`,
+            `🔹 [var] ➤ event.locals.user :: ${parseObject(event.locals.user)}`,
+            `🔹 [var] ➤ isCondition1 (set cookie) :: ${isCondition1}`,
+          ],
+        }
+      );
+
       // ╭─────
       // │ NOTE:
       // │ |: (re)set cookie.
       // ╰─────
-      if (objConfigModule.isHeadersCookieEnabled && cookies.betarenaScoresCookie == null)
+      if (isCondition1)
         dataRes0.headers.set
         (
           'Set-Cookie',
@@ -622,6 +648,28 @@ export const handle: Handle = sequence
             {
               if (objConfigModule?.objHtmlHeadABTestingInjection?.facebook.strLoadingType === 'cdn')
                 return objConfigModule?.objHtmlHeadABTestingInjection?.facebook.strCodeSampleForCdn;
+              else
+                return '';
+              ;
+            }
+          )
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT
+      // │ |: rutime injection :: 3RD-PARTY for A/B testing (INTERCOM)
+      // ╰─────
+      if (objConfigModule.objHtmlHeadABTestingInjection?.intercom.isEnabled)
+        html = html
+          ?.replace
+          (
+            objConfigModule?.objHtmlHeadABTestingInjection?.intercom.strHtmlHeadForInjection!,
+            (
+              _string
+            ) =>
+            {
+              if (objConfigModule?.objHtmlHeadABTestingInjection?.intercom.strLoadingType === 'cdn')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.intercom.strCodeSampleForCdn;
               else
                 return '';
               ;

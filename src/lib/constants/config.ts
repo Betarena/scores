@@ -288,6 +288,21 @@ export const config = {
                 `
               },
 
+              intercom:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn' as
+                  | 'none'  // disable, same as 'isEnabled: false'
+                  // | 'local' // ❌ load from local
+                  | 'cdn',  // load from cdn
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-INTERCOM :: INJECTED HERE DYNAMICALLY -->`,
+                strCodeSampleForCdn: `
+                  <link
+                    href="template/html.head.intercom.cdn.html"
+                  />
+                `
+              },
+
               // progressier: // TODO: implement progressier
             },
 
