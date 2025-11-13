@@ -17,10 +17,12 @@
 
 import { sveltekit } from '@sveltejs/kit/vite';
 import fs from 'fs-extra';
+import path from 'path';
 import { table } from 'table';
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
 
+import { partytownVite } from "@qwik.dev/partytown/utils";
 import { visualizer } from 'rollup-plugin-visualizer';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
@@ -309,8 +311,16 @@ export default defineConfig
         // ┣─────
         // │ │: ❔ NOT TESTED YET!
         // ╰─────
-        // viteCompression(),
-
+        // ╭─────
+        // │ IMPORTANT
+        // │ │: Partytown integration plugin
+        // ╰─────
+        partytownVite
+        (
+           {
+            dest: path.join(__dirname, "dist", "~partytown"),
+          }
+        ),
         // ╭─────
         // │ NOTE:
         // │ │: using 'vite-plugin-css-injected-by-js'

@@ -45,6 +45,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
+  import { partytownSnippet } from '@qwik.dev/partytown/integration'
 
   import { loginStore } from '$lib/components/section/login/login-store';
   import { config } from '$lib/constants/config.js';
@@ -597,6 +598,9 @@
       content="#ffffff"
     />
   {/if}
+
+  <!-- CRITICAL -->
+  {@html '<script>' + partytownSnippet() + '</script>'}
 
 </svelte:head>
 

@@ -14,6 +14,35 @@
 // │ |: Configuration for Betarena About Project
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+type ILoadingType =
+  | 'none'
+  // ╭─────
+  // │ NOTE:
+  // │ |:
+  // ╰─────
+  | 'purged'
+  // ╭─────
+  // │ NOTE:
+  // │ |:
+  // ╰─────
+  | 'standard'
+  // ╭─────
+  // │ NOTE:
+  // │ |:
+  // ╰─────
+  | 'local'
+  // ╭─────
+  // │ NOTE:
+  // │ |:
+  // ╰─────
+  | 'cdn'
+  // ╭─────
+  // │ NOTE:
+  // │ |:
+  // ╰─────
+  | 'cdn-partytown'
+;
+
 export const config = {
   // ╭─────
   // │ NOTE:
@@ -160,10 +189,7 @@ export const config = {
               stylesheets:
               {
                 isEnabled: true,
-                strLoadingType: 'purged' as
-                  | 'none'      // disable, same as 'isEnabled: false'
-                  | 'purged'    // load purged CSS
-                  | 'standard', // load standard CSS, not purged version
+                strLoadingType: 'purged' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-STYLESHEETS :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForPurged: `
                   <link
@@ -184,10 +210,7 @@ export const config = {
               fonts:
               {
                 isEnabled: true,
-                strLoadingType: 'local' as
-                  | 'none'  // disable, same as 'isEnabled: false'
-                  | 'local' // load from local
-                  | 'cdn',  // load from cdn
+                strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-FONTS :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForLocal: `
                   <link
@@ -204,10 +227,7 @@ export const config = {
               googleTagManager:
               {
                 isEnabled: true,
-                strLoadingType: 'local' as
-                  | 'none'  // disable, same as 'isEnabled: false'
-                  | 'local' // load from local
-                  | 'cdn',  // load from cdn
+                strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-GOOGLE-ANALYTICS :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForLocal: `
                   <link
@@ -225,10 +245,7 @@ export const config = {
               twitter:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as
-                  | 'none'  // disable, same as 'isEnabled: false'
-                  | 'local' // load from local
-                  | 'cdn',  // load from cdn
+                strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-TWITTER :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForLocal: `
                   <link
@@ -240,20 +257,27 @@ export const config = {
                   <link
                     href="template/html.head.twitter.cdn.html"
                   />
+                `,
+                strCodeSampleForCdnPartytown: `
+                  <link
+                    href="template/html.head.twitter.cdn.partytown.html"
+                  />
                 `
               },
 
               posthog:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as
-                  | 'none'  // disable, same as 'isEnabled: false'
-                  // | 'local' // ❌ load from local
-                  | 'cdn',  // load from cdn
+                strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-POSTHOG :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
                     href="template/html.head.posthog.cdn.html"
+                  />
+                `,
+                strCodeSampleForCdnPartytown: `
+                  <link
+                    href="template/html.head.posthog.cdn.partytown.html"
                   />
                 `
               },
@@ -261,14 +285,16 @@ export const config = {
               facebook:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as
-                  | 'none'  // disable, same as 'isEnabled: false'
-                  // | 'local' // ❌ load from local
-                  | 'cdn',  // load from cdn
+                strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-FACEBOOK :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
                     href="template/html.head.facebook.cdn.html"
+                  />
+                `,
+                strCodeSampleForCdnPartytown: `
+                  <link
+                    href="template/html.head.facebook.cdn.partytown.html"
                   />
                 `
               },
@@ -276,14 +302,16 @@ export const config = {
               linkedin:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as
-                  | 'none'  // disable, same as 'isEnabled: false'
-                  // | 'local' // ❌ load from local
-                  | 'cdn',  // load from cdn
+                strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-LINKEDIN :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
                     href="template/html.head.linkedin.cdn.html"
+                  />
+                `,
+                strCodeSampleForCdnPartytown: `
+                  <link
+                    href="template/html.head.linkedin.cdn.partytown.html"
                   />
                 `
               },
@@ -291,14 +319,16 @@ export const config = {
               intercom:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as
-                  | 'none'  // disable, same as 'isEnabled: false'
-                  // | 'local' // ❌ load from local
-                  | 'cdn',  // load from cdn
+                strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-INTERCOM :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
                     href="template/html.head.intercom.cdn.html"
+                  />
+                `,
+                strCodeSampleForCdnPartytown: `
+                  <link
+                    href="template/html.head.intercom.cdn.partytown.html"
                   />
                 `
               },

@@ -66,6 +66,7 @@
 		"@moralisweb3/client-firebase-auth-utils": "2.18.4",
 		"@moralisweb3/client-firebase-evm-auth": "2.18.4",
 		"@playwright/test": "1.36.1",
+		"@qwik.dev/partytown": "0.11.2",
 		"@tiptap/core": "2.7.4",
 		"@tiptap/extension-bubble-menu": "2.8.0",
 		"@tiptap/extension-image": "2.8.0",
