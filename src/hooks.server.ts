@@ -558,6 +558,8 @@ export const handle: Handle = sequence
                 return objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForLocal;
               else if (objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strLoadingType === 'cdn')
                 return objConfigModule?.objHtmlHeadABTestingInjection?.googleTagManager.strCodeSampleForCdn;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn-partytown')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdnPartytown;
               else
                 return '';
               ;
@@ -582,6 +584,8 @@ export const handle: Handle = sequence
                 return objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForLocal;
               else if (objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strLoadingType === 'cdn')
                 return objConfigModule?.objHtmlHeadABTestingInjection?.twitter.strCodeSampleForCdn;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn-partytown')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdnPartytown;
               else
                 return '';
               ;
@@ -604,6 +608,8 @@ export const handle: Handle = sequence
             {
               if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn')
                 return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdn;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn-partytown')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdnPartytown;
               else
                 return '';
               ;
@@ -626,6 +632,8 @@ export const handle: Handle = sequence
             {
               if (objConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strLoadingType === 'cdn')
                 return objConfigModule?.objHtmlHeadABTestingInjection?.linkedin.strCodeSampleForCdn;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn-partytown')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdnPartytown;
               else
                 return '';
               ;
@@ -648,6 +656,8 @@ export const handle: Handle = sequence
             {
               if (objConfigModule?.objHtmlHeadABTestingInjection?.facebook.strLoadingType === 'cdn')
                 return objConfigModule?.objHtmlHeadABTestingInjection?.facebook.strCodeSampleForCdn;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn-partytown')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdnPartytown;
               else
                 return '';
               ;
@@ -670,6 +680,8 @@ export const handle: Handle = sequence
             {
               if (objConfigModule?.objHtmlHeadABTestingInjection?.intercom.strLoadingType === 'cdn')
                 return objConfigModule?.objHtmlHeadABTestingInjection?.intercom.strCodeSampleForCdn;
+              else if (objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strLoadingType === 'cdn-partytown')
+                return objConfigModule?.objHtmlHeadABTestingInjection?.posthog.strCodeSampleForCdnPartytown;
               else
                 return '';
               ;

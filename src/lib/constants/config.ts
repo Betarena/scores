@@ -227,7 +227,7 @@ export const config = {
               googleTagManager:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as ILoadingType,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-GOOGLE-ANALYTICS :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForLocal: `
                   <link
@@ -239,13 +239,18 @@ export const config = {
                   <link
                     href="template/html.head.googletagmanager.cdn.html"
                   />
+                `,
+                strCodeSampleForCdnPartytown: `
+                  <link
+                    href="template/html.head.googletagmanager.cdn.partytown.html"
+                  />
                 `
               },
 
               twitter:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as ILoadingType,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-TWITTER :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForLocal: `
                   <link
@@ -268,7 +273,7 @@ export const config = {
               posthog:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as ILoadingType,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-POSTHOG :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
@@ -285,7 +290,7 @@ export const config = {
               facebook:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as ILoadingType,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-FACEBOOK :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
@@ -302,7 +307,7 @@ export const config = {
               linkedin:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as ILoadingType,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-LINKEDIN :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
@@ -319,7 +324,7 @@ export const config = {
               intercom:
               {
                 isEnabled: true,
-                strLoadingType: 'cdn' as ILoadingType,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-INTERCOM :: INJECTED HERE DYNAMICALLY -->`,
                 strCodeSampleForCdn: `
                   <link
