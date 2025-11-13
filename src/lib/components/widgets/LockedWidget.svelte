@@ -138,7 +138,7 @@
     position: absolute;
     left: -5px;
     right: -5px;
-    height: 70px;
+    height: 150px;
     bottom: -2px;
     z-index: 2000;
     transform: translateY(100%);
@@ -151,11 +151,11 @@
   .locked-tips-modal-wrapper {
     position: absolute;
     background: var(--colors-background-bg-secondary_alt, #1f1f1f);
-    bottom: -50px;
+    bottom: 0px;
     z-index: 3000;
     left: 0;
     width: 100vw;
-    transform: translateY(100%);
+    transform: translateY(120%);
 
     :global(.tips-modal-wrapper) {
       position: static;

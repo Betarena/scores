@@ -350,7 +350,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onDestroy(() => {
-    resizeObserver.disconnect();
     if (unlockComponent) unlockComponent.$destroy();
   });
 
