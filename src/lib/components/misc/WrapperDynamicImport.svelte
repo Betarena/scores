@@ -48,7 +48,11 @@
      * @description
      *  📝 path component to be dynamically imported.
      */
-    importComponentPath: string = ''
+    importComponentPath:
+      | 'Splash-Screen'
+      | 'Banner-Offline-Alert'
+      | 'Banner-Platform-Alert'
+      | 'Modal-Email-Subscribe'
   ;
 
   let _DynamicComponent;
@@ -81,13 +85,42 @@
         }
       );
 
-      _DynamicComponent
-        = (
-          await import
-          (
-            importComponentPath
-          )
-        ).default
+      if (importComponentPath == 'Splash-Screen')
+        _DynamicComponent
+          = (
+            await import
+            (
+              '$lib/components/misc/Splash-Screen.svelte'
+            )
+          ).default
+        ;
+      else if (importComponentPath == 'Banner-Offline-Alert')
+        _DynamicComponent
+          = (
+            await import
+            (
+              '$lib/components/misc/banner/Banner-Offline-Alert.svelte'
+            )
+          ).default
+        ;
+      else if (importComponentPath == 'Banner-Platform-Alert')
+        _DynamicComponent
+          = (
+            await import
+            (
+              '$lib/components/misc/banner/Banner-Platform-Alert.svelte'
+            )
+          ).default
+        ;
+      else if (importComponentPath == 'Modal-Email-Subscribe')
+        _DynamicComponent
+          = (
+            await import
+            (
+              '$lib/components/misc/modal/Modal-Email-Subscribe.svelte'
+            )
+          ).default
+        ;
       ;
 
       return;

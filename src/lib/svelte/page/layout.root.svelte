@@ -346,7 +346,7 @@
   // │ │: [instant] [once]
   // │ │: Instant critical data initialization.
   // ╰─────
-  $: if (objConfig.is3rdPartyIntercomEnabled && browser && !isInitliazed)
+  $: if (browser && !isInitliazed)
     herlperPreMountInitialize();
   ;
 
@@ -673,17 +673,12 @@
   {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
     {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isDynamicImport}
       <WrapperDynamicImport
-        importComponentPath='$lib/components/misc/Splash-Screen.svelte'
+        importComponentPath='Splash-Screen'
       />
     {:else}
       <SplashScreen />
     {/if}
   {/if}
-
-  <!--
-  {#if currentActiveModal == 'Auth_Modal'}
-    <AuthMain />
-  {/if} -->
 
   {#if currentActiveToast != null}
     <ToastAuth />
@@ -699,7 +694,7 @@
 
   {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath='$lib/components/misc/banner/Banner-Offline-Alert.svelte'
+      importComponentPath='Banner-Offline-Alert'
     />
   {:else}
     <OfflineAlert />
@@ -707,7 +702,7 @@
 
   {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath='$lib/components/misc/banner/Banner-Platform-Alert.svelte'
+      importComponentPath='Banner-Platform-Alert'
     />
   {:else}
     <PlatformAlert />
@@ -715,7 +710,7 @@
 
   {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/modal/Modal-Email-Subscribe.svelte')?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath='$lib/components/misc/modal/Modal-Email-Subscribe.svelte'
+      importComponentPath='Modal-Email-Subscribe'
     />
   {:else}
     <EmailSubscribe />
