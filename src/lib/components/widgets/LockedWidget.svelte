@@ -24,8 +24,6 @@
     awards_translations: TranslationAwardsDataJSONSchema;
   });
 
-
-
   let lockNode: HTMLDivElement;
   let modalNode: HTMLDivElement;
 
@@ -34,14 +32,13 @@
       const rect = lockNode.getBoundingClientRect();
       if (!modalNode) return;
       modalNode.style.left = `-${rect.left}px`;
-    })
+    });
     observer.observe(document.body);
 
     return () => {
       observer.disconnect();
-    }
-  })
-
+    };
+  });
 </script>
 
 <!--
@@ -54,7 +51,6 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
 
 <div class="lock-widget-wrapper" bind:this={lockNode}>
   <FeaturedIcon size="md" color="gray" type="modern"
@@ -85,11 +81,11 @@
     ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> (1
     BTA)</Button
   >
+  <div class="fade" />
   <div bind:this={modalNode} class="locked-tips-modal-wrapper">
     <TipsModal type="unlock" {sportstack} {grantAccess} />
   </div>
 </div>
-
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -138,9 +134,23 @@
       line-height: var(--line-height-text-md, 24px); /* 150% */
     }
   }
-
+  .fade {
+    position: absolute;
+    left: -5px;
+    right: -5px;
+    height: 70px;
+    bottom: -2px;
+    z-index: 2000;
+    transform: translateY(100%);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--colors-background-bg-secondary_alt, #1f1f1f) 80%, transparent) 42.31%,
+      var(--colors-background-bg-secondary_alt, #1f1f1f) 87.5%
+    );
+  }
   .locked-tips-modal-wrapper {
     position: absolute;
+    background: var(--colors-background-bg-secondary_alt, #1f1f1f);
     bottom: -50px;
     z-index: 3000;
     left: 0;
