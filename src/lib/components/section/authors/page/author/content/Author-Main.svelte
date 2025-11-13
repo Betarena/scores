@@ -120,7 +120,6 @@
      *  📣 Target `HTMLELement` for **Content*.
      */
     contentContainer: HTMLElement,
-    blurContentNode: HTMLElement,
     author,
     unlockComponent: LockedWidget;
 
@@ -162,7 +161,6 @@
 
   $: getAuthor(sportstack?.uid);
   $: if (contentContainer) {
-    resizeObserver.observe(contentContainer);
     insertWidgets(contentContainer);
   }
 
@@ -183,21 +181,7 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  const resizeObserver = new ResizeObserver(() => {
-    if (!paid || !contentContainer) return;
-    blurContent();
-  });
 
-  function blurContent() {
-    const widget = contentContainer.querySelector<HTMLParagraphElement>(
-      "[data-widget='locked-widget']"
-    );
-    if (!widget) return;
-
-    const blurStartTop = widget.offsetTop + widget.offsetHeight;
-
-    blurContentNode.style.top = `${blurStartTop}px`;
-  }
 
   function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
@@ -218,7 +202,7 @@
         }
         return false;
       });
-      if (blurContentNode && target) {
+      if (target) {
         try {
           const p_node = document.createElement("p");
           p_node.setAttribute("data-widget", "locked-widget");
@@ -488,9 +472,7 @@
           }
         )}
       {/key}
-      {#if paid && !accessGranted}
-        <div class="blur-content" bind:this={blurContentNode} />
-      {/if}
+
     </div>
     <div class="test-text">
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis

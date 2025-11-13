@@ -46,6 +46,7 @@
   import { page } from "$app/stores";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -71,7 +72,7 @@
   });
   $: ({ viewportType } = $session);
   $: user = $userSettings.user?.scores_user_data;
-  $: insufficientAmount = $walletStore.spending.available < 1;
+  $: insufficientAmount = user && $walletStore.spending.available < 1;
   $: isRewards = type === "tip";
   let loading = false;
   let step: "info" | "confirm" = "info";
@@ -101,6 +102,10 @@
   }
 
   function confirm() {
+    if (!user) {
+      gotoSW("/login");
+      return
+    }
     if (!isRewards && step === "info") {
       return (step = "confirm");
     }
@@ -323,8 +328,26 @@
               <Avatar size="lg" src={user?.profile_photo} />
               <div class="award-content">
                 <div class="award-candidate">
-                  <div class="name">{user?.name}</div>
-                  <div class="type">@{user?.username}</div>
+                  <div class="name">
+                    {#if user}
+                      {user?.name}
+                    {:else}
+                      <TranslationText
+                        text={awards_translations.betarena_user}
+                        fallback="Betarena User"
+                      />
+                    {/if}
+                  </div>
+                  <div class="type">
+                    {#if user}
+                      @{user?.username}
+                    {:else}
+                    @<TranslationText
+                        text={awards_translations.user.toLocaleLowerCase()}
+                        fallback="user"
+                      />
+                    {/if}
+                  </div>
                 </div>
                 <div class="amount">
                   <div class="bta-icon">
@@ -790,7 +813,7 @@
       left: 0;
       width: 100vw;
       max-width: 100%;
-      background: var(--colors-background-bg-secondary, #1f1f1f);
+      background: var(--colors-background-bg-secondary_alt, #1f1f1f);
 
       /* Shadows/shadow-xl */
       box-shadow: 0 20px 24px -4px var(--colors-effects-shadows-shadow-xl_01, rgba(255, 255, 255, 0)),
@@ -820,7 +843,7 @@
       &.mobile {
         max-width: 100%;
         width: 100%;
-        .tips-body{
+        .tips-body {
           width: 100%;
         }
       }
