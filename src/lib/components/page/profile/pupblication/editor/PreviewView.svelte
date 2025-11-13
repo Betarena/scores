@@ -92,7 +92,7 @@
   function mouseenter(option) {
     hoverItem = option;
   }
-  function mouseleave(option) {
+  function mouseleave() {
     hoverItem = "";
   }
   // #endregion ➤ 🛠️ METHODS
