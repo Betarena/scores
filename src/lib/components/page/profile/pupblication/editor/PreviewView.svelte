@@ -116,8 +116,10 @@
   in:chooseTransition={{ easing: cubicOut }}
   out:chooseTransition={{ easing: cubicIn, out: true }}
 >
-  <div class="option-wrapper" on:click={() => changeView("audience")}>
-    <FeaturedIcon color="gray" size="md" type="modern">
+  <div class="option-wrapper" class:hover={hoverItem === "audience"}
+    on:mouseleave={() => mouseleave()}
+    on:mouseenter={() => mouseenter("audience")} on:click={() => changeView("audience")}>
+    <FeaturedIcon color={hoverItem === "audience" ? "brand" : "gray"} size="md" type="modern">
       <User1 />
     </FeaturedIcon>
     <div class="info">
