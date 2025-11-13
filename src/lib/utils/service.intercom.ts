@@ -13,6 +13,12 @@
 // │ |: <insert-module-summary-here>
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+// #region ➤ 📦 Package Imports
+
+import { log_v3 } from "./debug.js";
+
+// #endregion ➤ 📦 Package Imports
+
 export class Intercom
 {
   constructor() {}
@@ -31,6 +37,14 @@ export class Intercom
     isEnabled: boolean
   ): void
   {
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: 'Service: Intercom // Toggle',
+      },
+    );
+
     const
       // ╭─────
       // │ NOTE:
@@ -74,6 +88,18 @@ export class Intercom
     }
   ): void
   {
+    // [🐞]
+    log_v3
+    (
+      {
+        strGroupName: 'Service: Intercom // Update',
+        msgs:
+        [
+          `Updating Intercom settings for user UID » ${uid}`,
+        ]
+      },
+    );
+
     const
       /**
        * @description

@@ -44,8 +44,8 @@
   import { browser } from '$app/environment';
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
+  import { partytownSnippet } from '@qwik.dev/partytown/integration';
   import { onDestroy, onMount } from 'svelte';
-  import { partytownSnippet } from '@qwik.dev/partytown/integration'
 
   import { loginStore } from '$lib/components/section/login/login-store';
   import { config } from '$lib/constants/config.js';
@@ -363,7 +363,7 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom - SHOW/HIDE
   // ╰─────
-  $: if (objConfig.is3rdPartyIntercomEnabled && browser && pageRouteId == routeIdPageProfile)
+  $: if (objConfig.is3rdPartyIntercomEnabled && browser && window.Intercom != null && pageRouteId == routeIdPageProfile)
     new Intercom().toggle(true);
   else if (browser)
     new Intercom().toggle(false);
@@ -373,7 +373,7 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom - update launcher visibility
   // ╰─────
-  $: if (objConfig.is3rdPartyIntercomEnabled && browser)
+  $: if (objConfig.is3rdPartyIntercomEnabled && browser && window.Intercom != null)
     // eslint-disable-next-line new-cap
     window.Intercom
     (
@@ -388,7 +388,7 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom - update user data
   // ╰─────
-  $: if (objConfig.is3rdPartyIntercomEnabled && browser && (deepReactListenStore1 || deepReactListenStore2))
+  $: if (objConfig.is3rdPartyIntercomEnabled && browser && window.Intercom != null && (deepReactListenStore1 || deepReactListenStore2))
   {
     new Intercom().update
     (
@@ -421,6 +421,12 @@
       )
     ;
   }
+
+  $: if (browser && window.Intercom) console.log('🔥 window.Intercom', window.Intercom);
+  $: if (browser && window.intercomSettings) console.log('🔥 window.intercomSettings', window.intercomSettings);
+  $: if (browser && window.fbq) console.log('🔥 window.fbq', window.fbq);
+  $: if (browser && window.gtag) console.log('🔥 window.gtag', window.gtag);
+  $: if (browser && window.ethereum) console.log('🔥 window.ethereum', window.ethereum);
 
   $: if (currentActiveModal === 'Auth_Modal'&& ![routeIdLogin, routeIdRegister].includes(pageRouteId|| ''))
     redirectToOnBoard(false);
@@ -598,6 +604,22 @@
       content="#ffffff"
     />
   {/if}
+
+  <script>
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ |: Forward the necessary functions to the web worker layer
+    // ╰─────
+    partytown = {
+      forward:
+      [
+        'fbq',
+        'gtag',
+        'dataLayer.push',
+        'Intercom',
+      ],
+    };
+  </script>
 
   <!-- CRITICAL -->
   {@html '<script>' + partytownSnippet() + '</script>'}

@@ -416,7 +416,7 @@ export const handle: Handle = sequence
         strExecutionTime = ((performance.now() - t0) / 1000).toFixed(5)
       ;
 
-      if (parseFloat(strExecutionTime) > 1)
+      if (parseFloat(strExecutionTime) > (objConfigModule.intPerformanceThresholdMs ?? 1))
         strExecutionTime = chalk.bgRed(`⚠️ ${strExecutionTime} sec`);
       else
         strExecutionTime = `${strExecutionTime} sec`;
@@ -735,10 +735,13 @@ export const handle: Handle = sequence
               else if (hrefValid.includes('/_app'))
                 hrefValid = hrefValid
                   .replace('/_app', '../../client/_app')
-                  .replace('...', '..')
                 ;
               else if (!hrefValid.includes('/_app'))
                 hrefValid = `../../client/${hrefValid}`;
+              ;
+
+              hrefValid = hrefValid
+                .replace('...', '..')
               ;
 
               // ╭─────
