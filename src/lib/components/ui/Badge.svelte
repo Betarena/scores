@@ -58,7 +58,7 @@
     href={link}
     class="badge {size} {color}"
     class:active
-    class:hover={hover}
+    class:hover
     {...$$restProps}
     on:click={() => dispatch("click")}
   >
@@ -69,7 +69,7 @@
   <div
     class="badge {size} {color}"
     class:active
-    class:hover={hover}
+    class:hover
     {...$$restProps}
     on:click={() => dispatch("click")}
   >
@@ -143,15 +143,14 @@
 
     &.brand {
       border: 1px solid
-        var(--component-colors-utility-brand-utility-brand-200, #fcd5c0);
-      color: var(--component-colors-utility-brand-utility-brand-700, #ae460b);
-
+        var(--component-colors-utility-brand-utility-brand-500, #f5620f);
       background: var(
-        --component-colors-utility-brand-utility-brand-50,
-        #fef5f0
+        --component-colors-utility-brand-utility-brand-500,
+        #f5620f
       );
 
-      &.active, &.hover:hover {
+      &.active,
+      &.hover:hover {
         border: 1px solid
           var(--component-colors-utility-brand-utility-brand-500, #ae460b);
         color: var(--colors-text-text-white, #fff);
@@ -172,7 +171,8 @@
       background: var(--component-colors-utility-gray-utility-gray-50, #fbfbfb);
       color: var(--component-colors-utility-gray-utility-gray-700, #525252);
 
-      &.active, &.hover:hover {
+      &.active,
+      &.hover:hover {
         border: 1px solid
           var(--component-colors-utility-gray-utility-gray-200, #ededed);
         background: var(
