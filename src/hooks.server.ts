@@ -502,12 +502,10 @@ export const handle: Handle = sequence
               _string
             ) =>
             {
-              if (objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'standard')
-                return objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForStandard;
-              else if (objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType === 'purged')
-                return objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strCodeSampleForPurged;
-              else
-                return '';
+              return objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.objLoadingOptions
+                [
+                  objConfigModule?.objHtmlHeadABTestingInjection?.stylesheets.strLoadingType!
+                ] ?? ''
               ;
             }
           )
@@ -526,12 +524,10 @@ export const handle: Handle = sequence
               _string
             ) =>
             {
-              if (objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'local')
-                return objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForLocal;
-              else if (objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType === 'cdn')
-                return objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strCodeSampleForCdn;
-              else
-                return '';
+              return objConfigModule?.objHtmlHeadABTestingInjection?.fonts.objLoadingOptions
+                [
+                  objConfigModule?.objHtmlHeadABTestingInjection?.fonts.strLoadingType!
+                ] ?? ''
               ;
             }
           )

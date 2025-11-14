@@ -94,15 +94,16 @@ export const config = {
       strCodeSampleForPartytownConfig: `
         <script>
           partytown = {
-            resolveUrl
-            (
-              url,
-              location,
-            )
+            resolveUrl: function (url, location, type)
             {
-              const proxy = '/partytown-proxy/';
-              const target = encodeURIComponent(url.href);
-              return new URL(proxy + '?url=' + target, location);
+              if (url.hostname === "connect.facebook.net")
+              {
+                var proxyUrl = new URL('https://staging.betarena.com/partytown-proxy');
+                proxyUrl.search = 'url=' + url.href;
+                console.log('Partytown Proxy URL:', proxyUrl.href);
+                return proxyUrl;
+              }
+              return url;
             },
             forward:
             [
