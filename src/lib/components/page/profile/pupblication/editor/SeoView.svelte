@@ -208,10 +208,8 @@
     </div>
     <Container style="height: unset">
       <div class="buttons-wrapper">
-        <Button
-          full={true}
-          type="secondary"
-          on:click={goBack}>{translations?.go_back || "Go Back"}</Button
+        <Button full={true} type="secondary" on:click={goBack}
+          >{translations?.go_back || "Go Back"}</Button
         >
         <Button full={true} on:click={save}
           >{translations?.save || "Save"}</Button
@@ -272,13 +270,13 @@
           .header-info {
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-md, 8px);
             align-self: stretch;
-            padding-bottom: var(--spacing-xl, 16px);
+            gap: var(--spacing-xs, 4px);
 
             h2 {
-              color: var(--colors-text-text-primary-900, #fbfbfb);
               margin: 0;
+              color: var(--colors-text-text-primary-900, #fbfbfb);
+
               /* Text lg/Semibold */
               font-family: var(--font-family-font-family-body, Roboto);
               font-size: var(--font-size-text-lg, 18px);
@@ -288,7 +286,7 @@
             }
 
             .info-desc {
-              color: var(--colors-text-text-quaternary, #8c8c8c);
+              color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
               /* Text sm/Regular */
               font-family: var(--font-family-font-family-body, Roboto);
@@ -305,7 +303,7 @@
           padding: var(--spacing-none, 0px) var(--spacing-xl, 16px);
           flex-direction: column;
           align-items: flex-start;
-          gap: 12px;
+          gap: var(--spacing-xl, 16px);
           flex: 1 0 0;
           align-self: stretch;
 
@@ -313,7 +311,7 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            gap: var(--spacing-2xl, 20px);
+            gap: var(--spacing-xl, 16px);
             color: var(--colors-text-text-secondary-700, #d2d2d2);
 
             /* Text sm/Medium */
@@ -333,6 +331,7 @@
                 cursor: pointer;
                 display: flex;
                 width: 100%;
+                height: 52px;
                 padding: var(--spacing-xl, 16px);
                 align-items: flex-start;
                 align-self: stretch;
@@ -422,41 +421,49 @@
       .content-wrapper {
         gap: var(--spacing-3xl, 24px);
         padding-bottom: var(--spacing-xl, 16px);
-        .header-info {
-          padding-top: var(--spacing-2xl, 20px);
-          gap: var(--spacing-xs, 4px);
 
-          .title-wrapper {
-            display: flex;
-            justify-content: space-between;
-            h2 {
-              color: var(--colors-text-text-primary-900, #fbfbfb);
+        .content {
+          .content-header-border {
+            .header-info {
+              padding-top: var(--spacing-2xl, 20px);
+              gap: var(--spacing-xs, 4px);
 
-              /* Text xl/Semibold */
-              font-family: var(--font-family-font-family-body, Roboto);
-              font-size: var(--font-size-text-xl, 20px);
-              font-style: normal;
-              font-weight: 600;
-              line-height: var(--line-height-text-xl, 30px); /* 150% */
+              .title-wrapper {
+                display: flex;
+                justify-content: space-between;
+                h2 {
+                  color: var(--colors-text-text-primary-900, #fbfbfb);
+
+                  /* Text xl/Semibold */
+                  font-family: var(--font-family-font-family-body, Roboto);
+                  font-size: var(--font-size-text-xl, 20px);
+                  font-style: normal;
+                  font-weight: 600;
+                  line-height: var(--line-height-text-xl, 30px); /* 150% */
+                }
+
+                .close {
+                  cursor: pointer;
+                }
+              }
+              .info-desc {
+                color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+                /* Text md/Regular */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-md, 16px);
+                font-style: normal;
+                font-weight: 400;
+                line-height: var(--line-height-text-md, 24px); /* 150% */
+              }
             }
-
-            .info-desc {
-              font-size: var(--font-size-text-sm, 14px);
-              font-style: normal;
-              font-weight: 400;
-              line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-            }
-
-            .close {
-              cursor: pointer;
+          }
+          .form-wrapper {
+            .confirm-lang-box .checkboxes-wrapper .radio-button-wrapper {
+              height: 56px;
             }
           }
         }
-
-        .form-wrapper {
-          gap: var(--spacing-2xl, 20px) !important;
-        }
-
         .buttons-wrapper {
           height: 110px;
           flex-direction: row;
