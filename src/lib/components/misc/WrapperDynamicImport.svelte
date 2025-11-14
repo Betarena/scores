@@ -49,6 +49,8 @@
      *  📝 path component to be dynamically imported.
      */
     importComponentPath:
+      | 'Layout-Root'
+      | 'Page-Author-Article'
       | 'Splash-Screen'
       | 'Banner-Offline-Alert'
       | 'Banner-Platform-Alert'
@@ -85,7 +87,25 @@
         }
       );
 
-      if (importComponentPath == 'Splash-Screen')
+      if (importComponentPath == 'Layout-Root')
+        _DynamicComponent
+          = (
+            await import
+            (
+              '$lib/svelte/page/layout.root.svelte'
+            )
+          ).default
+        ;
+      else if (importComponentPath == 'Page-Author-Article')
+        _DynamicComponent
+          = (
+            await import
+            (
+              '$lib/svelte/page/page.author.svelte'
+            )
+          ).default
+        ;
+      else if (importComponentPath == 'Splash-Screen')
         _DynamicComponent
           = (
             await import

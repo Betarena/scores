@@ -70,7 +70,7 @@
 
   {#if objConfig?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath="$lib/svelte/page/layout.root.svelte"
+      importComponentPath='Layout-Root'
     >
       <slot />
     </WrapperDynamicImport>

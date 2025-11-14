@@ -411,6 +411,7 @@ export const config = {
         [
           'src/lib/components/misc/Splash-Screen.svelte',
           {
+            isDynamicImport: false,
             isHidden: true,
           }
         ],

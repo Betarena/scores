@@ -70,7 +70,7 @@
 
   {#if objConfig?.isDynamicImport}
     <WrapperDynamicImport
-      importComponentPath="$lib/svelte/page/page.author.svelte"
+      importComponentPath='Page-Author-Article'
     />
   {:else}
     <Page />
