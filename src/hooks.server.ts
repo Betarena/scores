@@ -736,22 +736,6 @@ export const handle: Handle = sequence
                 .replace('...', '..')
               ;
 
-              // ╭─────
-              // │ CHECK:
-              // │ |: for, injectable-override presence in local memory-cache
-              // ╰─────
-              if (!mapHeadLinkCache.has(href))
-                mapHeadLinkCache.set
-                (
-                  href,
-                  fs.readFileSync
-                  (
-                    `${__dirname}/${hrefValid}`,
-                    'utf8'
-                  )
-                );
-              ;
-
               const
                 // ╭─────
                 // │ NOTE:
@@ -789,14 +773,6 @@ export const handle: Handle = sequence
                 ]
               ;
 
-              let
-                /**
-                 * @description
-                 * 📝 inlined string content.
-                 */
-                strInlined = mapHeadLinkCache.get(href) as string
-              ;
-
               // [🐞]
               log_v3
               (
@@ -816,6 +792,34 @@ export const handle: Handle = sequence
                 }
               );
 
+              if (isCondition1)
+                return ``;
+              ;
+
+              // ╭─────
+              // │ CHECK:
+              // │ |: for, injectable-override presence in local memory-cache
+              // ╰─────
+              if (!mapHeadLinkCache.has(href))
+                mapHeadLinkCache.set
+                (
+                  href,
+                  fs.readFileSync
+                  (
+                    `${__dirname}/${hrefValid}`,
+                    'utf8'
+                  )
+                );
+              ;
+
+              let
+                /**
+                 * @description
+                 * 📝 inlined string content.
+                 */
+                strInlined = mapHeadLinkCache.get(href) as string
+              ;
+
               // ╭─────
               // │ NOTE: WARNING:
               // │ |: disabled for now, causes issues with CSS parsing
@@ -833,9 +837,7 @@ export const handle: Handle = sequence
               // │ CHECK:
               // │ |: for, desired inlining injection
               // ╰─────
-              if (isCondition1)
-                return ``;
-              else if (isCondition2)
+              if (isCondition2)
                 return `
                   <!-- inlined HTML-TEMPLATE for ${href} -->
                   ${strInlined}

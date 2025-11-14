@@ -90,9 +90,7 @@
   import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-// import '@betarena/ad-engine';
-  // import WidgetAdEngine from '@betarena/ad-engine/src/lib/Widget-AdEngine.svelte';
-  // import WidgetAdEngine from '@betarena/ad-engine';
+  import WidgetAdEngine from '@betarena/ad-engine';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
@@ -679,16 +677,16 @@
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
-  <!--
-  {#key pageRouteId}
-    <WidgetAdEngine
-      authorId={$page.data.dataArticle?.author?.id}
-      authorArticleTagIds={$page.data.dataArticle?.article?.tags}
-      isDarkTheme={theme == 'Dark'}
-      strTranslationTarget={lang ?? 'en'}
-    />
-  {/key}
-  -->
+  {#if config.objApp.isBetareAgEngineEnabled}
+    {#key pageRouteId}
+      <WidgetAdEngine
+        authorId={$page.data.dataArticle?.author?.id}
+        authorArticleTagIds={$page.data.dataArticle?.article?.tags}
+        isDarkTheme={theme == 'Dark'}
+        strTranslationTarget={lang ?? 'en'}
+      />
+    {/key}
+  {/if}
 
   {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
     {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isDynamicImport}
