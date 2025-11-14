@@ -18,27 +18,27 @@ type ILoadingType =
   | 'none'
   // ╭─────
   // │ NOTE:
-  // │ |:
+  // │ |: Purged scripts/styles (critical CSS inlined, rest loaded async)
   // ╰─────
   | 'purged'
   // ╭─────
   // │ NOTE:
-  // │ |:
+  // │ |: Standard scripts/styles
   // ╰─────
   | 'standard'
   // ╭─────
   // │ NOTE:
-  // │ |:
+  // │ |: Locally hosted scripts/styles
   // ╰─────
   | 'local'
   // ╭─────
   // │ NOTE:
-  // │ |:
+  // │ |: 3rd-Party scripts loaded locally
   // ╰─────
   | 'cdn'
   // ╭─────
   // │ NOTE:
-  // │ |:
+  // │ |: 3rd-Party scripts loaded via CDN with Partytown
   // ╰─────
   | 'cdn-partytown'
 ;
@@ -81,8 +81,52 @@ export const config = {
   {
     /**
      * @description
+     * 📝 Enable Service Worker for PWA Functionality
      */
-    isServiceWorkerEnabled: true,
+    isServiceWorkerEnabled: false,
+    /**
+     * @description
+     * 📝 Partytown Configuration Settings
+     */
+    objServiceWorkerPartytown:
+    {
+      isEnabled: true,
+      strCodeSampleForPartytownConfig: `
+        <script>
+          partytown = {
+            resolveUrl
+            (
+              url,
+              location,
+            )
+            {
+              const proxy = '/partytown-proxy/';
+              const target = encodeURIComponent(url.href);
+              return new URL(proxy + '?url=' + target, location);
+            },
+            forward:
+            [
+              'fbq',
+              'gtag',
+              'dataLayer.push',
+              'Intercom',
+            ],
+          };
+        </script>
+      `,
+    },
+
+    /**
+     * @description
+     * 📝 Enable 3rd-Party Google Analytics
+     */
+    is3rdPartyIntercomEnabled: false,
+    /**
+     * @description
+     * 📝 Enable 3rd-Party Google Analytics
+     */
+    isBetareAgEngineEnabled: true,
+
     /**
      * @description
      */
@@ -191,20 +235,25 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'purged' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-STYLESHEETS :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForPurged: `
-                  <link
-                    href="css/app.purged.clean.css"
-                    rel="stylesheet"
-                    text="text/css"
-                  />
-                `,
-                strCodeSampleForStandard: `
-                  <link
-                    href="app.css"
-                    rel="stylesheet"
-                    text="text/css"
-                  />
-                `,
+                objLoadingOptions:
+                {
+                  'purged':
+                  `
+                    <link
+                      href="css/app.purged.clean.css"
+                      rel="stylesheet"
+                      text="text/css"
+                    />
+                  `,
+                  'standard':
+                  `
+                    <link
+                      href="app.css"
+                      rel="stylesheet"
+                      text="text/css"
+                    />
+                  `,
+                }
               },
 
               fonts:
@@ -212,16 +261,21 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'cdn' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-FONTS :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForLocal: `
-                  <link
-                    href="template/html.head.fonts.local.html"
-                  />
-                `,
-                strCodeSampleForCdn: `
-                  <link
-                    href="template/html.head.fonts.cdn.html"
-                  />
-                `,
+                objLoadingOptions:
+                {
+                  'local':
+                  `
+                    <link
+                      href="template/html.head.fonts.local.html"
+                    />
+                  `,
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.fonts.cdn.html"
+                    />
+                  `,
+                }
               },
 
               googleTagManager:
@@ -229,22 +283,28 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-GOOGLE-ANALYTICS :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForLocal: `
-                  <link
-                    href="scripts/service.googletagmanager.js"
-                    as="script"
-                  />
-                `,
-                strCodeSampleForCdn: `
-                  <link
-                    href="template/html.head.googletagmanager.cdn.html"
-                  />
-                `,
-                strCodeSampleForCdnPartytown: `
-                  <link
-                    href="template/html.head.googletagmanager.cdn.partytown.html"
-                  />
-                `
+                objLoadingOptions:
+                {
+                  'local':
+                  `
+                    <link
+                      href="scripts/service.googletagmanager.js"
+                      as="script"
+                    />
+                  `,
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.googletagmanager.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.googletagmanager.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
               },
 
               twitter:
@@ -252,22 +312,28 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-TWITTER :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForLocal: `
-                  <link
-                    href="scripts/service.twitter.js"
-                    as="script"
-                  />
-                `,
-                strCodeSampleForCdn: `
-                  <link
-                    href="template/html.head.twitter.cdn.html"
-                  />
-                `,
-                strCodeSampleForCdnPartytown: `
-                  <link
-                    href="template/html.head.twitter.cdn.partytown.html"
-                  />
-                `
+                objLoadingOptions:
+                {
+                  'local':
+                  `
+                    <link
+                      href="scripts/service.twitter.js"
+                      as="script"
+                    />
+                  `,
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.twitter.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.twitter.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
               },
 
               posthog:
@@ -275,16 +341,21 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-POSTHOG :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForCdn: `
-                  <link
-                    href="template/html.head.posthog.cdn.html"
-                  />
-                `,
-                strCodeSampleForCdnPartytown: `
-                  <link
-                    href="template/html.head.posthog.cdn.partytown.html"
-                  />
-                `
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.posthog.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.posthog.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
               },
 
               facebook:
@@ -292,16 +363,21 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-FACEBOOK :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForCdn: `
-                  <link
-                    href="template/html.head.facebook.cdn.html"
-                  />
-                `,
-                strCodeSampleForCdnPartytown: `
-                  <link
-                    href="template/html.head.facebook.cdn.partytown.html"
-                  />
-                `
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.facebook.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.facebook.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
               },
 
               linkedin:
@@ -309,16 +385,21 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-LINKEDIN :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForCdn: `
-                  <link
-                    href="template/html.head.linkedin.cdn.html"
-                  />
-                `,
-                strCodeSampleForCdnPartytown: `
-                  <link
-                    href="template/html.head.linkedin.cdn.partytown.html"
-                  />
-                `
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.linkedin.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.linkedin.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
               },
 
               intercom:
@@ -326,16 +407,21 @@ export const config = {
                 isEnabled: true,
                 strLoadingType: 'cdn-partytown' as ILoadingType,
                 strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-INTERCOM :: INJECTED HERE DYNAMICALLY -->`,
-                strCodeSampleForCdn: `
-                  <link
-                    href="template/html.head.intercom.cdn.html"
-                  />
-                `,
-                strCodeSampleForCdnPartytown: `
-                  <link
-                    href="template/html.head.intercom.cdn.partytown.html"
-                  />
-                `
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.intercom.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.intercom.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
               },
 
               // progressier: // TODO: implement progressier
@@ -379,8 +465,6 @@ export const config = {
           {
             isDynamicImport: false,
             isHidden: false,
-            isBetareAgEngineEnabled: true,
-            is3rdPartyIntercomEnabled: false,
             /**
              * @description
              * 📝 Holds target `component(s)` of dynamic nature.

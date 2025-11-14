@@ -363,7 +363,7 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom - SHOW/HIDE
   // ╰─────
-  $: if (objConfig.is3rdPartyIntercomEnabled && browser && window.Intercom != null && pageRouteId == routeIdPageProfile)
+  $: if (config.objApp.is3rdPartyIntercomEnabled && browser && window.Intercom != null && pageRouteId == routeIdPageProfile)
     new Intercom().toggle(true);
   else if (browser)
     new Intercom().toggle(false);
@@ -373,7 +373,7 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom - update launcher visibility
   // ╰─────
-  $: if (objConfig.is3rdPartyIntercomEnabled && browser && window.Intercom != null)
+  $: if (config.objApp.is3rdPartyIntercomEnabled && browser && window.Intercom != null)
     // eslint-disable-next-line new-cap
     window.Intercom
     (
@@ -388,7 +388,7 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom - update user data
   // ╰─────
-  $: if (objConfig.is3rdPartyIntercomEnabled && browser && window.Intercom != null && (deepReactListenStore1 || deepReactListenStore2))
+  $: if (config.objApp.is3rdPartyIntercomEnabled && browser && window.Intercom != null && (deepReactListenStore1 || deepReactListenStore2))
   {
     new Intercom().update
     (
@@ -605,24 +605,18 @@
     />
   {/if}
 
-  <script>
-    // ╭─────
-    // │ NOTE: IMPORTANT
-    // │ |: Forward the necessary functions to the web worker layer
-    // ╰─────
-    partytown = {
-      forward:
-      [
-        'fbq',
-        'gtag',
-        'dataLayer.push',
-        'Intercom',
-      ],
-    };
-  </script>
+  {#if config.objApp.objServiceWorkerPartytown.isEnabled}
+    <!--
+    ╭─────
+    │ NOTE: IMPORTANT
+    │ |: Forward the necessary functions to the web worker layer
+    ╰─────
+    -->
+    {@html config.objApp.objServiceWorkerPartytown.strCodeSampleForPartytownConfig}
 
-  <!-- CRITICAL -->
-  {@html '<script>' + partytownSnippet() + '</script>'}
+    <!-- CRITICAL -->
+    {@html '<script>' + partytownSnippet() + '</script>'}
+  {/if}
 
 </svelte:head>
 
