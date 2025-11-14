@@ -41,7 +41,7 @@
   import DepositOptions from "./DepositOptions.svelte";
   import DepositRevolut from "./DepositRevolut.svelte";
   import DepositSuccess from "./DepositSuccess.svelte";
-  import { get } from "$lib/api/utils.js";
+  import { getRates } from "../helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -238,17 +238,6 @@
     buttonDisabled = false;
   }
 
-  async function getRates() {
-      const res = await get("/api/data/bta-rates") as {
-      data?:      { [key: string]: any };
-      symbol?:    string;
-      timestamp?: string;
-      [property: string]: any;
-    }
-    if( res) {
-      $session.btaUsdRate = res.bta_rates?.data.price_in.usd || 0
-    }
-  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -271,7 +260,7 @@
       )[0] as unknown as HTMLElement;
     const prevIntercomState = instanceIntercom?.style.display;
     if (instanceIntercom) instanceIntercom.style.display = "none";
-    getRates();
+    getRates(session);
     const { orderId } = $depositStore.revolut || {};
     if (orderId && !unsubscribe) {
       unsubscribe = subscribeRevolutTransactionListen(
