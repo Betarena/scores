@@ -19,6 +19,7 @@
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 FROM node:18.19.0-alpine as base
+RUN apk add --no-cache python3 make g++
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🏗️ STEP 1 │ Initialize Docker Build                                              │
@@ -27,7 +28,6 @@ FROM node:18.19.0-alpine as base
 FROM base AS prod-deps
 COPY . /app
 WORKDIR /app
-RUN apk add --no-cache python3 make g++
 RUN \
   npm install -g npm@10.2.3 && \
   npm install --omit=optional --production --ignore-scripts
@@ -39,7 +39,6 @@ FROM base AS build
 COPY . /app
 COPY ./env/.env.docker.file /app/.env
 WORKDIR /app
-RUN apk add --no-cache python3 make g++
 RUN \
   npm install -g npm@10.2.3 && \
   npm i --omit=optional
@@ -59,9 +58,11 @@ FROM base AS final
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules node_modules/
 COPY --from=build /app/build build/
+COPY --from=build /app/dist/~partytown build/client/~partytown
 COPY --from=build /app/dist/server.docker.js server.docker.js
 COPY --from=build /app/package.json /app/.env ./
 COPY --from=build /app/.scripts .scripts/
+COPY --from=build /app/.output .output/
 # [🐞]
 RUN ls -lha
 
