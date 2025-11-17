@@ -36,6 +36,7 @@
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import Lock from "$lib/components/ui/assets/lock.svelte";
   import Coins02 from "$lib/components/ui/assets/coins-02.svelte";
+  import Trophy  from '$lib/components/ui/assets/trophy.svelte';
   import { getRates } from "../../helpers.js";
 
   // #endregion ➤ 📦 Package Imports
@@ -71,6 +72,7 @@
       description: translations?.free_access_description,
       description_fallback: "free_access_description",
       selected: access === "free",
+      icon: Lock,
     },
     {
       id: "paid",
@@ -79,6 +81,7 @@
       description: translations?.reward_gated_access_description,
       description_fallback: "reward_gated_access_description",
       selected: access === "paid",
+      icon: Trophy
     },
   ];
 
@@ -206,7 +209,7 @@
             controlType="radio"
           >
             <svelte:fragment slot="icon">
-              <FeaturedIcon><Lock /></FeaturedIcon>
+              <FeaturedIcon><svelte:component this={radio.icon} /></FeaturedIcon>
             </svelte:fragment>
             <div class="radio-text-wrapper" slot="content">
               <span class="title">
