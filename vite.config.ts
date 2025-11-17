@@ -15,43 +15,126 @@
 
 // #region ➤ 📦 Package Imports
 
-import { sentrySvelteKit } from "@sentry/sveltekit";
 import { sveltekit } from '@sveltejs/kit/vite';
+import fs from 'fs-extra';
+import path from 'path';
 import { table } from 'table';
-import { loadEnv } from "vite";
+import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
+
+import { partytownVite } from "@qwik.dev/partytown/utils";
+import { visualizer } from 'rollup-plugin-visualizer';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
+
+import { isSSR } from './.vite/env.ts';
+import { sveltekitCssPurge } from './.vite/sveltekit-build-css-unused.2.ts';
+import { sveltekitSsrOrCsrBuild } from './.vite/sveltekit-build-env.ts';
+import { buildSizePlugin } from './.vite/sveltekit-build-size.ts';
 
 import { dependencies, version } from './package.json';
 
-// ╭─────
-// │ NOTE: IMPORTANT
-// │ ➤ required as part of Google Hack.
-// ╰─────
-// import viteCompression from 'vite-plugin-compression';
-// import fs from 'fs';
-// import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types';
 
 // #endregion ➤ 📦 Package Imports
 
+// #region ➤ 📌 VARIABLES
+
+const
+  /**
+   * @description
+   * 📝 Vite configuration options object
+   */
+  objViteConfigOptions =
+  {
+    /**
+     * @description
+     * 📝 Plugin configuration options
+     */
+    objPluginConfig:
+    {
+      cssInjectedByJsPlugin:
+      {
+        isEnabled: false,
+        outputPath: './static/css/one-css-chunk.css',
+      },
+      visualizer:
+      {
+        isEnabled: true,
+        objConfig:
+        {
+          type: 'treemap' // options: 'sunburst' | 'treemap' | 'network' | 'raw-data' | 'list' | 'flamegraph'
+        } as { type: TemplateType },
+      },
+      _customBuildSizePlugin:
+      {
+        isEnabled: false,
+      },
+      _customSveltekitSsrOrCsrPlugin:
+      {
+        isEnabled: false,
+      },
+      _customSveltekitPurgeCssPlugin:
+      {
+        isEnabled: false,
+      }
+    },
+    /**
+     * @description
+     * 📝 Meta configuration options
+     */
+    objMetaConfig:
+    {
+      outputMetricsPath: './.output/metrics',
+    }
+  },
+  /**
+   * @description
+   * 📝 Object counter for file-types encountered during build.
+   */
+  objBuildFileCounter =
+  {
+    svelteFiles: 0,
+    jsFiles: 0,
+    cssFiles: 0,
+    totalFiles: 0,
+  },
+  // ╭─────
+  // │ NOTE:
+  // │ |: destructuring assignment
+  // ╰─────
+  [
+    dateCurrent
+  ] = [
+    new Date()
+      .toISOString()
+      .split('T')[0]
+      + `_` + new Date().getHours().toString().padStart(2,'0')
+      + `-` + new Date().getMinutes().toString().padStart(2,'0')
+      + `-` + new Date().getSeconds().toString().padStart(2,'0')
+  ]
+;
+
+// #endregion ➤ 📌 VARIABLES
+
 export default defineConfig
 (
-  (
+  async (
     {
       command,
       mode,
-      ssrBuild
+      ssrBuild,
     }
   ) =>
   {
     // ╭─────
     // │ NOTE: [🐞]
-    // │ ➤ [1] Testing expected override of local '.env' for that of the 'dotenv-valut' injected secrets.
+    // │ │: [step.1] - validating override of local '.env' secrets, by those in 'dotenv-valut'.
     // ╰─────
     console.log(`📜 [1] Loaded using (file): ${process.env.VITE_ENV_TARGET}`);
 
     // ╭─────
     // │ NOTE: IMPORTANT
-    // │ > inject environment secrets.
+    // │ │: inject environment secrets.
     // ╰─────
     process.env =
     {
@@ -61,12 +144,15 @@ export default defineConfig
 
     // ╭─────
     // │ NOTE: [🐞]
-    // │ ➤ [2] Testing expected override of local '.env' for that of the 'dotenv-valut' injected secrets.
+    // │ │: [step.2] - validating override of local '.env' secrets, by those in 'dotenv-valut'.
     // ╰─────
     console.log(`📜 [2] Loaded using (file): ${process.env.VITE_ENV_TARGET}`);
 
-    console.log('process.env.CI_GITHUB_DEPLOYMENT_STAGING', process.env.CI_GITHUB_DEPLOYMENT_STAGING);
-
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ |: Disable logging of 'process.env' values, when 'CI_GITHUB_DEPLOYMENT_STAGING' is set.
+    // │ |: This is done for secret(s) protection.
+    // ╰─────
     if (process.env.CI_GITHUB_DEPLOYMENT_STAGING == undefined)
     {
       console.log('📜 [3] Loaded using (file): .env.ci-github-deployment-staging');
@@ -130,7 +216,25 @@ export default defineConfig
       )
     );
 
+    // ╭─────
+    // │ CHECK:
+    // │ |: for, metrics output directory exists.
+    // ╰─────
+    if (command === 'build')
+      await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`);
+    ;
+
+    const
+      /**
+       * @description
+       * 📝 Flag indicating if building for SSR
+       */
+      strGlobalCssFileContent = await fs.readFile('./static/app.css', 'utf8')
+    ;
+
     return {
+
+      // appType: 'custom',
 
       define:
       {
@@ -142,163 +246,236 @@ export default defineConfig
       plugins:
       [
         // ╭─────
-        // │ NOTE: IMPORTANT
-        // │ ➤ needs to be placed 'before' sveltekit compilation.
+        // │ NOTE:
+        // │ │: using 'vite-plugin-chunk-split' NPM package.
+        // ┣─────
+        // │ │: ❌ DOES NOT WORK! BREAKS BUILD/COMPILE!
         // ╰─────
-        sentrySvelteKit
-        (
-          {
-            sourceMapsUploadOptions:
-            {
-              org: "betarena",
-              project: "scores-platform",
-              release: process.env?.npm_package_version ?? version ?? 'v.0.0.0',
-              uploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
-            },
-            autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
-          }
-        ),
-
-        // ╭─────
-        // │ NOTE: WARNING:
-        // │ ➤ imported from 'vite-plugin-chunk-split'.
-        // │ ➤ DOES NOT WORK! BREAKS BUILD/COMPILE!
-        // ╰─────
-        // chunkSplitPlugin({ strategy: 'all-in-one' }),
-
-        // ╭─────
-        // │ NOTE: WARNING:
-        // │ ➤ imported from 'vite-plugin-progress'.
-        // │ ➤ DOES NOT WORK AS ADVERTISED!
-        // ╰─────
-        // progress(),
-
-        // ╭─────
-        // │ NOTE: WARNING:
-        // │ ➤ imported from 'vite-plugin-compress'.
-        // │ ➤ DOES NOT WORK AS ADVERTISED!
-        // ╰─────
-        // c.compress(),
-
-        // ╭─────
-        // │ NOTE: WARNING:
-        // │ ➤ imported from 'vite-plugin-preload'.
-        // │ ➤ DOES NOT WORK AS ADVERTISED!
-        // ╰─────
-        // preload(),
-
-        // IMPORTANT
-        sveltekit(),
-        // viteCompression(),
-
         // ╭─────
         // │ NOTE:
-        // │ ➤ imported from 'vite-plugin-css-injected-by-js'.
-        // │ WARNING:
-        // │ ➤ overrides 'CSS' imported by 'svelte' & 'svelte-kit'
-        // │ ➤ requires to be imported a '<link ... >' in the 'src/app.html'
-        // │ IMPORTANT
-        // │ Please, follow the following steps (to attain google-hack)
-        // │ ➤ [1] Uncomment (below) code-block
-        // │ ➤ [2] Run `npm run build` in command-line for '_this_' root project path.
-        // │ ➤ [3] Validate new `./static/all-one-css-chunk.css` has been generated.
-        // │ ➤ [4] Comment (below) code-block.
-        // │ ➤ [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
-        // │ ➤ [6] Push to `Production`.
+        // │ │: using 'vite-plugin-progress' NPM package.
+        // ┣─────
+        // │ │: ❌ DOES NOT WORK AS ADVERTISED!
         // ╰─────
-        /*
-          cssInjectedByJsPlugin
-          (
+        // ╭─────
+        // │ NOTE:
+        // │ │: imported from 'vite-plugin-compress' NPM package.
+        // ┣─────
+        // │ │: ❌ DOES NOT WORK AS ADVERTISED!
+        // ╰─────
+        // ╭─────
+        // │ NOTE:
+        // │ │: imported from 'vite-plugin-compression' NPM package.
+        // ┣─────
+        // │ │: ❌ DOES NOT WORK AS ADVERTISED!
+        // ╰─────
+        // ╭─────
+        // │ NOTE:
+        // │ │: imported from 'vite-plugin-preload' NPM package.
+        // ┣─────
+        // │ │: ❌ DOES NOT WORK AS ADVERTISED!
+        // ╰─────
+        // ╭─────
+        // │ NOTE: IMPORTANT
+        // │ │: imported from '@sentry/sveltekit' NPM package.
+        // ┣─────
+        // │ │: needs to be placed 'BEFORE' sveltekit compilation.
+        // ╰─────
+        // sentrySvelteKit
+        // (
+        //   {
+        //     sourceMapsUploadOptions:
+        //     {
+        //       org: "betarena",
+        //       project: "scores-platform",
+        //       release: process.env?.npm_package_version ?? version ?? 'v.0.0.0',
+        //       uploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
+        //     },
+        //     autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
+        //   }
+        // ),
+        // ╭─────
+        // │ IMPORTANT
+        // │ │: official svelte-kit plugin
+        // ╰─────
+        sveltekit(),
+        // ╭─────
+        // │ NOTE:
+        // │ │: imported from '@erbelion/vite-plugin-sveltekit-purgecss' NPM package.
+        // ┣─────
+        // │ │: ❔ NOT TESTED YET!
+        // ╰─────
+        // ╭─────
+        // │ NOTE:
+        // │ │: imported from 'vite-plugin-lightningcss' NPM package.
+        // ┣─────
+        // │ │: ❔ NOT TESTED YET!
+        // ╰─────
+        // ╭─────
+        // │ IMPORTANT
+        // │ │: Partytown integration plugin
+        // ╰─────
+        partytownVite
+        (
+           {
+            dest: path.join(__dirname, "dist", "~partytown"),
+          }
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ │: using 'vite-plugin-css-injected-by-js'
+        // │ WARNING:
+        // │ │: overrides 'CSS' imported by 'svelte' & 'svelte-kit'
+        // │ │: requires to be imported as a '<link ... >' tag in the 'src/app.html' manually.
+        // │ IMPORTANT
+        // │ │: INSTRUCTIONS:
+        // │ │: Please, follow the following steps (to attain google-hack)
+        // │ │: [1] Un-comment (below) code-block
+        // │ │: [2] Run `npm run build` in command-line for '_this_' root project path.
+        // │ │: [3] Validate new `./static/all-one-css-chunk.css` has been generated.
+        // │ │: [4] Re-comment (below) code-block.
+        // │ │: [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
+        // │ │: [6] Push to `Production`.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.isEnabled && cssInjectedByJsPlugin
+        (
+          {
+            // relativeCSSInjection: true,
+
+            // topExecutionPriority: true,
+
+            // jsAssetsFilterFunction: function customJsAssetsfilterFunction
+            // (
+            //   outputChunk
+            // )
+            // {
+            // ╭─────
+            // │ NOTE:
+            // │ |: It appears, the 'outputChunk.filename' is of type:
+            // │ |: - _app/immutable/chunks/index.088b98a6.js
+            // │ |: - _app/immutable/chunks/index.8e8ca4ce.js
+            // ╰─────
+            // console.log(outputChunk.fileName);
+            //   return outputChunk.fileName == 'index.js';
+            // }
+
+            // ╭─────
+            // │ NOTE:
+            // │ |: 🟩 definitive 'HACK' (solution) for 'single CSS file' output chunk.
+            // ╰─────
+            injectCode:
+            (
+              cssCode,
+              options
+            ): string =>
             {
+              // [🐞]
+              console.log('🚦 Running cssInjectedByJsPlugin :: injectCode ...');
 
-              // relativeCSSInjection: true,
+              // ╭─────
+              // │ NOTE:
+              // │ |: the 'cssCode' generated contains some 'formatting' issues.
+              // │ WARNING: IMPORTANT
+              // │ |: remove 1st and last speech marks.
+              // │ |: remove cases of `\n` chars.
+              // │ |: correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
+              // ╰─────
+              const
+                cssCodeMod = cssCode
+                  .slice(1, -1)
+                  .replace(/\\n/g, "")
+                  .replace(/\\\\/g,"\\")
+              ;
 
-              // topExecutionPriority: true,
-
-              // jsAssetsFilterFunction: function customJsAssetsfilterFunction
-              // (
-              //   outputChunk
-              // )
-              // {
-
-              //   // [🐞]
-              //   // ▓ NOTE:
-              //   // ▓ It appears, the 'outputChunk.filename' is of type:
-              //   // ▓ - _app/immutable/chunks/index.088b98a6.js
-              //   // ▓ - _app/immutable/chunks/index.8e8ca4ce.js
-              //   // ▓ etc.
-              //   // console.log(outputChunk.fileName);
-
-              //   return outputChunk.fileName == 'index.js';
-              // }
-
-              // ▓ NOTE:
-              // ▓ definitive 'hack' solution for 'single CSS file' output chunk.
-              injectCode:
+              // ╭─────
+              // │ NOTE:
+              // │ |: output to file-system.
+              // ╰─────
+              fs.writeFile
               (
-                cssCode,
-                options
-              ): string =>
-              {
-
-                const generateOneCssFile: boolean = false;
-
-                if (generateOneCssFile)
+                objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.outputPath,
+                cssCodeMod,
+                err =>
                 {
-                  // ▓ NOTE:
-                  // ▓ the 'cssCode' generated contains some 'formatting' issues.
-                  // ▓ remove 1st and last speech marks.
-                  // ▓ remove cases of `\n` chars.
-                  // ▓ correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
-                  let cssCodeMod: string = cssCode.slice(1, -1);
-                  cssCodeMod = cssCodeMod.replace(/\\n/g, "");
-                  cssCodeMod = cssCodeMod.replace(/\\\\/g,"\\")
-
-                  // ▓ WARNING:
-                  // ▓ 'all-css-chunk.css' must exist inside '/static'
-                  fs.writeFile
-                  (
-                    './static/all-css-chunk.css',
-                    cssCodeMod,
-                    err =>
-                    {
-                      if (err) console.error(err);
-                    }
-                  );
+                  if (err) console.error(err);
                 }
+              );
 
-                return '';
+              return '';
 
-                // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
-              }
-
+              // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
             }
-          ),
-        */
+          }
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ │: using 'rollup-plugin-visualizer'
+        // │ │: @description: helper for visualizing bundled code output.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig.visualizer.isEnabled && visualizer
+        (
+          {
+            // emitFile: true,
+            // brotliSize: true,
+            // gzipSize: true,
+            filename: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/${isSSR ? 'ssr' : 'csr'}.visualizer.stats.${mode}.${objViteConfigOptions.objPluginConfig.visualizer.objConfig.type}.html`,
+            title: '[metrics] scores - vite.visualizer',
+            template: objViteConfigOptions.objPluginConfig.visualizer.objConfig.type,
+          }
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ |: custom 'vite' plugin.
+        // │ |: @description: detect 'SSR' or 'CSR' build phase.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customSveltekitSsrOrCsrPlugin && sveltekitSsrOrCsrBuild(),
+        // ╭─────
+        // │ NOTE:
+        // │ |: custom 'vite' plugin.
+        // │ |: @description: build size output reporting plugin
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customBuildSizePlugin && buildSizePlugin
+        (
+          'build',
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ |: custom 'vite' plugin.
+        // │ |:  @description: (1) analyze 'CSS' variable usage, (2) report unused 'CSS' vars & purge unused 'CSS' vars.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customSveltekitPurgeCssPlugin && sveltekitCssPurge
+        (
+          {
+            strGlobalCssFileContent,
+            strOutputFilePathPrefix: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`,
+            _strDebugLevel: 'info',
+          }
+        ),
+        // ╭─────
+        // │ NOTE:
+        // │ │: [CUSTOM] :: lightweight progress indicator plugin.
+        // ╰─────
+        // progressLite(),
       ],
 
       build:
       {
         // ╭─────
-        // │ NOTE:
-        // │ ➤ gets overridden by SvelteKit.
+        // │ NOTE: WARNING:
+        // │ │: 'cssCodeSplit' gets overridden by 'svelte-kit' plugin.
         // ╰─────
         // cssCodeSplit: false,
-
         minify: 'esbuild',
         cssMinify: 'lightningcss',
 
-        // ╭─────
-        // │ NOTE:
-        // │ ➤ rollup config.
-        // ╰─────
         rollupOptions:
         {
           output:
           {
             // ╭─────
             // │ NOTE:
-            // │ ➤ [disabled]
+            // │ │: [disabled]
+            // ┣─────
             // │ 🔗 read-more :|: https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
             // │ 🔗 read-more :|: https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
             // ╰─────
@@ -312,92 +489,168 @@ export default defineConfig
               // [🐞]
               // console.log(id);
 
-              // fs.appendFile
-              // (
-              //   './chunks-full.json',
-              //   id,
-              //   // ╭─────
-              //   // │ NOTE:
-              //   // │ |: Alternative approach
-              //   // ╰─────
-              //   // JSON.stringify(opt, null, 4),
-              //   err =>
-              //   {
-              //     if (err) console.error(err);
-              //   }
-              // );
+              // [🐞]
+              objBuildFileCounter.svelteFiles += id.includes('.svelte') ? 1 : 0;
+              objBuildFileCounter.jsFiles += id.includes('.js') ? 1 : 0;
+              objBuildFileCounter.cssFiles += id.includes('.css') ? 1 : 0;
+              objBuildFileCounter.totalFiles += 1;
 
               // ╭─────
               // │ NOTE:
-              // │ ➤ testing for 'per-page' component build split.
-              // │ ➤ works well, but at times incosistent, due to CSS.
+              // │ |: logging all chunk data to file.
               // ╰─────
-              // if (id.includes('src/lib/components/_main_'))
-              //   return 'M-main-single-chunk';
-              // ;
+              fs.appendFile
+              (
+                `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/chunks.json`,
+                id + '\n',
+                // ╭─────
+                // │ NOTE:
+                // │ |: alternative approach
+                // ╰─────
+                // JSON.stringify(opt, null, 4),
+                err =>
+                {
+                  if (err) console.error(err);
+                }
+              );
+
+              // ╭─────
+              // │ NOTE:
+              // │ |: logging all chunk count to file.
+              // ╰─────
+              fs.writeFile
+              (
+                `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/chunks.count.json`,
+                JSON.stringify(objBuildFileCounter, null, 4) + '\n',
+                // ╭─────
+                // │ NOTE:
+                // │ |: alternative approach
+                // ╰─────
+                // JSON.stringify(opt, null, 4),
+                err =>
+                {
+                  if (err) console.error(err);
+                }
+              );
+
+              // ╭─────
+              // │ IMPORTANT
+              // │ |: Run-Time Application Configuration Chunk
+              // ╰─────
+              if (id.includes('src/lib/constants/config'))
+                return '__run-time-config';
+              ;
+
+              // ╭─────
+              // │ IMPORTANT
+              // │ |: Application Styles Chunk
+              // ╰─────
+              if (id.includes('static/app.scss'))
+                return '__app-styles';
+              ;
+
+              // ╭──────────────────────────────────────────────────────────────────────────────────╮
+              // │ 💠 │ CHUNKING STRATEGIES - EXPERIMENTAL                                          │
+              // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
               // if (id.includes('src/'))
-              //   return 'M-homepage-single-chunk';
+              //   return 'single-chunk-js';
               // ;
-
+              // if (id.includes('src/lib/components') && id.includes('.css'))
+              //   return 'single-chunk-css';
+              // ;
               // if (id.includes('src/lib/store/'))
-              //   return 'M-stores-single-chunk';
+              //   return 'single-chunk-lib-store';
+              // ;
+              // if (id.includes('src/lib/firebase/'))
+              //   return 'single-chunk-lib-firebase';
+              // ;
+              // if (id.includes('src/lib/utils/'))
+              //   return 'single-chunk-lib-utils';
               // ;
 
-              // if (id.includes('src/lib/firebase/'))
-              //   return 'M-firebase-single-chunk';
+              // if (id.includes('src/lib')) // ⮕ Worsens Lightouse Performance (FCP) score
+              // if (id.includes('src/lib/components')) // ⮕ (worsens,slightly) Lightouse Performance (FCP) Scores
+              // if (id.includes('src/lib') && id.includes('.js')) // ⮕ Worsens Lightouse Performance (FCP) score
+              // if (id.includes('src/lib/components') && id.includes('.css')) // ⮕ (worsens,slightly) Lightouse Performance (FCP) Scores
+              //   return id
+              //     .toString()
+              //     .split('src/lib/')[1]
+              //     // @ts-expect-error
+              //     .replaceAll('/','_')
+              //   ;
               // ;
+
+              // ╭──────────────────────────────────────────────────────────────────────────────────╮
+              // │ 💠 │ CHUNKING STRATEGIES - NODE_MODULES                                          │
+              // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
               // ╭─────
               // │ NOTE:
-              // │ ➤ works well, but at times incosistent, supercharged with hardcoded CSS.
+              // │ │: 🔗 read-more :|: https://github.com/sveltejs/kit/issues/7257#issuecomment-1528962348
               // ╰─────
-              // if (id.includes('src/'))
-              //   return 'M-single-chunk';
-              // ;
-
-              // ╭─────
-              // │ NOTE: WARNING:
-              // │ ➤ gives error of 'dev' issue [?]
-              // ╰─────
-              // if (id.includes('src/lib/utils/'))
-              //   return 'M-utils-single-chunk';
-
-              // 🔗 read-more :|: (1st comment) https://stackoverflow.com/a/71578633/8421215
-              // if (id.indexOf("react") !== -1) { return; }
-
-              // 🔗 read-more :|: https://github.com/sveltejs/kit/issues/7257#issuecomment-1528962348
               // if (id.includes('@sentry') && !id.includes('@sentry/browser') && !id.includes('@sentry/tracing'))
               //   return 'vendor_sentry'
+              // ;
 
               // ╭─────
               // │ NOTE:
-              // │ ➤ original
+              // │ │: original suggestion
+              // │ │: 🔗 read-more :|: https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
               // ╰─────
               // if (id.includes('node_modules'))
-              //   return id.toString().split('node_modules/')[1].split('/')[0].toString();
+              //   return id
+              //     .toString()
+              //     .split('node_modules/')[1]
+              //     // .split('/')[0] // [1] option.1
+              //     // @ts-expect-error
+              //     .replaceAll('/','_') // [2] option.2 // ⮕ (improves) Lightouse Performance (FCP) Scores
+              //     .toString()
+              //   ;
+              // ;
             }
-          }
-        }
+          },
+        },
+
+        ssrManifest: true,
+        reportCompressedSize: true,
+
+        // sourcemap: "hidden"
+      },
+
+      // css:
+      // {
+      //   lightningcss:
+      //   {
+      //     unusedSymbols: true
+      //   }
+      // },
+
+      server:
+      {
+        host: '0.0.0.0',
+        port: 3050,
+        // ╭─────
+        // │ NOTE:
+        // ┣─────
+        // │ 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
+        // ╰─────
+        // https:
+        // {
+        //   key: fs.readFileSync(`${__dirname}/cert/key.pem`),
+        //   cert: fs.readFileSync(`${__dirname}/cert/cert.pem`)
+        // }
+      },
+
+      preview:
+      {
+        host: '0.0.0.0',
+        port: 3050,
       },
 
       // ╭─────
       // │ NOTE:
-      // │ ➤ [disabled]
-      // │ 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
-      // ╰─────
-      // server:
-      // {
-      //   https:
-      //   {
-      //     key: fs.readFileSync(`${__dirname}/cert/key.pem`),
-      //     cert: fs.readFileSync(`${__dirname}/cert/cert.pem`)
-      //   }
-      // }
-
-      // ╭─────
-      // │ NOTE:
-      // │ ➤ [disabled] 'vitest' integration
+      // │ │: [disabled] 'vitest' integration
       // ╰─────
       // test:
       // {
@@ -406,6 +659,6 @@ export default defineConfig
       //   environment: 'jsdom',
       //   // setupFiles: ["src/setuptest.js"],
       // }
-    }
+    };
   }
 );

@@ -1,0 +1,541 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Overview                                                           │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // 2025-11-10                                                    │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ BETARENA (envrionment)
+// │ |: IMPORTANT :: SAFE TO COMMIT TO REPOSITORY
+// │ |: Configuration for Betarena About Project
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+type ILoadingType =
+  | 'none'
+  // ╭─────
+  // │ NOTE:
+  // │ |: Purged scripts/styles (critical CSS inlined, rest loaded async)
+  // ╰─────
+  | 'purged'
+  // ╭─────
+  // │ NOTE:
+  // │ |: Standard scripts/styles
+  // ╰─────
+  | 'standard'
+  // ╭─────
+  // │ NOTE:
+  // │ |: Locally hosted scripts/styles
+  // ╰─────
+  | 'local'
+  // ╭─────
+  // │ NOTE:
+  // │ |: 3rd-Party scripts loaded locally
+  // ╰─────
+  | 'cdn'
+  // ╭─────
+  // │ NOTE:
+  // │ |: 3rd-Party scripts loaded via CDN with Partytown
+  // ╰─────
+  | 'cdn-partytown'
+;
+
+export const config = {
+  // ╭─────
+  // │ NOTE:
+  // │ |: Toggle 'countdown' component
+  // ┣───
+  // │ |: WARNING:
+  // │ |: [production] => true
+  // ╰─────
+  objDebug:
+  {
+    isEnabled: false,
+      // process.env.VITE_PROD_LOGS === 'true'
+      //   ? false
+      //   : true,
+    listSegmentsOverrideEnabled:
+    [
+      'instrumentation.server.middleware.ts',
+    ]
+  },
+  // ╭─────
+  // │ NOTE:
+  // │ |: Toggle 'countdown' component
+  // ┣───
+  // │ |: WARNING:
+  // │ |: [production] => true
+  // ╰─────
+  objSentry:
+  {
+    // url: process.env.VITE_SENTRY_URL
+  },
+  // ╭─────
+  // │ NOTE:
+  // │ |: Configuration for Lazy Load Components in Application
+  // ╰─────
+  objApp:
+  {
+    /**
+     * @description
+     * 📝 Enable Service Worker for PWA Functionality
+     */
+    isServiceWorkerEnabled: false,
+    /**
+     * @description
+     * 📝 Partytown Configuration Settings
+     */
+    objServiceWorkerPartytown:
+    {
+      isEnabled: true,
+      strCodeSampleForPartytownConfig: `
+        <script>
+          partytown = {
+            resolveUrl: function (url, location, type)
+            {
+              if (url.hostname === "connect.facebook.net")
+              {
+                var proxyUrl = new URL('https://staging.betarena.com/partytown-proxy');
+                proxyUrl.search = 'url=' + url.href;
+                console.log('Partytown Proxy URL:', proxyUrl.href);
+                return proxyUrl;
+              }
+              return url;
+            },
+            forward:
+            [
+              'fbq',
+              'gtag',
+              'dataLayer.push',
+              'Intercom',
+            ],
+          };
+        </script>
+      `,
+    },
+
+    /**
+     * @description
+     * 📝 Enable 3rd-Party Google Analytics
+     */
+    is3rdPartyIntercomEnabled: false,
+    /**
+     * @description
+     * 📝 Enable 3rd-Party Google Analytics
+     */
+    isBetareAgEngineEnabled: true,
+
+    /**
+     * @description
+     */
+    objComponentConfiguration: new Map
+    (
+      [
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 📌 │ SVELTEKIT // HOOKS                                                          │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+        [
+          'src/hooks.server.ts',
+          {
+            // ╭──────────────────────────────────────────────────────────────────────────────────╮
+            // │ 💠 │ configuration                                                               │
+            // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+            /**
+             * @description
+             * 📝 Debug Level for Hook Operations
+             */
+            isDebugEnabled: false,
+
+            /**
+             * @description
+             * 📝 Performance Threshold in ms for Hook Operations
+             */
+            intPerformanceThresholdMs: 1,
+
+            customErrorHandler:
+            {
+
+            },
+
+            // ╭──────────────────────────────────────────────────────────────────────────────────╮
+            // │ 💠 │ configuration // resolve.preload(..                                         │
+            // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+            /**
+             * @description
+             * 📝 Enable Preload for 'link rel=preload' tags
+             */
+            isPreload: false,
+
+            // ╭──────────────────────────────────────────────────────────────────────────────────╮
+            // │ 💠 │ configuration // resolve.transformPageChunk(..)                             │
+            // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+            /**
+             * @description
+             * 📝 AB-Testing Injection Configuration
+             */
+            objHtmlHeadABTestingInjection:
+            {
+              /**
+               * @description
+               *  📝 Enable inline HTML head links injection
+               * @example
+               *  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" />
+               *  -> becomes ->
+               *  <style> {inlined CSS content} </style>
+               */
+              isInjectionEnabled: true,
+              /**
+               * @description
+               *  📝 Skip (exlcude) matching '<head> <link href="{.}" >' parsing
+               */
+              setInjectionLinkHrefExclude: new Set
+              (
+                [
+                  'https://fonts.googleapis.com/', // google fonts
+                  '__app-styles', // custom identifier to exclude app styles
+                ]
+              ),
+              /**
+               * @description
+               * 📝 Enable Inline Single Line Styles Injection (compression-js-logic)
+               */
+              isInjectionInlineSingleLineEnabled: true,
+
+              /**
+               * @description
+               * 📝 Enable Inline Head Styles Injection (compression-js-logic)
+               * @note
+               * ❗️ WARNING: This means, compressed injection will ONLY resolve at 'document-load-time' (client-side).
+               */
+              isInjectionCompressed: false,
+              /**
+               * @description
+               * 📝 Skip (exclude) Target Head Styles from Inline Compression
+               */
+              setInjectionCompressedExclude: new Set
+              (
+                [
+                  '__app-styles'
+                ]
+              ),
+
+              /**
+               * @description
+               * 📝 Enable Image Preload Injection in HTML Head
+               */
+              isInjectionImagePreload: true,
+
+              stylesheets:
+              {
+                isEnabled: true,
+                strLoadingType: 'purged' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-STYLESHEETS :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'purged':
+                  `
+                    <link
+                      href="css/app.purged.clean.css"
+                      rel="stylesheet"
+                      text="text/css"
+                    />
+                  `,
+                  'standard':
+                  `
+                    <link
+                      href="app.css"
+                      rel="stylesheet"
+                      text="text/css"
+                    />
+                  `,
+                }
+              },
+
+              fonts:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-FONTS :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'local':
+                  `
+                    <link
+                      href="template/html.head.fonts.local.html"
+                    />
+                  `,
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.fonts.cdn.html"
+                    />
+                  `,
+                }
+              },
+
+              googleTagManager:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-GOOGLE-ANALYTICS :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'local':
+                  `
+                    <link
+                      href="scripts/service.googletagmanager.js"
+                      as="script"
+                    />
+                  `,
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.googletagmanager.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.googletagmanager.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
+              },
+
+              twitter:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-TWITTER :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'local':
+                  `
+                    <link
+                      href="scripts/service.twitter.js"
+                      as="script"
+                    />
+                  `,
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.twitter.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.twitter.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
+              },
+
+              posthog:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-POSTHOG :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.posthog.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.posthog.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
+              },
+
+              facebook:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-FACEBOOK :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.facebook.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.facebook.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
+              },
+
+              linkedin:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-LINKEDIN :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.linkedin.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.linkedin.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
+              },
+
+              intercom:
+              {
+                isEnabled: true,
+                strLoadingType: 'cdn-partytown' as ILoadingType,
+                strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-INTERCOM :: INJECTED HERE DYNAMICALLY -->`,
+                objLoadingOptions:
+                {
+                  'cdn':
+                  `
+                    <link
+                      href="template/html.head.intercom.cdn.html"
+                    />
+                  `,
+                  'cdn-partytown':
+                  `
+                    <link
+                      href="template/html.head.intercom.cdn.partytown.html"
+                    />
+                  `,
+                } as Record<ILoadingType, string>,
+              },
+
+              // progressier: // TODO: implement progressier
+            },
+
+            // ╭──────────────────────────────────────────────────────────────────────────────────╮
+            // │ 💠 │ configuration // resolve.setHeaders(..)                                     │
+            // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+            /**
+             * @description
+             * 📝 Enable setting 'Cookie' headers
+             */
+            isHeadersCookieEnabled: true,
+          }
+        ],
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 🤖 │ SVELTEKIT // LAYOUTS - PAGES                                                │
+        // ┣──────────────────────────────────────────────────────────────────────────────────┫
+        // │ ℹ️ set 'isSsr' to 'false' to disable 'Server-Side-Rendering' (no load()) on route│
+        // │ │-> Affects SEO negatively & worsens lighthouse score                            │
+        // │ ℹ️ set 'isCsr' to 'false' to disable 'Client-Side-Rendering' (no JS) on route    │
+        // │ │-> Improves Performance for User (avg. 90 score on lighthouse performance)      │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+        [
+          'src/routes/(authors)/a/[...permalink]/+page.server.ts',
+          {
+            objSveltekitOptions:
+            {
+              isSsr: true,
+              isCsr: true,
+              isPrerender: false,
+            }
+          }
+        ],
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 📌 │ SVELTE // LAYOUTS - PAGES                                                   │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+        [
+          'src/routes/+layout.svelte',
+          {
+            isDynamicImport: false,
+            isHidden: false,
+            /**
+             * @description
+             * 📝 Holds target `component(s)` of dynamic nature.
+             */
+            mapStrDebugPreifix: new Map <
+              | 'beforeNavigate'
+              | 'afterNavigate',
+              string
+            >
+            (
+              [
+                [ 'beforeNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte beforeNavigate(..)' ],
+                [ 'afterNavigate', '🚏 checkpoint ➤ src/routes/+layout.svelte afterNavigate(..)' ]
+              ]
+            )
+          }
+        ],
+        [
+          'src/routes/(authors)/a/[...permalink]/+page.svelte',
+          {
+            isDynamicImport: false,
+            isHidden: false,
+          }
+        ],
+        // ╭──────────────────────────────────────────────────────────────────────────────────╮
+        // │ 💠 │ SVELTE // COMPONENTS                                                        │
+        // ╰──────────────────────────────────────────────────────────────────────────────────╯
+        [
+          'src/lib/components/misc/Splash-Screen.svelte',
+          {
+            isDynamicImport: false,
+            isHidden: true,
+          }
+        ],
+        [
+          'src/lib/components/misc/banner/Banner-Offline-Alert.svelte',
+          {
+            isDynamicImport: true,
+            isHidden: false,
+          }
+        ],
+        [
+          'src/lib/components/misc/banner/Banner-Platform-Alert.svelte',
+          {
+            isDynamicImport: true,
+            isHidden: false,
+          }
+        ],
+        [
+          'src/lib/components/misc/modal/Modal-Email-Subscribe.svelte',
+          {
+            isDynamicImport: true,
+            isHidden: false,
+          }
+        ],
+        [
+          'src/lib/components/section/authors/page/author/content/Author-Widget.svelte',
+          {
+            objMeta:
+            {
+              cname: 'page/author/content/author-widget',
+              // intDeviceThresholdsInPx: [ 575, 1160 ],
+            },
+            isDynamicImport: false,
+            isHidden: false,
+            isSeoBoxEnabled: true,
+            intComponentConfigVersion: 1,
+          }
+        ]
+      ]
+    )
+  },
+}

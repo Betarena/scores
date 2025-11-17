@@ -31,37 +31,55 @@ services:
         max-size: 1g
         max-file: 5
     volumes:
-      - ./nginx/logs/scores:/var/log/nginx/scores:rw
+      - ./nginx/logs/scores.production:/var/log/nginx/scores.production:rw
+      - ./nginx/logs/scores.staging:/var/log/nginx/scores.staging:rw
       - ./nginx/logs/goaccess:/var/log/nginx/goaccess:rw
+      - ./nginx/cache/scores.production:/var/cache/nginx/scores.production:rw
+      - ./nginx/cache/scores.staging:/var/cache/nginx/scores.staging:rw
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: Volume for NGINX to serve GoAccess Monitoring
+      # ╰─────
       - ./goaccess:/etc/nginx/html:ro
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: Volumes for NGINX to serve the Scores Application
+      # ╰─────
+      - scores-production-volume:/etc/nginx/scores.production/build:ro
+      - scores-staging-volume:/etc/nginx/scores.staging/build:ro
     networks:
       - loadbalancer
+      - loadbalancer.staging
+    links:
+      - scores-production
+      - scores-staging
   #
 
-  scores:
+  scores-production:
     image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
     restart: always
-    # ╭─────
-    # │ NOTE:
-    # │ |: used for development purposes
-    # ╰─────
-    # build:
-    #   context: ../
-    #   dockerfile: ./.docker/Dockerfile
     deploy:
       replicas: ${BETARNA_SCORES__REPLICAS:-3}
-    env_file: ../env/.env.docker.scores
+    env_file: ../env/.env.docker.scores.production
     volumes:
-      - ./scores/robots.txt:/app/build/client/robots.txt:ro
-      - ./scores/sitemap.xml:/app/build/client/sitemap.xml:ro
       # ╭─────
       # │ NOTE: WARNING:
-      # │ |: This volume is used to share scripts between the host and the container.
-      # │ |: Enable it only if you need to run scripts from the host.
+      # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
       # ╰─────
       # - ../.scripts:/app/.scripts:rw
-    expose:
-      - 3000
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: Volume for persisting build output
+      # ╰─────
+      - scores-production-volume:/app/build:rw
+      # ╭─────
+      # │ NOTE:
+      # │ |: Volumes for serving static files
+      # ╰─────
+      - ./scores.production/sitemap.xml:/app/build/client/sitemap.xml:ro
+      - ./scores.production/robots.txt:/app/build/client/robots.txt:ro
+    # expose:
+    #   - 3000
     # ╭─────
     # │ NOTE:
     # │ |: used for development purposes
@@ -75,6 +93,46 @@ services:
         max-file: 5
     networks:
       - loadbalancer
+  #
+
+  scores-staging:
+    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE}
+    restart: always
+    deploy:
+      replicas: ${BETARNA_SCORES_STAGING__REPLICAS:-1}
+    env_file: ../env/.env.docker.scores.staging
+    volumes:
+      # ╭─────
+      # │ NOTE: WARNING:
+      # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
+      # ╰─────
+      # - ../.scripts:/app/.scripts:rw
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: Volume for persisting build output
+      # ╰─────
+      - scores-staging-volume:/app/build:rw
+      # ╭─────
+      # │ NOTE:
+      # │ |: Volumes for serving static files
+      # ╰─────
+      - ./scores.staging/sitemap.xml:/app/build/client/sitemap.xml:ro
+      - ./scores.staging/robots.txt:/app/build/client/robots.txt:ro
+    # expose:
+    #   - 6500
+    # ╭─────
+    # │ NOTE:
+    # │ |: used for development purposes
+    # ╰─────
+    # ports:
+    #   - 3000:3000
+    logging:
+      driver: local
+      options:
+        max-size: 500m
+        max-file: 5
+    networks:
+      - loadbalancer.staging
   #
 
   # ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -105,4 +163,13 @@ services:
 networks:
   loadbalancer:
     driver: bridge
+  loadbalancer.staging:
+    driver: bridge
+#
+
+volumes:
+  scores-production-volume:
+    driver: local
+  scores-staging-volume:
+    driver: local
 #

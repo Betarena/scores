@@ -151,14 +151,6 @@
 │ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<svelte:head>
-  <meta name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta
-    name="theme-color"
-    content="#1f1f1f"
-    />
-</svelte:head>
 
 <style lang="scss">
 

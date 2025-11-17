@@ -38,12 +38,9 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-
-  import { sleep } from '$lib/utils/miscellenous.js';
-  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+	import { config } from '$lib/constants/config.js';
+	import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import AuthorLoader from './Author-Loader.svelte';
@@ -68,20 +65,20 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   const
-    /** @description 📣 `this` component **main** `id` and `data-testid` prefix. */
-    // eslint-disable-next-line no-unused-vars
-    CNAME: string = 'profile⮕w⮕investfaq⮕main',
-    /** @description 📣 threshold start + state for 📱 MOBILE */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_MOBILE_INIT: [ number, boolean ] = [ 575, true ],
-    /** @description 📣 threshold start + state for 💻 TABLET */
-    // eslint-disable-next-line no-unused-vars
-    VIEWPORT_TABLET_INIT: [ number, boolean ] = [ 1160, true ],
-    /** @description 📣 (widget) dynamic import variable condition */
-    useDynamicImport: boolean = true
+    /**
+     * @description
+     * 📝 `this` component **main** `id` and `data-testid` prefix.
+     */
+    objConfig
+      = config.objApp.objComponentConfiguration.get('src/lib/components/section/authors/page/author/content/Author-Widget.svelte')!
   ;
 
-  $: widgetDataMain = $page.data.dataArticle as IPageAuhtorArticleDataFinal | null | undefined;
+  $: widgetDataMain
+    = $page.data.dataArticle as
+      | IPageAuhtorArticleDataFinal
+      | null
+      | undefined
+  ;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -112,40 +109,10 @@
   (
   ): Promise < void >
   {
-    // IMPORTANT
-    if (!browser) return;
-
-    await sleep(750);
-
     return;
   }
 
   // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount
-  (
-    async (
-    ): Promise < void > =>
-    {
-      // ▓▓ CHECK
-      // ▓▓ for loading widget dynamically.
-      if (useDynamicImport)
-      {
-        // MainMainAsDynamic = (await import('./Main-Main.svelte')).default;
-      }
-    }
-  );
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -160,44 +127,38 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<SeoBox>
-  <h1>{widgetDataMain?.article.data.title}</h1>
-  {@html widgetDataMain?.article.data.content}
-  <a
-      href="/a/sportstack/{mutateStringToPermalink(widgetDataMain?.author?.data?.username)}"
-    >{widgetDataMain?.author?.data?.username}</a>
-  {#each (widgetDataMain?.mapTag || []) as [_id, tag]}
-   <a href="/a/tag/{tag.permalink}">{tag.name}</a>
-  {/each}
-</SeoBox>
+{#if objConfig.isSeoBoxEnabled}
+  <SeoBox>
+    <h1>
+      {widgetDataMain?.article.data.title}
+    </h1>
+    {@html widgetDataMain?.article.data.content}
+    <a
+      href="/a/sportstack/{mutateStringToPermalink(widgetDataMain?.author.data?.username)}"
+    >
+      {widgetDataMain?.author.data?.username}
+    </a>
+    {#each (widgetDataMain?.mapTag || []) as [_id, tag]}
+      <a href="/a/tag/{tag.permalink}">{tag.name}</a>
+    {/each}
+  </SeoBox>
+{/if}
 
 <!-- [🐞] -->
 <!-- <AuthorLoader /> -->
 
-{#await widgetInit()}
-  <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is pending                                            │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-  <AuthorLoader />
-
-{:then data}
-  <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is fulfilled                                          │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-
+{#if objConfig.intComponentConfigVersion === 1}
   <AuthorMain
     widgetData={widgetDataMain}
   />
-
-{:catch error}
-  <!--
-  ╭────────────────────────────────────────────────────────────────────────╮
-  │ NOTE :|: promise is rejected                                           │
-  ╰────────────────────────────────────────────────────────────────────────╯
-  -->
-
-{/await}
+{:else if objConfig.intComponentConfigVersion === 2}
+  {#await widgetInit()}
+    <AuthorLoader />
+  {:then data}
+    <AuthorMain
+      widgetData={widgetDataMain}
+    />
+  {:catch error}
+    <!--  -->
+  {/await}
+{/if}
