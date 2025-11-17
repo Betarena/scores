@@ -24,8 +24,8 @@ import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #region ➤ 📌 VARIABLES
 
-export const ssr = config.objApp.listLazyLoadComponents.get('src/routes/(authors)/a/[...permalink]/+page.server.ts')?.objSveltekitOptions?.isSsr ?? true;
-export const csr = config.objApp.listLazyLoadComponents.get('src/routes/(authors)/a/[...permalink]/+page.server.ts')?.objSveltekitOptions?.isCsr ?? true;
+export const ssr = config.objApp.objComponentConfiguration.get('src/routes/(authors)/a/[...permalink]/+page.server.ts')?.objSveltekitOptions?.isSsr ?? true;
+export const csr = config.objApp.objComponentConfiguration.get('src/routes/(authors)/a/[...permalink]/+page.server.ts')?.objSveltekitOptions?.isCsr ?? true;
 // export const prerender = false;
 
 // #endregion ➤ 📌 VARIABLES

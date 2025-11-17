@@ -146,7 +146,7 @@
      * 📝 `this` component **main** `id` and `data-testid` prefix.
      */
     objConfig
-      = config.objApp.listLazyLoadComponents.get('src/routes/+layout.svelte')!
+      = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')!
   ;
 
   /**
@@ -688,8 +688,8 @@
     {/key}
   {/if}
 
-  {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
-    {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/Splash-Screen.svelte')?.isDynamicImport}
+  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/Splash-Screen.svelte')?.isDynamicImport}
       <WrapperDynamicImport
         importComponentPath='Splash-Screen'
       />
@@ -710,8 +710,8 @@
     <ModalError />
   {/if}
 
-  {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isHidden}
-    {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
+  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
       <WrapperDynamicImport
         importComponentPath='Banner-Offline-Alert'
       />
@@ -720,8 +720,8 @@
     {/if}
   {/if}
 
-  {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isHidden}
-    {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isDynamicImport}
+  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isDynamicImport}
       <WrapperDynamicImport
         importComponentPath='Banner-Platform-Alert'
       />
@@ -730,8 +730,8 @@
     {/if}
   {/if}
 
-  {#if !config.objApp.listLazyLoadComponents.get('src/lib/components/misc/banner/Modal-Email-Subscribe.svelte')?.isHidden}
-    {#if config.objApp.listLazyLoadComponents.get('src/lib/components/misc/modal/Modal-Email-Subscribe.svelte')?.isDynamicImport}
+  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Modal-Email-Subscribe.svelte')?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/modal/Modal-Email-Subscribe.svelte')?.isDynamicImport}
       <WrapperDynamicImport
         importComponentPath='Modal-Email-Subscribe'
       />

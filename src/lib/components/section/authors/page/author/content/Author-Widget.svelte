@@ -70,7 +70,7 @@
      * 📝 `this` component **main** `id` and `data-testid` prefix.
      */
     objConfig
-      = config.objApp.listLazyLoadComponents.get('src/lib/components/section/authors/page/author/content/Author-Widget.svelte')!
+      = config.objApp.objComponentConfiguration.get('src/lib/components/section/authors/page/author/content/Author-Widget.svelte')!
   ;
 
   $: widgetDataMain

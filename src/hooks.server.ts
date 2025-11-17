@@ -64,7 +64,7 @@ const
   ] = [
     dirname(__filename),
     new Map(),
-    config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')!
+    config.objApp.objComponentConfiguration.get('src/hooks.server.ts')!
   ]
 ;
 
@@ -1028,7 +1028,7 @@ export const handle: Handle = sequence
                 }
               );
 
-              return config.objApp.listLazyLoadComponents.get('src/hooks.server.ts')?.isPreload ?? true;
+              return config.objApp.objComponentConfiguration.get('src/hooks.server.ts')?.isPreload ?? true;
             }
           }
         )

@@ -131,7 +131,7 @@ export const config = {
     /**
      * @description
      */
-    listLazyLoadComponents: new Map
+    objComponentConfiguration: new Map
     (
       [
         // ╭──────────────────────────────────────────────────────────────────────────────────╮

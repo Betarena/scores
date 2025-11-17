@@ -50,7 +50,7 @@
      * 📝 `this` component **main** `id` and `data-testid` prefix.
      */
     objConfig
-      = config.objApp.listLazyLoadComponents.get('src/routes/+layout.svelte')
+      = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')
   ;
 
   // #endregion ➤ 📌 VARIABLES
