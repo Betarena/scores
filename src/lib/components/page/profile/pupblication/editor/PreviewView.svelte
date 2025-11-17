@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { access } from 'fs';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -61,7 +62,7 @@
 
   const dispatch = createEventDispatcher();
 
-  $: ({ seo, tags } = $create_article_store);
+  $: ({ seo, tags, access } = $create_article_store);
   $: ({ viewportType } = $session);
   let hoverItem = "";
 
@@ -128,8 +129,8 @@
       </h3>
       <div class="info-message">
         <TranslationText
-          text={translations?.free_access}
-          fallback="free_access"
+          text={translations?.[access === "free" ? "free_access" : "reward_gated_access" ]}
+          fallback={access === "free" ? "free_access" : "reward_gated_access" }
         />
       </div>
     </div>
