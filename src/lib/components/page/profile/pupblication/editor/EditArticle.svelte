@@ -129,6 +129,7 @@
         description: article.seo_details?.main_data.description || "",
       },
       view: "preview",
+      access: "free"
     });
   }
 
