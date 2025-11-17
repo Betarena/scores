@@ -142,7 +142,8 @@
         lang: article.lang || "en",
         iso: article.seo_details?.opengraph.locale || "en_US"
       },
-      access: "free"
+      access: "free",
+      rewards_amount: 1
     });
     title = article.data?.title || "";
     disablePublishButton =
