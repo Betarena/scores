@@ -75,6 +75,7 @@
   import { parseObject } from '$lib/utils/string.2.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
+  import { Browser } from '$lib/utils/browser.js';
 
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
   import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
@@ -155,7 +156,7 @@
    */
   let page_unsub: () => void;
 
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang } = { ...$sessionStore });
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
   $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
@@ -174,6 +175,7 @@
   $: if (browser) $sessionStore.page = $page;
   $: isInitliazed = false;
   $: isInitializationFinished = false;
+  $: isWindowIntercom = (browser && _window?.Intercom != null)
 
   $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
     = viewportChangeV2
@@ -286,7 +288,8 @@
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
     await mainDeepLinkCheck();
-    isInitializationFinished= true
+    new Browser().initiateSubscription();
+    isInitializationFinished = true;
     return;
   }
 
@@ -359,36 +362,10 @@
 
   // ╭─────
   // │ NOTE:
-  // │ |: [3rd-party] // Intercom - SHOW/HIDE
+  // │ |: [3rd-party] // Intercom // BOOT (with user data)
   // ╰─────
-  $: if (config.objApp.is3rdPartyIntercomEnabled && browser && window.Intercom != null && pageRouteId == routeIdPageProfile)
-    new Intercom().toggle(true);
-  else if (browser)
-    new Intercom().toggle(false);
-  ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ |: [3rd-party] // Intercom - update launcher visibility
-  // ╰─────
-  $: if (config.objApp.is3rdPartyIntercomEnabled && browser && window.Intercom != null)
-    // eslint-disable-next-line new-cap
-    window.Intercom
-    (
-      'update',
-      {
-        hide_default_launcher: currentPageRouteId != 'ProfilePage',
-      }
-    );
-  ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ |: [3rd-party] // Intercom - update user data
-  // ╰─────
-  $: if (config.objApp.is3rdPartyIntercomEnabled && browser && window.Intercom != null && (deepReactListenStore1 || deepReactListenStore2))
-  {
-    new Intercom().update
+  $: if (isWindowIntercom && (deepReactListenStore1 || deepReactListenStore2))
+    new Intercom().boot
     (
       {
         uid,
@@ -398,33 +375,28 @@
         competition_number: competition_number,
       }
     );
+  ;
 
-    // eslint-disable-next-line camelcase
-    page_unsub
-      = page.subscribe
-      (
-        () =>
-        {
-          // eslint-disable-next-line new-cap
-          window.Intercom
-            ?.(
-              'update',
-              {
-                hide_default_launcher: $sessionStore.currentPageRouteId !== 'ProfilePage',
-                last_request_at: Math.floor(Date.now() / 1000)
-              }
-            )
-          ;
-        }
-      )
-    ;
-  }
+  // ╭─────
+  // │ NOTE:
+  // │ |: [3rd-party] // Intercom // SHOW-HIDE
+  // ╰─────
+  // $: if (isWindowIntercom && pageRouteId == routeIdPageProfile)
+  //   new Intercom().toggle(true);
+  // else if (isWindowIntercom)
+  //   new Intercom().toggle(false);
+  // ;
 
-  $: if (browser && window.Intercom) console.log('🔥 window.Intercom', window.Intercom);
-  $: if (browser && window.intercomSettings) console.log('🔥 window.intercomSettings', window.intercomSettings);
-  $: if (browser && window.fbq) console.log('🔥 window.fbq', window.fbq);
-  $: if (browser && window.gtag) console.log('🔥 window.gtag', window.gtag);
-  $: if (browser && window.ethereum) console.log('🔥 window.ethereum', window.ethereum);
+  // ╭─────
+  // │ NOTE:
+  // │ |: [3rd-party] // Intercom // update launcher visibility
+  // ╰─────
+  $: if (isWindowIntercom)
+    new Intercom().update
+    (
+      (currentPageRouteId !== 'ProfilePage')
+    );
+  ;
 
   $: if (currentActiveModal === 'Auth_Modal'&& ![routeIdLogin, routeIdRegister].includes(pageRouteId|| ''))
     redirectToOnBoard(false);

@@ -42,6 +42,8 @@ const mobileBreakpoint = 575,
     = {
       globalState: new Set(),
       page: null,
+      // @ts-expect-error
+      window: {},
       deviceType: 'mobile',
       viewportType: 'mobile',
       userAgent: undefined,
@@ -49,6 +51,7 @@ const mobileBreakpoint = 575,
       windowWidth: 0,
       firebaseListeners: [],
       grapqhQlWebSockets: [],
+      listIntervals: [],
       currentActiveModal: null,
       currentActiveToast: null,
       currentAdminToggle: null,
@@ -132,6 +135,8 @@ type IDataProp =
   | 'windowWidth'
   | 'userAgent'
   | "btaRate"
+  | 'window'
+  | 'listIntervals'
 ;
 
 /**
@@ -367,8 +372,17 @@ function createLocalStore
               const [isMobile, isTablet] = viewportChangeV2(dataPoint, mobileBreakpoint, tabletBreakpoint);
               sessionStoreObj.viewportType = dataPoint && isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop';
             }
-            else if (dataTarget === "btaRate") {
+            else if (dataTarget === "btaRate")
+            {
               sessionStoreObj.btaUsdRate = dataPoint;
+            }
+            else if (dataTarget == 'window')
+            {
+              sessionStoreObj.window = dataPoint;
+            }
+            else if (dataTarget == 'listIntervals')
+            {
+              sessionStoreObj.listIntervals.push(dataPoint);
             }
           }
 
