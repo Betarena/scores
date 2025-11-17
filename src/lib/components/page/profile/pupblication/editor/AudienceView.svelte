@@ -113,7 +113,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
   function goBack() {
     dispatch("changeView", "preview");
   }

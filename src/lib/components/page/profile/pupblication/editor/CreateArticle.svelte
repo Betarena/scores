@@ -141,7 +141,8 @@
       detectedLang: {
         lang: article.lang || "en",
         iso: article.seo_details?.opengraph.locale || "en_US"
-      }
+      },
+      access: "free"
     });
     title = article.data?.title || "";
     disablePublishButton =
