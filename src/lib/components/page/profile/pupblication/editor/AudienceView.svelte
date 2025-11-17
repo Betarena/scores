@@ -118,7 +118,6 @@
   }
 
   function save() {
-    // $create_article_store.seo = { title, description };
     goBack();
   }
 
