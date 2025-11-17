@@ -27,6 +27,7 @@
   import SeoView from "./SeoView.svelte";
   import PreviewView from "./PreviewView.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import AudienceView from "./AudienceView.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,6 +55,7 @@
   const viewMap = {
     tags: TagsView,
     seo: SeoView,
+    audience: AudienceView,
     preview: PreviewView,
   };
 

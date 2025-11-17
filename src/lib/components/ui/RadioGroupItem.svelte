@@ -11,6 +11,8 @@
   // #region ➤ 📌 VARIABLES
 
   import Checkbox from "./Checkbox.svelte";
+  import Radio from "./Radio.svelte";
+  import { createEventDispatcher } from "svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -25,8 +27,22 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let selected = false;
   export let disabled = false;
+  export let controlType: "radio" | "checkbox" = "checkbox";
   export let size: "sm" = "sm";
+  export let full = false;
+  export let clickHandler = false;
 
+  $: console.log("RadioGroupItem selected: ", selected);
+
+  const dispatch = createEventDispatcher();
+  function handleClick() {
+    if (disabled) return;
+    if (clickHandler) {
+      dispatch("click");
+      return;
+    }
+    selected = !selected;
+  }
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -40,14 +56,28 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="radio-group-item {size}" class:selected class:disabled on:click={() => (selected = !selected)} tabindex="0">
+<div
+  class="radio-group-item {size}"
+  class:selected
+  class:full
+  class:disabled
+  on:click={handleClick}
+  tabindex="0"
+>
   <div class="content">
     <slot>
-        <slot name="icon"></slot>
-        <slot name="content"></slot>
+      <slot name="icon" />
+      <slot name="content" />
     </slot>
   </div>
-  <Checkbox bind:checked={selected} />
+  <div class="control-wrapper">
+    {#if controlType === "checkbox"}
+      <Checkbox bind:checked={selected} />
+    {/if}
+    {#if controlType === "radio"}
+      <Radio bind:checked={selected} />
+    {/if}
+  </div>
 </div>
 
 <!--
@@ -63,7 +93,7 @@
 <style lang="scss">
   .radio-group-item {
     border-radius: var(--radius-xl, 12px);
-    border: 1px solid var(--colors-border-border-secondary, #ededed);
+    border: 2px solid var(--colors-border-border-secondary, #ededed);
     background: var(--colors-background-bg-primary, #fff);
 
     display: flex;
@@ -100,6 +130,13 @@
       padding: var(--spacing-xl, 16px);
     }
 
-    
+    &.full {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .control-wrapper {
+      flex-shrink: 0;
+    }
   }
 </style>

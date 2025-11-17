@@ -33,10 +33,11 @@
   import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
+  import User1 from "$lib/components/ui/assets/user-1.svelte";
   import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
   import { modalStore } from "$lib/store/modal.js";
-
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -115,6 +116,39 @@
   in:chooseTransition={{ easing: cubicOut }}
   out:chooseTransition={{ easing: cubicIn, out: true }}
 >
+  <div class="option-wrapper" class:hover={hoverItem === "audience"}
+    on:mouseleave={() => mouseleave()}
+    on:mouseenter={() => mouseenter("audience")} on:click={() => changeView("audience")}>
+    <FeaturedIcon color={hoverItem === "audience" ? "brand" : "gray"} size="md" type="modern">
+      <User1 />
+    </FeaturedIcon>
+    <div class="info">
+      <h3>
+        <TranslationText text={translations?.audience} fallback="audience" />
+      </h3>
+      <div class="info-message">
+        <TranslationText
+          text={translations?.free_access}
+          fallback="free_access"
+        />
+      </div>
+    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="21"
+      height="20"
+      viewBox="0 0 21 20"
+      fill="none"
+    >
+      <path
+        d="M8.35254 15L13.4115 10L8.35254 5"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
   <div
     class="option-wrapper"
     class:hover={hoverItem === "tags"}
