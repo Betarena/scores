@@ -536,9 +536,14 @@ docker-image-build:
 	#
 
 	docker build \
-		-t betarena-scores:$${TEMP_VERSION} \
-		-f ./.docker/Dockerfile \
 		. \
+		-f ./.docker/Dockerfile.scores.full \
+		-t betarena-scores:$${TEMP_VERSION} \
+		--platform=linux/amd64 \
+		--progress=plain
+		# --no-cache
+	#
+#
 		--progress=plain
 		# --no-cache
 	#
