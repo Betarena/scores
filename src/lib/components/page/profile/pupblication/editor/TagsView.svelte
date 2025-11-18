@@ -173,13 +173,6 @@
   -->
 
 <div class="page-container {viewportType}">
-  {#if viewportType === "mobile"}
-    <Container style="height: unset">
-      <div class="header">
-        <BackButton on:click={goBack} custom_handler={true} />
-      </div>
-    </Container>
-  {/if}
   <div class="content-wrapper">
     <div class="content">
       <div class="content-header-border">
@@ -201,7 +194,7 @@
               </div>
             </div>
             <Input
-              placeholder="Search for tabs"
+              placeholder={translations?.search_for_tag || "Search for a tag"}
               bind:value={search}
               label={translations?.tags || "Tags"}
               on:keydown={keyHandler}
@@ -354,6 +347,7 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            padding-top: var(--spacing-2xl, 20px);
             gap: var(--spacing-2xl, 20px);
             align-self: stretch;
 
@@ -539,6 +533,16 @@
             flex-shrink: 0;
             max-height: calc(215px + 30px + 12px + 5px);
             overflow-y: auto;
+
+            h2 {
+              color: var(--colors-text-text-secondary-700, #d2d2d2);
+
+              /* Text xl/Medium */
+              font-size: var(--font-size-text-lg, 18px);
+              font-style: normal;
+              font-weight: 500;
+              line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+            }
           }
         }
 

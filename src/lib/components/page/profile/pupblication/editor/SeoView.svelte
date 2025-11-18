@@ -134,13 +134,6 @@
   -->
 
 <div class="page-container {viewportType}">
-  {#if viewportType === "mobile"}
-    <Container style="height: unset">
-      <div class="header">
-        <BackButton on:click={goBack} custom_handler={true} />
-      </div>
-    </Container>
-  {/if}
   <div class="content-wrapper">
     <div class="content">
       <div class="content-header-border">
@@ -269,6 +262,7 @@
         .content-header-border {
           .header-info {
             display: flex;
+            padding-top: var(--spacing-2xl, 20px);
             flex-direction: column;
             align-self: stretch;
             gap: var(--spacing-xs, 4px);

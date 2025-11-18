@@ -4251,7 +4251,6 @@ body {
   --background-bg-quarterary: var(--colors-gray-4);
   --background-bg-quarterary_hover: var(--colors-gray-5);
   --colors-text-text-primary-900: #F5F5F6;
-  --colors-text-text-secondary-700: #696969;
   --button-secondary-bg2: #313131;
   --button-secondary-border: #525252;
   --button-secondary-fg: #D2D2D2;
@@ -4260,7 +4259,6 @@ body {
   --colors-border-border-secondary: #3b3b3b;
   --colors-border-border-primary: #6a6a6a;
   --colors-foreground-fg-tertiary-600: #6A6A6A;
-  --colors-text-text-secondary-700: #D2D2D2;
   --colors-foreground-fg-quinary-400: #727171;
   --colors-background-bg-primary_alt: #313131;
   --colors-foreground-fg-primary-900: #fff;
@@ -4278,7 +4276,7 @@ body {
 .dark-mode {
   --colors-text-text-primary-900: var(--colors-base-white);
   --colors-text-text-primary_on-brand: var(--colors-gray-dark-mode-50);
-  --colors-text-text-secondary-700: var(--colors-gray-dark-mode-50);
+  --colors-text-text-secondary-700: var(--colors-gray-dark-mode-300);
   --colors-text-text-secondary_hover: var(--colors-gray-dark-mode-300);
   --colors-text-text-secondary_on-brand: var(--colors-gray-dark-mode-200);
   --colors-text-text-tertiary-600: var(--colors-gray-dark-mode-400);
