@@ -23,7 +23,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
@@ -157,13 +156,6 @@
   -->
 
 <div class="page-container {viewportType}">
-  {#if viewportType === "mobile"}
-    <Container style="height: unset">
-      <div class="header">
-        <BackButton on:click={goBack} custom_handler={true} />
-      </div>
-    </Container>
-  {/if}
   <div class="content-wrapper">
     <div class="content">
       <div class="content-header-border">
@@ -334,6 +326,7 @@
 
         .content-header-border {
           .header-info {
+            padding-top: var(--spacing-2xl, 20px);
             display: flex;
             flex-direction: column;
             align-self: stretch;

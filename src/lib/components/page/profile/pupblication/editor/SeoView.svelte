@@ -23,7 +23,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Input from "$lib/components/ui/Input.svelte";
