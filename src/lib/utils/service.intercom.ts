@@ -15,6 +15,7 @@
 
 // #region ➤ 📦 Package Imports
 
+import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common.js";
 import { log_v3 } from "./debug.js";
 
 // #endregion ➤ 📦 Package Imports
@@ -79,66 +80,75 @@ export class Intercom
   (
   ): void
   {
-    if (window == undefined)
-      return;
-    ;
-
-    let
-      // ╭─────
-      // │ NOTE:
-      // │ |:
-      // ╰─────
-      [
-        isReady,
-        isBooted,
-        isUIPresent,
-      ] = [
-        false,
-        false,
-        false,
-      ]
-    ;
-
-    isReady =
+    tryCatchAsync
     (
-      typeof window.Intercom === "function"
-    );
+      () =>
+      {
+        if (window == undefined)
+          return;
+        ;
 
-    isBooted =
-    (
-      window.Intercom.booted === true
-    );
-
-    isUIPresent =
-    (
-      document.querySelector('iframe[id="intercom-frame"]') != null
-      && document.getElementsByClassName('intercom-lightweight-app').length > 0
-    );
-
-    if
-    (
-      this.isReady !== isReady
-      || this.isBooted !== isBooted
-      || this.isUIPresent !== isUIPresent
-    )
-      // [🐞]
-      log_v3
-      (
-        {
-          strGroupName: 'Service: Intercom // Check Status // Status Changed',
-          msgs:
+        let
+          // ╭─────
+          // │ NOTE:
+          // │ |:
+          // ╰─────
           [
-            `isReady     » ${isReady}`,
-            `isBooted    » ${isBooted}`,
-            `isUIPresent » ${isUIPresent}`,
+            isReady,
+            isBooted,
+            isUIPresent,
+          ] = [
+            false,
+            false,
+            false,
           ]
-        },
-      );
-    ;
+        ;
 
-    this.isReady = isReady;
-    this.isBooted = isBooted;
-    this.isUIPresent = isUIPresent;
+        isReady =
+        (
+          typeof window.Intercom === "function"
+        );
+
+        isBooted =
+        (
+          window?.Intercom?.booted === true
+        );
+
+        isUIPresent =
+        (
+          document.querySelector('iframe[id="intercom-frame"]') != null
+          && document.getElementsByClassName('intercom-lightweight-app').length > 0
+        );
+
+        if
+        (
+          this.isReady !== isReady
+          || this.isBooted !== isBooted
+          || this.isUIPresent !== isUIPresent
+        )
+          // [🐞]
+          log_v3
+          (
+            {
+              strGroupName: 'Service: Intercom // Check Status // Status Changed',
+              msgs:
+              [
+                `isReady     » ${isReady}`,
+                `isBooted    » ${isBooted}`,
+                `isUIPresent » ${isUIPresent}`,
+              ]
+            },
+          );
+        ;
+
+        this.isReady = isReady;
+        this.isBooted = isBooted;
+        this.isUIPresent = isUIPresent;
+
+        return;
+
+       }
+    );
 
     return;
   }
