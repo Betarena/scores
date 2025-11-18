@@ -377,12 +377,6 @@
     <div class="footer">
       {#if insufficientAmount}
         <div class="insufficient-buttons">
-          <Button type="secondary" on:click={cancel} full={true}>
-            <TranslationText
-              text={awards_translations.cancel}
-              fallback="Cancel"
-            />
-          </Button>
           <Button full={true} on:click={showDepositModal}>
             <TranslationText
               text={awards_translations.buy_bta}
