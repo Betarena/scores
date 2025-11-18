@@ -16,6 +16,7 @@
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TranslationText from "../misc/Translation-Text.svelte";
   import { onMount } from "svelte";
+  import session from "$lib/store/session.js";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let grantAccess = () => {};
@@ -23,6 +24,8 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
+
+  $: ({viewportType} = $session)
 
   let lockNode: HTMLDivElement;
   let modalNode: HTMLDivElement;
@@ -52,7 +55,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="lock-widget-wrapper" bind:this={lockNode}>
+<div class="lock-widget-wrapper {viewportType}" bind:this={lockNode}>
   <FeaturedIcon size="md" color="gray" type="modern"
     ><svg
       xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +109,7 @@
     align-items: center;
     gap: 12px;
     align-self: stretch;
-    z-index: 10000001;
+    z-index: 1000;
 
     border-radius: var(--radius-xl, 12px);
     border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
@@ -132,6 +135,10 @@
       font-style: normal;
       font-weight: 600;
       line-height: var(--line-height-text-md, 24px); /* 150% */
+    }
+
+    &:not(.mobile) {
+       z-index: 10000001;
     }
   }
   .fade {
