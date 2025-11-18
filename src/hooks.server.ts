@@ -733,7 +733,7 @@ export const handle: Handle = sequence
               ;
 
               hrefValid = hrefValid
-                .replace('...', '..')
+                .replace(/\.{3,}/g, '..')
               ;
 
               const
