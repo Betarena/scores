@@ -20,6 +20,7 @@
 
 import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
+import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { sequence } from '@sveltejs/kit/hooks';
 import parserAccLang from 'accept-language-parser';
 import chalk from 'chalk';
@@ -714,26 +715,25 @@ export const handle: Handle = sequence
                 injectionType = 'style';
               else if (_substring.includes('.html'))
                 injectionType = 'html';
+              else if (!_substring.includes('_app'))
+                return _substring;
               else
                 return _substring;
               ;
 
               // ╭─────
-              // │ CHECK:
-              // │ |: for given 'hrefs' path, adjust for correct path
+              // │ NOTE:
+              // │ |: validate only '_app/' hrefs for inlining
               // ╰─────
-              if (hrefValid.includes('../../_app'))
-                hrefValid = hrefValid.replace('../../', '../../client/');
-              else if (hrefValid.includes('/_app'))
+              if (href.includes('_app/'))
+              {
                 hrefValid = hrefValid
-                  .replace('/_app', '../../client/_app')
+                  .split('_app/')[1]
                 ;
-              else if (!hrefValid.includes('/_app'))
+                hrefValid = `../../client/_app/${hrefValid}`;
+              }
+              else if (!hrefValid.includes('_app/'))
                 hrefValid = `../../client/${hrefValid}`;
-              ;
-
-              hrefValid = hrefValid
-                .replace(/\.{3,}/g, '..')
               ;
 
               const
@@ -797,20 +797,38 @@ export const handle: Handle = sequence
               ;
 
               // ╭─────
-              // │ CHECK:
+              // │ CHECK: TRY-CATCH
               // │ |: for, injectable-override presence in local memory-cache
               // ╰─────
-              if (!mapHeadLinkCache.has(href))
-                mapHeadLinkCache.set
+              tryCatchAsync
+              (
+                () =>
+                {
+                  if (!mapHeadLinkCache.has(href))
+                    mapHeadLinkCache.set
+                    (
+                      href,
+                      fs.readFileSync
+                      (
+                        `${__dirname}/${hrefValid}`,
+                        'utf8'
+                      )
+                    );
+                  ;
+
+                  return;
+                },
                 (
-                  href,
-                  fs.readFileSync
+                  _err: unknown
+                ) =>
+                {
+                  // [🐞]
+                  errlog
                   (
-                    `${__dirname}/${hrefValid}`,
-                    'utf8'
-                  )
-                );
-              ;
+                    `🚏 checkpoint ➤ Hooks | src/hooks.server.ts // (step) isInjectionEnabled ➤ ERROR\n${_err}`
+                  );
+                }
+              );
 
               let
                 /**
