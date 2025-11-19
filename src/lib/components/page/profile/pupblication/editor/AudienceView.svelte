@@ -291,10 +291,10 @@
     top: 0;
     display: flex;
     flex-direction: column;
-    height: 100dvh;
     width: 100%;
-    max-height: 100dvh;
-    padding-bottom: 34px;
+    height: 100%;
+    min-height: 100dvh;
+
     overflow-y: auto;
 
     .header {
@@ -307,6 +307,7 @@
     }
 
     .content-wrapper {
+      flex-shrink: 0;
       display: flex;
       width: 100%;
       padding-bottom: var(--spacing-lg, 12px);
@@ -316,6 +317,7 @@
       flex-grow: 1;
       min-height: 0;
       align-self: stretch;
+      padding-bottom: 34px;
 
       .content {
         width: 100%;
