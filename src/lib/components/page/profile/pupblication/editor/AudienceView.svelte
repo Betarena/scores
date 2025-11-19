@@ -295,6 +295,7 @@
     width: 100%;
     max-height: 100dvh;
     padding-bottom: 34px;
+    overflow-y: auto;
 
     .header {
       display: flex;
