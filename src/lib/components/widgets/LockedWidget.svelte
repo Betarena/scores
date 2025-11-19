@@ -25,7 +25,7 @@
     awards_translations: TranslationAwardsDataJSONSchema;
   });
 
-  $: ({viewportType} = $session)
+  $: ({ viewportType } = $session);
 
   let lockNode: HTMLDivElement;
   let modalNode: HTMLDivElement;
@@ -34,7 +34,7 @@
     const observer = new ResizeObserver(() => {
       const rect = lockNode.getBoundingClientRect();
       if (!modalNode) return;
-      modalNode.style.left = `-${rect.left}px`;
+      // modalNode.style.left = `-${rect.left}px`;
     });
     observer.observe(document.body);
 
@@ -84,8 +84,8 @@
     ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> (1
     BTA)</Button
   >
-  <div class="fade" />
-  <div bind:this={modalNode} class="locked-tips-modal-wrapper">
+  <div class="fade {viewportType}" />
+  <div bind:this={modalNode} class="locked-tips-modal-wrapper  {viewportType}">
     <TipsModal type="unlock" {sportstack} {grantAccess} />
   </div>
 </div>
@@ -137,35 +137,60 @@
       line-height: var(--line-height-text-md, 24px); /* 150% */
     }
 
-    &:not(.mobile) {
-       z-index: 10000001;
+    &.mobile {
+      z-index: 10000001;
     }
   }
   .fade {
     position: absolute;
     left: -5px;
     right: -5px;
-    height: 150px;
+    height: 100px;
     bottom: -2px;
     z-index: 2000;
     transform: translateY(100%);
+
     background: linear-gradient(
       180deg,
-      color-mix(in srgb, var(--colors-background-bg-secondary_alt, #1f1f1f) 80%, transparent) 42.31%,
-      var(--colors-background-bg-secondary_alt, #1f1f1f) 87.5%
+      transparent 2%,
+      color-mix(
+          in srgb,
+          var(--colors-background-bg-secondary_alt, #1f1f1f) 20%,
+          transparent
+        )
+        40%,
+      var(--colors-background-bg-secondary_alt, #1f1f1f) 100%
     );
+    &.mobile {
+      background: linear-gradient(
+        180deg,
+        transparent 20%,
+        color-mix(
+            in srgb,
+            var(--colors-background-bg-secondary_alt, #1f1f1f) 70%,
+            transparent
+          )
+          40%,
+        var(--colors-background-bg-secondary_alt, #1f1f1f) 100%
+      );
+    }
   }
   .locked-tips-modal-wrapper {
     position: absolute;
     background: var(--colors-background-bg-secondary_alt, #1f1f1f);
     bottom: 0px;
     z-index: 3000;
-    left: 0;
-    width: 100vw;
-    transform: translateY(120%);
+    left: -5px;
+    width: calc(100% + 10px);
+    transform: translateY(140%);
 
     :global(.tips-modal-wrapper) {
       position: static;
+    }
+    &.mobile {
+      width: 100vw;
+      left: calc(-50vw + 50%);
+      transform: translateY(120%);
     }
   }
 </style>
