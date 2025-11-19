@@ -292,6 +292,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-height: 100dvh;
     padding-bottom: 34px;
     overflow-y: auto;
 
