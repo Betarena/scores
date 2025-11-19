@@ -653,9 +653,10 @@
     {#key pageRouteId}
       <WidgetAdEngine
         authorId={$page.data.dataArticle?.author?.id}
-        authorArticleTagIds={$page.data.dataArticle?.article?.tags}
+        authorArticleTagIds={($page.data.dataArticle?.article?.tags ?? [])}
         isDarkTheme={theme == 'Dark'}
-        strTranslationTarget={lang ?? 'en'}
+        strTranslationTarget={(lang ?? 'en')}
+        isStandalone={false}
       />
     {/key}
   {/if}
