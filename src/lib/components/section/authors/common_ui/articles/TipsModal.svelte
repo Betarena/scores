@@ -47,6 +47,8 @@
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
+  import AlertCircle from "$lib/components/ui/assets/alert-circle.svelte";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -104,7 +106,7 @@
   function confirm() {
     if (!user) {
       gotoSW("/login");
-      return
+      return;
     }
     if (!isRewards && step === "info") {
       return (step = "confirm");
@@ -177,45 +179,31 @@
 >
   <div class="tips-body">
     <div class="header">
-      {#if !insufficientAmount}
-        <div class="icon-wrapper">
-          <FeaturedIcon color="brand" type="gradient" size="lg">
-            {#if !isRewards}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-              >
-                <path
-                  d="M14.1666 8.33333V6.66667C14.1666 4.36548 12.3012 2.5 9.99998 2.5C7.69879 2.5 5.83331 4.36548 5.83331 6.66667V8.33333M9.99998 12.0833V13.75M7.33331 17.5H12.6666C14.0668 17.5 14.7668 17.5 15.3016 17.2275C15.772 16.9878 16.1545 16.6054 16.3942 16.135C16.6666 15.6002 16.6666 14.9001 16.6666 13.5V12.3333C16.6666 10.9332 16.6666 10.2331 16.3942 9.69836C16.1545 9.22795 15.772 8.8455 15.3016 8.60582C14.7668 8.33333 14.0668 8.33333 12.6666 8.33333H7.33331C5.93318 8.33333 5.23312 8.33333 4.69834 8.60582C4.22793 8.8455 3.84548 9.22795 3.6058 9.69836C3.33331 10.2331 3.33331 10.9332 3.33331 12.3333V13.5C3.33331 14.9001 3.33331 15.6002 3.6058 16.135C3.84548 16.6054 4.22793 16.9878 4.69834 17.2275C5.23312 17.5 5.93318 17.5 7.33331 17.5Z"
-                  stroke="currentColor"
-                  stroke-width="1.336"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            {:else}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-              >
-                <path
-                  d="M9.99984 12.5C7.23841 12.5 4.99984 10.2614 4.99984 7.50001V2.87038C4.99984 2.5255 4.99984 2.35307 5.05009 2.21499C5.13434 1.98352 5.31668 1.80118 5.54815 1.71693C5.68623 1.66667 5.85867 1.66667 6.20354 1.66667H13.7961C14.141 1.66667 14.3134 1.66667 14.4515 1.71693C14.683 1.80118 14.8653 1.98352 14.9496 2.21499C14.9998 2.35307 14.9998 2.5255 14.9998 2.87038V7.50001C14.9998 10.2614 12.7613 12.5 9.99984 12.5ZM9.99984 12.5V15M14.9998 3.33334H17.0832C17.4715 3.33334 17.6656 3.33334 17.8187 3.39677C18.0229 3.48135 18.1852 3.64358 18.2697 3.84777C18.3332 4.00091 18.3332 4.19505 18.3332 4.58334V5.00001C18.3332 5.77498 18.3332 6.16247 18.248 6.48039C18.0168 7.34312 17.3429 8.01699 16.4802 8.24815C16.1623 8.33334 15.7748 8.33334 14.9998 8.33334M4.99984 3.33334H2.9165C2.52822 3.33334 2.33408 3.33334 2.18093 3.39677C1.97674 3.48135 1.81452 3.64358 1.72994 3.84777C1.6665 4.00091 1.6665 4.19505 1.6665 4.58334V5.00001C1.6665 5.77498 1.6665 6.16247 1.75169 6.48039C1.98286 7.34312 2.65673 8.01699 3.51946 8.24815C3.83737 8.33334 4.22486 8.33334 4.99984 8.33334M6.20354 18.3333H13.7961C14.0007 18.3333 14.1665 18.1675 14.1665 17.963C14.1665 16.3266 12.8399 15 11.2035 15H8.79613C7.15973 15 5.83317 16.3266 5.83317 17.963C5.83317 18.1675 5.99899 18.3333 6.20354 18.3333Z"
-                  stroke="currentColor"
-                  stroke-width="1.336"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            {/if}
-          </FeaturedIcon>
-        </div>
-      {/if}
+      <div class="icon-wrapper">
+        <FeaturedIcon color="brand" type="gradient" size="lg">
+          {#if insufficientAmount}
+            <AlertCircle />
+          {:else if !isRewards}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+            >
+              <path
+                d="M14.1666 8.33333V6.66667C14.1666 4.36548 12.3012 2.5 9.99998 2.5C7.69879 2.5 5.83331 4.36548 5.83331 6.66667V8.33333M9.99998 12.0833V13.75M7.33331 17.5H12.6666C14.0668 17.5 14.7668 17.5 15.3016 17.2275C15.772 16.9878 16.1545 16.6054 16.3942 16.135C16.6666 15.6002 16.6666 14.9001 16.6666 13.5V12.3333C16.6666 10.9332 16.6666 10.2331 16.3942 9.69836C16.1545 9.22795 15.772 8.8455 15.3016 8.60582C14.7668 8.33333 14.0668 8.33333 12.6666 8.33333H7.33331C5.93318 8.33333 5.23312 8.33333 4.69834 8.60582C4.22793 8.8455 3.84548 9.22795 3.6058 9.69836C3.33331 10.2331 3.33331 10.9332 3.33331 12.3333V13.5C3.33331 14.9001 3.33331 15.6002 3.6058 16.135C3.84548 16.6054 4.22793 16.9878 4.69834 17.2275C5.23312 17.5 5.93318 17.5 7.33331 17.5Z"
+                stroke="currentColor"
+                stroke-width="1.336"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          {:else}
+            <Trophy />
+          {/if}
+        </FeaturedIcon>
+      </div>
       <div class="text-wrapper">
         <div class="title">
           {#if insufficientAmount}
@@ -254,7 +242,7 @@
         </div>
         {#if insufficientAmount}
           <div class="warning-text">
-            <p class="warning-main">
+            <div class="warning-main">
               <TranslationText
                 text={awards_translations.insufficient_main_text?.replace(
                   "{amount}",
@@ -262,13 +250,13 @@
                 )}
                 fallback="You need at least 1 BTA in your Balance wallet to award this post."
               />
-            </p>
-            <p class="warning-support">
+            </div>
+            <div class="warning-support">
               <TranslationText
                 text={awards_translations.insufficient_support_text}
                 fallback="You always receive half of the award back to your Rewards wallet."
               />
-            </p>
+            </div>
           </div>
         {:else}
           <div class="awards-flow">
@@ -342,7 +330,7 @@
                     {#if user}
                       @{user?.username}
                     {:else}
-                    @<TranslationText
+                      @<TranslationText
                         text={awards_translations.user.toLocaleLowerCase()}
                         fallback="user"
                       />
@@ -418,7 +406,6 @@
             on:click={confirm}
           >
             {#if step === "info"}
-              <!-- content here -->
               <TranslationText
                 text={awards_translations.share_bta?.replace("{amount}", "1")}
                 fallback="Share 1BTA"
@@ -693,8 +680,13 @@
           flex-direction: column;
           gap: var(--spacing-lg, 12px);
 
+          p {
+            margin: 0;
+          }
           .warning-main {
             color: var(--colors-text-text-secondary-700, #fbfbfb);
+            overflow: visible;
+            white-space: nowrap;
 
             /* Text sm/Regular */
             font-family: var(--font-family-font-family-body, Roboto);
@@ -704,6 +696,8 @@
             line-height: var(--line-height-text-sm, 20px); /* 142.857% */
           }
           .warning-support {
+            overflow: visible;
+            white-space: nowrap;
             color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
             /* Text sm/Regular */
@@ -789,6 +783,29 @@
             .title-support {
               white-space: initial;
               text-align: start;
+            }
+          }
+          .warning-text {
+            .warning-main {
+              color: var(--colors-text-text-secondary-700, #fbfbfb);
+              white-space: normal;
+
+              /* Text sm/Regular */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-sm, 14px);
+              font-style: normal;
+              font-weight: 400;
+              line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+            }
+            .warning-support {
+              color: var(--colors-text-text-tertiary-600, #8c8c8c);
+              white-space: normal;
+              /* Text sm/Regular */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-sm, 14px);
+              font-style: normal;
+              font-weight: 400;
+              line-height: var(--line-height-text-sm, 20px);
             }
           }
         }
