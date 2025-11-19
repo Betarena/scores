@@ -145,34 +145,28 @@
     position: absolute;
     left: -5px;
     right: -5px;
-    height: 100px;
+    height: 120px;
     bottom: -2px;
     z-index: 2000;
     transform: translateY(100%);
 
-    background: linear-gradient(
+      background: linear-gradient(
       180deg,
-      transparent 2%,
-      color-mix(
+      transparent 20%,
+       color-mix(
           in srgb,
-          var(--colors-background-bg-secondary_alt, #1f1f1f) 20%,
+          var(--colors-background-bg-secondary_alt, #1f1f1f) 80%,
           transparent
-        )
-        40%,
-      var(--colors-background-bg-secondary_alt, #1f1f1f) 100%
+        ) 60%,
+      var(--colors-background-bg-secondary_alt, #1f1f1f) 90%
     );
     &.mobile {
       background: linear-gradient(
         180deg,
         transparent 20%,
-        color-mix(
-            in srgb,
-            var(--colors-background-bg-secondary_alt, #1f1f1f) 70%,
-            transparent
-          )
-          40%,
-        var(--colors-background-bg-secondary_alt, #1f1f1f) 100%
+        var(--colors-background-bg-secondary_alt, #1f1f1f) 90%
       );
+      height: 120px;
     }
   }
   .locked-tips-modal-wrapper {
