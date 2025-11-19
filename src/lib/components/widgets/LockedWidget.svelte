@@ -182,7 +182,7 @@
     z-index: 3000;
     left: -5px;
     width: calc(100% + 10px);
-    transform: translateY(140%);
+    transform: translateY(120%);
 
     :global(.tips-modal-wrapper) {
       position: static;
