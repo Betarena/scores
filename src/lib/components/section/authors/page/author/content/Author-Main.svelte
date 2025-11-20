@@ -207,7 +207,7 @@
           const p_node = document.createElement("p");
           p_node.setAttribute("data-widget", "locked-widget");
           p_node.style.width = "100%";
-          target.style.minHeight = "500px";
+          target.style.minHeight = "calc(515px + 120px)";
 
           container.insertBefore(p_node, target);
 
