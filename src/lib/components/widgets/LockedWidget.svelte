@@ -15,7 +15,6 @@
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TranslationText from "../misc/Translation-Text.svelte";
-  import { onMount } from "svelte";
   import session from "$lib/store/session.js";
 
   export let sportstack = {} as IPageAuthorAuthorData;
@@ -30,18 +29,6 @@
   let lockNode: HTMLDivElement;
   let modalNode: HTMLDivElement;
 
-  onMount(() => {
-    const observer = new ResizeObserver(() => {
-      const rect = lockNode.getBoundingClientRect();
-      if (!modalNode) return;
-      // modalNode.style.left = `-${rect.left}px`;
-    });
-    observer.observe(document.body);
-
-    return () => {
-      observer.disconnect();
-    };
-  });
 </script>
 
 <!--
@@ -176,7 +163,7 @@
     z-index: 3000;
     left: -5px;
     width: calc(100% + 10px);
-    transform: translateY(120%);
+    transform: translateY(calc(100% + 120px));
 
     :global(.tips-modal-wrapper) {
       position: static;
@@ -184,7 +171,6 @@
     &.mobile {
       width: 100vw;
       left: calc(-50vw + 50%);
-      transform: translateY(120%);
     }
   }
 </style>
