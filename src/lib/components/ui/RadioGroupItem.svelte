@@ -8,11 +8,27 @@
 -->
 
 <script lang="ts">
-  // #region ➤ 📌 VARIABLES
+  // #region ➤ 📦 Package Imports
 
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
   import Checkbox from "./Checkbox.svelte";
   import Radio from "./Radio.svelte";
   import { createEventDispatcher } from "svelte";
+  import session from "$lib/store/session.js";
+
+  // #endregion ➤ 📦 Package Imports
+  // #region ➤ 📌 VARIABLES
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -32,9 +48,24 @@
   export let full = false;
   export let clickHandler = false;
 
-  $: console.log("RadioGroupItem selected: ", selected);
-
   const dispatch = createEventDispatcher();
+
+  $: ({ viewportType } = $session);
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
   function handleClick() {
     if (disabled) return;
     if (clickHandler) {
@@ -43,7 +74,8 @@
     }
     selected = !selected;
   }
-  // #endregion ➤ 📌 VARIABLES
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -57,7 +89,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div
-  class="radio-group-item {size}"
+  class="radio-group-item {size} {viewportType}"
   class:selected
   class:full
   class:disabled
@@ -110,10 +142,13 @@
     &:hover {
       background: var(--colors-background-bg-primary, #fff);
     }
-    &:focus,
-    &:focus-within {
-      box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
-        0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+
+    &.desktop {
+      &:focus,
+      &:focus-within {
+        box-shadow: 0 0 0 2px var(--colors-background-bg-primary, #fff),
+          0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+      }
     }
 
     .content {
