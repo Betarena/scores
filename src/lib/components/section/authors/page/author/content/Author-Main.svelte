@@ -62,6 +62,7 @@
   import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import { walletStore } from "$lib/store/wallets.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -126,7 +127,8 @@
   const widgetsMap = {
     1: AiPredictorWidget,
   };
-
+  let accessGranted = false;
+  let secondP: HTMLElement | null = null;
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
     windowWidth,
@@ -142,7 +144,8 @@
   });
   $: ({ author: sportstack, article } = widgetData);
   $: ({ paid = true } = article);
-  let accessGranted = false;
+  $: user = $userSettings.user?.scores_user_data;
+  $: insufficientAmount = user && $walletStore.spending.available < 1;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -166,6 +169,9 @@
 
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
+  }
+  $: if (secondP && paid && !accessGranted) {
+    secondP.style.minHeight = `${insufficientAmount ? "calc(270px + 120px)" : "calc(515px + 120px)"}`
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -207,10 +213,9 @@
           const p_node = document.createElement("p");
           p_node.setAttribute("data-widget", "locked-widget");
           p_node.style.width = "100%";
-          target.style.minHeight = "calc(515px + 120px)";
 
           container.insertBefore(p_node, target);
-
+          secondP = target;
           unlockComponent = new LockedWidget({
             target: p_node,
             props: {
@@ -232,10 +237,6 @@
               child.textContent = "";
             });
           }
-
-          setTimeout(() => {
-            blurContent();
-          }, 200);
         } catch (error) {
           console.error("Error inserting locked widget:", error);
         }
