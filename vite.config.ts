@@ -29,6 +29,7 @@ import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import { isSSR } from './.vite/env.ts';
 import { sveltekitCssPurge } from './.vite/sveltekit-build-css-unused.2.ts';
 import { sveltekitSsrOrCsrBuild } from './.vite/sveltekit-build-env.ts';
+import { sveltekitBuildMinifyPlugin } from './.vite/sveltekit-build-minify.ts';
 import { buildSizePlugin } from './.vite/sveltekit-build-size.ts';
 
 import { dependencies, version } from './package.json';
@@ -76,7 +77,11 @@ const
       _customSveltekitPurgeCssPlugin:
       {
         isEnabled: false,
-      }
+      },
+      _customSveltekitBuildMinifyPlugin:
+      {
+        isEnabled: true,
+      },
     },
     /**
      * @description
@@ -456,6 +461,11 @@ export default defineConfig
         // │ │: [CUSTOM] :: lightweight progress indicator plugin.
         // ╰─────
         // progressLite(),
+        // ╭─────
+        // │ NOTE:
+        // │ │: [CUSTOM] :: minify build output plugin.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customSveltekitBuildMinifyPlugin.isEnabled && sveltekitBuildMinifyPlugin()
       ],
 
       build:
@@ -465,7 +475,7 @@ export default defineConfig
         // │ │: 'cssCodeSplit' gets overridden by 'svelte-kit' plugin.
         // ╰─────
         // cssCodeSplit: false,
-        minify: 'esbuild',
+        minify: false,
         cssMinify: 'lightningcss',
 
         rollupOptions:
