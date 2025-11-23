@@ -16,6 +16,7 @@
 // #region ➤ 📦 Package Imports
 
 import session from "$lib/store/session.js";
+import { ServiceFacebook } from "./service.facebook.js";
 import { Intercom } from "./service.intercom.js";
 
 // #endregion ➤ 📦 Package Imports
@@ -49,8 +50,10 @@ export class Browser
       [
         isIntercomReady,
         isIntercomBooted,
-        isIntercomUIPresent
+        isIntercomUIPresent,
+        isServiceFacebookReady,
       ] = [
+        false,
         false,
         false,
         false,
@@ -70,6 +73,10 @@ export class Browser
           (
           ) =>
           {
+            // ╭──────────────────────────────────────────────────────────────────────────────────╮
+            // │ 💠 │ TEST FOR :: INTERCOM                                                        │
+            // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
             new Intercom().checkStatus();
 
             if (!isIntercomReady && new Intercom().isReady)
@@ -99,6 +106,23 @@ export class Browser
               (
                 [
                   ['window', { Intercom: window.Intercom }]
+                ]
+              );
+            }
+
+            // ╭──────────────────────────────────────────────────────────────────────────────────╮
+            // │ 💠 │ TEST FOR :: FACEBOOK                                                        │
+            // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+            new ServiceFacebook().checkStatus();
+
+            if (!isServiceFacebookReady && new ServiceFacebook().isReady)
+            {
+              isServiceFacebookReady = true;
+              session.updateData
+              (
+                [
+                  ['window', { fbq: window.fbq }]
                 ]
               );
             }
