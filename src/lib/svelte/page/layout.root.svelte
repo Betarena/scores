@@ -577,6 +577,16 @@
   {
     () =>
     {
+      // [🐞]
+      if (!config.objDebug.objMeta['document.on:visibilitychange'].isEnabled)
+        log_v3
+        (
+          {
+            strGroupName: `${config.objDebug.objMeta['document.on:visibilitychange'].strLogPrefix}`,
+          }
+        );
+      ;
+
       sessionStore.updateData
       (
         [
@@ -594,6 +604,16 @@
   {
     () =>
     {
+      // [🐞]
+      if (!config.objDebug.objMeta['window.on:resize'].isEnabled)
+        log_v3
+        (
+          {
+            strGroupName: `${config.objDebug.objMeta['window.on:resize'].strLogPrefix}`,
+          }
+        );
+      ;
+
       sessionStore.updateData
       (
         [

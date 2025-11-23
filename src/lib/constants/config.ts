@@ -64,7 +64,24 @@ export const config = {
     listSegmentsOverrideEnabled:
     [
       'instrumentation.server.middleware.ts',
-    ]
+    ],
+    /**
+     * @description
+     * 📝 Meta Configuration for Debugging Events
+     */
+    objMeta:
+    {
+      'window.on:resize':
+      {
+        isEnabled: false,
+        strLogPrefix: '🚏 checkpoint ➤ window.on:resize(..) event fired',
+      },
+      'document.on:visibilitychange':
+      {
+        isEnabled: false,
+        strLogPrefix: '🚏 checkpoint ➤ document.on:visibilitychange(..) event fired',
+      },
+    }
   },
   // ╭─────
   // │ NOTE:
@@ -182,17 +199,33 @@ export const config = {
              * 📝 Debug Level for Hook Operations
              */
             isDebugEnabled: false,
-
+            /**
+             * @description
+             * 📝 Custom Error Object for Hook Operations
+             */
+            objError:
+            {
+              errorId: '500',
+              message: 'Whoops!',
+            } as App.Error,
+            /**
+             * @description
+             * 📝 Holds target `component(s)` of dynamic nature.
+             */
+            mapStrDebugPreifix: new Map <
+              | 'customErrorHandler',
+              string
+            >
+            (
+              [
+                [ 'customErrorHandler', '🚏 checkpoint ➤ Hooks | src/hooks.server.ts customErrorHandler(..)' ],
+              ]
+            ),
             /**
              * @description
              * 📝 Performance Threshold in ms for Hook Operations
              */
             intPerformanceThresholdMs: 1,
-
-            customErrorHandler:
-            {
-
-            },
 
             // ╭──────────────────────────────────────────────────────────────────────────────────╮
             // │ 💠 │ configuration // resolve.preload(..)                                        │
@@ -470,6 +503,33 @@ export const config = {
              * 📝 Enable setting 'Cookie' headers
              */
             isHeadersCookieEnabled: true,
+          }
+        ],
+        [
+          'src/hooks.client.ts',
+          {
+            /**
+             * @description
+             * 📝 Custom Error Object for Hook Operations
+             */
+            objError:
+            {
+              errorId: '500',
+              message: 'Whoops! Client error found!',
+            } as App.Error,
+            /**
+             * @description
+             * 📝 Holds target `component(s)` of dynamic nature.
+             */
+            mapStrDebugPreifix: new Map <
+              | 'customErrorHandler',
+              string
+            >
+            (
+              [
+                [ 'customErrorHandler', '🚏 checkpoint ➤ Hooks | src/hooks.client.ts customErrorHandler(..)' ],
+              ]
+            )
           }
         ],
         // ╭──────────────────────────────────────────────────────────────────────────────────╮
