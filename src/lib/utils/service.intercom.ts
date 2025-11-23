@@ -117,7 +117,9 @@ export class Intercom
         isUIPresent =
         (
           document.querySelector('iframe[id="intercom-frame"]') != null
-          && document.getElementsByClassName('intercom-lightweight-app').length > 0
+          &&
+          (document.getElementsByClassName('intercom-lightweight-app').length > 0
+          || document.querySelector('iframe[id="intercom-launcher-frame"]') != null)
         );
 
         if
@@ -159,63 +161,12 @@ export class Intercom
    * @summary
    *  🔹 HELPER
    * @description
-   *  📝 Toggle Intercom visibility
-   * @param { boolean } isEnabled
-   *  ❗️ **REQUIRED** Target `isEnabled` flag.
-   * @return { void }
-   */
-  toggle
-  (
-    isEnabled: boolean
-  ): void
-  {
-    // [🐞]
-    log_v3
-    (
-      {
-        strGroupName: 'Service: Intercom // Toggle',
-        msgs:
-        [
-          `Toggling Intercom visibility to » ${isEnabled}`,
-        ]
-      },
-    );
-
-    const
-      // ╭─────
-      // │ NOTE:
-      // │ |: destrcurte assignment
-      // ╰─────
-      [
-        instanceIntercomElement
-      ] = [
-        document.getElementsByClassName('intercom-lightweight-app')[0] as unknown as HTMLElement
-      ]
-    ;
-
-    if (isEnabled && instanceIntercomElement != undefined)
-      instanceIntercomElement.style.display = 'unset';
-    ;
-
-    if (!isEnabled && instanceIntercomElement != undefined)
-      instanceIntercomElement.style.display = 'none';
-    ;
-
-    return;
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔹 HELPER
-   * @description
    *  📝 Update Intercom user settings
    * @param { object } _
    *  ❗️ **REQUIRED** Target user settings.
    * @return { void }
    */
-  boot
+  lifecycle
   (
     {
       uid,
@@ -223,6 +174,17 @@ export class Intercom
       email,
       lang,
       competition_number,
+      currentPageRouteIdVisibility,
+      strLifecycleType
+    }:
+    {
+      uid: string | NullUndef,
+      username?: string | NullUndef,
+      email?: string | NullUndef,
+      lang?: string | NullUndef,
+      competition_number?: number | NullUndef,
+      currentPageRouteIdVisibility: boolean,
+      strLifecycleType: 'boot' | 'update'
     }
   ): void
   {
@@ -234,6 +196,8 @@ export class Intercom
         msgs:
         [
           `Updating Intercom settings for user UID » ${uid}`,
+          `Lifecycle Type » ${strLifecycleType}`,
+          `currentPageRouteIdVisibility » ${currentPageRouteIdVisibility}`,
         ]
       },
     );
@@ -245,11 +209,19 @@ export class Intercom
        */
       intercomSettings
         = {
+          // ╭─────
+          // │ NOTE:
+          // │ |: Main Fields
+          // ╰─────
           api_base: 'https://api-iam.intercom.io',
           app_id: 'yz9qn6p3',
+          // ╭─────
+          // │ NOTE:
+          // │ |: Additional Fields
+          // ╰─────
+          uid,
           name: (username ?? ''),
           email: (email ?? `${uid}-unkown@gmail.com`),
-          uid,
           lang: (lang ?? 'en'),
           competition_number: (competition_number ?? 0),
         }
@@ -257,52 +229,25 @@ export class Intercom
 
     window.intercomSettings = intercomSettings;
 
-    window.Intercom
-      ?.(
+    if (strLifecycleType === 'update' || this.isBooted)
+      window.Intercom
+      (
+        'update',
+        {
+          hide_default_launcher: currentPageRouteIdVisibility,
+          last_request_at: Math.floor(Date.now() / 1000)
+        }
+      );
+    else if (strLifecycleType === 'boot')
+      window.Intercom
+      (
         'boot',
         {
           ...intercomSettings,
-          hide_default_launcher: true
+          hide_default_launcher: currentPageRouteIdVisibility
         }
-      )
+      );
     ;
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔹 HELPER
-   * @description
-   *  📝 Update Intercom page settings
-   * @param { boolean } currentPageRouteIdVisibility
-   *  ❗️ **REQUIRED** Target page route id visibility.
-   * @return { void }
-   */
-  update
-  (
-    currentPageRouteIdVisibility: boolean,
-  ): void
-  {
-    // [🐞]
-    log_v3
-    (
-      {
-        strGroupName: 'Service: Intercom // Update (0)',
-        msgs:
-        [
-        ]
-      },
-    );
-
-    window.Intercom
-    (
-      'update',
-      {
-        hide_default_launcher: currentPageRouteIdVisibility,
-        last_request_at: Math.floor(Date.now() / 1000)
-      }
-    );
 
     return;
   }

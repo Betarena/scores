@@ -17,12 +17,30 @@
 
 import { table } from 'table';
 
+import { config } from '$lib/constants/config.js';
 import { dlog } from '$lib/utils/debug.js';
+
 import type { HandleClientError } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 💠 MISC.
+// #region ➤ 📌 VARIABLES
+
+const
+  // ╭─────
+  // │ NOTE:
+  // │ |: destructure assignment
+  // ╰─────
+  [
+    objConfigModule,
+  ] = [
+    config.objApp.objComponentConfiguration.get('src/hooks.client.ts')!
+  ]
+;
+
+// #endregion ➤ 📌 VARIABLES
+
+// #region ➤ 💠 MISCELLANEOUS
 
 // [🐞]
 dlog
@@ -30,9 +48,9 @@ dlog
   '🚏 checkpoint [H] ➤ src/hooks.client.ts',
   true
 );
+
 // [🐞]
-// eslint-disable-next-line no-console
-console.debug
+dlog
 (
   table
   (
@@ -48,7 +66,7 @@ console.debug
   )
 );
 
-// #endregion ➤ 💠 MISC.
+// #endregion ➤ 💠 MISCELLANEOUS
 
 // #region ➤ 🛠️ METHODS
 
@@ -74,12 +92,13 @@ const customErrorHandler: HandleClientError = async (
 {
   // [🐞]
   // eslint-disable-next-line no-console
-  console.error('❌ An error occurred on the client side:', error);
+  console.error
+  (
+    objConfigModule.mapStrDebugPreifix?.get('customErrorHandler')!,
+    error
+  );
 
-  return {
-    message: 'Whoops! Client error found!',
-    errorId: '404'
-  }
+  return objConfigModule.objError!
 }
 
 // #endregion ➤ 🛠️ METHODS

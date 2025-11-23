@@ -40,13 +40,7 @@ import type { Handle, HandleServerError } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 💠 MISCELLANEOUS
-
-// [🐞]
-dlog
-(
-  '🚏 checkpoint [H] ➤ src/hooks.server.ts'
-);
+// #region ➤ 📌 VARIABLES
 
 const
   /**
@@ -68,6 +62,16 @@ const
     config.objApp.objComponentConfiguration.get('src/hooks.server.ts')!
   ]
 ;
+
+// #endregion ➤ 📌 VARIABLES
+
+// #region ➤ 💠 MISCELLANEOUS
+
+// [🐞]
+dlog
+(
+  '🚏 checkpoint [H] ➤ src/hooks.server.ts'
+);
 
 // #endregion ➤ 💠 MISCELLANEOUS
 
@@ -98,26 +102,25 @@ const customErrorHandler: HandleServerError = async (
      */
     objError: App.Error
       = {
-        message: 'Whoops!',
-        errorId: 'x1',
+        ...objConfigModule.objError!
       }
   ;
 
   // ╭─────
-  // │ NOTE:
-  // │ |: Skip unwanted logging bloat of 'error', if 'error' is due to 'Not found' page.
+  // │ CHECK:
+  // │ |: for, unwanted logging bloat of 'error' messages.
   // ╰─────
   if (error instanceof Error && error.message.includes('Not found:'))
     // [🐞]
     errlog
     (
-      `🚏 checkpoint ➤ Hooks | src/hooks.server.ts customErrorHandler(..)\n${error.message}`,
+      `${objConfigModule.mapStrDebugPreifix?.get('customErrorHandler')}\n${error.message}`,
     );
   else
     // [🐞]
     errlog
     (
-      `🚏 checkpoint ➤ Hooks | src/hooks.server.ts customErrorHandler(..)\n${error}\n${parseObject(event)}`,
+      `${objConfigModule.mapStrDebugPreifix?.get('customErrorHandler')}\n${error}\n${parseObject(event)}`,
     );
   ;
 

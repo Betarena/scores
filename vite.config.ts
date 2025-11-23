@@ -67,11 +67,11 @@ const
       },
       _customBuildSizePlugin:
       {
-        isEnabled: false,
+        isEnabled: true,
       },
       _customSveltekitSsrOrCsrPlugin:
       {
-        isEnabled: false,
+        isEnabled: true,
       },
       _customSveltekitPurgeCssPlugin:
       {
@@ -428,13 +428,13 @@ export default defineConfig
         // │ |: custom 'vite' plugin.
         // │ |: @description: detect 'SSR' or 'CSR' build phase.
         // ╰─────
-        objViteConfigOptions.objPluginConfig._customSveltekitSsrOrCsrPlugin && sveltekitSsrOrCsrBuild(),
+        objViteConfigOptions.objPluginConfig._customSveltekitSsrOrCsrPlugin.isEnabled && sveltekitSsrOrCsrBuild(),
         // ╭─────
         // │ NOTE:
         // │ |: custom 'vite' plugin.
         // │ |: @description: build size output reporting plugin
         // ╰─────
-        objViteConfigOptions.objPluginConfig._customBuildSizePlugin && buildSizePlugin
+        objViteConfigOptions.objPluginConfig._customBuildSizePlugin.isEnabled && buildSizePlugin
         (
           'build',
         ),
@@ -443,7 +443,7 @@ export default defineConfig
         // │ |: custom 'vite' plugin.
         // │ |:  @description: (1) analyze 'CSS' variable usage, (2) report unused 'CSS' vars & purge unused 'CSS' vars.
         // ╰─────
-        objViteConfigOptions.objPluginConfig._customSveltekitPurgeCssPlugin && sveltekitCssPurge
+        objViteConfigOptions.objPluginConfig._customSveltekitPurgeCssPlugin.isEnabled && sveltekitCssPurge
         (
           {
             strGlobalCssFileContent,

@@ -67,15 +67,14 @@
   import { initiateSubscribtions } from '$lib/store/subscribtions.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { initWalletStore } from '$lib/store/wallets';
-  import { dlogv2 } from '$lib/utils/debug';
+  import { Browser } from '$lib/utils/browser.js';
+  import { dlogv2, log_v3 } from '$lib/utils/debug';
   import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
   import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
   import { setUserGeoLocation } from '$lib/utils/geo.js';
   import { Intercom } from '$lib/utils/service.intercom.js';
-  import { parseObject } from '$lib/utils/string.2.js';
   import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
   import { gotoSW } from '$lib/utils/sveltekitWrapper';
-  import { Browser } from '$lib/utils/browser.js';
 
   import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
   import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
@@ -92,8 +91,6 @@
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
-
-  import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // ╭─────
   // │ IMPORTANT:
@@ -150,32 +147,16 @@
       = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')!
   ;
 
-  /**
-   * @description
-   *  📝 Page unsubscribe to remove inside onDestroy.
-   */
-  let page_unsub: () => void;
-
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
   $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
+  $: ({ B_NAV_T: navbarTranslationData, dataArticle } = $page.data);
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  $: navbarTranslationData = ($page.data.B_NAV_T ?? {}) as
-    | B_NAV_T
-    | null
-    | undefined
-  ;
-  $: deepReactListenStore1 = parseObject($sessionStore);
-  $: deepReactListenStore2 = parseObject($userBetarenaSettings);
-
-  $: $sessionStore.serverLang = $page.data.langParam as string;
-  $: if (browser) $sessionStore.page = $page;
   $: isInitliazed = false;
   $: isInitializationFinished = false;
-  $: isWindowIntercom = (browser && _window?.Intercom != null)
+  $: isWindowIntercom = (browser && _window?.Intercom != null && currentPageRouteId === 'ProfilePage');
 
   $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
     = viewportChangeV2
@@ -185,9 +166,6 @@
       objComponentStandardState.viewport.tablet.threshold
     )
   ;
-
-  $sessionStore.deviceType = $page.data.deviceType as 'mobile' | 'tablet' | 'desktop';
-  $sessionStore.userAgent  = $page.data.userAgent as string;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -277,10 +255,25 @@
    * @author
    *  @migbash
    * @description
+   *  📣 Eager Server Initialization Helper
+   * @return { Promise < void > }
+   */
+  async function helperInitializeServerEager
+  (
+  ): Promise < void >
+  {
+    initiateSubscribtions();
+    return;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @description
    *  📣 Pre-Mount Initialization Helper
    * @return { Promise < void > }
    */
-  async function herlperPreMountInitialize
+  async function helperInitializeOnMountPre
   (
   ): Promise < void >
   {
@@ -308,7 +301,7 @@
   ): Promise < void >
   {
     const
-      lang = ($userBetarenaSettings.lang ?? $page.params.lang )
+      lang = ($userBetarenaSettings.lang ?? $page.params.lang)
     ;
 
     let path = '';
@@ -349,7 +342,7 @@
   // │ │: Instant critical data initialization.
   // ╰─────
   $: if (browser && !isInitliazed)
-    herlperPreMountInitialize();
+    helperInitializeOnMountPre();
   ;
 
   // ╭─────
@@ -364,45 +357,26 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom // BOOT (with user data)
   // ╰─────
-  $: if (isWindowIntercom && (deepReactListenStore1 || deepReactListenStore2))
-    new Intercom().boot
+  $: if (isWindowIntercom)
+    new Intercom().lifecycle
     (
       {
         uid,
-        email: email,
+        email,
         username,
-        lang: lang,
-        competition_number: competition_number,
+        lang,
+        competition_number,
+        currentPageRouteIdVisibility: (currentPageRouteId !== 'ProfilePage'),
+        strLifecycleType: 'boot',
       }
     );
   ;
 
-  // ╭─────
-  // │ NOTE:
-  // │ |: [3rd-party] // Intercom // SHOW-HIDE
-  // ╰─────
-  // $: if (isWindowIntercom && pageRouteId == routeIdPageProfile)
-  //   new Intercom().toggle(true);
-  // else if (isWindowIntercom)
-  //   new Intercom().toggle(false);
-  // ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ |: [3rd-party] // Intercom // update launcher visibility
-  // ╰─────
-  $: if (isWindowIntercom)
-    new Intercom().update
-    (
-      (currentPageRouteId !== 'ProfilePage')
-    );
-  ;
-
-  $: if (currentActiveModal === 'Auth_Modal'&& ![routeIdLogin, routeIdRegister].includes(pageRouteId|| ''))
+  $: if (currentActiveModal === 'Auth_Modal' && ![routeIdLogin, routeIdRegister].includes(pageRouteId || ''))
     redirectToOnBoard(false);
   ;
 
-  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId|| '') && uid && !verified && isInitializationFinished)
+  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId || '') && uid && !verified && isInitializationFinished)
     redirectToOnBoard();
   ;
 
@@ -417,6 +391,18 @@
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🚏 ONE-OFF CONDITIONS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately, as soon as 'this' .svelte file is ran, as a one-off       │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  helperInitializeServerEager();
+
+  // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -435,7 +421,6 @@
       window.visualViewport
         ?.removeEventListener('resize', updateVh)
       ;
-      page_unsub();
       return;
     }
   );
@@ -448,30 +433,18 @@
       // ╭─────
       // │ CRITICAL
       // ╰─────
-      initiateSubscribtions();
-      // ╭─────
-      // │ CRITICAL
-      // ╰─────
       initiateServiceWorker();
-      // ╭─────
-      // │ IMPORTANT
-      // │ |: Set initial values of 'windowWidth'.
-      // ╰─────
-      sessionStore.updateData
-      (
-        [
-          ['windowWidth', document.documentElement.clientWidth]
-        ]
-      );
       // ╭─────
       // │ NOTE: IMPORTANT
       // │ |: Check if the current device is a PWA.
       // ╰─────
-      if (isPWA())
-        $sessionStore.globalState.add('IsPWA');
-      else
-        $sessionStore.globalState.delete('IsPWA');
-      ;
+      sessionStore.updateData
+      (
+        [
+          ['windowWidth', document.documentElement.clientWidth],
+          [(isPWA() ? 'globalStateAdd' : 'globalStateRemove'), 'IsPWA'],
+        ]
+      );
 
       setUserGeoLocation(navbarTranslationData!);
 
@@ -531,13 +504,6 @@
     {
       if (!browser) return;
 
-      sessionStore.updateData
-      (
-        [
-          ['routeId', pageRouteId]
-        ]
-      );
-
       // [🐞]
       dlogv2
       (
@@ -562,7 +528,11 @@
 -->
 
 <svelte:head>
-
+  <!--
+  ╭─────
+  │ NOTE:
+  │ |: Theme Color Meta Tag
+  ╰───── -->
   {#if theme === 'Dark'}
     <meta
       name="theme-color"
@@ -575,19 +545,31 @@
     />
   {/if}
 
+  <!--
+  ╭─────
+  │ NOTE:
+  │ |: Integration Injection for :: Partytown
+  ╰───── -->
   {#if config.objApp.objServiceWorkerPartytown.isEnabled}
     <!--
     ╭─────
     │ NOTE: IMPORTANT
     │ |: Forward the necessary functions to the web worker layer
-    ╰─────
-    -->
+    ╰───── -->
     {@html config.objApp.objServiceWorkerPartytown.strCodeSampleForPartytownConfig}
 
     <!-- CRITICAL -->
     {@html '<script>' + partytownSnippet() + '</script>'}
   {/if}
 
+  <!--
+  ╭─────
+  │ NOTE:
+  │ |: Integration Injection for :: Intercom
+  ╰───── -->
+  {#if config.objApp.objServiceIntercom && currentPageRouteId === 'ProfilePage'}
+    {@html config.objApp.objServiceIntercom.strInjectionCode}
+  {/if}
 </svelte:head>
 
 <svelte:document
@@ -595,12 +577,23 @@
   {
     () =>
     {
-      if (!document.hidden)
-      {
-        $sessionStore.isUserActive = true;
-        return;
-      }
-      $sessionStore.isUserActive = false;
+      // [🐞]
+      if (!config.objDebug.objMeta['document.on:visibilitychange'].isEnabled)
+        log_v3
+        (
+          {
+            strGroupName: `${config.objDebug.objMeta['document.on:visibilitychange'].strLogPrefix}`,
+          }
+        );
+      ;
+
+      sessionStore.updateData
+      (
+        [
+          ['isUserActive', !document.hidden],
+        ]
+      );
+
       return;
     }
   }
@@ -611,18 +604,23 @@
   {
     () =>
     {
+      // [🐞]
+      if (!config.objDebug.objMeta['window.on:resize'].isEnabled)
+        log_v3
+        (
+          {
+            strGroupName: `${config.objDebug.objMeta['window.on:resize'].strLogPrefix}`,
+          }
+        );
+      ;
+
       sessionStore.updateData
       (
         [
           ['windowWidth', document.documentElement.clientWidth],
+          [(isPWA() ? 'globalStateAdd' : 'globalStateRemove'), 'IsPWA'],
         ]
       );
-
-      if (isPWA())
-        $sessionStore.globalState.add('IsPWA');
-      else
-        $sessionStore.globalState.delete('IsPWA');
-      ;
 
       return;
     }
@@ -652,8 +650,8 @@
   {#if config.objApp.isBetareAgEngineEnabled}
     {#key pageRouteId}
       <WidgetAdEngine
-        authorId={$page.data.dataArticle?.author?.id}
-        authorArticleTagIds={($page.data.dataArticle?.article?.tags ?? [])}
+        authorId={dataArticle?.author?.id}
+        authorArticleTagIds={(dataArticle?.article?.tags ?? [])}
         isDarkTheme={theme == 'Dark'}
         strTranslationTarget={(lang ?? 'en')}
         isStandalone={false}
