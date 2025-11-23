@@ -137,6 +137,9 @@ type IDataProp =
   | "btaRate"
   | 'window'
   | 'listIntervals'
+  | 'deviceType'
+  | 'svelteKitPage'
+  | 'isUserActive'
 ;
 
 /**
@@ -383,6 +386,22 @@ function createLocalStore
             else if (dataTarget == 'listIntervals')
             {
               sessionStoreObj.listIntervals.push(dataPoint);
+            }
+            else if (dataTarget == 'deviceType')
+            {
+              sessionStoreObj.deviceType = dataPoint;
+            }
+            else if (dataTarget == 'userAgent')
+            {
+              sessionStoreObj.userAgent = dataPoint;
+            }
+            else if (dataTarget == 'svelteKitPage')
+            {
+              sessionStoreObj.page = dataPoint;
+            }
+            else if (dataTarget == 'isUserActive')
+            {
+              sessionStoreObj.isUserActive = dataPoint;
             }
           }
 
