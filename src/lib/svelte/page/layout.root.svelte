@@ -147,12 +147,6 @@
       = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')!
   ;
 
-  /**
-   * @description
-   *  📝 Page unsubscribe to remove inside onDestroy.
-   */
-  let page_unsub: () => void;
-
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
   $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
@@ -162,7 +156,7 @@
 
   $: isInitliazed = false;
   $: isInitializationFinished = false;
-  $: isWindowIntercom = (browser && _window?.Intercom != null)
+  $: isWindowIntercom = (browser && _window?.Intercom != null && currentPageRouteId === 'ProfilePage');
 
   $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
     = viewportChangeV2
@@ -363,37 +357,18 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom // BOOT (with user data)
   // ╰─────
-  $: if (isWindowIntercom && (deepReactListenStore1 || deepReactListenStore2))
-    new Intercom().boot
+  $: if (isWindowIntercom)
+    new Intercom().lifecycle
     (
       {
         uid,
-        email: email,
+        email,
         username,
-        lang: lang,
-        competition_number: competition_number,
+        lang,
+        competition_number,
+        currentPageRouteIdVisibility: (currentPageRouteId !== 'ProfilePage'),
+        strLifecycleType: 'boot',
       }
-    );
-  ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ |: [3rd-party] // Intercom // SHOW-HIDE
-  // ╰─────
-  // $: if (isWindowIntercom && pageRouteId == routeIdPageProfile)
-  //   new Intercom().toggle(true);
-  // else if (isWindowIntercom)
-  //   new Intercom().toggle(false);
-  // ;
-
-  // ╭─────
-  // │ NOTE:
-  // │ |: [3rd-party] // Intercom // update launcher visibility
-  // ╰─────
-  $: if (isWindowIntercom)
-    new Intercom().update
-    (
-      (currentPageRouteId !== 'ProfilePage')
     );
   ;
 
@@ -446,7 +421,6 @@
       window.visualViewport
         ?.removeEventListener('resize', updateVh)
       ;
-      page_unsub();
       return;
     }
   );
@@ -588,6 +562,14 @@
     {@html '<script>' + partytownSnippet() + '</script>'}
   {/if}
 
+  <!--
+  ╭─────
+  │ NOTE:
+  │ |: Integration Injection for :: Intercom
+  ╰───── -->
+  {#if config.objApp.objServiceIntercom && currentPageRouteId === 'ProfilePage'}
+    {@html config.objApp.objServiceIntercom.strInjectionCode}
+  {/if}
 </svelte:head>
 
 <svelte:document
