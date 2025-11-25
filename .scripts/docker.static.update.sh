@@ -14,47 +14,32 @@
 # │ BETARENA (Module)
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-strDebugPrefix="[docker.runtime-config.update.sh]"
-dockerContainer=betarena-scores-scores-production-1
-dockerRuntimeConfigFilePath=./.docker/scores.production/runtime.config/runtime-config-files.txt
-outputDirClient=./.docker/scores.production/runtime.config/__run-time-config.client.js
-outputDirServer=./.docker/scores.production/runtime.config/__run-time-config.server.js
+strDebugPrefix="[docker.static.update.sh]"
+strDockerContainer=betarena-scores-scores-production-1
+strStaticDirectory=./.docker/scores.production/static
 
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
-# [🐞]
-echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // START"
 
 # ╭─────
 # │ NOTE:
-# │ |: loop through all the files listed in the runtime-config-files.txt, and copy each file from the (1) host-machine to the (2) docker-container
+# │ |: loop through all the files listed in the runtime-config-files.txt
 # ╰─────
-for i in $(cat $dockerRuntimeConfigFilePath); do
-  # [🐞]
-  echo "\n$strDebugPrefix 🟧 UPDATING :: $i // INSIGHT"
-  if [[ "$i" == *"/client/"* ]]; then
-    # [🐞]
-    # echo "it contains /client/"
-    docker cp \
-      $outputDirClient \
-      $dockerContainer:"/app/$i"
-    #
-  fi
-  if [[ "$i" == *"/server/"* ]]; then
-    # [🐞]
-    # echo "it contains /server/"
-    docker cp \
-      $outputDirServer \
-      $dockerContainer:"/app/$i"
-    #
-  fi
-  # [🐞]
+for strFilePath in $(find $strStaticDirectory -type f); do
+
+  echo "🔹 processing :: $strFilePath"
+
+  strFilePathInsideContainer="${strFilePath/'./.docker/scores.production/static/'/'build/client/'}"
+
+  echo "💽 persisting :: $strFilePathInsideContainer"
+
+  docker cp \
+    $strFilePath \
+    $strDockerContainer:"/app/$strFilePathInsideContainer"
+  #
+
   echo ""
 done
 
-# [🐞]
-echo ""
-# [🐞]
-echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // END"
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
