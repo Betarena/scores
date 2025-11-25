@@ -228,7 +228,6 @@
   --component-colors-alpha-alpha-white-40: #0C0E1266;
   --component-colors-alpha-alpha-white-50: #0C0E1280;
   --component-colors-alpha-alpha-white-60: #0C0E1299;
-  --component-colors-alpha-alpha-white-70: #0C0E12B2;
   --component-colors-alpha-alpha-white-80: #0C0E12CC;
   --component-colors-alpha-alpha-white-90: #0C0E12E5;
   --component-colors-alpha-alpha-white-100: var(--colors-gray-dark-mode-950);
@@ -471,7 +470,6 @@
   --colors-background-bg-brand-primary_alt: var(--colors-background-bg-secondary);
   --colors-background-bg-brand-secondary: var(--colors-brand-600);
   --colors-background-bg-brand-solid: var(--colors-brand-600);
-  --colors-background-bg-brand-solid_hover: var(--colors-brand-500);
   --colors-background-bg-brand-section: var(--colors-background-bg-secondary);
   --colors-background-bg-brand-section_subtle: var(--colors-background-bg-primary);
   --colors-background-bg-error-primary: var(--colors-error-950);
@@ -516,7 +514,7 @@
   --colors-text-text-error-primary: var(--colors-error-400);
   --colors-text-text-warning-primary: var(--colors-warning-400);
   --colors-text-text-success-primary: var(--colors-success-400);
-  --colors-border-border-primary: var(--colors-gray-600);
+  // --colors-border-border-primary: var(--colors-gray-600);
   --colors-border-border-secondary: var(--colors-gray-800);
   --colors-border-border-tertiary: var(--colors-gray-800);
   --colors-border-border-disabled: var(--colors-gray-700);
@@ -757,7 +755,6 @@
   --colors-background-bg-warning-primary: var(--colors-warning-500);
   --colors-background-bg-warning-secondary: var(--colors-warning-600);
   --colors-background-bg-warning-solid: var(--colors-warning-600);
-  --colors-background-bg-success-primary: var(--colors-success-500);
   --colors-background-bg-success-secondary: var(--colors-success-600);
   --colors-background-bg-success-solid: var(--colors-success-600);
 

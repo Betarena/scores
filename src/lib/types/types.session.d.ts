@@ -99,6 +99,11 @@ export interface ISessionStore
   grapqhQlWebSockets: (() => void)[] = [];
   /**
    * @description
+   *  📣 Active `setInterval` intervals.
+   */
+  listIntervals: NodeJS.Timer[] = [];
+  /**
+   * @description
    *  📣 Device type obtained from `user-agent`.
    */
   deviceType: 'mobile' | 'tablet' | 'desktop';
@@ -305,5 +310,18 @@ export interface ISessionStore
    *  📣 Defines the type of device being used for viewing.
    * Can take the values 'mobile', 'tablet', 'desktop', or null if the device type is not determined.
    */
-  viewportType: "mobile" | "tablet" | "desktop" |  null;
+  viewportType: "mobile" | "tablet" | "desktop" | null;
+
+   /**
+   * @description
+   *  📣 Exchange rate: amount of BTA tokens equivalent to 1 USD.
+   *  Example: 1 USD = X BTA
+   */
+  btaUsdRate: number;
+
+  /**
+   * @description
+   *  📣 Reference to the global `window` object, or `null` if not available.
+   */
+  window: Window & typeof globalThis | null;
 }

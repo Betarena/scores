@@ -23,9 +23,9 @@ import { dlogv2, log_v3 } from '$lib/utils/debug.js';
 import { viewportChangeV2 } from '$lib/utils/device.js';
 
 import type { IPageRouteId, ISessionStore } from '$lib/types/types.session.js';
+import { parseObject } from '$lib/utils/string.2.js';
 import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
-import { parseObject } from '$lib/utils/string.2.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -42,6 +42,8 @@ const mobileBreakpoint = 575,
     = {
       globalState: new Set(),
       page: null,
+      // @ts-expect-error
+      window: {},
       deviceType: 'mobile',
       viewportType: 'mobile',
       userAgent: undefined,
@@ -49,10 +51,12 @@ const mobileBreakpoint = 575,
       windowWidth: 0,
       firebaseListeners: [],
       grapqhQlWebSockets: [],
+      listIntervals: [],
       currentActiveModal: null,
       currentActiveToast: null,
       currentAdminToggle: null,
       currentPageRouteId: 'Standard',
+      btaUsdRate: 0,
 
       // ### NOTE:
       // ### variables for show/hide.
@@ -130,6 +134,12 @@ type IDataProp =
   | 'globalStateRemove'
   | 'windowWidth'
   | 'userAgent'
+  | "btaRate"
+  | 'window'
+  | 'listIntervals'
+  | 'deviceType'
+  | 'svelteKitPage'
+  | 'isUserActive'
 ;
 
 /**
@@ -364,6 +374,34 @@ function createLocalStore
               sessionStoreObj.windowWidth = dataPoint;
               const [isMobile, isTablet] = viewportChangeV2(dataPoint, mobileBreakpoint, tabletBreakpoint);
               sessionStoreObj.viewportType = dataPoint && isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop';
+            }
+            else if (dataTarget === "btaRate")
+            {
+              sessionStoreObj.btaUsdRate = dataPoint;
+            }
+            else if (dataTarget == 'window')
+            {
+              sessionStoreObj.window = dataPoint;
+            }
+            else if (dataTarget == 'listIntervals')
+            {
+              sessionStoreObj.listIntervals.push(dataPoint);
+            }
+            else if (dataTarget == 'deviceType')
+            {
+              sessionStoreObj.deviceType = dataPoint;
+            }
+            else if (dataTarget == 'userAgent')
+            {
+              sessionStoreObj.userAgent = dataPoint;
+            }
+            else if (dataTarget == 'svelteKitPage')
+            {
+              sessionStoreObj.page = dataPoint;
+            }
+            else if (dataTarget == 'isUserActive')
+            {
+              sessionStoreObj.isUserActive = dataPoint;
             }
           }
 

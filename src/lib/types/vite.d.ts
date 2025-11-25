@@ -164,6 +164,7 @@ interface ImportMetaEnv
    *    WalletConnect project env
    */
   readonly VITE_WALLETCONNECT_ID?: string
+
 }
 
 interface ImportMeta

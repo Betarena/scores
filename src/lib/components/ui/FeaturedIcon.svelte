@@ -9,7 +9,8 @@
 
 <script lang="ts">
   export let size: "sm" | "md" | "lg" | "xl" = "md";
-  export let type: "brand" | "gray" | "error" | "warning" | "sucess" = "brand";
+  export let color: "brand" | "gray" | "error" | "warning" | "sucess" = "brand";
+  export let type: "modern" | "light" = "light";
 </script>
 
 <!--
@@ -23,7 +24,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="featured-icon {size} {type}">
+<div class="featured-icon {size} {color} {type}">
   <slot />
 </div>
 
@@ -98,6 +99,29 @@
         stroke: var(
           --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-gray
         ) !important;
+      }
+
+      &.modern {
+        border-radius: var(--radius-md, 8px);
+        border: 1px solid var(--colors-border-border-primary, #d2d2d2);
+        background: var(--colors-background-bg-primary, #fff);
+        color: var(--colors-foreground-fg-secondary-700);
+        /* Shadows/shadow-xs-skeuomorphic */
+        box-shadow: 0 0 0 1px
+            var(
+              --colors-effects-shadows-shadow-skeumorphic-inner-border,
+              rgba(10, 13, 18, 0.18)
+            )
+            inset,
+          0 -2px 0 0 var(
+              --colors-effects-shadows-shadow-skeumorphic-inner,
+              rgba(10, 13, 18, 0.05)
+            ) inset,
+          0 1px 2px 0
+            var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+        :global(path) {
+          stroke: var(--colors-foreground-fg-secondary-700) !important;
+        }
       }
     }
 

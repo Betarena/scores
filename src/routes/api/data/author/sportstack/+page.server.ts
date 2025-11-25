@@ -1,12 +1,11 @@
 import { getSportstackByPermalink } from '$lib/sveltekit/endpoint/sportstack.js';
-import { entryProfileTabAuthorSportstackUpsert, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
+import { entryProfileTabAuthorSportstackUpsert, entryProfileTabAuthorValidateSportstackUsername } from '@betarena/scores-lib/dist/functions/v8/profile.main';
 import type { AuthorsAuthorsMain } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 import { Actions, fail } from '@sveltejs/kit';
 
 export const actions: Actions = {
 
-  update: async ({ request, locals }) =>
-  {
+  update: async ({ request, locals }) => {
     const
       // ╭─────
       // │ NOTE:
@@ -18,47 +17,44 @@ export const actions: Actions = {
           uid
         }
       } = locals
-    ;
+      ;
 
     if (!uid)
       return fail(401, { error: true, message: 'Unauthorized', reason: 'No uid' });
     ;
 
-    try
-    {
+    try {
 
       const formData = await request.formData();
       const dataObject = Object.fromEntries(formData.entries());
-      const { id, username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
+      const {username, about, permalink, avatar } = dataObject as { id: number } & AuthorsAuthorsMain["data"];
       const isSportstackExist = await getSportstackByPermalink(permalink);
-      if (!isSportstackExist)
-      {
+      if (!isSportstackExist) {
         return fail(400, { error: true, message: "Sportstack dosen't exists" });
       }
       const { sportstacks } = isSportstackExist;
-      await entryProfileTabAuthorSportstackUpsert({
-        id,
+      const updated_sportstack = {
+        id: sportstacks.id,
         uid,
         data: {
           badges: [],
           location: "",
           ...sportstacks.data,
-          creation_date: new Date(sportstacks.data.creation_date),
-          about,
-          avatar,
-          username,
+          creation_date: new Date(sportstacks.data?.creation_date || new Date()),
+          about: about ?? sportstacks.data?.about ?? "",
+          avatar: avatar ?? sportstacks.data?.avatar ?? "",
+          username: username ?? sportstacks.data?.username ?? sportstacks.permalink ?? "",
         }
-      });
-      return { success: true, message: 'Sportstack created' };
-    } catch (e)
-    {
-      console.log("error: ", e);
+      }
+      const data = await entryProfileTabAuthorSportstackUpsert(updated_sportstack);
+      return { success: true, message: 'Sportstack created', data };
+    } catch (e) {
+      console.log("Update Publication error: ", e);
       return fail(500, { error: true, message: 'Internal server error' });
     }
   },
 
-  create: async ({ request, locals }) =>
-  {
+  create: async ({ request, locals }) => {
     const
       // ╭─────
       // │ NOTE:
@@ -70,7 +66,7 @@ export const actions: Actions = {
           uid
         }
       } = locals
-    ;
+      ;
 
     if (!uid)
       return fail(401, { error: true, message: 'Unauthorized', reason: 'No uid' });
@@ -78,20 +74,17 @@ export const actions: Actions = {
 
     const data = await request.formData();
     const name = data.get('name') as string;
-    if (!name)
-    {
+    if (!name) {
       return fail(400, { error: true, message: 'Name is required' });
     }
     const isMatched = await entryProfileTabAuthorValidateSportstackUsername({ username: name });
-    if (isMatched)
-    {
+    if (isMatched) {
       return fail(400, { error: true, message: 'Name is already taken' });
     }
-    try
-    {
+    try {
 
 
-      await entryProfileTabAuthorSportstackUpsert({
+      const data = await entryProfileTabAuthorSportstackUpsert({
         uid,
         data: {
           about: "",
@@ -102,9 +95,8 @@ export const actions: Actions = {
           location: ""
         }
       });
-      return { success: true, message: 'Sportstack created' };
-    } catch (e)
-    {
+      return { success: true, message: 'Sportstack created', data };
+    } catch (e) {
       return fail(500, { error: true, message: 'Internal server error' });
     }
   }

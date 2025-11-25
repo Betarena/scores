@@ -46,6 +46,7 @@
   import type { ITab } from "$lib/types.js";
   import type { ISearchSuggestion } from "$lib/types/types.search.js";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -203,6 +204,7 @@
   }
 
   async function getSuggestions(text: string) {
+    if (!browser) return;
     const url = `/api/data/search.suggestions?search=${encodeURIComponent(search)}`;
     const res = await fetch(url);
     const r = await res.json();
@@ -216,6 +218,7 @@
   }
 
   async function suggestClick(suggest: string) {
+    if (!browser) return;
     const url = `/api/data/search.suggestions`;
     $search_store.search = suggest;
     inputBlur();

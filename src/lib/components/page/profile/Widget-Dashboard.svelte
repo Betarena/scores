@@ -1,291 +1,198 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+
+	import { modalStore } from './../../../store/modal.ts';
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
-	import { page } from '$app/stores';
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-	import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { page } from "$app/stores";
 
-	import metamask_percent_ration_dark from './assets/dashboard/metamask-percent-ration-dark.png';
-	import metamask_percent_ration from './assets/dashboard/metamask-percent-ration.png';
-	import metamask_volume_dark from './assets/dashboard/metamask-volume-dark.png';
-	import metamask_volume from './assets/dashboard/metamask-volume.png';
-	import nft_marketshare_img_dark from './assets/dashboard/nft-marketshare-dark.png';
-	import nft_marketshare_img from './assets/dashboard/nft-marketshare.png';
-	import stats_row_img_dark from './assets/dashboard/total-volume-dark.png';
-	import stats_row_img from './assets/dashboard/total-volume.png';
-	import home from './assets/menu-opt/home-select.svg';
-
-  import type { IProfileTrs } from '@betarena/scores-lib/types/types.profile.js';
+  import session from "$lib/store/session";
+  import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile.js";
+  import { onMount } from "svelte";
+  import DashboardActivity from "./dashboard/DashboardActivity.svelte";
+  import DashboardEarnings from "./dashboard/DashboardEarnings.svelte";
+  import DashboardEngagement from "./dashboard/DashboardEngagement.svelte";
+  import DashboardQuickActions from "./dashboard/DashboardQuickActions.svelte";
+  import DashboardTopArticles from "./dashboard/DashboardTopArticles.svelte";
+  import DashboardWallets from "./dashboard/DashboardWallets.svelte";
+  import { get } from "$lib/api/utils.js";
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  $: profileTrs = $page.data.RESPONSE_PROFILE_DATA as IProfileTrs;
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  $: ({ viewportType } = $session);
+  let timer: ReturnType<typeof setInterval>;
 
   // #endregion ➤ 📌 VARIABLES
 
-</script>
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-<!-- ===============
-### COMPONENT HTML
-### NOTE:
-### HINT: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-<div
-  id="dashboard-widget-container"
-  class:dark={$userBetarenaSettings.theme == 'Dark'}
->
-	<!--
-  [ℹ] widget not available
-  <-contents->
-  [ℹ] icon
-  [ℹ] text
-  -->
-	<div id="background-modal-blur">
-		<div
-			id="dashboard-not-available-container"
-			class="text-center"
-		>
-			<img
-				src={home}
-				alt="default alt text"
-				width="40"
-				height="40"
-				class="m-b-16"
-			/>
-			<p
-				class="
-          color-grey
-          s-14
-        "
-			>
-				{profileTrs.dashboard_title || 'Dashboard content will be available soon'}
-			</p>
-		</div>
-	</div>
-	<!--
-  [ℹ] widget title
-  -->
-	<h2
-		id="widget-title"
-		class="
-      w-500
-      s-20
-    "
-	>
-    {profileTrs.dashboard || 'Dashboard content will be available soon'}
-	</h2>
-	<!--
-  [ℹ] dashboard stats info
-  -->
-	<div
-    id="stats-box"
-    class="dashboard-row-info">
-		<img
-			src={$userBetarenaSettings.theme == 'Dark' ? stats_row_img_dark : stats_row_img}
-      alt="Stats Row"
-    />
-	</div>
-	<!--
-  [ℹ] dashboard metamask info (#1)
-  -->
-	<div
-		id="nft-volume-box"
-		class="dashboard-row-info"
-	>
-		<img
-			src={$userBetarenaSettings.theme == 'Dark' ? metamask_volume_dark : metamask_volume}
-			alt="Metamask Volume"
-		/>
-	</div>
-	<!--
-  [ℹ] dashboard metamask info (#1)
-  -->
-	<div
-		id="nft-marketshare-box"
-		class="dashboard-row-info"
-	>
-		<img
-			src={$userBetarenaSettings.theme == 'Dark' ? nft_marketshare_img_dark : nft_marketshare_img}
-			alt="Metamask Volume"
-		/>
-	</div>
-	<!--
-  [ℹ] dashboard metamask info (#2)
-  -->
-	<div
-		id="metamask-percent-ratio"
-		class="dashboard-row-info"
-	>
-		<img
-			src={$userBetarenaSettings.theme == 'Dark' ? metamask_percent_ration_dark : metamask_percent_ration}
-			alt="Stats Row"
-		/>
-	</div>
-</div>
+  onMount(() => {
+    getRates();
+    return () => {
+      timer && clearInterval(timer);
+    };
+  });
 
-<!-- ===============
-### COMPONENT STYLE
-### NOTE:
-### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
-<style>
+  // #region ➤ 🛠️ METHODS
 
-	/*
-  layer (top) box
-  */
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
 
-	div#background-modal-blur
-  {
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-		z-index: 4000;
-		height: 100%;
-		width: 100%;
-		background: rgba(255, 255, 255, 0.7);
-		backdrop-filter: blur(4px);
-		-webkit-backdrop-filter: blur(4px);
-	}
-	div#dashboard-not-available-container
-  {
-		position: absolute;
-		right: 0;
-		left: 0;
-		margin: auto;
-		width: fit-content;
-		height: fit-content;
-		top: 0;
-		bottom: 0;
-	}
-
-	/*
-  (main) account widget
-  */
-	div#dashboard-widget-container
-  {
-		position: relative;
-		background: #ffffff;
-		/* box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08); */
-		border-radius: 12px;
-		padding: 20px;
-		overflow: hidden;
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 20px;
-		max-height: 572px;
-		overflow: hidden;
-	}
-
-	h2
-  {
-		margin: 0;
-	}
-
-	/*
-  grid control
-  */
-	div#dashboard-widget-container > h2#widget-title
-  {
-		grid-row: 1;
-		grid-column: 1/2;
-	}
-	div#dashboard-widget-container > div#stats-box
-  {
-		grid-row: 2;
-		grid-column: 1/2;
-	}
-	div#dashboard-widget-container > div#nft-volume-box
-  {
-		grid-row: 3;
-		grid-column: 1/2;
-	}
-	div#dashboard-widget-container > div#nft-marketshare-box
-  {
-		grid-row: 4;
-		grid-column: 1/2;
-	}
-	div#dashboard-widget-container > div#metamask-percent-ratio
-  {
-		grid-row: 5;
-		grid-column: 1/2;
-	}
-
-	/*
-  grid (items) control
-  */
-	div#dashboard-widget-container div.dashboard-row-info	img
-  {
-		width: 100%;
-	}
-
-	/*
-  =============
-  RESPONSIVNESS
-  =============
-  */
-
-	@media only screen
-  and (min-width: 575px)
-  {
-		/* grid control */
-		div#dashboard-widget-container
-    {
-			grid-template-columns: 1fr 1fr;
-			max-height: unset;
-		}
-		div#dashboard-widget-container > h2#widget-title
-    {
-			grid-row: unset;
-			grid-column: 1/4;
-		}
-		div#dashboard-widget-container > div#stats-box
-    {
-			grid-row: unset;
-			grid-column: 1/4;
-		}
-		div#dashboard-widget-container > div#nft-volume-box
-    {
-			grid-column: 1/2;
-			grid-row: unset;
-		}
-		div#dashboard-widget-container > div#nft-marketshare-box
-    {
-			grid-row: unset;
-			grid-column: 2/4;
-		}
-		div#dashboard-widget-container > div#metamask-percent-ratio
-    {
-			grid-row: unset;
-			grid-column: 1/4;
-		}
-	}
-
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
-
-  div#dashboard-widget-container.dark
-  {
-		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
-		background-color: var(--dark-theme-1) !important;
-	}
-
-  div#dashboard-widget-container.dark div#background-modal-blur
-  {
-    background-color: rgba(35, 35, 35, 0.685) ;
-   backdrop-filter: blur(4px);
+  async function getRates() {
+    const res = await get("/api/data/bta-rates") as {
+      data?:      { [key: string]: any };
+      symbol?:    string;
+      timestamp?: string;
+      [property: string]: any;
+    }
+    if(res) {
+      $session.btaUsdRate = res.bta_rates?.data.price_in.usd || 0
+      return
+    }
+    timer = setTimeout(() => {
+      getRates();
+    }, 60000);
   }
 
+  // #endregion ➤ 🛠️ METHODS
+</script>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<div id="dashboard-widget-container" class={viewportType}>
+  {#if viewportType !== "mobile"}
+    <div class="title">{translations?.dashboard || "Dashboard"}</div>
+
+    <div class="sections-wrapper">
+      <div class="section-left">
+        <DashboardWallets />
+        <DashboardEarnings />
+        <DashboardTopArticles />
+      </div>
+      <div class="section-right">
+        <DashboardEngagement />
+        <DashboardActivity />
+        <DashboardQuickActions />
+      </div>
+    </div>
+  {:else}
+    <DashboardWallets />
+    <DashboardEngagement />
+    <DashboardEarnings />
+    <DashboardTopArticles />
+    <DashboardActivity />
+    <DashboardQuickActions />
+  {/if}
+</div>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  #dashboard-widget-container {
+    height: 100%;
+    min-height: 500px;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3xl, 24px);
+
+    &:not(.mobile) {
+      border-radius: 12px;
+      background: var(--colors-background-bg-secondary, #232323);
+      padding: var(--spacing-2xl, 20px);
+      gap: var(--spacing-2xl, 20px);
+      .title {
+        color: var(--colors-text-text-primary-900, #fff);
+
+        /* Text xl/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-xl, 20px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-xl, 30px); /* 150% */
+      }
+
+      .sections-wrapper {
+        display: flex;
+        gap: var(--spacing-2xl, 20px);
+        flex-wrap: wrap;
+
+        .section-left {
+          flex: 4 1 450px;
+          // max-width: 637px;
+          min-width: 450px;
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-2xl, 20px);
+        }
+        .section-right {
+          max-width: 100%;
+          flex-grow: 1;
+          flex-shrink: 1;
+          min-width: 265px;
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-2xl, 20px);
+        }
+      }
+    }
+  }
 </style>

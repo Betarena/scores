@@ -506,9 +506,14 @@ docker-image-build:
 	#
 
 	docker build \
-		-t betarena-scores:$${TEMP_VERSION} \
-		-f ./.docker/Dockerfile \
 		. \
+		-f ./.docker/Dockerfile.scores.full \
+		-t betarena-scores:$${TEMP_VERSION} \
+		--platform=linux/amd64 \
+		--progress=plain
+		# --no-cache
+	#
+#
 		--progress=plain
 		# --no-cache
 	#
@@ -569,29 +574,75 @@ docker-image-publish-to-registry:
 #
 
 .ONESHELL:
+docker-volume-scores-prune-target:
+
+	TEMP_VOLUME_TO_PRUNE="betarena-scores_$(target)-volume"
+
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 💽 │ pruning volumes for scores                                  │\
+		\n│ ➤ type: $(type) \
+		\n│ ➤ target: $(target) \
+		\n│ ➤ TEMP_VOLUME_TO_PRUNE: $$(TEMP_VOLUME_TO_PRUNE) \
+		\n╰──────────────────────────────────────────────────────────────────╯"
+	#
+
+	sleep 5; \
+
+	# [🐞]
+	echo "[docker-compose-up] contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
+	# [🐞]
+	docker run \
+		--rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
+	#
+
+	if [ "$(type)" = "reset" ]; then\
+		sleep 5; \
+		docker run --rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine sh -c "rm -rf /v/*"; \
+		sleep 5; \
+	fi
+
+	# [🐞]
+	echo "[docker-compose-up] contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
+	# [🐞]
+	docker run \
+		--rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
+	#
+#
+
+.ONESHELL:
 docker-compose-up:
 	@
 	# ╭──────────────────────────────────────────────────────────────────╮
-	# │ NOTE: │ DESCRIPTION																						   │
-	# │ ➤ initialize docker compose for  																 │
-	# │ ➤ Betarena // Scores (Frontend)  				  			          		   │
+	# │ DESCRIPTION:
+	# │ ➤ custom wrapper for 'docker-compose'
 	# ╰──────────────────────────────────────────────────────────────────╯
 
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
-		\n│ 🔀 │ (re)start container(s)                                      │\
-		\n┣──────────────────────────────────────────────────────────────────┫\
+		\n│ 🐳 │ (re)start container(s)                                      │\
+		\n│ ➤ version: $(version) \
 		\n│ ➤ type: $(type) \
 		\n│ ➤ services: $(services) \
-		\n│ ➤ BETARNA_SCORES__DOCKER_IMAGE: $(BETARNA_SCORES__DOCKER_IMAGE) \
-		\n│ ➤ BETARNA_SCORES__REPLICAS: $(BETARNA_SCORES__REPLICAS) \
+		\n│ ➤ DOCKER_IMAGE: $(BETARNA_SCORES__DOCKER_IMAGE) \
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	${MAKE} docker-container-export-logs-all
+	if [ ! $(services) ]; then\
+		echo "[Makefile::docker-compose-up] Please set a target services via services=\"<service-1>\"";\
+		exit 1;\
+		echo "";\
+	fi
 
-	if [ "$(type)" = "prod" ]; then\
+	if [[ "$(services)" == *"scores-staging"* && "$(services)" == *"scores-production"* ]]; then\
+		echo "[Makefile::docker-compose-up] Please do not deploy 'scores-production & scores-staging' together";\
+		exit 1;\
+		echo "";\
+	fi
+
+	if [ "$(version)" = "latest" ]; then\
 		cd .docker/; \
 		docker compose pull scores; \
 		cd ..; \
@@ -614,9 +665,20 @@ docker-compose-up:
 
 	mkdir \
 		-p \
-		./.docker/nginx/logs/scores \
+		./.docker/nginx/logs/scores.production \
+		./.docker/nginx/logs/scores.staging \
 		./.docker/nginx/logs/goaccess
 	#
+
+	TEMP_SCORES_ENVIRONMENT="scores-$(type)"
+
+	if [[ "$(services)" == *"scores-staging"* ]]; then\
+		TEMP_SCORES_ENVIRONMENT="scores-staging";\
+	elif [[ "$(services)" == *"scores-production"* ]]; then\
+		TEMP_SCORES_ENVIRONMENT="scores-production";\
+	fi
+
+	${MAKE} docker-volume-scores-prune-target type="prune" target="$${TEMP_SCORES_ENVIRONMENT}"
 
 	# [🐞]
 	docker compose \
@@ -625,6 +687,8 @@ docker-compose-up:
 		config \
 		> .docker/docker-compose.output.yml
 	#
+
+	${MAKE} docker-container-log-full-export
 
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
@@ -637,7 +701,21 @@ docker-compose-up:
 		$(services)
 	#
 
-	if [ "$(type)" = "prod" ]; then\
+	# [🐞]
+	echo "[Makefile::docker-compose-up] contents of docker volume :: betarena-scores_scores-staging-volume"
+	# [🐞]
+	docker run \
+		--rm -v betarena-scores_scores-staging-volume:/v alpine ls -lha /v
+	#
+
+	# [🐞]
+	echo "[Makefile::docker-compose-up] contents of docker volume :: betarena-scores_scores-production-volume"
+	# [🐞]
+	docker run \
+		--rm -v betarena-scores_scores-production-volume:/v alpine ls -lha /v
+	#
+
+	if [ "$(version)" = "latest" ]; then\
 		docker rmi $$(docker images -f "dangling=true" -q); \
 	fi
 #

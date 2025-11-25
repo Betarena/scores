@@ -1,23 +1,23 @@
-import { Editor } from "@tiptap/core";
-import DOMPurify from "dompurify";
-import { postv2 } from "$lib/api/utils.js";
-import { modalStore } from "$lib/store/modal.js";
-import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
-import { create_article_store } from "./create_article.store.js";
-import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { goto } from "$app/navigation";
+import { postv2 } from "$lib/api/utils.js";
+import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
+import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
+import { modalStore } from "$lib/store/modal.js";
 import session from "$lib/store/session.js";
+import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
+import { detectLanguage } from "$lib/utils/translation.js";
 import type {
   AuthorsAuthorsMain,
   TranslationSportstacksSectionDataJSONSchema,
 } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-import { type Writable, writable } from "svelte/store";
 import type {
   IPageAuthorArticleData,
   IPageAuthorAuthorData,
 } from "@betarena/scores-lib/types/v8/preload.authors.js";
-import { detectLanguage } from "$lib/utils/translation.js";
-import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
+import { Editor } from "@tiptap/core";
+import DOMPurify from "dompurify";
+import { type Writable, writable } from "svelte/store";
+import { create_article_store } from "./create_article.store.js";
 
 export function getFirstImageWithSize(
   editor: Editor
@@ -57,6 +57,19 @@ export function getFirstImageWithSize(
       });
     img.onerror = () => resolve(null);
   });
+}
+
+function isInternalLink(node: HTMLAnchorElement) {
+  const href = node.getAttribute("href") || "";
+  if (!href) return false;
+  const domain =
+    typeof window !== "undefined" && window.location
+      ? window.location.hostname
+      : "";
+  const isInternal =
+    href.startsWith('/') ||
+    href.includes(`//${domain}`);
+  return isInternal;
 }
 
 export async function upsert({
@@ -101,6 +114,22 @@ export async function upsert({
       const ok = /^(https?:)?\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(src);
       if (!ok) {
         (node.parentNode as Node)?.removeChild(node);
+      }
+    }
+    if (data.tagName === "a") {
+      const isInternal = isInternalLink(node);
+      const anchor_node = node as HTMLAnchorElement
+      let rel = anchor_node.getAttribute('rel') || '';
+
+      if (isInternal) {
+         anchor_node.removeAttribute('rel');
+         anchor_node.removeAttribute('target');
+
+      } else {
+        if (!rel.includes('nofollow')) {
+          rel = `${rel} nofollow`.trim();
+          anchor_node.setAttribute('rel', rel);
+        }
       }
     }
   });

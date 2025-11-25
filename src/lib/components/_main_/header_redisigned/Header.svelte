@@ -25,17 +25,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import { translationObject } from "$lib/utils/translation.js";
-  import HeaderCLang from "./Header-C-Lang.svelte";
-  import HeaderCTheme from "./Header-C-Theme.svelte";
-  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
-  import { scoresNavbarStore } from "./_store.js";
-  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+  import Button from "$lib/components/ui/Button.svelte";
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
@@ -45,7 +36,15 @@
     routeIdSportstack,
   } from "$lib/constants/paths.js";
   import session from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { promiseUrlsPreload } from "$lib/utils/navigation.js";
+  import { translationObject } from "$lib/utils/translation.js";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import HeaderCLang from "./Header-C-Lang.svelte";
+  import HeaderCTheme from "./Header-C-Theme.svelte";
   import HeaderSearch from "./HeaderSearch.svelte";
+  import { scoresNavbarStore } from "./_store.js";
+  import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -61,7 +60,6 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: ({ serverLang } = $sessionStore);
 
   $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
   $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
@@ -71,7 +69,7 @@
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: loadTranslations(serverLang);
-   $: ({viewportType} = $session)
+   $: ({viewportType, serverLang} = $session)
 
   const pagesWihoutNav = [
     routeIdPageTags,
@@ -101,7 +99,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function signIn() {
-    $sessionStore.currentActiveModal = "Auth_Modal";
+    $session.currentActiveModal = "Auth_Modal";
     return;
   }
 

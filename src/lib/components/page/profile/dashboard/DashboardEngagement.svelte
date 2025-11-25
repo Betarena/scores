@@ -1,0 +1,192 @@
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🟦 Svelte Component JS/TS                                                        │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+
+│         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<script lang="ts">
+  // #region ➤ 📦 Package Imports
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'imports' that are required        │
+  // │ by 'this' .svelte file is ran.                                         │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. svelte/sveltekit imports                                            │
+  // │ 2. project-internal files and logic                                    │
+  // │ 3. component import(s)                                                 │
+  // │ 4. assets import(s)                                                    │
+  // │ 5. type(s) imports(s)                                                  │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import MetricChart from "$lib/components/ui/metrics/MetricChart.svelte";
+  import session from "$lib/store/session";
+  import type { IProfileData, IProfileTrs } from "@betarena/scores-lib/types/types.profile";
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  $: translations = ($page.data.RESPONSE_PROFILE_DATA as IProfileTrs).profile;
+  $: ({engagementMetrics = []} = $page.data.profile_main_data as IProfileData);
+  $: ({ viewportType } = $session);
+  $: ([ all, ...sportstacks] = [...engagementMetrics].reverse())
+
+  $: options = [
+    {...all, id: -1, label: (translations?.all_sportstacks || "All")},
+    ...(sportstacks as IProfileData["engagementMetrics"]).map(metric => {
+      const { id, engagement, data } = metric;
+      return {
+        ...engagement,
+        id,
+        label: data?.username || ""
+      };
+    })
+  ]
+
+  $: engagements = [
+    { field: "subscribers", label: translations?.subscribers || "Subscribers"},
+    { field: "views", label: translations?.views || "Views" },
+  ];
+
+  $: selectedOption = options.find(option => option.id < 0);
+
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function handleOptionChange(e) {
+    selectedOption = e.detail;
+  }
+
+  function getEngagementTrend(snapshot: number, field: string): number {
+    const total_now = snapshot[`${field}_total`];
+    const day = snapshot[`${field}_24h`];
+    if (snapshot === 0) return 0;
+    const total_before = total_now - day;
+    if (!total_before && !day) return 0;
+    if (!total_before) return 100;
+    return (day * 100) / (total_before);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+</script>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 💠 Svelte Component HTML                                                         │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
+│         │ imported from './static/app.css'                                       │
+│ ➤ HINT: │ access custom Betarena Scores VScode Snippets by typing emmet-like     │
+│         │ abbrev.                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+<div id="dashboard-engagement" class={viewportType}>
+  <div class="title-wrapper">
+    <div class="title"><TranslationText fallback="Engagement" text={translations?.engagement} /></div>
+    <div class="dropdown">
+      <DropDownInput checkIcon={true} {options} value={selectedOption} on:change={handleOptionChange} />
+    </div>
+  </div>
+  <div class="metrics-wrappers">
+    {#each engagements as { label, field }}
+      <MetricChart text={label} number={selectedOption[`${field}_total`]} animation={false} change={getEngagementTrend(selectedOption, field)} />
+    {/each}
+  </div>
+</div>
+
+<!--
+╭──────────────────────────────────────────────────────────────────────────────────╮
+│ 🌊 Svelte Component CSS/SCSS                                                     │
+┣──────────────────────────────────────────────────────────────────────────────────┫
+│ ➤ HINT: │ auto-fill/auto-complete iniside <style> for var()                      │
+│         │ values by typing/CTRL+SPACE                                            │
+│ ➤ HINT: │ access custom Betarena Scores CSS VScode Snippets by typing 'style...' │
+╰──────────────────────────────────────────────────────────────────────────────────╯
+-->
+
+<style lang="scss">
+  #dashboard-engagement {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    flex-shrink: 0;
+    align-self: stretch;
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-none, 0);
+      flex-shrink: 0;
+      align-self: stretch;
+      flex-direction: column;
+      gap: 12px;
+      align-items: start;
+      height: fit-content;
+      .title {
+        color: var(--colors-text-text-secondary-700, #fbfbfb);
+        flex: 1 0 0;
+        /* Text lg/Semibold */
+        font-family: var(--font-family-font-family-body, Roboto);
+        font-size: var(--font-size-text-lg, 18px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+      }
+
+      .dropdown {
+        flex: 1 0 0;
+        width: 100%;
+      }
+    }
+
+    .metrics-wrappers {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      min-width: 0;
+      align-self: stretch;
+    }
+    &:not(.mobile) {
+      min-width: 0;
+      :global(.metric-chart-1) {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      .metrics-wrappers {
+        justify-content: flex-start;
+      }
+    }
+  }
+</style>

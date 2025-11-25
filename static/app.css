@@ -4098,6 +4098,11 @@ body {
   --font-size-display-2xl: 72px;
 }
 
+/* 6. Gradients - Value */
+:root {
+  --gradient-skeuemorphic-gradient-border: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.00) 100%);
+}
+
 .dark-mode {
   --text-color: #FFFFFF;
   --text-color-second: #cccccc;
@@ -4312,7 +4317,6 @@ body {
   --component-colors-alpha-alpha-white-40: #0C0E1266;
   --component-colors-alpha-alpha-white-50: #0C0E1280;
   --component-colors-alpha-alpha-white-60: #0C0E1299;
-  --component-colors-alpha-alpha-white-70: #0C0E12B2;
   --component-colors-alpha-alpha-white-80: #0C0E12CC;
   --component-colors-alpha-alpha-white-90: #0C0E12E5;
   --component-colors-alpha-alpha-white-100: var(--colors-gray-dark-mode-950);
@@ -4555,7 +4559,6 @@ body {
   --colors-background-bg-brand-primary_alt: var(--colors-background-bg-secondary);
   --colors-background-bg-brand-secondary: var(--colors-brand-600);
   --colors-background-bg-brand-solid: var(--colors-brand-600);
-  --colors-background-bg-brand-solid_hover: var(--colors-brand-500);
   --colors-background-bg-brand-section: var(--colors-background-bg-secondary);
   --colors-background-bg-brand-section_subtle: var(--colors-background-bg-primary);
   --colors-background-bg-error-primary: var(--colors-error-950);
@@ -4598,7 +4601,6 @@ body {
   --colors-text-text-error-primary: var(--colors-error-400);
   --colors-text-text-warning-primary: var(--colors-warning-400);
   --colors-text-text-success-primary: var(--colors-success-400);
-  --colors-border-border-primary: var(--colors-gray-600);
   --colors-border-border-secondary: var(--colors-gray-800);
   --colors-border-border-tertiary: var(--colors-gray-800);
   --colors-border-border-disabled: var(--colors-gray-700);
@@ -4839,7 +4841,6 @@ body {
   --colors-background-bg-warning-primary: var(--colors-warning-500);
   --colors-background-bg-warning-secondary: var(--colors-warning-600);
   --colors-background-bg-warning-solid: var(--colors-warning-600);
-  --colors-background-bg-success-primary: var(--colors-success-500);
   --colors-background-bg-success-secondary: var(--colors-success-600);
   --colors-background-bg-success-solid: var(--colors-success-600);
   --colors-foreground-fg-brand-primary-500: var(--colors-base-white);
@@ -5060,7 +5061,6 @@ body {
   --component-colors-alpha-alpha-white-40: #FFFFFF66;
   --component-colors-alpha-alpha-white-50: #FFFFFF80;
   --component-colors-alpha-alpha-white-60: #FFFFFF99;
-  --component-colors-alpha-alpha-white-70: #FFFFFFB2;
   --component-colors-alpha-alpha-white-80: #FFFFFFCC;
   --component-colors-alpha-alpha-white-90: #FFFFFFE5;
   --component-colors-alpha-alpha-white-100: #FFFFFFFF;
@@ -5303,7 +5303,6 @@ body {
   --colors-background-bg-brand-primary_alt: var(--colors-brand-50);
   --colors-background-bg-brand-secondary: var(--colors-brand-100);
   --colors-background-bg-brand-solid: var(--colors-brand-600);
-  --colors-background-bg-brand-solid_hover: var(--colors-brand-700);
   --colors-background-bg-brand-section: var(--colors-brand-800);
   --colors-background-bg-brand-section_subtle: var(--colors-brand-700);
   --colors-background-bg-error-primary: var(--colors-error-50);
@@ -5346,7 +5345,6 @@ body {
   --colors-text-text-error-primary: var(--colors-error-600);
   --colors-text-text-warning-primary: var(--colors-warning-600);
   --colors-text-text-success-primary: var(--colors-success-600);
-  --colors-border-border-primary: var(--colors-gray-300);
   --colors-border-border-secondary: var(--colors-gray-200);
   --colors-border-border-tertiary: var(--colors-gray-100);
   --colors-border-border-disabled: var(--colors-gray-300);
@@ -5362,7 +5360,7 @@ body {
   --component-colors-alpha-alpha-white-40: rgba(255, 255, 255, 0.4000000059604645);
   --component-colors-alpha-alpha-white-50: rgba(255, 255, 255, 0.5);
   --component-colors-alpha-alpha-white-60: rgba(255, 255, 255, 0.6000000238418579);
-  --component-colors-alpha-alpha-white-70: rgba(255, 255, 255, 0.699999988079071);
+  --component-colors-alpha-alpha-white-70: rgba(255, 255, 255, 0.7);
   --component-colors-alpha-alpha-white-80: rgba(255, 255, 255, 0.800000011920929);
   --component-colors-alpha-alpha-white-90: rgba(255, 255, 255, 0.8999999761581421);
   --component-colors-alpha-alpha-white-100: rgba(255, 255, 255, 1);
@@ -5568,7 +5566,7 @@ body {
   --colors-background-bg-secondary_hover: var(--colors-gray-100);
   --colors-background-bg-secondary_subtle: var(--colors-gray-25);
   --colors-background-bg-secondary-solid: var(--colors-gray-600);
-  --colors-background-bg-tertiary: var(--colors-gray-100);
+  --colors-background-bg-tertiary: var(--colors-gray-light-mode-100);
   --colors-background-bg-quaternary: var(--colors-gray-200);
   --colors-background-bg-active: var(--colors-gray-50);
   --colors-background-bg-disabled: var(--colors-gray-100);

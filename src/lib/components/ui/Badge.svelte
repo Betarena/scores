@@ -35,6 +35,7 @@
     | undefined = "gray";
   export let active: boolean = false;
   export let link = "";
+  export let hover = true;
 
   const dispatch = createEventDispatcher();
 
@@ -57,6 +58,7 @@
     href={link}
     class="badge {size} {color}"
     class:active
+    class:hover={hover}
     {...$$restProps}
     on:click={() => dispatch("click")}
   >
@@ -67,6 +69,7 @@
   <div
     class="badge {size} {color}"
     class:active
+    class:hover={hover}
     {...$$restProps}
     on:click={() => dispatch("click")}
   >
@@ -147,7 +150,7 @@
         #fef5f0
       );
 
-      &.active {
+      &.active, &.hover:hover {
         border: 1px solid
           var(--component-colors-utility-brand-utility-brand-500, #ae460b);
         color: var(--colors-text-text-white, #fff);
@@ -157,6 +160,9 @@
           #fef5f0
         );
       }
+      &.hover {
+        cursor: pointer;
+      }
     }
 
     &.gray {
@@ -165,7 +171,7 @@
       background: var(--component-colors-utility-gray-utility-gray-50, #fbfbfb);
       color: var(--component-colors-utility-gray-utility-gray-700, #525252);
 
-      &.active {
+      &.active, &.hover:hover {
         border: 1px solid
           var(--component-colors-utility-gray-utility-gray-200, #ededed);
         background: var(
@@ -173,6 +179,9 @@
           #ededed
         );
         color: var(--component-colors-utility-gray-utility-gray-800, #3b3b3b);
+      }
+      &.hover {
+        cursor: pointer;
       }
     }
 

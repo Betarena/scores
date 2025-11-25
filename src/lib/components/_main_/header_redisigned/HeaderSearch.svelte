@@ -23,20 +23,21 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from "$app/environment";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { get } from "$lib/api/utils.js";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import CommandMenuItem from "$lib/components/ui/CommandMenu/CommandMenuItem.svelte";
   import Input from "$lib/components/ui/Input.svelte";
+  import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import search_store from "$lib/store/search_store.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { debounce } from "$lib/utils/miscellenous.js";
-  import { page } from "$app/stores";
-  import CommandMenuItem from "$lib/components/ui/CommandMenu/CommandMenuItem.svelte";
-  import type { IBetarenaUser } from "@betarena/scores-lib/types/firebase/firestore.js";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
-  import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
   import type { ISearchSuggestion } from "$lib/types/types.search.js";
-  import { get } from "$lib/api/utils.js";
-  import { goto } from "$app/navigation";
+  import { debounce } from "$lib/utils/miscellenous.js";
   import { Betarena_User_Class } from "@betarena/scores-lib/dist/classes/class.betarena-user.js";
+  import type { IBetarenaUser } from "@betarena/scores-lib/types/firebase/firestore.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -138,6 +139,7 @@
   }
 
   async function getSuggestions(text: string) {
+    if (!browser) return;
     const res = await get<{
       suggestions: ISearchSuggestion[];
     }>(`/api/data/search.suggestions?search=${encodeURIComponent(search)}`);
@@ -229,7 +231,6 @@
       }
     )
 
-    console.log("users_data", users_data);
 
     if (!users_data) {
       return ($search_store.users = {

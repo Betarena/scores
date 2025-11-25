@@ -27,19 +27,19 @@
   import { page } from '$app/stores';
 
   import { timeAgo } from '$lib/utils/dates.js';
-  import { fade } from 'svelte/transition';
-  import defaultAvatar from '../profile-avatar.svg';
-  import { readingTime } from '../helpers.js';
   import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+  import { fade } from 'svelte/transition';
+  import { readingTime } from '../helpers.js';
+  import defaultAvatar from '../profile-avatar.svg';
 
-  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
   import TranslationText from '$lib/components/misc/Translation-Text.svelte';
-  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
   import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+  import ExpandDataWrapper from '$lib/components/ui/wrappers/ExpandDataWrapper.svelte';
+  import ScrollDataWrapper from '$lib/components/ui/wrappers/ScrollDataWrapper.svelte';
 
+  import Badge from '$lib/components/ui/Badge.svelte';
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
   import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import Badge from '$lib/components/ui/Badge.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -93,11 +93,10 @@
     avatar: defaultAvatar,
   });
   $: ({ images = [] } = seo_details?.opengraph || {});
-  $: ({ title = "", content = "" } = data || {});
+  $: ({ title = "", content = "", featured_image } = data || {});
   $: date = timeAgo(published_date, translations.time_ago);
-  $: timeToRead =  readingTime(content)
+  $: timeToRead =  content && readingTime(content)
   // #endregion ➤ 📌 VARIABLES
-
 </script>
 
 <!--
@@ -167,9 +166,9 @@
       {/if}
     </div>
   </div>
-  {#if images[0]?.url}
+  {#if images[0]?.url || featured_image}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url })} alt={images[0].alt} srcset="" />
+      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url || featured_image })} alt={images[0]?.alt || title} srcset="" />
     </a>
   {/if}
 </div>

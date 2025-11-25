@@ -13,7 +13,6 @@
 // #region ➤ 📦 Package Imports
 
 import { browser } from '$app/environment';
-import { goto } from '$app/navigation';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 import { isSignInWithEmailLink, signInWithCustomToken, signInWithEmailLink } from 'firebase/auth';
 
@@ -23,8 +22,9 @@ import sessionStore from '$lib/store/session.js';
 import { authWithMoralis, successAuthComplete } from './authentication.js';
 import { AU_W_TAG, dlog, dlogv2, errlog } from './debug.js';
 
-import type { Page } from '@sveltejs/kit';
 import { routeIdHome } from '$lib/constants/paths.js';
+import type { Page } from '@sveltejs/kit';
+import { gotoSW } from './sveltekitWrapper.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -53,21 +53,20 @@ export async function mainDeepLinkCheck
      */
     page = sessionStore.extract<Page>('page')
     ;
-  let     /**
-  * @description
-  * 📝 Data for `page`.
-  */
- revertUrl = `${page?.url.origin}${page?.url.pathname}`
-  if (page?.route.id === routeIdHome)
+
+  const lang = sessionStore.extract<string>('lang');
+  const
+    /**
+     * @description
+     * 📝 URL with corrected lang to be redirected.
+     */
+   nextRoute = `/${lang === "en" ? "" : `${lang}`}`;
+  if (page?.route.id === routeIdHome && page?.url.pathname !== nextRoute)
   {
-    const lang = sessionStore.extract<string>('lang');
-      revertUrl = `/${lang === "en" ? "" : `${lang}`}`;
-    goto
+   await gotoSW
     (
-      revertUrl,
-      {
-        replaceState: true
-      }
+      nextRoute,
+     true
     );
   }
 

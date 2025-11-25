@@ -23,6 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { walletStore } from "$lib/store/wallets";
   import { spliceBalanceDoubleZero, toDecimalFix } from "$lib/utils/string.js";
   import Walleticon from "./assets/walleticon.svelte";
 
@@ -42,7 +43,7 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: ({ main_balance } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: ({primary, spending} = $walletStore)
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -58,7 +59,7 @@
     </div>
     <div class="info">
       <span class="amount">
-        {spliceBalanceDoubleZero(toDecimalFix(main_balance)) ?? "0.00"}
+        {spliceBalanceDoubleZero(toDecimalFix(primary.available + spending.available)) ?? "0.00"}
       </span>
       <span class="amount"
         >BTA</span

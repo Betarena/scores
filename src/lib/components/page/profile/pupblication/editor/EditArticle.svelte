@@ -23,28 +23,28 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { page } from "$app/stores";
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
-  import { deleteArticle, publish, upsert } from "./helpers.js";
-  import { create_article_store } from "./create_article.store.js";
-  import { modalStore } from "$lib/store/modal.js";
-  import session from "$lib/store/session.js";
-  import Editor from "./Editor.svelte";
+  import { page } from "$app/stores";
   import XClose from "$lib/components/ui/assets/x-close.svelte";
   import BackButton from "$lib/components/ui/BackButton.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import Unpublish from "../Unpublish.svelte";
-  import DeleteModal from "../DeleteModal.svelte";
-  import PublishModal from "./PublishModal.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/edit/[...permalink]/[lang=lang]/$types.js";
   import type {
     AuthorsAuthorsMain,
     TranslationSportstacksSectionDataJSONSchema,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/edit/[...permalink]/[lang=lang]/$types.js";
-  import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import DeleteModal from "../DeleteModal.svelte";
+  import Unpublish from "../Unpublish.svelte";
+  import { create_article_store } from "./create_article.store.js";
+  import Editor from "./Editor.svelte";
+  import { deleteArticle, publish, upsert } from "./helpers.js";
+  import PublishModal from "./PublishModal.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -78,7 +78,7 @@
     .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
 
   $: title = initTitle || "";
-  $: if (featured_image && !content.includes(featured_image)) {
+  $: if (featured_image && !content.includes(featured_image.split("?")[0])) {
     content = `<img src="${getOptimizedImageUrl({
       strImageUrl: featured_image,
     })}" alt="${title}" />${content}`;

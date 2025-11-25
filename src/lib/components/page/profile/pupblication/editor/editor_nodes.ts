@@ -5,7 +5,8 @@ import { mergeAttributes, Node } from "@tiptap/core";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import type { DOMOutputSpec } from "@tiptap/pm/model";
-import { Plugin } from "prosemirror-state";
+import { EditorView } from "@tiptap/pm/view";
+import { Plugin, PluginKey } from "prosemirror-state";
 
 declare global {
   interface Window {
@@ -24,6 +25,15 @@ declare global {
       };
     };
   }
+}
+
+function insertImageNode(view: EditorView, src: string) {
+  if (!src) return;
+  const nodeType = view.state.schema.nodes.imageWithPlaceholder || view.state.schema.nodes.image;
+  if (!nodeType) return;
+
+  const node = nodeType.create({ src });
+  view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
 }
 
 export const ImageWithPlaceholder = Image.extend({
@@ -173,12 +183,105 @@ export const ImageWithPlaceholder = Image.extend({
 
       return {
         dom,
-        update: () =>
-        {
+        update: () => {
           return false
         }
       };
     };
+  },
+  addProseMirrorPlugins() {
+    const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|avif|svg)/i;
+
+    return [
+    // async plugin to handle image and URI strings from the clipboard
+      new Plugin({
+        key: new PluginKey("asyncImagePaste"),
+        view: (view) => {
+          const handleAsyncPaste = async (event: ClipboardEvent) => {
+            const shouldAttemptAsyncRead = event.clipboardData?.types.includes('text/uri-list') ||
+              (event.clipboardData?.items && Array.from(event.clipboardData.items).some(item => item.type.startsWith('image/')));
+
+            if (shouldAttemptAsyncRead) {
+              event.preventDefault();
+            } else if (event.clipboardData?.getData("text/plain")) {
+              return;
+            }
+
+            if (!navigator.clipboard || !navigator.clipboard.read) return;
+
+            try {
+              const clipboardContents = await navigator.clipboard.read();
+
+              for (const item of clipboardContents) {
+                let url = "";
+
+                if (item.types.includes('text/uri-list')) {
+                  const uriListBlob = await item.getType('text/uri-list');
+                  const uriListText = await uriListBlob.text();
+                  url = uriListText.split('\n')[0].trim();
+                  if (url && IMG_EXT_RE.test(url)) {
+                    insertImageNode(view, url);
+                    break;
+                  } else {
+                    const nodeType = view.state.schema.nodes.link;
+                    if (!nodeType) return;
+
+                    const node = nodeType.create({ href: url });
+                    view.dispatch(view.state.tr.replaceSelectionWith(node).scrollIntoView());
+                  }
+                }
+
+                const imageType = item.types.find(type => type.startsWith('image/'));
+                if (imageType) {
+                  const blob = await item.getType(imageType);
+                  const objectUrl = URL.createObjectURL(blob);
+
+                  insertImageNode(view, objectUrl);
+                  break;
+                }
+              }
+
+            } catch (err) {
+              console.warn('Async clipboard read failed:', err);
+            }
+          };
+
+          view.dom.addEventListener('paste', handleAsyncPaste);
+
+          return {
+            destroy: () => {
+              view.dom.removeEventListener('paste', handleAsyncPaste);
+            }
+          };
+        }
+      }),
+
+      new Plugin({
+        props: {
+          handlePaste(view, event: ClipboardEvent) {
+            const clipboard = event.clipboardData;
+            if (!clipboard) return false;
+
+            for (const item of clipboard.items) {
+              if (item.type.startsWith("image/")) {
+              const file = item.getAsFile();
+              if (file) {
+                event.preventDefault();
+                const objectUrl = URL.createObjectURL(file);
+                insertImageNode(view, objectUrl);
+                return true;
+              }
+              }
+              if (item.type === "text/uri-list") {
+              event.preventDefault();
+              return true;
+              }
+            }
+            return false;
+          }
+        },
+      }),
+    ];
   },
 });
 
@@ -439,6 +542,115 @@ export const YouTube = Node.create({
         },
       }),
     ];
+  },
+});
+
+export const WidgetNode = Node.create({
+  name: 'widget',
+  group: 'block',
+  atom: true,
+  selectable: false,
+
+  addAttributes() {
+    return {
+      'data-widget-id': {
+        default: null,
+        parseHTML: element => element.getAttribute('data-widget-id'),
+        renderHTML: attributes => {
+          if (!attributes['data-widget-id']) {
+            return {};
+          }
+          return {
+            'data-widget-id': attributes['data-widget-id'],
+          };
+        },
+      },
+      dataAttributes: {
+        default: {},
+        parseHTML: element => {
+          const dataAttrs: Record<string, string> = {};
+          Array.from((element as HTMLElement).attributes).forEach(attr => {
+            if (attr.name.startsWith('data-')) {
+              dataAttrs[attr.name] = attr.value;
+            }
+          });
+          return dataAttrs;
+        },
+        renderHTML: attributes => {
+          return attributes.dataAttributes || {};
+        },
+      },
+      tagName: {
+        default: 'div',
+        parseHTML: element => (element as HTMLElement).tagName.toLowerCase(),
+        renderHTML: () => ({}),
+      },
+      innerHTML: {
+        default: '',
+        parseHTML: element => (element as HTMLElement).innerHTML,
+        renderHTML: () => ({}),
+      }
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: '[data-widget-id]',
+        getAttrs: element => {
+          const el = element as HTMLElement;
+          const widgetId = el.getAttribute('data-widget-id');
+
+          if (!widgetId) return false;
+
+          const dataAttributes: Record<string, string> = {};
+          Array.from(el.attributes).forEach(attr => {
+            if (attr.name.startsWith('data-')) {
+              dataAttributes[attr.name] = attr.value;
+            }
+          });
+
+          return {
+            'data-widget-id': widgetId,
+            dataAttributes,
+            tagName: el.tagName.toLowerCase(),
+            innerHTML: el.innerHTML
+          };
+        },
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const tagName = 'div';
+
+    const attrs = mergeAttributes(HTMLAttributes)
+
+    return [tagName, attrs];
+  },
+
+  addNodeView() {
+    return ({ node }) => {
+      const element = document.createElement('div');
+      element.style.width = '100%';
+      element.style.height = '60px';
+      element.style.borderRadius = '8px';
+      element.style.backgroundColor = '#2d2d2d';
+      element.style.display = 'flex';
+      element.style.justifyContent = "center"
+      element.style.alignItems = "center"
+      element.innerHTML = `Here will be widget with id: ${node.attrs['data-widget-id']} prediction-id:${node.attrs.dataAttributes['data-ai-prediction-id']}`;
+
+      Object.entries(node.attrs.dataAttributes || {}).forEach(([key, value]) => {
+        element.setAttribute(key, `${value}`);
+      });
+
+      return {
+        dom: element,
+        update: () => false,
+        ignoreMutation: () => true
+      };
+    };
   },
 });
 

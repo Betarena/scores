@@ -10,10 +10,9 @@
 <script lang="ts">
   // #region ➤ 📌 VARIABLES
 
-  import { createEventDispatcher } from "svelte";
-  import DefaultAvatar from "./assets/default-avatar.svelte";
-  import ImgPlaceholder from "./assets/img-placeholder.svelte";
   import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import { createEventDispatcher } from "svelte";
+  import ImgPlaceholder from "./assets/img-placeholder.svelte";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -70,8 +69,8 @@
     class="sportstack-image"
     style=
     "
-    background: url({getOptimizedImageUrl({ strImageUrl: src })}) center center / cover no-repeat;
-    background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+    background: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src })}) center center / cover no-repeat;
+    background-image: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src })});
     {styles}
     border-radius: {radius};
     "
@@ -86,7 +85,7 @@
     style="
     {styles}
     border-radius: {radius};
-    background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+    background-image: url({src?.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src })});
     "
   >
     <ImgPlaceholder size={numSize / 2} />

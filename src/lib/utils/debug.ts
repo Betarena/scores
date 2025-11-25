@@ -18,8 +18,7 @@
 
 // #region ➤ 📦 Package Imports
 
-import { browser, dev } from '$app/environment';
-import * as Sentry from '@sentry/browser';
+import { browser } from '$app/environment';
 import { json } from '@sveltejs/kit';
 import chalk, { type ChalkInstance } from 'chalk';
 
@@ -609,51 +608,6 @@ export function log_error_v1
   // console.trace(excpetion);
 
   return;
-}
-
-/**
- * @deprecated
- * @author
- *  @migbash
- * @summary
- *  🔹 HELPER
- * @description
- *  📌 initialized Sentry Debug/Logging in PRODUCTION environment;
- */
-export function initSentry
-(
-): void
-{
-  if (!dev)
-
-    Sentry.init
-    (
-      {
-        dsn: 'https://847e94f5884c4185809a4cee44769d8b@o1009217.ingest.sentry.io/6275655',
-        integrations:
-        [
-          // new BrowserTracing(), // deprecated
-          new Sentry.Replay()
-        ],
-        // release: "v.2.2.3",
-
-        // NOTE: browser-tracing;
-
-        // Set tracesSampleRate to 1.0 to capture 100%
-        // of transactions for performance monitoring.
-        // We recommend adjusting this value in production
-        tracesSampleRate: 1.0,
-
-        // NOTE: replay-session;
-
-        // This sets the sample rate to be 10%. You may want this to be 100% while
-        // in development and sample at a lower rate in production
-        replaysSessionSampleRate: 0.1,
-        // If the entire session is not sampled, use the below sample rate to sample
-        // sessions when an error occurs.
-        replaysOnErrorSampleRate: 1.0,
-      }
-    );
 }
 
 /**
