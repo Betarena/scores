@@ -507,7 +507,7 @@ heroku-target-bash:
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 🐳 │ DOCKER                                                                      │
+# │ 🐳 // DOCKER                                                                     │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 .ONESHELL:
@@ -540,10 +540,6 @@ docker-image-build:
 		-f ./.docker/Dockerfile.scores.full \
 		-t betarena-scores:$${TEMP_VERSION} \
 		--platform=linux/amd64 \
-		--progress=plain
-		# --no-cache
-	#
-#
 		--progress=plain
 		# --no-cache
 	#
@@ -605,60 +601,83 @@ docker-image-publish-to-registry:
 
 .ONESHELL:
 docker-volume-scores-prune-target:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ┣──────────────────────────────────────────────────────────────────┫
+	# │ │: prune docker volume for target 'scores-<env>' service.        │
+	# ╰──────────────────────────────────────────────────────────────────╯
 
+	TEMP_DEBUG_PREFIX="[Makefile::docker-volume-scores-prune-target]"
 	TEMP_VOLUME_TO_PRUNE="betarena-scores_$(target)-volume"
 
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 💽 │ pruning volumes for scores                                  │\
+		\n┣──────────────────────────────────────────────────────────────────┫\
 		\n│ ➤ type: $(type) \
 		\n│ ➤ target: $(target) \
 		\n│ ➤ TEMP_VOLUME_TO_PRUNE: $$(TEMP_VOLUME_TO_PRUNE) \
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	sleep 5; \
-
 	# [🐞]
-	echo "[docker-compose-up] contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
+	echo "$${TEMP_DEBUG_PREFIX} contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
 	# [🐞]
-	docker run \
-		--rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
-	#
+	docker run --rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
 
 	if [ "$(type)" = "reset" ]; then\
-		sleep 5; \
+		sleep 8; \
 		docker run --rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine sh -c "rm -rf /v/*"; \
-		sleep 5; \
+		sleep 8; \
 	fi
 
 	# [🐞]
-	echo "[docker-compose-up] contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
+	echo "$${TEMP_DEBUG_PREFIX} contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
 	# [🐞]
-	docker run \
-		--rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
-	#
+	docker run --rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
+#
+
+.ONESHELL:
+docker-volume-scores-check:
+	# [🐞]
+	echo "[Makefile::docker-volume-scores-check] contents of docker volume :: betarena-scores_scores-staging-volume"
+	# [🐞]
+	docker run --rm -v betarena-scores_scores-staging-volume:/v alpine ls -lha /v
+
+	# [🐞]
+	echo "[Makefile::docker-volume-scores-check] contents of docker volume :: betarena-scores_scores-production-volume"
+	# [🐞]
+	docker run --rm -v betarena-scores_scores-production-volume:/v alpine ls -lha /v
 #
 
 .ONESHELL:
 docker-compose-up:
 	@
 	# ╭──────────────────────────────────────────────────────────────────╮
-	# │ DESCRIPTION:
-	# │ ➤ custom wrapper for 'docker-compose'
+	# │ TARGET DESCRIPTION  																						 │
+	# ┣──────────────────────────────────────────────────────────────────┫
+	# │ │: custom wrapper for 'docker-compose'                           │
 	# ╰──────────────────────────────────────────────────────────────────╯
+
+	TEMP_DEBUG_PREFIX="[Makefile::docker-compose-up]"
 
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🐳 │ (re)start container(s)                                      │\
+		\n┣──────────────────────────────────────────────────────────────────┫\
 		\n│ ➤ version: $(version) \
 		\n│ ➤ type: $(type) \
 		\n│ ➤ services: $(services) \
-		\n│ ➤ DOCKER_IMAGE: $(BETARNA_SCORES__DOCKER_IMAGE) \
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
+
+	# ╭─────
+	# │ CHECK:
+	# │ |: for validate input parameters
+	# ╰─────
 
 	if [ ! $(services) ]; then\
 		echo "[Makefile::docker-compose-up] Please set a target services via services=\"<service-1>\"";\
@@ -674,23 +693,14 @@ docker-compose-up:
 
 	if [ "$(version)" = "latest" ]; then\
 		cd .docker/; \
-		docker compose pull scores; \
+		docker compose pull scores-production; \
 		cd ..; \
 	fi
 
-	if [ "$(BETARNA_SCORES__DOCKER_IMAGE)" != "name4d/betarena:scores-latest" ]; then\
-		echo -e \
-			"$(COLOR_R)\
-			\n╭──────────────────────────────────────────────────────────────────╮\
-			\n│ 🐳 │ WARNING:                                                    │\
-			\n│ ➤ Docker image is not set to 'name4d/betarena:scores-latest'     │\
-			\n│ ➤ Sleeping for 10 seconds                                        │\
-			\n┣──────────────────────────────────────────────────────────────────┫\
-			\n│ ➤ Please set the image to 'name4d/betarena:scores-latest'        │\
-			\n╰──────────────────────────────────────────────────────────────────╯\
-			$(END_COLOUR)\n";\
-		sleep 10; \
-	fi
+	# ╭─────
+	# │ CHECK:
+	# │ |: create required directories (ie: logs)
+	# ╰─────
 
 	mkdir \
 		-p \
@@ -699,7 +709,12 @@ docker-compose-up:
 		./.docker/nginx/logs/goaccess
 	#
 
-	TEMP_SCORES_ENVIRONMENT="scores-$(type)"
+	# ╭─────
+	# │ CHECK:
+	# │ |: create required directories (ie: logs)
+	# ╰─────
+
+	TEMP_SCORES_ENVIRONMENT=""
 
 	if [[ "$(services)" == *"scores-staging"* ]]; then\
 		TEMP_SCORES_ENVIRONMENT="scores-staging";\
@@ -707,7 +722,17 @@ docker-compose-up:
 		TEMP_SCORES_ENVIRONMENT="scores-production";\
 	fi
 
-	${MAKE} docker-volume-scores-prune-target type="prune" target="$${TEMP_SCORES_ENVIRONMENT}"
+	if [ "$${TEMP_SCORES_ENVIRONMENT}" ]; then\
+		${MAKE} docker-volume-scores-prune-target type="reset" target="$${TEMP_SCORES_ENVIRONMENT}";\
+	else\
+		echo "$${TEMP_DEBUG_PREFIX} 🟦 skipping volume prune as no valid 'scores' service detected in target services.";\
+	fi
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: generate docker-compose output file for debugging
+	# │ |: generated docker-compose.yml from merged files.
+	# ╰─────
 
 	# [🐞]
 	docker compose \
@@ -717,7 +742,17 @@ docker-compose-up:
 		> .docker/docker-compose.output.yml
 	#
 
+	# ╭─────
+	# │ NOTE:
+	# │ |: export current docker container logs before (re)start
+	# ╰─────
+
 	${MAKE} docker-container-log-full-export
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: docker-compose up (build & deploy)
+	# ╰─────
 
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
@@ -730,19 +765,12 @@ docker-compose-up:
 		$(services)
 	#
 
-	# [🐞]
-	echo "[Makefile::docker-compose-up] contents of docker volume :: betarena-scores_scores-staging-volume"
-	# [🐞]
-	docker run \
-		--rm -v betarena-scores_scores-staging-volume:/v alpine ls -lha /v
-	#
+	${MAKE} docker-volume-scores-check
 
-	# [🐞]
-	echo "[Makefile::docker-compose-up] contents of docker volume :: betarena-scores_scores-production-volume"
-	# [🐞]
-	docker run \
-		--rm -v betarena-scores_scores-production-volume:/v alpine ls -lha /v
-	#
+	# ╭─────
+	# │ NOTE:
+	# │ |: clean dangling images if 'latest' version deployed
+	# ╰─────
 
 	if [ "$(version)" = "latest" ]; then\
 		docker rmi $$(docker images -f "dangling=true" -q); \
@@ -752,29 +780,37 @@ docker-compose-up:
 .ONESHELL:
 docker-container-log-full-export:
 	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ┣──────────────────────────────────────────────────────────────────┫
+	# │ │: export all docker container logs to a designated directory    │
+	# │ │: for archive & debugging purposes.                             │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	PATH_OUTPUT=./.docker/.export/$$(date +%Y_%m_%d_%H_%M_%S)
+
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 📜 │ Exporting docker container logs                             │\
+		\n┣──────────────────────────────────────────────────────────────────┫\
+		\n│ ➤ path: $${PATH_OUTPUT} \
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	PATH_OUTPUT=./.docker/.export/$$(date +%Y_%m_%d_%H_%M_%S)
-
 	mkdir -p $${PATH_OUTPUT}
 
-	echo "Saving logs to: $${PATH_OUTPUT}"
-
 	# ╭─────
-	# │ NOTE:
-	# │ |: Export current docker container state to a file, for archive
+	# │ NOTE: IMPORTANT
+	# │ |: Export current docker containers metadata to a file.
+	# │ |: Used for debugging purposes.
 	# ╰─────
 
 	docker ps -a --format="table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.Status}}" --no-trunc >> $${PATH_OUTPUT}/docker.state.log
 
 	# ╭─────
-	# │ NOTE:
-	# │ |: Exporting all logs from 'scores' containers (replicas)
+	# │ NOTE: IMPORTANT
+	# │ |: Exporting all logs from 'scores' containers (& its replicas)
 	# ╰─────
 
 	for i in $$(docker ps --filter name=^betarena-scores-scores- --format="{{.ID}}" --no-trunc); do\
@@ -785,8 +821,8 @@ docker-container-log-full-export:
 	done
 
 	# ╭─────
-	# │ NOTE:
-	# │ |: Exporting all logs from all other containers
+	# │ NOTE: IMPORTANT
+	# │ |: Exporting all logs from all other containers to a designated directory
 	# ╰─────
 
 	cp \
@@ -796,17 +832,23 @@ docker-container-log-full-export:
 #
 
 .ONESHELL:
-docker-container-log-nginx-export:
+docker-run-goaccess:
 	@
-	echo -e \
-		"\
-		\n╭──────────────────────────────────────────────────────────────────╮\
-		\n│ 📜 │ Exporting docker container logs                             │\
-		\n╰──────────────────────────────────────────────────────────────────╯"
-	#
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ┣──────────────────────────────────────────────────────────────────┫
+	# │ │: run goaccess log analyzer for nginx logs.                     │
+	# ╰──────────────────────────────────────────────────────────────────╯
 
-	cp ./.docker/nginx/logs/scores/access.log ./.docker/export/scores.access.log
-	truncate -s 0 ./.docker/nginx/logs/scores/access.log
+	docker run --rm -it \
+		-v $(logPath):/temp/goaccess/access.log:ro \
+		-v ./.docker/goaccess/output:/var/www/goaccess/goacces.report.html:rw \
+		allinurl/goaccess:1.9.3 \
+		goaccess \
+			$(logPath) \
+			-o /var/www/goaccess/goacces.report.html \
+			--log-format=COMBINED
+	#
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
