@@ -23,9 +23,37 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import Layout from '$lib/components/section/authors/page/author/Layout.svelte';
+  import { config } from '$lib/constants/config.js';
+
+  import WrapperDynamicImport from '$lib/components/misc/WrapperDynamicImport.svelte';
+  import Page from '$lib/svelte/page/page.author.svelte';
 
   // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'variables' that are to be         │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. export const / let [..]                                             │
+  // │ 2. const [..]                                                          │
+  // │ 3. let [..]                                                            │
+  // │ 4. $: [..]                                                             │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  const
+    /**
+     * @description
+     * 📝 `this` component **main** `id` and `data-testid` prefix.
+     */
+    objConfig
+      = config.objApp.objComponentConfiguration.get('src/routes/(authors)/a/[...permalink]/+page.svelte')
+  ;
+
+  // #endregion ➤ 📌 VARIABLES
 
 </script>
 
@@ -38,4 +66,14 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<Layout />
+{#if !objConfig?.isHidden}
+
+  {#if objConfig?.isDynamicImport}
+    <WrapperDynamicImport
+      importComponentPath='Page-Author-Article'
+    />
+  {:else}
+    <Page />
+  {/if}
+
+{/if}

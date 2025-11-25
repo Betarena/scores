@@ -5,7 +5,7 @@
 // │ ➤ Status        // 🔒 LOCKED                                                     │
 // │ ➤ Author(s)     // @migbash                                                      │
 // │ ➤ Maintainer(s) // @migbash                                                      │
-// │ ➤ Created on    // <date-created>                                                │
+// │ ➤ Created on    // November 21st, 2021 2:22 AM                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
 // │ 📝 Description                                                                   │
 // ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -35,8 +35,13 @@ export default
     {
       scss:
       {
-        prependData: `@import 'static/scss/themes/index.scss';`
-      }
+        // ╭─────
+        // │ IMPORTANT
+        // │ |: DISABLED
+        // │ |: Causes overbloating of CSS during final build output.
+        // ╰─────
+        // prependData: `@import 'static/scss/themes/index.scss';`
+      },
     }
   ),
 
@@ -59,6 +64,10 @@ export default
       {
         // ╭─────
         // │ IMPORTANT
+        // │ |: DISABLED
+        // │ |: Project is deployed behind a reverse proxy (nginx) that
+        // │ |: already handles compression of resources.
+        // ┣─────
         // │ |: 🔗 read-more |:| https://discord.com/channels/457912077277855764/1049973005675143219
         // │ |: 🔗 read-more |:| https://kit.svelte.dev/docs/adapter-node#options-precompress
         // ╰─────
