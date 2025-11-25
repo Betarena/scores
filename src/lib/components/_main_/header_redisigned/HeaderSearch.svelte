@@ -23,6 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { get } from "$lib/api/utils.js";
@@ -138,6 +139,7 @@
   }
 
   async function getSuggestions(text: string) {
+    if (!browser) return;
     const res = await get<{
       suggestions: ISearchSuggestion[];
     }>(`/api/data/search.suggestions?search=${encodeURIComponent(search)}`);

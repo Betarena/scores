@@ -15,11 +15,20 @@
 
 // #region ➤ 📦 Package Imports
 
+import { config } from '$lib/constants/config.js';
 import { main } from '$lib/sveltekit/load/load.author.page.article.js';
 
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
+
+// #region ➤ 📌 VARIABLES
+
+export const ssr = config.objApp.objComponentConfiguration.get('src/routes/(authors)/a/[...permalink]/+page.server.ts')?.objSveltekitOptions?.isSsr ?? true;
+export const csr = config.objApp.objComponentConfiguration.get('src/routes/(authors)/a/[...permalink]/+page.server.ts')?.objSveltekitOptions?.isCsr ?? true;
+// export const prerender = false;
+
+// #endregion ➤ 📌 VARIABLES
 
 // #region ➤ 🔄 LIFECYCLE - [SVELTE-KIT]
 

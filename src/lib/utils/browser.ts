@@ -1,0 +1,122 @@
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 📌 High Order Overview                                                           │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ ➤ Code Format   // V.8.0                                                         │
+// │ ➤ Status        // 🔒 LOCKED                                                     │
+// │ ➤ Author(s)     // @migbash                                                      │
+// │ ➤ Maintainer(s) // @migbash                                                      │
+// │ ➤ Created on    // November 17th, 2025 12:35 PM                                  │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ 📝 Description                                                                   │
+// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// │ BETARENA (Module)
+// │ |: Browser utility for managing browser-related functionalities.
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+// #region ➤ 📦 Package Imports
+
+import session from "$lib/store/session.js";
+import { Intercom } from "./service.intercom.js";
+
+// #endregion ➤ 📦 Package Imports
+
+export class Browser
+{
+  constructor() {}
+
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 📌 │ HELPER METHODS                                                              │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📝 Initiate Intercom subscription to monitor its state changes.
+   * @return { void }
+   */
+  initiateSubscription
+  (
+  ): void
+  {
+    let
+      // ╭─────
+      // │ NOTE:
+      // │ |:
+      // ╰─────
+      [
+        isIntercomReady,
+        isIntercomBooted,
+        isIntercomUIPresent
+      ] = [
+        false,
+        false,
+        false,
+      ]
+    ;
+
+    const
+      // ╭─────
+      // │ NOTE:
+      // │ |: This interval is necessary to keep the session store updated with the latest window object.
+      // ╰─────
+      [
+        instanceInterval
+      ] = [
+        setInterval
+        (
+          (
+          ) =>
+          {
+            new Intercom().checkStatus();
+
+            if (!isIntercomReady && new Intercom().isReady)
+            {
+              isIntercomReady = true;
+              session.updateData
+              (
+                [
+                  ['window', { Intercom: window.Intercom }]
+                ]
+              );
+            }
+            if (!isIntercomBooted && new Intercom().isBooted)
+            {
+              isIntercomBooted = true;
+              session.updateData
+              (
+                [
+                  ['window', { Intercom: window.Intercom }]
+                ]
+              );
+            }
+            if (!isIntercomUIPresent && new Intercom().isUIPresent)
+            {
+              isIntercomUIPresent = true;
+              session.updateData
+              (
+                [
+                  ['window', { Intercom: window.Intercom }]
+                ]
+              );
+            }
+
+            return;
+          },
+          1000
+        )
+      ]
+    ;
+
+    session.updateData
+    (
+      [
+        ['listIntervals', instanceInterval]
+      ]
+    );
+
+    return;
+  }
+}

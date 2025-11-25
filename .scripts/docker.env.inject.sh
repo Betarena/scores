@@ -72,8 +72,7 @@ do
   #
   find build \
     -type f \
-    ! -name '*.txt' \
-    ! -name '*.xml' \
+    -name '*.js' \
     -exec sed \
     -i "s|${key}|${value_adjusted}|g" '{}' +
   #
@@ -89,8 +88,9 @@ echo "[docker.env.inject.sh] 'VITE_X_' values remaining" $(find build -type f -e
 echo "[docker.env.inject.sh] 'VITE_X_' values replaced" $counter
 # [🐞]
 echo "[docker.env.inject.sh] ENVIROMENT INJECTION 🟨 // END"
-
 # [🐞]
 # echo "[docker.env.inject.sh] ENV:" $(env)
 # [🐞]
 echo "[docker.env.inject.sh] DONE 🟩"
+# [🐞]
+echo "[docker.env.inject.sh] ────────────────────────────────────────────────────────────────"

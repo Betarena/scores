@@ -21,6 +21,8 @@ import { mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { dlogv2, ERROR_CODE_INVALID } from '$lib/utils/debug.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 import { parseObject } from '$lib/utils/string.2.js';
+import { getOptimizedImageUrl } from '$lib/utils/image.js';
+import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
 
 import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import type { B_SAP_D2 } from '@betarena/scores-lib/types/v8/preload.scores.js';
@@ -182,20 +184,74 @@ export async function main
     parentData.langParam
   );
 
-  objResponse.dataArticle = JSON.parse
-  (
-		JSON.stringify(objResponse.dataArticle)
-      // ╭─────
-      // │ NOTE:
-      // │ |: [LEGACY] Replace all instances of 'scores.betarena.com' with the parent config URL.
-      // ╰─────
-      ?.replaceAll('scores.betarena.com', parentData?.config?.url)
-      // ╭─────
-      // │ NOTE:
-      // │ |: Replace all instances of '{url}' with the parent config URL.
-      // ╰─────
-      ?.replaceAll('{url}', `https://${parentData?.config?.url}`)
-	);
+  // @ts-expect-error
+  objResponse.dataArticle = tryCatch
+    (
+      () =>
+        JSON.parse
+        (
+          JSON.stringify(objResponse.dataArticle)
+            // ╭─────
+            // │ NOTE:
+            // │ |: [LEGACY] Replace all instances of 'scores.betarena.com' with the parent config URL.
+            // ╰─────
+            ?.replaceAll
+            (
+              'scores.betarena.com',
+              parentData?.config?.url
+            )
+            // ╭─────
+            // │ NOTE:
+            // │ |: Replace all instances of '{url}' with the parent config URL.
+            // ╰─────
+            ?.replaceAll
+            (
+              '{url}',
+              `https://${parentData?.config?.url}`
+            )
+            // ╭─────
+            // │ NOTE: IMPORTANT CRITICAL
+            // │ |: [0] Optimize all images in the article content.
+            // ╰─────
+            ?.replaceAll
+            (
+              /<img[^>]+src=\\["']([^\\"'>]+)[\\"']/g,
+              (
+                match,
+                src
+              ) =>
+              {
+                // [🐞]
+                console.log('match', match, src);
+
+                return match
+                  .replace
+                  (
+                    src,
+                    getOptimizedImageUrl
+                    (
+                      {
+                        strImageUrl: src,
+                        intQuality: 90,
+                        intWidth: 750,
+                      }
+                    )
+                  )
+                ;
+              }
+            )
+            // ╭─────
+            // │ NOTE: IMPORTANT CRITICAL
+            // │ |: [1] Optimize all images in the article content.
+            // ╰─────
+            ?.replace
+            (
+              /<img/,
+              `<img fetchpriority='high' `
+            )
+        )
+    ) ?? objResponse.dataArticle
+  ;
 
   // ╭─────
   // │ NOTE: IMPORTANT
