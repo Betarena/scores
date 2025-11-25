@@ -100,8 +100,7 @@ export const config = {
       // │ NOTE:
       // │ |: Enable Service Worker for PWA Functionality
       // ┣─────
-      // │ |: WARNING:
-      // │ |: production ➤ 'true'
+      // │ |: "env/production/typical" :: true
       // ╰─────
       isServiceWorkerEnabled: false,
       // ╭─────
@@ -117,7 +116,7 @@ export const config = {
           // │ |: WARNING:
           // │ |: production ➤ 'true'
           // ╰─────
-          isEnabled: true,
+          isEnabled: false,
           // ╭─────
           // │ NOTE:
           // │ |: Partytown Configuration Code Sample
@@ -130,7 +129,7 @@ export const config = {
                 {
                   if (url.hostname === "connect.facebook.net")
                   {
-                    var proxyUrl = new URL('https://staging.betarena.com/partytown-proxy');
+                    var proxyUrl = new URL('https://betarena.com/partytown-proxy');
                     proxyUrl.search = 'url=' + url.href;
                     console.log('Partytown Proxy URL:', proxyUrl.href);
                     return proxyUrl;
@@ -142,7 +141,7 @@ export const config = {
                   'fbq',
                   'gtag',
                   'dataLayer.push',
-                  // 'Intercom',
+                  // 'Intercom', // uncomment if 'cdn-partytown' loading is used for Intercom
                 ],
               };
             </script>
@@ -160,9 +159,8 @@ export const config = {
           // ╭─────
           // │ NOTE:
           // │ |: Intercom Integration Toggle (enable/disable)
-          // ┣───
-          // │ |: WARNING:
-          // │ |: production ➤ 'true'
+          // ┣─────
+          // │ |: "env/production/typical" :: true
           // ╰─────
           isEnabled: true,
           // ╭─────
@@ -186,8 +184,7 @@ export const config = {
       // │ NOTE:
       // │ |: Configuration Settings for :: Betarena/Ad-Engine
       // ┣─────
-      // │ |: WARNING:
-      // │ |: production ➤ 'true'
+      // │ |: "env/production/typical" :: true
       // ╰─────
       isBetareAgEngineEnabled: true,
       // ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -246,7 +243,7 @@ export const config = {
                 // ╰──────────────────────────────────────────────────────────────────────────────────╯
                 // ╭─────
                 // │ NOTE:
-                // │ |: Enable Preload for 'link rel=preload' tags
+                // │ |: Enable Preload for '<link rel=preload [..]>' tags
                 // ╰─────
                 isPreload: false,
                 // ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -260,51 +257,70 @@ export const config = {
                   {
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Enable inline HTML head links injection
+                    // │ |: Toggle inline HTML <head> resource link(s) injection
                     // ┣─────
-                    // │ |: EXAMPLE
-                    // │ <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" />
-                    // │ becomes:
-                    // │ <style> {inlined CSS content} </style>
+                    // │ EXAMPLE [0]
+                    // │  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" />
+                    // │    ⬇becomes⬇
+                    // │  <style> {inlined CSS content} </style>
+                    // ┣─────
+                    // │ NOTE:
+                    // │ |: Needed to reduce number of HTTP requests for resources.
                     // ╰─────
-                    isInjectionEnabled: true,
+                    isInjectionEnabled: false,
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Skip (exlcude) matching '<head> <link href="{.}" >' parsing
+                    // │ |: Skip (exclude) injection of matching '<link href="*" [..]>'
                     // ╰─────
                     setInjectionLinkHrefExclude: new Set
-                    (
-                      [
-                        'https://fonts.googleapis.com/', // google fonts
-                        '__app-styles', // custom identifier to exclude app styles
-                      ]
-                    ),
+                      (
+                        [
+                          'https://fonts.googleapis.com/', // google fonts
+                          '__app-styles', // custom identifier to exclude app styles
+                        ]
+                      ),
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Enable Inline Single Line Styles Injection (compression-js-logic)
+                    // │ |: Toggle inline single line injection
+                    // ┣─────
+                    // │ EXAMPLE [0]
+                    // │  removes line breaks (\n) from inlined styles
+                    // ┣─────
+                    // │ WARNING: [disabled]
                     // ╰─────
                     isInjectionInlineSingleLineEnabled: true,
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Enable Inline Head Styles Injection (compression-js-logic)
+                    // │ |: Toggle inline Head Styles Injection (compression-js-logic)
                     // ┣─────
-                    // │ WARNING:
-                    // │ |: This means, compressed injection will ONLY resolve at 'document-load-time' (client-side).
+                    // │ EXAMPLE [0]
+                    // │  <style> {inlined CSS content} </style>
+                    // │    ⬇becomes⬇
+                    // │  <style> {inlined CSS content (compressed)} </style>
+                    // ┣─────
+                    // │ NOTE: WARNING:
+                    // │ |: Compressed injection will ONLY resolve at 'document-load-time' (client-side-rendering).
+                    // │ |: This may cause FOUC (Flash of Unstyled Content) in some cases.
                     // ╰─────
                     isInjectionCompressed: false,
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Skip (exclude) Target Head Styles from Inline Compression
+                    // │ |: Skip (exclude) compression of matching '<link href="*" [..]>'
                     // ╰─────
                     setInjectionCompressedExclude: new Set
-                    (
-                      [
-                        '__app-styles'
-                      ]
-                    ),
+                      (
+                        [
+                          '__app-styles'
+                        ]
+                      ),
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Enable Image Preload Injection in HTML Head
+                    // │ |: Toggle image preload injection in HTML Head
+                    // ┣─────
+                    // │ EXAMPLE [0]
+                    // │  loop over ALL '<img src="*">' tags found in 'pre-loaded' data & inject as 'preload' links.
+                    // │    ⬇becomes⬇
+                    // │  <link rel="preload" as="image" href="*" fetchpriority="high" />
                     // ╰─────
                     isInjectionImagePreload: true,
                     // ╭─────
@@ -312,351 +328,363 @@ export const config = {
                     // │ |: Dynamic Server Injection for :: Website Stylesheets
                     // ╰─────
                     stylesheets:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Stylesheets
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'purged'    :: Purged stylesheets (critical CSS inlined, rest loaded async)
-                      // │ |: -> 'standard'  :: Standard stylesheets
-                      // ╰─────
-                      strLoadingType: 'purged' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-STYLESHEETS :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'purged': `
-                          <link
-                            href="css/app.purged.clean.css"
-                            rel="stylesheet"
-                            text="text/css"
-                          />
-                        `,
-                        'standard': `
-                          <link
-                            href="app.css"
-                            rel="stylesheet"
-                            text="text/css"
-                          />
-                        `,
-                      }
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'purged'    :: Purged stylesheets (critical CSS inlined, rest loaded async)
+                        // │ |: -> 'standard'  :: Standard stylesheets
+                        // ╰─────
+                        strLoadingType: 'purged' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-STYLESHEETS :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'purged': `
+                            <link
+                              href="css/app.purged.clean.css"
+                              rel="stylesheet"
+                              text="text/css"
+                            />
+                          `,
+                          'standard': `
+                            <link
+                              href="app.css"
+                              rel="stylesheet"
+                              text="text/css"
+                            />
+                          `,
+                        }
+                      },
                     // ╭─────
                     // │ NOTE:
                     // │ |: Dynamic Server Injection for :: Website Fonts
                     // ╰─────
                     fonts:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Fonts
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'local' :: Locally hosted fonts
-                      // │ |: -> 'cdn'   :: 3rd-Party fonts loaded via CDN
-                      // ╰─────
-                      strLoadingType: 'cdn' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-FONTS :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'local': `
-                          <link
-                            href="template/html.head.fonts.local.html"
-                          />
-                        `,
-                        'cdn': `
-                          <link
-                            href="template/html.head.fonts.cdn.html"
-                          />
-                        `,
-                      }
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'local' :: Locally hosted fonts
+                        // │ |: -> 'cdn'   :: 3rd-Party fonts loaded via CDN
+                        // ╰─────
+                        strLoadingType: 'cdn' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-FONTS :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'local': `
+                            <link
+                              href="template/html.head.fonts.local.html"
+                            />
+                          `,
+                          'cdn': `
+                            <link
+                              href="template/html.head.fonts.cdn.html"
+                            />
+                          `,
+                        }
+                      },
                     // ╭─────
                     // │ NOTE:
                     // │ |: Dynamic Server Injection for :: Google-Tag-Manager
                     // ╰─────
                     googleTagManager:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Fonts
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'local'         :: Locally hosted scripts
-                      // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
-                      // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
-                      // ╰─────
-                      strLoadingType: 'cdn-partytown' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-GOOGLE-ANALYTICS :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'local': `
-                          <link
-                            href="scripts/service.googletagmanager.js"
-                            as="script"
-                          />
-                        `,
-                        'cdn': `
-                          <link
-                            href="template/html.head.googletagmanager.cdn.html"
-                          />
-                        `,
-                        'cdn-partytown': `
-                          <link
-                            href="template/html.head.googletagmanager.cdn.partytown.html"
-                          />
-                        `,
-                      } as Record<ILoadingType, string>,
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'local'         :: Locally hosted scripts
+                        // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
+                        // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
+                        // ╰─────
+                        strLoadingType: 'cdn-partytown' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-GOOGLE-ANALYTICS :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: Loading Options for Website Stylesheets
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'local': `
+                            <link
+                              href="scripts/service.googletagmanager.js"
+                              as="script"
+                            />
+                          `,
+                          'cdn': `
+                            <link
+                              href="template/html.head.googletagmanager.cdn.html"
+                            />
+                          `,
+                          'cdn-partytown': `
+                            <link
+                              href="template/html.head.googletagmanager.cdn.partytown.html"
+                            />
+                          `,
+                        } as Record<ILoadingType, string>,
+                      },
                     // ╭─────
                     // │ NOTE:
                     // │ |: Dynamic Server Injection for :: Twitter
                     // ╰─────
                     twitter:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Fonts
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'local'         :: Locally hosted scripts
-                      // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
-                      // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
-                      // ╰─────
-                      strLoadingType: 'cdn-partytown' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-TWITTER :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'local': `
-                          <link
-                            href="scripts/service.twitter.js"
-                            as="script"
-                          />
-                        `,
-                        'cdn': `
-                          <link
-                            href="template/html.head.twitter.cdn.html"
-                          />
-                        `,
-                        'cdn-partytown': `
-                          <link
-                            href="template/html.head.twitter.cdn.partytown.html"
-                          />
-                        `,
-                      } as Record<ILoadingType, string>,
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'local'         :: Locally hosted scripts
+                        // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
+                        // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
+                        // ╰─────
+                        strLoadingType: 'cdn-partytown' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-TWITTER :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'local': `
+                            <link
+                              href="scripts/service.twitter.js"
+                              as="script"
+                            />
+                          `,
+                          'cdn': `
+                            <link
+                              href="template/html.head.twitter.cdn.html"
+                            />
+                          `,
+                          'cdn-partytown': `
+                            <link
+                              href="template/html.head.twitter.cdn.partytown.html"
+                            />
+                          `,
+                        } as Record < ILoadingType, string >,
+                      },
                     // ╭─────
                     // │ NOTE:
                     // │ |: Dynamic Server Injection for :: PostHog
                     // ╰─────
                     posthog:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Fonts
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'local'         :: Locally hosted scripts
-                      // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
-                      // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
-                      // ╰─────
-                      strLoadingType: 'cdn-partytown' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-POSTHOG :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'cdn': `
-                          <link
-                            href="template/html.head.posthog.cdn.html"
-                          />
-                        `,
-                        'cdn-partytown': `
-                          <link
-                            href="template/html.head.posthog.cdn.partytown.html"
-                          />
-                        `,
-                      } as Record<ILoadingType, string>,
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
+                        // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
+                        // ╰─────
+                        strLoadingType: 'cdn-partytown' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-POSTHOG :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'cdn': `
+                            <link
+                              href="template/html.head.posthog.cdn.html"
+                            />
+                          `,
+                          'cdn-partytown': `
+                            <link
+                              href="template/html.head.posthog.cdn.partytown.html"
+                            />
+                          `,
+                        } as Record<ILoadingType, string>,
+                      },
                     // ╭─────
                     // │ NOTE:
                     // │ |: Dynamic Server Injection for :: Facebook
                     // ╰─────
                     facebook:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Fonts
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'local'         :: Locally hosted scripts
-                      // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
-                      // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
-                      // ╰─────
-                      strLoadingType: 'cdn-partytown' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-FACEBOOK :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'cdn': `
-                          <link
-                            href="template/html.head.facebook.cdn.html"
-                          />
-                        `,
-                        'cdn-partytown': `
-                          <link
-                            href="template/html.head.facebook.cdn.partytown.html"
-                          />
-                        `,
-                      } as Record<ILoadingType, string>,
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
+                        // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
+                        // ╰─────
+                        strLoadingType: 'cdn-partytown' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-FACEBOOK :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'cdn': `
+                            <link
+                              href="template/html.head.facebook.cdn.html"
+                            />
+                          `,
+                          'cdn-partytown': `
+                            <link
+                              href="template/html.head.facebook.cdn.partytown.html"
+                            />
+                          `,
+                        } as Record < ILoadingType, string >,
+                      },
                     // ╭─────
                     // │ NOTE:
                     // │ |: Dynamic Server Injection for :: LinkedIn
                     // ╰─────
                     linkedin:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Fonts
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'local'         :: Locally hosted scripts
-                      // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
-                      // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
-                      // ╰─────
-                      strLoadingType: 'cdn-partytown' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-LINKEDIN :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'cdn': `
-                          <link
-                            href="template/html.head.linkedin.cdn.html"
-                          />
-                        `,
-                        'cdn-partytown': `
-                          <link
-                            href="template/html.head.linkedin.cdn.partytown.html"
-                          />
-                        `,
-                      } as Record<ILoadingType, string>,
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
+                        // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
+                        // ╰─────
+                        strLoadingType: 'cdn-partytown' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-LINKEDIN :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'cdn': `
+                            <link
+                              href="template/html.head.linkedin.cdn.html"
+                            />
+                          `,
+                          'cdn-partytown': `
+                            <link
+                              href="template/html.head.linkedin.cdn.partytown.html"
+                            />
+                          `,
+                        } as Record<ILoadingType, string>,
+                      },
                     // ╭─────
                     // │ NOTE:
                     // │ |: Dynamic Server Injection for :: Intercom
                     // ╰─────
                     intercom:
-                    {
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Toggle Loading Type for Website Fonts
-                      // ╰─────
-                      isEnabled: true,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Type Options:
-                      // │ |: -> 'local'         :: Locally hosted scripts
-                      // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
-                      // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
-                      // ╰─────
-                      strLoadingType: 'cdn-partytown' as ILoadingType,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: HTML Head Injection Point Identifier
-                      // ╰─────
-                      strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-INTERCOM :: INJECTED HERE DYNAMICALLY -->`,
-                      // ╭─────
-                      // │ NOTE:
-                      // │ |: Loading Options for Website Stylesheets
-                      // ╰─────
-                      objLoadingOptions:
                       {
-                        'cdn': `
-                          <link
-                            href="template/html.head.intercom.cdn.html"
-                          />
-                        `,
-                        'cdn-partytown': `
-                          <link
-                            href="template/html.head.intercom.cdn.partytown.html"
-                          />
-                        `,
-                      } as Record<ILoadingType, string>,
-                    },
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
+                        // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
+                        // ╰─────
+                        strLoadingType: 'cdn-partytown' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: 3RD-PARTY-INTERCOM :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'cdn': `
+                            <link
+                              href="template/html.head.intercom.cdn.html"
+                            />
+                          `,
+                          'cdn-partytown': `
+                            <link
+                              href="template/html.head.intercom.cdn.partytown.html"
+                            />
+                          `,
+                        } as Record < ILoadingType, string >,
+                      },
                     // TODO: implement progressier
                     // progressier:
                   },
@@ -667,8 +695,7 @@ export const config = {
                 // │ NOTE:
                 // │ |: Enable setting 'Cookie' headers
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: "env/production/typical" :: true
                 // ╰─────
                 isHeadersCookieEnabled: true,
               }
@@ -713,25 +740,25 @@ export const config = {
               {
                 // ╭─────
                 // │ NOTE:
-                // │ |: Configuration for SvelteKit Rendering Options
+                // │ |: sveltekit route :: configuration
                 // ╰─────
                 objSveltekitOptions:
                   {
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Toggle 'SERVER-SIDE-RENDERING' for route
+                    // │ |: Toggle 'server-side-redndering'
                     // ╰─────
                     isSsr: true,
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Toggle 'SERVER-SIDE-RENDERING' for route
+                    // │ |: Toggle 'client-side-rendering'
                     // ╰─────
                     isCsr: true,
                     // ╭─────
                     // │ NOTE:
-                    // │ |: Toggle 'SERVER-SIDE-RENDERING' for route
+                    // │ |: Toggle 'pre-rendering'
                     // ╰─────
-                    isPrerender: false,
+                    // isPrerender: false,
                   }
               }
             ],
@@ -743,18 +770,12 @@ export const config = {
               {
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'DYNAMIC-IMPORT' svelte component
-                // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isDynamicImport: false,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'HIDDEN' state for component
-                // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isHidden: false,
                 // ╭─────
@@ -779,18 +800,12 @@ export const config = {
               {
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'DYNAMIC-IMPORT' svelte component
-                // ┣───
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: svelte component :: toggle use of 'dynamic-import'
                 // ╰─────
                 isDynamicImport: false,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'HIDDEN' state for component
-                // ┣───
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isHidden: false,
               }
@@ -803,18 +818,24 @@ export const config = {
               {
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'DYNAMIC-IMPORT' svelte component
+                // │ |: svelte component :: toggle use of 'dynamic-import'
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: "env/production/typical" :: true
+                // ┣─────
+                // │ |: TODO:
+                // │ |: enable (1) dynamic import and (2) test performance impact
                 // ╰─────
                 isDynamicImport: false,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'HIDDEN' state for component
+                // │ |: svelte component :: toggle 'hidden' state
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: "env/production/typical" :: false
+                // ┣─────
+                // │ |: NOTE:
+                // │ |: ⫸ true [⭐️]
+                // │ |:   ↳ [0] Hidden to avoid Flash of Splash Screen.
+                // │ |:   ↳ [1] Showed improvement in lighthouse performance score
                 // ╰─────
                 isHidden: true,
               }
@@ -824,18 +845,17 @@ export const config = {
               {
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'DYNAMIC-IMPORT' svelte component
+                // │ |: svelte component :: toggle use of 'dynamic-import'
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: "env/production/typical" :: true
+                // ┣─────
+                // │ |: TODO:
+                // │ |: disable (1) dynamic import and (2) test performance impact
                 // ╰─────
                 isDynamicImport: true,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'HIDDEN' state for component
-                // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isHidden: false,
               }
@@ -845,18 +865,17 @@ export const config = {
               {
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'DYNAMIC-IMPORT' svelte component
+                // │ |: svelte component :: toggle use of 'dynamic-import'
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: "env/production/typical" :: true
+                // ┣─────
+                // │ |: TODO:
+                // │ |: disable (1) dynamic import and (2) test performance impact
                 // ╰─────
                 isDynamicImport: true,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'HIDDEN' state for component
-                // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isHidden: false,
               }
@@ -866,18 +885,17 @@ export const config = {
               {
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'DYNAMIC-IMPORT' svelte component
+                // │ |: svelte component :: toggle use of 'dynamic-import'
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: "env/production/typical" :: true
+                // ┣─────
+                // │ |: TODO:
+                // │ |: disable (1) dynamic import and (2) test performance impact
                 // ╰─────
                 isDynamicImport: true,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'HIDDEN' state for component
-                // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isHidden: false,
               }
@@ -896,38 +914,40 @@ export const config = {
                 },
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'DYNAMIC-IMPORT' svelte component
+                // │ |: svelte component :: toggle use of 'dynamic-import'
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: "env/production/typical" :: false
+                // ┣─────
+                // │ |: TODO:
+                // │ |: enable (1) dynamic import and (2) test performance impact
                 // ╰─────
                 isDynamicImport: false,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'HIDDEN' state for component
-                // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'false'
+                // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isHidden: false,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Toggle 'SEO-BOX' svelte component
+                // │ |: svelte component :: toggle use of 'SEO-BOX'
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 'true'
+                // │ |: "env/production/typical" :: TRUE/FALSE
+                // ┣─────
+                // │ |: IMPORTANT CRITICAL
+                // │ |: depends_on 'intComponentConfigVersion':
+                // │ |: ⫸ 'intComponentConfigVersion == 1' supports 'isSeoBoxEnabled == false' [⭐️]
+                // │ |: ⫸ 'intComponentConfigVersion == 2' requires 'isSeoBoxEnabled == true' to function properly
                 // ╰─────
-                isSeoBoxEnabled: true,
+                isSeoBoxEnabled: false,
                 // ╭─────
                 // │ NOTE:
-                // │ |: Component Configuration Version
+                // │ |: svelte component :: component configuration version
                 // ┣─────
-                // │ |: WARNING:
-                // │ |: production ➤ 1
+                // │ |: "env/production/typical" :: 1 [⭐️]
                 // ┣─────
-                // │ |: Available Versions:
-                // │ │: 1 - Initial Version, without {#await} blocks for data fetching
-                // │ │: 2 - Added {#await} blocks for (ready) data fetching
+                // │ |: Available Options:
+                // │ │: 1 - (best) [⭐️] skips use of {#await} blocks for 'data-fetching/processing'
+                // │ │: 2 - (original configuration) uses {#await} blocks for 'data-fetching/processing'
                 // ╰─────
                 intComponentConfigVersion: 1,
               }
