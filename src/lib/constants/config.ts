@@ -267,7 +267,7 @@ export const config = {
                     // │ NOTE:
                     // │ |: Needed to reduce number of HTTP requests for resources.
                     // ╰─────
-                    isInjectionEnabled: false,
+                    isInjectionEnabled: true,
                     // ╭─────
                     // │ NOTE:
                     // │ |: Skip (exclude) injection of matching '<link href="*" [..]>'
@@ -286,9 +286,9 @@ export const config = {
                     // │ EXAMPLE [0]
                     // │  removes line breaks (\n) from inlined styles
                     // ┣─────
-                    // │ WARNING: [disabled]
+                    // │ WARNING: [disabled] [enabling will not do anything]
                     // ╰─────
-                    isInjectionInlineSingleLineEnabled: true,
+                    isInjectionInlineSingleLineEnabled: false,
                     // ╭─────
                     // │ NOTE:
                     // │ |: Toggle inline Head Styles Injection (compression-js-logic)
