@@ -1,21 +1,21 @@
 name: ➕ Feature Request
 description: Suggest an idea, feature and/or solution for Betarena - Scores Platform.
 title: "[FEATURE]: "
-labels: ["🌟 [A] enhancement", "🎨 Frontend"]
+labels: ["type:enhancement", "section:frontend"]
 body:
 
 - type: markdown
   attributes:
     value: |
       ![Static Badge](https://img.shields.io/badge/issue-%E2%9E%95_feature_general-black?logo=github&color=%230096FF%09&cacheSeconds=0)
-      
+
       Please, fill out this form to submit a new `Feature Request` for the Betarena - Scores Platform.
 
 - type: checkboxes
   attributes:
     label: Does a duplicate issue exist?
     description: |
-      Please search to see if an issue already exists for the feature you are requesting. 
+      Please search to see if an issue already exists for the feature you are requesting.
       ([scores/issues](https://github.com/Betarena/scores/issues)).
     options:
     - label: I have searched the existing issues
@@ -25,7 +25,7 @@ body:
   attributes:
     label: 🤔 Is feature request related to a problem? Please describe the problem.
     description: |
-      A clear and concise description of what the problem is. 
+      A clear and concise description of what the problem is.
     placeholder: |
       Example:
       - I am trying to do [...] but [...]
