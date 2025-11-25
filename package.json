@@ -50,6 +50,7 @@
 		"svelte-check": "svelte-check --tsconfig ./tsconfig.json",
 		"svelte-check/watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"svelte-kit-sync": "svelte-kit sync",
+    "partytown": "partytown copylib 'static/~partytown'",
 		"__FORMAT__": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────",
 		"prettier/eslint/lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"prettier/format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",

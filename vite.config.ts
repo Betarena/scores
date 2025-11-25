@@ -58,6 +58,14 @@ const
         isEnabled: false,
         outputPath: './static/css/one-css-chunk.css',
       },
+      partytown:
+      {
+        // ╭─────
+        // │ NOTE:
+        // │ |: Disabled because already added manually to 'static/~partytown' folder.
+        // ╰─────
+        isEnabled: false,
+      },
       visualizer:
       {
         isEnabled: true,
@@ -320,7 +328,7 @@ export default defineConfig
         // │ IMPORTANT
         // │ │: Partytown integration plugin
         // ╰─────
-        partytownVite
+        objViteConfigOptions.objPluginConfig.partytown.isEnabled && partytownVite
         (
            {
             dest: path.join(__dirname, "dist", "~partytown"),
