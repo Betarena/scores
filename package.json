@@ -172,7 +172,7 @@
 		]
 	},
 	"validate-branch-name": {
-		"pattern": "^(master|main|develop|dev|test){1}$|^(feature|fix|hotfix|release|refactor|chore).+$",
+		"pattern": "^(master|main|develop|dev|test|next){1}$|^(feature|fix|hotfix|release|refactor|chore).+$",
 		"errorMsg": "❌ Uh-oh! Please check package.json > validate-branch-name for allowed branch names!"
 	},
 	"nodemonConfig": {
