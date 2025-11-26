@@ -516,6 +516,7 @@ docker-image-publish-to-registry:
 		\n│ 🐳 │ Creating Docker Image                                       │\
 		\n│ 	 │: DockerHub Account :: $(ENV_DOCKER_HUB_USERNAME) \
 		\n│ 	 │: Docker ImageId :: $(ENV_IMAGE_TAG_ID) \
+		\n│ 	 │: Type :: $(type) \
 		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n";
 	#
@@ -526,33 +527,66 @@ docker-image-publish-to-registry:
 	# 	docker.io
 	#
 
-	# ╭─────
-	# │ NOTE:
-	# │ |: Docker Image Tagging (Version)
-	# ╰─────
+	if [ "$(type)" = "production" ]; then\
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Version)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Latest)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest; \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest; \
+	fi
 
-	docker tag \
-		$(ENV_IMAGE_TAG_ID) \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \")
+	if [ "$(type)" = "staging" ]; then\
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Version)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Latest)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-latest; \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-latest; \
+	fi
+#
+
+.ONESHELL:
+docker-image-purge:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ┣──────────────────────────────────────────────────────────────────┫
+	# │ │: prune docker images for Betarena // Scores service.           │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🐳 │ pruning docker images for scores                            │\
+		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	docker push \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \")
-	#
-
-	# ╭─────
-	# │ NOTE:
-	# │ |: Docker Image Tagging (Latest)
-	# ╰─────
-
-	docker tag \
-		$(ENV_IMAGE_TAG_ID) \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest
-	#
-
-	docker push \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest
-	#
+	docker rmi $$(docker images -f "dangling=true" -q);
 #
 
 .ONESHELL:
@@ -649,7 +683,7 @@ docker-compose-up:
 
 	if [ "$(version)" = "latest" ]; then\
 		cd .docker/; \
-		docker compose pull scores-production; \
+		docker compose pull scores-production scores-staging; \
 		cd ..; \
 	fi
 
@@ -722,15 +756,6 @@ docker-compose-up:
 	#
 
 	${MAKE} docker-volume-scores-check
-
-	# ╭─────
-	# │ NOTE:
-	# │ |: clean dangling images if 'latest' version deployed
-	# ╰─────
-
-	if [ "$(version)" = "latest" ]; then\
-		docker rmi $$(docker images -f "dangling=true" -q); \
-	fi
 #
 
 .ONESHELL:
