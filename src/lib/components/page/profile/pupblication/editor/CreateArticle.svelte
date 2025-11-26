@@ -44,6 +44,7 @@
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/article/create/[lang=lang]/$types.js";
   import userSettings from "$lib/store/user-settings.js";
+  import { detectLanguage } from "$lib/utils/translation.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -201,9 +202,12 @@
     if (!$create_article_store.seo.title) {
       $create_article_store.seo.title = title;
     }
+    const firstP = getFirstParagraph();
     if (!$create_article_store.seo.description) {
-      $create_article_store.seo.description = getFirstParagraph();
+      $create_article_store.seo.description = firstP;
     }
+    const detectedLangFromText = detectLanguage(contentEditor.getText());
+    $create_article_store.detectedLang = detectedLangFromText;
     $modalStore.props = { cb: publishClick, translations };
   }
 
@@ -211,7 +215,8 @@
     const json = contentEditor.getJSON();
     if (!json) return "";
     for (const node of json.content || []) {
-      if (node.type === "paragraph" && node.content) {
+      if (node.type === "paragraph" && node.content && !node.content.find((n) => n.type === "imageWithPlaceholder")) {
+        debugger
         return (node.content || []).map((n) => n.text).join(" ");
       }
     }

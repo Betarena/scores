@@ -62,8 +62,16 @@
   $: ({ seo, detectedLang } = $create_article_store);
 
   $: radioButtons = [
-    { id: "pt_PT", value: "pt", label: translations?.pt || "Portuguese Portugal" },
-    { id: "pt_BR", value: "br", label: translations?.["pt-br"] || "Portuguese Brazil" },
+    {
+      id: "pt_PT",
+      value: "pt",
+      label: translations?.pt || "Portuguese Portugal",
+    },
+    {
+      id: "pt_BR",
+      value: "br",
+      label: translations?.["pt-br"] || "Portuguese Brazil",
+    },
   ];
 
   // #endregion ➤ 📌 VARIABLES
@@ -126,13 +134,6 @@
   -->
 
 <div class="page-container {viewportType}">
-  {#if viewportType === "mobile"}
-    <Container style="height: unset">
-      <div class="header">
-        <BackButton on:click={goBack} custom_handler={true} />
-      </div>
-    </Container>
-  {/if}
   <div class="content-wrapper">
     <div class="content">
       <div class="content-header-border">
@@ -171,17 +172,22 @@
 
         {#if ["pt", "br"].includes(detectedLang?.lang || "")}
           <div class="confirm-lang-box">
-            <span>{translations?.lang_preference || "Confirm the article language:"} </span>
+            <span
+              >{translations?.lang_preference ||
+                "Confirm the article language:"}
+            </span>
             <div class="checkboxes-wrapper">
               {#each radioButtons as radio}
                 <div
                   class="radio-button-wrapper"
+                  class:active={$create_article_store.detectedLang?.iso ===
+                    radio.id}
                   on:click={() => checkRadio(radio)}
                 >
                   <div
                     class="radio-input"
-                    class:active={$create_article_store.detectedLang
-                      ?.iso === radio.id}
+                    class:active={$create_article_store.detectedLang?.iso ===
+                      radio.id}
                   >
                     <div class="input-inset" />
                   </div>
@@ -195,12 +201,10 @@
     </div>
     <Container style="height: unset">
       <div class="buttons-wrapper">
-        <Button
-          full={viewportType !== "mobile"}
-          type="secondary-gray"
-          on:click={goBack}>{translations?.go_back || "Go Back"}</Button
+        <Button full={true} type="secondary" on:click={goBack}
+          >{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}
+        <Button full={true} on:click={save}
           >{translations?.save || "Save"}</Button
         >
       </div>
@@ -220,7 +224,7 @@
 
 <style lang="scss">
   .page-container {
-    background-color: var(--colors-background-bg-main);
+    background: var(--colors-background-bg-secondary_alt, #1f1f1f);
     position: absolute;
     top: 0;
     display: flex;
@@ -245,7 +249,7 @@
       align-items: center;
       gap: var(--spacing-2xl, 20px);
       flex-grow: 1;
-      min-height: 0; 
+      min-height: 0;
       align-self: stretch;
 
       .content {
@@ -256,30 +260,27 @@
         flex-shrink: 1;
 
         .content-header-border {
-          border-bottom: 1px solid
-            var(--colors-border-border-secondary, #3b3b3b);
-
           .header-info {
             display: flex;
+            padding-top: var(--spacing-2xl, 20px);
             flex-direction: column;
-            gap: var(--spacing-md, 8px);
             align-self: stretch;
-            padding-bottom: var(--spacing-xl, 16px);
+            gap: var(--spacing-xs, 4px);
 
             h2 {
-              color: var(--colors-text-text-primary, #fbfbfb);
+              margin: 0;
+              color: var(--colors-text-text-primary-900, #fbfbfb);
 
-              /* Display xs/Semibold */
-              font-family: var(--font-family-font-family-display, Roboto);
-              font-size: var(--font-size-display-xs, 24px);
+              /* Text lg/Semibold */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-lg, 18px);
               font-style: normal;
               font-weight: 600;
-              margin: 0;
-              line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+              line-height: var(--line-height-text-lg, 28px); /* 155.556% */
             }
 
             .info-desc {
-              color: var(--colors-text-text-quaternary, #8c8c8c);
+              color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
               /* Text sm/Regular */
               font-family: var(--font-family-font-family-body, Roboto);
@@ -296,14 +297,15 @@
           padding: var(--spacing-none, 0px) var(--spacing-xl, 16px);
           flex-direction: column;
           align-items: flex-start;
-          gap: 12px;
+          gap: var(--spacing-xl, 16px);
           flex: 1 0 0;
           align-self: stretch;
 
           .confirm-lang-box {
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-2xl, 20px);
+            width: 100%;
+            gap: var(--spacing-xl, 16px);
             color: var(--colors-text-text-secondary-700, #d2d2d2);
 
             /* Text sm/Medium */
@@ -315,14 +317,26 @@
 
             .checkboxes-wrapper {
               display: flex;
-              gap: var(--spacing-4xl, 32px);
+              flex-direction: column;
+              gap: var(--spacing-xl, 16px);
+              width: 100%;
 
               .radio-button-wrapper {
+                cursor: pointer;
                 display: flex;
+                width: 100%;
+                height: 52px;
+                padding: var(--spacing-xl, 16px);
+                align-items: flex-start;
+                align-self: stretch;
+                display: flex;
+                align-items: flex-start;
                 gap: var(--spacing-lg, 12px);
-                align-items: center;
-                cursor:pointer;
-
+                flex: 1 0 0;
+                border-radius: var(--radius-xl, 12px);
+                border-radius: var(--radius-xl, 12px);
+                border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+                background: var(--colors-background-bg-primary, #1f1f1f);
                 .radio-input {
                   display: flex;
                   width: 16px;
@@ -354,6 +368,10 @@
                     }
                   }
                 }
+
+                &.active {
+                  border: 2px solid var(--colors-border-border-brand, #f5620f);
+                }
               }
             }
           }
@@ -363,9 +381,10 @@
       .buttons-wrapper {
         display: flex;
         align-items: flex-start;
-        gap: 20px;
+        flex-direction: column-reverse;
+        gap: var(--spacing-lg, 12px);
         align-self: stretch;
-        
+
         :global(.button) {
           flex-grow: 1;
           flex-shrink: 0;
@@ -396,38 +415,53 @@
       .content-wrapper {
         gap: var(--spacing-3xl, 24px);
         padding-bottom: var(--spacing-xl, 16px);
-        .header-info {
-          padding-top: var(--spacing-2xl, 20px);
-          gap: var(--spacing-xs, 4px);
 
-          .title-wrapper {
-            display: flex;
-            justify-content: space-between;
-            h2 {
-              font-size: var(--font-size-text-lg, 18px);
-              font-weight: 600;
-              line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+        .content {
+          .content-header-border {
+            .header-info {
+              padding-top: var(--spacing-2xl, 20px);
+              gap: var(--spacing-xs, 4px);
+
+              .title-wrapper {
+                display: flex;
+                justify-content: space-between;
+                h2 {
+                  color: var(--colors-text-text-primary-900, #fbfbfb);
+
+                  /* Text xl/Semibold */
+                  font-family: var(--font-family-font-family-body, Roboto);
+                  font-size: var(--font-size-text-xl, 20px);
+                  font-style: normal;
+                  font-weight: 600;
+                  line-height: var(--line-height-text-xl, 30px); /* 150% */
+                }
+
+                .close {
+                  cursor: pointer;
+                }
+              }
+              .info-desc {
+                color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+                /* Text md/Regular */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-md, 16px);
+                font-style: normal;
+                font-weight: 400;
+                line-height: var(--line-height-text-md, 24px); /* 150% */
+              }
             }
-
-            .info-desc {
-              font-size: var(--font-size-text-sm, 14px);
-              font-style: normal;
-              font-weight: 400;
-              line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-            }
-
-            .close {
-              cursor: pointer;
+          }
+          .form-wrapper {
+            .confirm-lang-box .checkboxes-wrapper .radio-button-wrapper {
+              height: 56px;
             }
           }
         }
-
-        .form-wrapper {
-          gap: var(--spacing-2xl, 20px) !important;
-        }
-
         .buttons-wrapper {
-          flex-direction: column-reverse;
+          height: 110px;
+          flex-direction: row;
+          align-items: end;
           gap: var(--spacing-lg, 12px);
         }
       }
