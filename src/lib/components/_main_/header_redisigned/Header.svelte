@@ -45,6 +45,8 @@
   import HeaderSearch from "./HeaderSearch.svelte";
   import { scoresNavbarStore } from "./_store.js";
   import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
+  import userSettings from "$lib/store/user-settings.js";
+  import { browser } from "$app/environment";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -62,14 +64,15 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: translationData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
+  $: ({ lang } = $userSettings);
+  $: homepageURL = lang != "en" ? `/${lang}` : "/";
   $: logoLink =
-    serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
+    lang != "en" ? `${$page.url.origin}/${lang}` : $page.url.origin;
   $: ({ user } = $userBetarenaSettings);
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
-  $: loadTranslations(serverLang);
-   $: ({viewportType, serverLang} = $session)
+  $: if(browser) loadTranslations(lang);
+   $: ({viewportType} = $session)
 
   const pagesWihoutNav = [
     routeIdPageTags,
