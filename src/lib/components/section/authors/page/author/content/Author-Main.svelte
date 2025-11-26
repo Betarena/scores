@@ -459,19 +459,7 @@
 
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
       {#key accessGranted}
-        {@html widgetData.article.data?.content.replaceAll(
-          /<img[^>]+src=["']([^"'>]+)["']/g,
-          (match, src) => {
-            return match.replace(
-              src,
-              getOptimizedImageUrl({
-                strImageUrl: src,
-                intQuality: 90,
-                intWidth: 1500,
-              })
-            );
-          }
-        )}
+        {@html widgetData.article.data?.content}
       {/key}
 
     </div>
