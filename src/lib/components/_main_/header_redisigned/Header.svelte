@@ -27,6 +27,7 @@
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+	import { browser } from '$app/environment';
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
@@ -68,7 +69,7 @@
   $: ({ user } = $userBetarenaSettings);
   $: isAuth = !!user;
   $: ({ profile_photo } = { ...$userBetarenaSettings.user?.scores_user_data });
-  $: loadTranslations(serverLang);
+  $: if (browser) loadTranslations(serverLang);
    $: ({viewportType, serverLang} = $session)
 
   const pagesWihoutNav = [
