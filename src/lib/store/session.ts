@@ -45,7 +45,7 @@ const mobileBreakpoint = 575,
       // @ts-expect-error
       window: {},
       deviceType: 'mobile',
-      viewportType: 'mobile',
+      viewportType: null,
       userAgent: undefined,
       isUserActive: true,
       windowWidth: 0,
