@@ -48,6 +48,8 @@ services:
       - prometheus-data:/prometheus
     expose:
       - 9090
+    ports:
+      - 9190:9090
     networks:
       - monitoring
   #
@@ -83,6 +85,24 @@ services:
         read_only: true
         bind:
           propagation: rslave
+  #
+
+  cadvisor:
+    # ╭─────
+    # │ NOTE:
+    # │ |: https://github.com/google/cadvisor/issues/2523#issuecomment-785094428
+    # ╰─────
+    image: gcr.io/cadvisor/cadvisor:v0.47.1
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - 9110:8080
+    networks:
+      - monitoring
   #
 #
 
