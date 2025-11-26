@@ -133,7 +133,8 @@
     if (widget_data) {
       odds = widget_data?.match_odds?.sort((a, b) => getOrder(a) - getOrder(b));
       const label = widget_data?.label?.toLowerCase() || "";
-      selectedTeam = label.includes("home") ? "Home" : label.includes("away") ? "Away" : "Draw";
+      const isAwayTeam = ['away', 'visit'].find(status => label.includes(status));
+      selectedTeam = label.includes("home") ? "Home" : isAwayTeam ? "Away" : "Draw";
       content = widget_data?.generated_response || "";
     }
     loading = false;

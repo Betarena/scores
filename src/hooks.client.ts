@@ -15,65 +15,32 @@
 
 // #region ➤ 📦 Package Imports
 
-import * as Sentry from '@sentry/sveltekit';
-import { Replay } from '@sentry/sveltekit';
 import { table } from 'table';
 
-import userBetarenaSettings from '$lib/store/user-settings.js';
+import { config } from '$lib/constants/config.js';
 import { dlog } from '$lib/utils/debug.js';
 
 import type { HandleClientError } from '@sveltejs/kit';
 
 // #endregion ➤ 📦 Package Imports
 
-// #region ➤ 💠 MISC.
+// #region ➤ 📌 VARIABLES
 
-// ╭─────
-// │ CHECK
-// │ > for disabling of Sentry on localhost
-// ╰─────
-if (import.meta.env.VITE_SENTRY_ENVIRONMENT != 'local')
-{
-  // [🐞]
-  Sentry.init
-  (
-    {
-      dsn: import.meta.env.VITE_SENTRY_URL,
-      tracesSampleRate: 1.0,
-      release: __PKG_VERSION_SCORES__,
-      environment: import.meta.env.VITE_SENTRY_ENVIRONMENT,
+const
+  // ╭─────
+  // │ NOTE:
+  // │ |: destructure assignment
+  // ╰─────
+  [
+    objConfigModule,
+  ] = [
+    config.objApp.objComponentConfiguration.get('src/hooks.client.ts')!
+  ]
+;
 
-      // This sets the sample rate to be 10%. You may want this to be 100% while
-      // in development and sample at a lower rate in production
-      replaysSessionSampleRate: 0.1,
+// #endregion ➤ 📌 VARIABLES
 
-      // If the entire session is not sampled, use the below sample rate to sample
-      // sessions when an error occurs.
-      replaysOnErrorSampleRate: 1.0,
-
-      // If you don't want to use Session Replay, just remove the line below:
-      integrations:
-      [
-        new Replay()
-      ],
-    }
-  );
-  // [🐞]
-  Sentry.setTags
-  (
-    {
-      location: 'client'
-    }
-  );
-  // [🐞]
-  Sentry.setContext
-  (
-    '📸 Data',
-    {
-      ...userBetarenaSettings.extractUserDataSnapshot()
-    }
-  );
-}
+// #region ➤ 💠 MISCELLANEOUS
 
 // [🐞]
 dlog
@@ -81,9 +48,9 @@ dlog
   '🚏 checkpoint [H] ➤ src/hooks.client.ts',
   true
 );
+
 // [🐞]
-// eslint-disable-next-line no-console
-console.debug
+dlog
 (
   table
   (
@@ -99,7 +66,7 @@ console.debug
   )
 );
 
-// #endregion ➤ 💠 MISC.
+// #endregion ➤ 💠 MISCELLANEOUS
 
 // #region ➤ 🛠️ METHODS
 
@@ -125,12 +92,13 @@ const customErrorHandler: HandleClientError = async (
 {
   // [🐞]
   // eslint-disable-next-line no-console
-  console.error('❌ An error occurred on the client side:', error);
+  console.error
+  (
+    objConfigModule.mapStrDebugPreifix?.get('customErrorHandler')!,
+    error
+  );
 
-  return {
-    message: 'Whoops! Client error found!',
-    errorId: '404'
-  }
+  return objConfigModule.objError!
 }
 
 // #endregion ➤ 🛠️ METHODS
@@ -139,13 +107,8 @@ const customErrorHandler: HandleClientError = async (
 
 // ╭─────
 // │ NOTE:
-// │ > using Sentry with Custom Error Handler.
+// │ │: Instantiation of custom rrror handler.
 // ╰─────
-export const handleError: HandleClientError = Sentry.handleErrorWithSentry(customErrorHandler);
-// ╭─────
-// │ NOTE:
-// │ > or, alternatively:
-// ╰─────
-// export const handleError: HandleClientError = Sentry.handleErrorWithSentry();
+export const handleError: HandleClientError = customErrorHandler;
 
 // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

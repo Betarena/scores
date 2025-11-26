@@ -456,6 +456,7 @@
   ╰─────
   -->
   {#key $userSettings.theme}
+
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
       {#key accessGranted}
         {@html widgetData.article.data?.content.replaceAll(
@@ -527,6 +528,7 @@
       laudantium libero dolorem dolore delectus beatae facere. Soluta et facilis
       ipsa eius.
     </div>
+
   {/key}
 </div>
 

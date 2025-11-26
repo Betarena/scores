@@ -42,13 +42,16 @@ const mobileBreakpoint = 575,
     = {
       globalState: new Set(),
       page: null,
+      // @ts-expect-error
+      window: {},
       deviceType: 'mobile',
-      viewportType: null,
+      viewportType: 'mobile',
       userAgent: undefined,
       isUserActive: true,
       windowWidth: 0,
       firebaseListeners: [],
       grapqhQlWebSockets: [],
+      listIntervals: [],
       currentActiveModal: null,
       currentActiveToast: null,
       currentAdminToggle: null,
@@ -132,6 +135,11 @@ type IDataProp =
   | 'windowWidth'
   | 'userAgent'
   | "btaRate"
+  | 'window'
+  | 'listIntervals'
+  | 'deviceType'
+  | 'svelteKitPage'
+  | 'isUserActive'
 ;
 
 /**
@@ -367,8 +375,33 @@ function createLocalStore
               const [isMobile, isTablet] = viewportChangeV2(dataPoint, mobileBreakpoint, tabletBreakpoint);
               sessionStoreObj.viewportType = dataPoint && isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop';
             }
-            else if (dataTarget === "btaRate") {
+            else if (dataTarget === "btaRate")
+            {
               sessionStoreObj.btaUsdRate = dataPoint;
+            }
+            else if (dataTarget == 'window')
+            {
+              sessionStoreObj.window = dataPoint;
+            }
+            else if (dataTarget == 'listIntervals')
+            {
+              sessionStoreObj.listIntervals.push(dataPoint);
+            }
+            else if (dataTarget == 'deviceType')
+            {
+              sessionStoreObj.deviceType = dataPoint;
+            }
+            else if (dataTarget == 'userAgent')
+            {
+              sessionStoreObj.userAgent = dataPoint;
+            }
+            else if (dataTarget == 'svelteKitPage')
+            {
+              sessionStoreObj.page = dataPoint;
+            }
+            else if (dataTarget == 'isUserActive')
+            {
+              sessionStoreObj.isUserActive = dataPoint;
             }
           }
 
