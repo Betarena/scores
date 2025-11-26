@@ -730,7 +730,7 @@ export const handle: Handle = sequence
               // │ NOTE:
               // │ |: validate only '_app/' hrefs for inlining
               // ╰─────
-              if (!dev)
+              if (__dirname.includes('chunks'))
               {
                 if (href.includes('_app/'))
                 {
