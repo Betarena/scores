@@ -381,7 +381,9 @@ function createLocalStore
             }
             else if (dataTarget == 'window')
             {
-              sessionStoreObj.window = dataPoint;
+              // @ts-expect-error
+              sessionStoreObj.window ??= {};
+              sessionStoreObj.window = { ...sessionStoreObj.window, ...dataPoint };
             }
             else if (dataTarget == 'listIntervals')
             {

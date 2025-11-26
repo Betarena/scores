@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -5,35 +7,39 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // <date-created>                                                │
+# │ ➤ Created on    // 03-12-2024                                                    │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Prometheus Configuration for Scores
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-global:
-  scrape_interval: 1m
-#
+strDebugPrefix="[docker.static.update.sh]"
+strDockerContainer=betarena-scores-scores-production-1
+strStaticDirectory=./.docker/scores.production/static
 
-scrape_configs:
-  - job_name: 'prometheus'
-    scrape_interval: 1m
-    static_configs:
-      - targets: ['localhost:9090']
-  - job_name: 'betarena-scores'
-    static_configs:
-      - targets: ['prometheus-node-exporter:9100']
-  - job_name: 'betarena-scores-cadvisor'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['cadvisor:8080']
-#
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 
-remote_write:
-  - url: https://prometheus-prod-24-prod-eu-west-2.grafana.net/api/prom/push
-    basic_auth:
-      username: '1605699'
-      password_file: /etc/prometheus/password.txt
-#
+# ╭─────
+# │ NOTE:
+# │ |: loop through all the files listed in the runtime-config-files.txt
+# ╰─────
+for strFilePath in $(find $strStaticDirectory -type f); do
+
+  echo "🔹 processing :: $strFilePath"
+
+  strFilePathInsideContainer="${strFilePath/'./.docker/scores.production/static/'/'build/client/'}"
+
+  echo "💽 persisting :: $strFilePathInsideContainer"
+
+  docker cp \
+    $strFilePath \
+    $strDockerContainer:"/app/$strFilePathInsideContainer"
+  #
+
+  echo ""
+done
+
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
