@@ -31,28 +31,41 @@ services:
         max-size: 1g
         max-file: 5
     volumes:
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: volume for: configuration files
+      # ╰─────
+      - ./nginx/config:/etc/nginx/config:ro
+      - ./nginx/auth:/etc/nginx/auth:ro
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: volume for: access/error logs
+      # ╰─────
       - ./nginx/logs/scores.production:/var/log/nginx/scores.production:rw
       - ./nginx/logs/scores.staging:/var/log/nginx/scores.staging:rw
       - ./nginx/logs/goaccess:/var/log/nginx/goaccess:rw
-      - ./nginx/cache/scores.production:/var/cache/nginx/scores.production:rw
-      - ./nginx/cache/scores.staging:/var/cache/nginx/scores.staging:rw
       # ╭─────
       # │ NOTE: IMPORTANT
-      # │ |: Volume for NGINX to serve GoAccess Monitoring
+      # │ |: volume for: cache files
+      # ╰─────
+      - ./nginx/cache/scores.production:/var/cache/nginx/scores_production:rw
+      - ./nginx/cache/scores.staging:/var/cache/nginx/scores_staging:rw
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: volume for: go-access monitoring
       # ╰─────
       - ./goaccess:/etc/nginx/html:ro
       # ╭─────
       # │ NOTE: IMPORTANT
-      # │ |: Volumes for NGINX to serve the Scores Application
+      # │ |: volume for: serve of scores application
       # ╰─────
       - scores-production-volume:/etc/nginx/scores.production/build:ro
       - scores-staging-volume:/etc/nginx/scores.staging/build:ro
     networks:
       - loadbalancer
       - loadbalancer.staging
-    links:
+    depends_on:
       - scores-production
-      - scores-staging
   #
 
   scores-production:
@@ -67,19 +80,14 @@ services:
       # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
       # ╰─────
       # - ../.scripts:/app/.scripts:rw
+      # - ./scores.production/package.json:/app/package.json:ro
       # ╭─────
       # │ NOTE: IMPORTANT
-      # │ |: Volume for persisting build output
+      # │ |: volume for: build output
       # ╰─────
       - scores-production-volume:/app/build:rw
-      # ╭─────
-      # │ NOTE:
-      # │ |: Volumes for serving static files
-      # ╰─────
-      - ./scores.production/sitemap.xml:/app/build/client/sitemap.xml:ro
-      - ./scores.production/robots.txt:/app/build/client/robots.txt:ro
-    # expose:
-    #   - 3000
+    expose:
+      - 3050
     # ╭─────
     # │ NOTE:
     # │ |: used for development purposes
@@ -96,7 +104,7 @@ services:
   #
 
   scores-staging:
-    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE}
+    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE:-name4d/betarena:scores-latest}
     restart: always
     deploy:
       replicas: ${BETARNA_SCORES_STAGING__REPLICAS:-1}
@@ -107,17 +115,12 @@ services:
       # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
       # ╰─────
       # - ../.scripts:/app/.scripts:rw
+      # - ./scores.production/package.json:/app/package.json:ro
       # ╭─────
       # │ NOTE: IMPORTANT
-      # │ |: Volume for persisting build output
+      # │ |: volume for: build output
       # ╰─────
       - scores-staging-volume:/app/build:rw
-      # ╭─────
-      # │ NOTE:
-      # │ |: Volumes for serving static files
-      # ╰─────
-      - ./scores.staging/sitemap.xml:/app/build/client/sitemap.xml:ro
-      - ./scores.staging/robots.txt:/app/build/client/robots.txt:ro
     # expose:
     #   - 6500
     # ╭─────
@@ -144,7 +147,7 @@ services:
     ports:
       - 7890:7890
     volumes:
-      - ./nginx/logs/scores:/var/log/nginx:ro
+      - ./nginx/logs/scores.production:/var/log/nginx:ro
       - ./goaccess:/var/www/goaccess:rw
     command: |
       --config-file=/var/www/goaccess/goaccess.conf
