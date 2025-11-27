@@ -539,6 +539,28 @@ export const handle: Handle = sequence
           )
       ;
 
+      // ╭─────
+      // │ NOTE: IMPORTANT CRITICAL
+      // │ |: rutime injection :: pwa for A/B testing
+      // ╰─────
+      if (objConfigModule.objHtmlHeadABTestingInjection?.pwa.isEnabled)
+        html = html
+          ?.replace
+          (
+            objConfigModule.objHtmlHeadABTestingInjection.pwa.strHtmlHeadForInjection,
+            (
+              _string
+            ) =>
+            {
+              return objConfigModule.objHtmlHeadABTestingInjection.pwa.objLoadingOptions
+                [
+                  objConfigModule.objHtmlHeadABTestingInjection.pwa.strLoadingType
+                ] ?? ''
+              ;
+            }
+          )
+      ;
+
       // ╭──────────────────────────────────────────────────────────────────────────────────╮
       // │ ⛩️ │ 3RD-PARTY INJECTION                                                         │
       // ╰──────────────────────────────────────────────────────────────────────────────────╯
