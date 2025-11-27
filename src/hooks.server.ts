@@ -18,8 +18,6 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dev } from '$app/environment';
-
 import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
