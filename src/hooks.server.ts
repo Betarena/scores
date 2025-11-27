@@ -18,7 +18,6 @@
 
 // #region ➤ 📦 Package Imports
 
-import { dev } from '$app/environment';
 
 import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
@@ -539,6 +538,28 @@ export const handle: Handle = sequence
           )
       ;
 
+      // ╭─────
+      // │ NOTE: IMPORTANT CRITICAL
+      // │ |: rutime injection :: pwa for A/B testing
+      // ╰─────
+      if (objConfigModule.objHtmlHeadABTestingInjection?.pwa.isEnabled)
+        html = html
+          ?.replace
+          (
+            objConfigModule.objHtmlHeadABTestingInjection.pwa.strHtmlHeadForInjection,
+            (
+              _string
+            ) =>
+            {
+              return objConfigModule.objHtmlHeadABTestingInjection.pwa.objLoadingOptions
+                [
+                  objConfigModule.objHtmlHeadABTestingInjection.pwa.strLoadingType
+                ] ?? ''
+              ;
+            }
+          )
+      ;
+
       // ╭──────────────────────────────────────────────────────────────────────────────────╮
       // │ ⛩️ │ 3RD-PARTY INJECTION                                                         │
       // ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -730,7 +751,7 @@ export const handle: Handle = sequence
               // │ NOTE:
               // │ |: validate only '_app/' hrefs for inlining
               // ╰─────
-              if (!dev)
+              if (__dirname.includes('chunks'))
               {
                 if (href.includes('_app/'))
                 {

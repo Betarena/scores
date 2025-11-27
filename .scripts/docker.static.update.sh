@@ -15,7 +15,6 @@
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 strDebugPrefix="[docker.static.update.sh]"
-
 strDockerContainer=betarena-scores-scores-production-1
 strStaticDirectory=./.docker/scores.production/static
 

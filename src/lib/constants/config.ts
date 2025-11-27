@@ -685,8 +685,43 @@ export const config = {
                           `,
                         } as Record < ILoadingType, string >,
                       },
-                    // TODO: implement progressier
-                    // progressier:
+                    // ╭─────
+                    // │ NOTE:
+                    // │ |: Dynamic Server Injection for :: PWA
+                    // ╰─────
+                    pwa:
+                      {
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: toggle injection
+                        // ╰─────
+                        isEnabled: true,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: select injection option
+                        // ┣─────
+                        // │ |: Available Options:
+                        // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
+                        // ╰─────
+                        strLoadingType: 'cdn' as ILoadingType,
+                        // ╭─────
+                        // │ NOTE: IMPORTANT
+                        // │ |: HTML Head Injection Point Identifier
+                        // ╰─────
+                        strHtmlHeadForInjection: `<!-- DO-NOT-REMOVE :: WEBSITE-PWA :: INJECTED HERE DYNAMICALLY -->`,
+                        // ╭─────
+                        // │ NOTE:
+                        // │ |: loading options, determined by 'strLoadingType'
+                        // ╰─────
+                        objLoadingOptions:
+                        {
+                          'cdn': `
+                            <link
+                              href="template/html.head.pwa.cdn.html"
+                            />
+                          `,
+                        } as Record < ILoadingType, string >,
+                      }
                   },
                 // ╭──────────────────────────────────────────────────────────────────────────────────╮
                 // │ 💠 │ configuration // resolve.setHeaders(..)                                     │

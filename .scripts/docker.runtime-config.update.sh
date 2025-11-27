@@ -15,7 +15,6 @@
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 strDebugPrefix="[docker.runtime-config.update.sh]"
-
 dockerContainer=betarena-scores-scores-production-1
 dockerRuntimeConfigFilePath=./.docker/scores.production/runtime.config/runtime-config-files.txt
 outputDirClient=./.docker/scores.production/runtime.config/__run-time-config.client.js
