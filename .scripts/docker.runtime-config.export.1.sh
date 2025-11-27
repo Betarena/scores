@@ -16,11 +16,11 @@
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 strDebugPrefix="[docker.runtime-config.export.1.sh]"
-dockerContainer=betarena-scores-scores-staging-1
+dockerContainer=betarena-scores-scores-production-1
 dockerRuntimeConfigFilePath=/app/runtime-config-files.txt
-hostRuntimeConfigFilePath=./.docker/scores.staging/runtime-config-files.txt
-outputDirClient=./.docker/scores.staging/__run-time-config.client.js
-outputDirServer=./.docker/scores.staging/__run-time-config.server.js
+hostRuntimeConfigFilePath=./.docker/scores.production/runtime.config/runtime-config-files.txt
+outputDirClient=./.docker/scores.production/runtime.config/__run-time-config.client.js
+outputDirServer=./.docker/scores.production/runtime.config/__run-time-config.server.js
 
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
@@ -37,18 +37,20 @@ docker cp \
 
 # ╭─────
 # │ NOTE:
-# │ |: loop through 'runtime-config-files.txt' file
+# │ |: loop through 'runtime-config-files.txt' file, and copy each listed file from the (1) docker-container to the (2) host-machine
 # ╰─────
 for i in $(cat $hostRuntimeConfigFilePath); do
   # [🐞]
   echo "\n$strDebugPrefix 📝 $i // INSIGHT"
   if [[ "$i" == *"/client/"* ]]; then
+    # [🐞]
     # echo "it contains /client/"
     docker cp \
       $dockerContainer:"/app/$i" $outputDirClient
     #
   fi
   if [[ "$i" == *"/server/"* ]]; then
+    # [🐞]
     # echo "it contains /server/"
      docker cp \
       $dockerContainer:"/app/$i" $outputDirServer
