@@ -16,8 +16,9 @@
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 strDebugPrefix="[docker.runtime-config.export.1.sh]"
-dockerContainer=betarena-scores-scores-production-1
 dockerRuntimeConfigFilePath=/app/runtime-config-files.txt
+
+dockerContainer=betarena-scores-scores-production-1
 hostRuntimeConfigFilePath=./.docker/scores.production/runtime.config/runtime-config-files.txt
 outputDirClient=./.docker/scores.production/runtime.config/__run-time-config.client.js
 outputDirServer=./.docker/scores.production/runtime.config/__run-time-config.server.js
@@ -25,7 +26,7 @@ outputDirServer=./.docker/scores.production/runtime.config/__run-time-config.ser
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 # [🐞]
-echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILE TO HOST 🟨 // START"
+echo "$strDebugPrefix // 🟨 exporting __runtime-config file to host // START"
 
 # ╭─────
 # │ NOTE:
@@ -59,6 +60,6 @@ for i in $(cat $hostRuntimeConfigFilePath); do
 done
 
 # [🐞]
-echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILE TO HOST 🟨 // END"
+echo "$strDebugPrefix // 🟨 exporting __runtime-config file to host // END"
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"

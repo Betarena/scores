@@ -7,7 +7,7 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // November 17th, 2025                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -15,6 +15,7 @@
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 strDebugPrefix="[docker.runtime-config.update.sh]"
+
 dockerContainer=betarena-scores-scores-production-1
 dockerRuntimeConfigFilePath=./.docker/scores.production/runtime.config/runtime-config-files.txt
 outputDirClient=./.docker/scores.production/runtime.config/__run-time-config.client.js
@@ -23,15 +24,16 @@ outputDirServer=./.docker/scores.production/runtime.config/__run-time-config.ser
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 # [🐞]
-echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // START"
+echo "$strDebugPrefix // persist __runtime-config file to docker container 🟨 // START"
 
 # ╭─────
 # │ NOTE:
-# │ |: loop through all the files listed in the runtime-config-files.txt, and copy each file from the (1) host-machine to the (2) docker-container
+# │ |: loop through all the files listed in the runtime-config-files.txt,
+# │ |: and copy each file from the (1) host-machine to the (2) docker-container
 # ╰─────
 for i in $(cat $dockerRuntimeConfigFilePath); do
   # [🐞]
-  echo "\n$strDebugPrefix 🟧 UPDATING :: $i // INSIGHT"
+  echo "\n$strDebugPrefix 🟧 updating file :: $i // INSIGHT"
   if [[ "$i" == *"/client/"* ]]; then
     # [🐞]
     # echo "it contains /client/"
@@ -55,6 +57,6 @@ done
 # [🐞]
 echo ""
 # [🐞]
-echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // END"
+echo "$strDebugPrefix // persist __runtime-config file to docker container 🟨 // END"
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"

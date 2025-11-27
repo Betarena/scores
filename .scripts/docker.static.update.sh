@@ -7,7 +7,7 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // November 17th, 2025                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -15,6 +15,7 @@
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 strDebugPrefix="[docker.static.update.sh]"
+
 strDockerContainer=betarena-scores-scores-production-1
 strStaticDirectory=./.docker/scores.production/static
 
@@ -26,18 +27,16 @@ echo "$strDebugPrefix ───────────────────�
 # │ |: loop through all the files listed in the runtime-config-files.txt
 # ╰─────
 for strFilePath in $(find $strStaticDirectory -type f); do
-
-  echo "🔹 processing :: $strFilePath"
-
+  # [🐞]
+  # echo "🔹 processing :: $strFilePath"
   strFilePathInsideContainer="${strFilePath/'./.docker/scores.production/static/'/'build/client/'}"
-
+  # [🐞]
   echo "💽 persisting :: $strFilePathInsideContainer"
-
   docker cp \
     $strFilePath \
     $strDockerContainer:"/app/$strFilePathInsideContainer"
   #
-
+  # [🐞]
   echo ""
 done
 

@@ -7,45 +7,26 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // November 26th, 2025.                                          │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Aggregate list of '__run-time-config*.js' configuration files in 'build' directory.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-strDebugPrefix="[docker.runtime-config.export.0.sh]"
-configFile=/app/runtime-config-files.txt
-buildFile=/app/build-files.txt
+strDebugPrefix="[docker.scores.build.check.sh]"
 
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 # [🐞]
-echo "$strDebugPrefix // 🟨 exporting __runtime-config files for archive // START"
-# [🐞]
-cat $configFile
-
-# ╭─────
-# │ NOTE:
-# │ |: find '__run-time-config*.js' files in the 'build' directory.
-# ╰─────
-find build \
-  -type f \
-  -name '__run-time-config*.js' \
-  > $configFile
-#
-
-# ╭─────
-# │ NOTE:
-# │ |: find '*' (all) files in the 'build' directory.
-# ╰─────
-find build \
-  -type f \
-  > $buildFile
-#
+echo "$strDebugPrefix // START"
 
 # [🐞]
-echo "$strDebugPrefix // 🟨 exporting __runtime-config files for archive // END"
+echo "$strDebugPrefix Number of files in build.copy ::" $(ls -R build.copy | wc -l)
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+echo "$strDebugPrefix Number of files changed between build and build.copy ::" $(diff -qr build build.copy | wc -l)
+# [🐞]
+diff -qr build build.copy
+
+# [🐞]
+echo "$strDebugPrefix // END"
