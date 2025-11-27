@@ -50,6 +50,15 @@ RUN npm run tsc/build/server
 # [🐞]
 RUN ls -lha
 
+FROM base as meta
+COPY . /app
+WORKDIR /app
+RUN \
+  mkdir -p .metadata \
+  git branch --show-current > .metadata/branch \
+  git diff --color > .metadata/diff
+#
+
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🏗️ STEP 2 │ Final Docker Build                                                   │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -58,13 +67,20 @@ FROM base AS final
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules node_modules/
 COPY --from=build /app/build build/
-COPY --from=build /app/dist/~partytown build/client/~partytown
+COPY --from=build /app/build build.copy/
 COPY --from=build /app/dist/server.docker.js server.docker.js
 COPY --from=build /app/package.json /app/.env ./
 COPY --from=build /app/.scripts .scripts/
 COPY --from=build /app/.output .output/
+COPY --from=meta /app/.metadata .metadata/
 # [🐞]
 RUN ls -lha
+# [🐞]
+RUN ls -R build | wc -l
+# [🐞]
+RUN ls -R build.copy | wc -l
+# [🐞]
+RUN diff -qr build build.copy
 
 RUN chmod +x .scripts/*.sh
 
@@ -96,7 +112,3 @@ LABEL \
 
 EXPOSE 5055
 ENTRYPOINT [ "/app/.scripts/docker.entrypoint.sh" ]
-# ╭─────
-# │ NOTE: |:| Alternative [1]
-# ╰─────
-# CMD ["npm", "run", "sveltekit|:|start|:|docker"]
