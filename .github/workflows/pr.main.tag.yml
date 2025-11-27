@@ -137,6 +137,10 @@ jobs:
   deployment:
     name: 🚀 JOB /:/ Deployment
     needs: docker-image-build-and-push
+    if: ${{
+        needs.version-bump.outputs.isVersionBumped == 'true'
+        && !contains(github.event.pull_request.labels.*.name, 'cd/pr/no-deployment')
+      }}
     runs-on: ubuntu-22.04
     environment:
       name: production
