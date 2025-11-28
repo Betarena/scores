@@ -108,44 +108,48 @@ export const config = {
       // │ |: Configuration Settings for :: Partytown
       // ╰─────
       objServiceWorkerPartytown:
+      (
+      ) =>
         {
-          // ╭─────
-          // │ NOTE:
-          // │ |: Toggle (enable/disable)
-          // ┣───
-          // │ |: WARNING:
-          // │ |: production ➤ 'true'
-          // ╰─────
-          isEnabled: false,
-          // ╭─────
-          // │ NOTE:
-          // │ |: Partytown Configuration Code Sample
-          // │ |: Injected in HTML Head
-          // ╰─────
-          strCodeSampleForPartytownConfig: `
-            <script>
-              partytown = {
-                resolveUrl: function (url, location, type)
-                {
-                  if (url.hostname === "connect.facebook.net")
+          return {
+            // ╭─────
+            // │ NOTE:
+            // │ |: Toggle (enable/disable)
+            // ┣───
+            // │ |: WARNING:
+            // │ |: production ➤ 'true'
+            // ╰─────
+            isEnabled: true,
+            // ╭─────
+            // │ NOTE:
+            // │ |: Partytown Configuration Code Sample
+            // │ |: Injected in HTML Head
+            // ╰─────
+            strCodeSampleForPartytownConfig: `
+              <script>
+                partytown = {
+                  resolveUrl: function (url, location, type)
                   {
-                    var proxyUrl = new URL('https://betarena.com/partytown-proxy');
-                    proxyUrl.search = 'url=' + url.href;
-                    console.log('Partytown Proxy URL:', proxyUrl.href);
-                    return proxyUrl;
-                  }
-                  return url;
-                },
-                forward:
-                [
-                  'fbq',
-                  'gtag',
-                  'dataLayer.push',
-                  // 'Intercom', // uncomment if 'cdn-partytown' loading is used for Intercom
-                ],
-              };
-            </script>
-          `,
+                    if (url.hostname === "connect.facebook.net")
+                    {
+                      var proxyUrl = new URL('https://betarena.com/partytown-proxy');
+                      proxyUrl.search = 'url=' + url.href;
+                      console.log('Partytown Proxy URL:', proxyUrl.href);
+                      return proxyUrl;
+                    }
+                    return url;
+                  },
+                  forward:
+                  [
+                    'fbq',
+                    'gtag',
+                    'dataLayer.push',
+                    // 'Intercom', // uncomment if 'cdn-partytown' loading is used for Intercom
+                  ],
+                };
+              </script>
+            `,
+          }
         },
       // ╭──────────────────────────────────────────────────────────────────────────────────╮
       // │ 💠 │ 3RD-PARTY SERVICES                                                          │
