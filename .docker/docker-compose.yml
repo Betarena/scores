@@ -64,8 +64,6 @@ services:
     networks:
       - loadbalancer
       - loadbalancer.staging
-    depends_on:
-      - scores-production
   #
 
   scores-production:
@@ -83,7 +81,12 @@ services:
       # - ./scores.production/package.json:/app/package.json:ro
       # ╭─────
       # │ NOTE: IMPORTANT
-      # │ |: volume for: build output
+      # │ |: volume for: 'build' output (pure project files)
+      # ├─────
+      # │ NOTE: (alternative)
+      # │ |: - ./scores.production:/app/build:rw
+      # │ |:  ├ not recommended for production usage, as accidental file changes may occur,
+      # │ |:  ├ best to use docker volume for production-like usage.
       # ╰─────
       - scores-production-volume:/app/build:rw
     expose:
@@ -104,7 +107,7 @@ services:
   #
 
   scores-staging:
-    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE:-name4d/betarena:scores-latest}
+    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE:-name4d/betarena:scores-staging-latest}
     restart: always
     deploy:
       replicas: ${BETARNA_SCORES_STAGING__REPLICAS:-1}
@@ -115,10 +118,15 @@ services:
       # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
       # ╰─────
       # - ../.scripts:/app/.scripts:rw
-      # - ./scores.production/package.json:/app/package.json:ro
+      # - ./scores.staging/package.json:/app/package.json:ro
       # ╭─────
       # │ NOTE: IMPORTANT
-      # │ |: volume for: build output
+      # │ |: volume for: 'build' output (pure project files)
+      # ├─────
+      # │ NOTE: (alternative)
+      # │ |: - ./scores.staging:/app/build:rw
+      # │ |:  ├ not recommended for production usage, as accidental file changes may occur,
+      # │ |:  ├ best to use docker volume for production-like usage.
       # ╰─────
       - scores-staging-volume:/app/build:rw
     # expose:
