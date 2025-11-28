@@ -27,7 +27,6 @@
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
-	import { browser } from '$app/environment';
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
