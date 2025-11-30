@@ -13,9 +13,9 @@
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
 # │ |: Injects the environment variables into the VITE build files,
-# │ |:  by replacing the 'VITE_X_' with 'VITE_'.
+# │ |  by replacing the 'VITE_X_' with 'VITE_'.
 # │ |: This is done to ensure that the environment variables are available in the
-# │ |:  production build, and that the 'VITE_' variables are not exposed.
+# │ |  production build, and that the 'VITE_' variables are not exposed.
 # │ |: The script is executed during the 'docker build' process.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
@@ -23,10 +23,21 @@
 # source ./env/.env.docker.scores
 # set +o allexport
 
+#region ➤ 📌 VARIABLES
+
 strDebugPrefix="[docker.scores.build.env.inject.sh]"
 
+#endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
+
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+log start
+
 # [🐞]
 # echo "$strDebugPrefix ENV:" $(env)
 
@@ -93,7 +104,6 @@ echo "$strDebugPrefix ───────────────────�
 echo "$strDebugPrefix 'VITE_X_' values remaining (build) ::" $(find build -type f -exec grep -i "VITE_X" {} \; | wc -l)
 # [🐞]
 echo "$strDebugPrefix 'VITE_X_' values replaced ::" $counter
+
 # [🐞]
-echo "$strDebugPrefix // END"
-# [🐞]
-# echo "$strDebugPrefix ENV:" $(env)
+log end
