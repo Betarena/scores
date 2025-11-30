@@ -40,6 +40,6 @@ source ./.scripts/docker.scores.build.check.sh
 # │ NOTE: CRITICAL
 # │ |: inject environment variables into 'build/*' files.
 # ╰─────
-source ./.scripts/docker.env.inject.sh
+source ./.scripts/docker.scores.build.env.inject.sh
 
 source ./.scripts/docker.scores.build.check.sh
