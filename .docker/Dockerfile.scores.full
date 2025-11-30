@@ -111,4 +111,4 @@ LABEL \
 # RUN apk --no-cache add curl
 
 EXPOSE 5055
-ENTRYPOINT [ "/app/.scripts/docker.entrypoint.sh" ]
+ENTRYPOINT [ "/app/.scripts/docker.scores.entrypoint.sh" ]

@@ -66,6 +66,23 @@ services:
       - loadbalancer.staging
   #
 
+  scores-production-build:
+    image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
+    env_file: ../env/.env.docker.scores.production
+    volumes:
+      # ╭─────
+      # │ NOTE: WARNING:
+      # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
+      # ╰─────
+      # - ../.scripts:/app/.scripts:rw
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: Volume for: 'build' output (pure project files)
+      # ╰─────
+      - scores-production-volume:/app/build:rw
+    entrypoint: /app/.scripts/docker.scores.build.entrypoint.sh
+  #
+
   scores-production:
     image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
     restart: always
@@ -88,7 +105,7 @@ services:
       # │ |:  ├ not recommended for production usage, as accidental file changes may occur,
       # │ |:  ├ best to use docker volume for production-like usage.
       # ╰─────
-      - scores-production-volume:/app/build:rw
+      - scores-production-volume:/app/build:ro
     expose:
       - 3050
     # ╭─────
@@ -104,6 +121,25 @@ services:
         max-file: 5
     networks:
       - loadbalancer
+    depends_on:
+      - scores-production-build
+  #
+
+  scores-staging-build:
+    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE:-name4d/betarena:scores-staging-latest}
+    env_file: ../env/.env.docker.scores.staging
+    volumes:
+      # ╭─────
+      # │ NOTE: WARNING:
+      # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
+      # ╰─────
+      # - ../.scripts:/app/.scripts:rw
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: Volume for: 'build' output (pure project files)
+      # ╰─────
+      - scores-staging-volume:/app/build:rw
+    entrypoint: /app/.scripts/docker.scores.build.entrypoint.sh
   #
 
   scores-staging:
@@ -128,7 +164,7 @@ services:
       # │ |:  ├ not recommended for production usage, as accidental file changes may occur,
       # │ |:  ├ best to use docker volume for production-like usage.
       # ╰─────
-      - scores-staging-volume:/app/build:rw
+      - scores-staging-volume:/app/build:ro
     # expose:
     #   - 6500
     # ╭─────
@@ -144,6 +180,8 @@ services:
         max-file: 5
     networks:
       - loadbalancer.staging
+    depends_on:
+      - scores-staging-build
   #
 
   # ╭──────────────────────────────────────────────────────────────────────────────────╮
