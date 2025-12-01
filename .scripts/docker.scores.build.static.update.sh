@@ -15,18 +15,26 @@
 # │ |: Update static files in docker-container from host-machine static directory in docker-volume.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+#region ➤ 📌 VARIABLES
+
 strDebugPrefix="[docker.scores.build.static.update.sh]"
 
-strDockerContainer=betarena-scores-scores-build-temp
-strStaticDirectory=./.docker/scores.production/static
-strDockerVolume=betarena-scores_scores-production-volume
+#endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/_env.sh $1
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
 
 checkForChanges ()
 {
   if [[ "$3" == "start" ]]; then
     mkdir -p ./.docker/scores.production/.tmp
-    docker cp \
-      $strDockerContainer:/app/build ./.docker/scores.production/.tmp
+    docker_cp \
+      $strDockerContainerScoresBuildTemp:/app/build \
+      ./.docker/scores.production/.tmp
     #
   fi
 
@@ -59,9 +67,7 @@ checkForChanges ()
 }
 
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
-# [🐞]
-echo "$strDebugPrefix START"
+log start $strDebugPrefix
 
 # ╭─────
 # │ NOTE:
@@ -69,8 +75,8 @@ echo "$strDebugPrefix START"
 # ╰─────
 docker run \
   --rm --detach \
-  --name $strDockerContainer \
-  --volume $strDockerVolume:/app/build:rw \
+  --name $strDockerContainerScoresBuildTemp \
+  --volume $strDockerVolumeScores:/app/build:rw \
   alpine \
   sleep 30
 #
@@ -81,7 +87,7 @@ docker run \
 # │ |: START
 # ╰─────
 checkForChanges \
-  $strStaticDirectory \
+  $strHostDirStatic \
   ./.docker/scores.production/.tmp/build/client \
   start
 #
@@ -91,17 +97,18 @@ checkForChanges \
 # │ |: loop through ALL files in the static directory and copy them into the
 # │ |: running docker container, preserving the directory structure.
 # ╰─────
-for strFilePath in $(find $strStaticDirectory -type f); do
+for strFilePath in $(find $strHostDirStatic -type f); do
   # [🐞]
   # echo "🔹 processing :: $strFilePath"
   strFilePathInsideContainer="${strFilePath/'./.docker/scores.production/static/'/'build/client/'}"
   # [🐞]
   # echo "💽 persisting :: $strFilePathInsideContainer"
   docker exec \
-    $strDockerContainer mkdir -p "$(dirname /app/$strFilePathInsideContainer)"
+    $strDockerContainerScoresBuildTemp mkdir -p "$(dirname /app/$strFilePathInsideContainer)"
   #
-  docker cp \
-    $strFilePath $strDockerContainer:"/app/$strFilePathInsideContainer"
+  docker_cp \
+    $strFilePath \
+    $strDockerContainerScoresBuildTemp:"/app/$strFilePathInsideContainer"
   #
 done
 
@@ -111,12 +118,10 @@ done
 # │ |: END
 # ╰─────
 checkForChanges \
-  $strStaticDirectory \
+  $strHostDirStatic \
   ./.docker/scores.production/.tmp/build/client \
   end
 #
 
 # [🐞]
-echo "$strDebugPrefix END"
-# [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+log end $strDebugPrefix

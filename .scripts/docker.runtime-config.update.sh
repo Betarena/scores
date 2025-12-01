@@ -34,27 +34,22 @@ checkForChanges ()
     mkdir -p $strHostDirRuntimeConfigTmp
   fi
 
-  docker cp \
-    $strDockerContainerScores:/app/$strConfigFileName \
-    $strHostDirRuntimeConfigTmp/$strConfigFileName
-  #
   # ╭─────
   # │ NOTE:
-  # │ |: loop through 'runtime-config-files.txt',
-  # │ |: AND copy (export) each listed file from (1) docker-container to (2) host-machine (TEMPORARY path)
+  # │ |: copy runtime-config files from docker-container to host-machine temporary directory
   # ╰─────
-  for i in $(cat $strHostDirRuntimeConfigTmp/$strConfigFileName); do
-    strRuntimeConfigFileName=$(basename "$i")
-    if [[ "$i" == *"/client/"* ]]; then
-      strRuntimeConfigFileName="$strHostConfigFileClientName"
-    elif [[ "$i" == *"/server/"* ]]; then
-      strRuntimeConfigFileName="$strHostConfigFileServerName"
-    fi
-    docker cp \
-      $strDockerContainerScores:"/app/$i" \
-      $strHostDirRuntimeConfigTmp/$strRuntimeConfigFileName
-    #
-  done
+  docker_cp \
+    $strDockerContainerScoresBuildTemp:$strDockerRuntimeConfigeConfigFilePath \
+    $strHostDirRuntimeConfigTmp/$strConfigFileName
+  #
+  docker_cp \
+    $strDockerContainerScoresBuildTemp:$strDockerPathClient \
+    $strHostDirRuntimeConfigTmp/$strConfigFileName
+  #
+  docker_cp \
+    $strDockerContainerScoresBuildTemp:$strDockerPathServer \
+    $strHostDirRuntimeConfigTmp/$strConfigFileName
+  #
 
   DIFF_OUTPUT=$(diff -qr $1 $2)
 
@@ -122,14 +117,30 @@ for i in $(cat $strOutputHostRuntimeConfigFilePath); do
   # [🐞]
   echo -e "$strDebugPrefix 🟧 updating file :: $i"
   if [[ "$i" == *"/client/"* ]]; then
-    docker cp \
+    docker_cp \
       $strOutputHostPathClient \
       $strDockerContainerScoresBuildTemp:"/app/$i"
     #
+    docker_cp \
+      $strOutputHostPathClient \
+      $strDockerContainerScoresBuildTemp:"$strDockerDirRuntimeConfig/__run-time-config.client.js"
+    #
+    docker_cp \
+      $strOutputHostPathClient \
+      $strDockerContainerScoresBuildTemp:"/app/build/client/__run-time-config.client.js"
+    #
   elif [[ "$i" == *"/server/"* ]]; then
-    docker cp \
+    docker_cp \
       $strOutputHostPathServer \
       $strDockerContainerScoresBuildTemp:"/app/$i"
+    #
+    docker_cp \
+      $strOutputHostPathServer \
+      $strDockerContainerScoresBuildTemp:"$strDockerDirRuntimeConfig/__run-time-config.server.js"
+    #
+    docker_cp \
+      $strOutputHostPathServer \
+      $strDockerContainerScoresBuildTemp:"/app/build/client/__run-time-config.server.js"
     #
   fi
 done

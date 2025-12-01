@@ -18,6 +18,7 @@ strDockerVolumeScores=betarena-scores_scores-production-volume
 
 strHostDirRuntimeConfig=./.docker/scores.production/runtime.config
 strHostDirRuntimeConfigTmp=./.docker/scores.production/.tmp/runtime.config
+strHostDirStatic=./.docker/scores.production/static
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 │ DOCKER PATHS                                                                │
@@ -39,7 +40,20 @@ if [[ "$1" == "staging" ]]; then
   strDockerVolumeScores=betarena-scores_scores-staging-volume
   strHostDirRuntimeConfig=./.docker/scores.staging/runtime.config
   strHostDirRuntimeConfigTmp=./.docker/scores.staging/.tmp/runtime.config
+  strHostDirStatic=./.docker/scores.staging/static
 fi
+
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 📌 │ DOCKER PATHS (2)                                                            │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
+
+strDockerRuntimeConfigeConfigFilePath=$strDockerDirRuntimeConfig/$strConfigFileName
+strDockerPathClient=$strDockerDirRuntimeConfig/$strHostConfigFileClientName
+strDockerPathServer=$strDockerDirRuntimeConfig/$strHostConfigFileServerName
+
+# ╭──────────────────────────────────────────────────────────────────────────────────╮
+# │ 📌 │ HOST PATHS (2)                                                              │
+# ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 strOutputHostRuntimeConfigFilePath=$strHostDirRuntimeConfig/$strConfigFileName
 strOutputHostPathClient=$strHostDirRuntimeConfig/$strHostConfigFileClientName
