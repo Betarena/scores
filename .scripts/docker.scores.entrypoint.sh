@@ -20,19 +20,8 @@ strDebugPrefix="[docker.entrypoint.sh]"
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 # [🐞]
-echo "$strDebugPrefix 🛠️  Starting Docker Entrypoint Script for 'scores' Service..."
+echo "$strDebugPrefix 🛠️  starting 'scores' service..."
 
-source ./.scripts/docker.scores.build.check.sh
-
-# ╭─────
-# │ NOTE: CRITICAL
-# │ |: clean previous build files and copy fresh build files.
-# ╰─────
-rm -rf ./build/*
-cp -R ./build.copy/* ./build/
-
-source ./.scripts/docker.scores.build.check.sh
-source ./.scripts/docker.env.inject.sh
 source ./.scripts/docker.scores.build.check.sh
 
 npm run vite/start/express/docker

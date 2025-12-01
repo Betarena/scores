@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -12,14 +12,14 @@
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Update (import) '__run-time-config*.js' configuration files from host-machine to docker-container.
+# │ |: Update static files in docker-container from host-machine static directory in docker-volume.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-# #region ➤ 📌 VARIABLES
+#region ➤ 📌 VARIABLES
 
-strDebugPrefix="[docker.runtime-config.update.sh]"
+strDebugPrefix="[docker.scores.build.static.update.sh]"
 
-# #endregion ➤ 📌 VARIABLES
+#endregion ➤ 📌 VARIABLES
 
 #region ➤ 📦 Imports
 
@@ -31,25 +31,12 @@ source ./.scripts/lib/functions.sh
 checkForChanges ()
 {
   if [[ "$3" == "start" ]]; then
-    mkdir -p $strHostDirRuntimeConfigTmp
+    mkdir -p ./.docker/scores.production/.tmp
+    docker_cp \
+      $strDockerContainerScoresBuildTemp:/app/build \
+      ./.docker/scores.production/.tmp
+    #
   fi
-
-  # ╭─────
-  # │ NOTE:
-  # │ |: copy runtime-config files from docker-container to host-machine temporary directory
-  # ╰─────
-  docker_cp \
-    $strDockerContainerScoresBuildTemp:$strDockerRuntimeConfigeConfigFilePath \
-    $strHostDirRuntimeConfigTmp/$strConfigFileName
-  #
-  docker_cp \
-    $strDockerContainerScoresBuildTemp:$strDockerPathClient \
-    $strHostDirRuntimeConfigTmp/$strConfigFileName
-  #
-  docker_cp \
-    $strDockerContainerScoresBuildTemp:$strDockerPathServer \
-    $strHostDirRuntimeConfigTmp/$strConfigFileName
-  #
 
   DIFF_OUTPUT=$(diff -qr $1 $2)
 
@@ -66,10 +53,7 @@ checkForChanges ()
         # echo "$strDebugPrefix 🔹 volume only :: $transformed"
       elif [[ "$line" == *" differ" ]]; then
         transformed=$(echo "$line" | sed -E 's/^Files ([^ ]*) and ([^ ]*) differ$/File \1 differs/')
-        filePath1=$(echo "$line" | awk '{print $2}')
-        filePath2=$(echo "$line" | awk '{print $4}')
         echo -e "$strDebugPrefix ⚠️  $transformed"
-        diff -u $filePath1 $filePath2
       # else
       #   echo "$strDebugPrefix ❓ $line"
       fi
@@ -87,7 +71,7 @@ log start $strDebugPrefix
 
 # ╭─────
 # │ NOTE:
-# │ |: create temporary (time-limited) docker-container to copy 'runtime-config' files into
+# │ |: create a temporary docker container to copy static files into
 # ╰─────
 docker run \
   --rm --detach \
@@ -103,46 +87,29 @@ docker run \
 # │ |: START
 # ╰─────
 checkForChanges \
-  $strHostDirRuntimeConfig \
-  $strHostDirRuntimeConfigTmp \
+  $strHostDirStatic \
+  ./.docker/scores.production/.tmp/build/client \
   start
 #
 
 # ╭─────
 # │ NOTE:
-# │ |: loop through runtime-config defined in 'runtime-config-files.txt',
-# │ |: and copy (import) each file from (1) host-machine to (2) docker-container
+# │ |: loop through ALL files in the static directory and copy them into the
+# │ |: running docker container, preserving the directory structure.
 # ╰─────
-for i in $(cat $strOutputHostRuntimeConfigFilePath); do
+for strFilePath in $(find $strHostDirStatic -type f); do
   # [🐞]
-  echo -e "$strDebugPrefix 🟧 updating file :: $i"
-  if [[ "$i" == *"/client/"* ]]; then
-    docker_cp \
-      $strOutputHostPathClient \
-      $strDockerContainerScoresBuildTemp:"/app/$i"
-    #
-    docker_cp \
-      $strOutputHostPathClient \
-      $strDockerContainerScoresBuildTemp:"$strDockerDirRuntimeConfig/__run-time-config.client.js"
-    #
-    docker_cp \
-      $strOutputHostPathClient \
-      $strDockerContainerScoresBuildTemp:"/app/build/client/__run-time-config.client.js"
-    #
-  elif [[ "$i" == *"/server/"* ]]; then
-    docker_cp \
-      $strOutputHostPathServer \
-      $strDockerContainerScoresBuildTemp:"/app/$i"
-    #
-    docker_cp \
-      $strOutputHostPathServer \
-      $strDockerContainerScoresBuildTemp:"$strDockerDirRuntimeConfig/__run-time-config.server.js"
-    #
-    docker_cp \
-      $strOutputHostPathServer \
-      $strDockerContainerScoresBuildTemp:"/app/build/client/__run-time-config.server.js"
-    #
-  fi
+  # echo "🔹 processing :: $strFilePath"
+  strFilePathInsideContainer="${strFilePath/'./.docker/scores.production/static/'/'build/client/'}"
+  # [🐞]
+  # echo "💽 persisting :: $strFilePathInsideContainer"
+  docker exec \
+    $strDockerContainerScoresBuildTemp mkdir -p "$(dirname /app/$strFilePathInsideContainer)"
+  #
+  docker_cp \
+    $strFilePath \
+    $strDockerContainerScoresBuildTemp:"/app/$strFilePathInsideContainer"
+  #
 done
 
 # ╭─────
@@ -151,8 +118,8 @@ done
 # │ |: END
 # ╰─────
 checkForChanges \
-  $strHostDirRuntimeConfig \
-  $strHostDirRuntimeConfigTmp \
+  $strHostDirStatic \
+  ./.docker/scores.production/.tmp/build/client \
   end
 #
 

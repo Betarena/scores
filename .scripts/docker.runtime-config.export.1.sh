@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -12,54 +12,53 @@
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Copy '__run-time-config*.js' configuration files from docker-container to host-machine.
+# │ |: Copy (export) '__run-time-config*.js' configuration files from docker-container to host-machine.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+#region ➤ 📌 VARIABLES
+
 strDebugPrefix="[docker.runtime-config.export.1.sh]"
-dockerRuntimeConfigFilePath=/app/runtime-config-files.txt
 
-dockerContainer=betarena-scores-scores-production-1
-hostRuntimeConfigFilePath=./.docker/scores.production/runtime.config/runtime-config-files.txt
-outputDirClient=./.docker/scores.production/runtime.config/__run-time-config.client.js
-outputDirServer=./.docker/scores.production/runtime.config/__run-time-config.server.js
+#endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/_env.sh $1
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
 
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
-# [🐞]
-echo "$strDebugPrefix // 🟨 exporting __runtime-config file to host // START"
+log start $strDebugPrefix
 
 # ╭─────
 # │ NOTE:
-# │ |: copy 'runtime-config-files.txt' from the (1) docker-container to the (2) host-machine
+# │ |: create a temporary docker container to copy runtime-config files into
 # ╰─────
-docker cp \
-  $dockerContainer:$dockerRuntimeConfigFilePath $hostRuntimeConfigFilePath
+docker run \
+  --rm --detach \
+  --name $strDockerContainerScoresBuildTemp \
+  --volume $strDockerScoresBuildVolume:/app/build:rw \
+  alpine \
+  sleep 30
 #
 
 # ╭─────
 # │ NOTE:
-# │ |: loop through 'runtime-config-files.txt' file, and copy each listed file from the (1) docker-container to the (2) host-machine
+# │ |: copy (export) 'runtime-config-files.txt' from (1) docker-container to (2) host-machine
 # ╰─────
-for i in $(cat $hostRuntimeConfigFilePath); do
-  # [🐞]
-  echo "\n$strDebugPrefix 📝 $i // INSIGHT"
-  if [[ "$i" == *"/client/"* ]]; then
-    # [🐞]
-    # echo "it contains /client/"
-    docker cp \
-      $dockerContainer:"/app/$i" $outputDirClient
-    #
-  fi
-  if [[ "$i" == *"/server/"* ]]; then
-    # [🐞]
-    # echo "it contains /server/"
-     docker cp \
-      $dockerContainer:"/app/$i" $outputDirServer
-    #
-  fi
-done
+docker_cp \
+  $strDockerContainerScoresBuildTemp:$strDockerDirRuntimeConfig/runtime-config-files.txt \
+  $strOutputHostRuntimeConfigFilePath
+#
+docker_cp \
+  $strDockerContainerScoresBuildTemp:$strDockerDirRuntimeConfig/$strHostConfigFileClientName \
+  $strOutputHostPathClient
+#
+docker_cp \
+  $strDockerContainerScoresBuildTemp:$strDockerDirRuntimeConfig/$strHostConfigFileServerName \
+  $strOutputHostPathServer
+#
 
 # [🐞]
-echo "$strDebugPrefix // 🟨 exporting __runtime-config file to host // END"
-# [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+log end $strDebugPrefix

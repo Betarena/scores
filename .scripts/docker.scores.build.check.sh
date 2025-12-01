@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -14,19 +14,48 @@
 # │ BETARENA (Module)
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+#region ➤ 📌 VARIABLES
+
 strDebugPrefix="[docker.scores.build.check.sh]"
 
-# [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
-# [🐞]
-echo "$strDebugPrefix // START"
+#endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
 
 # [🐞]
-echo "$strDebugPrefix Number of files in build.copy ::" $(ls -R build.copy | wc -l)
-# [🐞]
-echo "$strDebugPrefix Number of files changed between build and build.copy ::" $(diff -qr build build.copy | wc -l)
-# [🐞]
-diff -qr build build.copy
+log start $strDebugPrefix
 
 # [🐞]
-echo "$strDebugPrefix // END"
+echo "$strDebugPrefix Number of files :: $(ls -R build.copy | wc -l) (./build.copy)"
+# [🐞]
+echo "$strDebugPrefix Number of files (changed) between build and build.copy ::" $(diff -qr build build.copy | wc -l)
+# [🐞]
+echo "$strDebugPrefix"
+
+DIFF_OUTPUT=$(diff -qr build build.copy)
+
+if [[ -z "$DIFF_OUTPUT" ]]; then
+  echo -e "$strDebugPrefix 🟩  No differences found"
+elif [[ -n "$DIFF_OUTPUT" ]]; then
+  IFS=$'\n'
+  for line in $DIFF_OUTPUT; do
+    if [[ "$line" == Only* ]]; then
+      echo -e "$strDebugPrefix 💎  $line"
+    elif [[ "$line" == *" differ" ]]; then
+      transformed=$(echo "$line" | sed -E 's/^Files ([^ ]*) and ([^ ]*) differ$/File \1 differs/')
+      echo -e "$strDebugPrefix ⚠️  $transformed"
+    else
+      echo -e "$strDebugPrefix ❓  $line"
+    fi
+  done
+  unset IFS
+fi
+
+# [🐞]
+echo "$strDebugPrefix"
+# [🐞]
+log end $strDebugPrefix

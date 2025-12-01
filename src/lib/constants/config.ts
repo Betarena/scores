@@ -35,6 +35,8 @@ type ILoadingType =
   // │ |: Locally hosted scripts/styles
   // ╰─────
   | 'local'
+  | 'local-mini'
+  | 'local.v2'
   // ╭─────
   // │ NOTE:
   // │ |: 3rd-Party scripts loaded locally
@@ -45,6 +47,7 @@ type ILoadingType =
   // │ |: 3rd-Party scripts loaded via CDN with Partytown
   // ╰─────
   | 'cdn-partytown'
+  | 'cdn-partytown-fix'
 ;
 
 export const config = {
@@ -391,9 +394,10 @@ export const config = {
                         // ┣─────
                         // │ |: Available Options:
                         // │ |: -> 'local' :: Locally hosted fonts
+                        // │ |: -> 'local-mini' :: Locally hosted fonts (mini version)
                         // │ |: -> 'cdn'   :: 3rd-Party fonts loaded via CDN
                         // ╰─────
-                        strLoadingType: 'cdn' as ILoadingType,
+                        strLoadingType: 'local-mini' as ILoadingType,
                         // ╭─────
                         // │ NOTE: IMPORTANT
                         // │ |: HTML Head Injection Point Identifier
@@ -409,6 +413,11 @@ export const config = {
                             <link
                               href="template/html.head.fonts.local.html"
                             />
+                          `,
+                          'local-mini': `
+                              <link
+                                href="template/html.head.fonts.local.mini.html"
+                              />
                           `,
                           'cdn': `
                             <link
@@ -484,10 +493,12 @@ export const config = {
                         // ┣─────
                         // │ |: Available Options:
                         // │ |: -> 'local'         :: Locally hosted scripts
+                        // │ |: -> 'local.v2'      :: Locally hosted scripts (version 2)
                         // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
                         // │ |: -> 'cdn-partytown' :: 3rd-Party scripts loaded via CDN with Partytown
+                        // │ |: -> 'cdn-partytown-fix' :: 3rd-Party scripts loaded via CDN with Partytown (fixed)
                         // ╰─────
-                        strLoadingType: 'cdn-partytown' as ILoadingType,
+                        strLoadingType: 'local.v2' as ILoadingType,
                         // ╭─────
                         // │ NOTE: IMPORTANT
                         // │ |: HTML Head Injection Point Identifier
@@ -505,6 +516,11 @@ export const config = {
                               as="script"
                             />
                           `,
+                          'local.v2': `
+                            <link
+                              href="template/html.head.twitter.local.html"
+                            />
+                          `,
                           'cdn': `
                             <link
                               href="template/html.head.twitter.cdn.html"
@@ -515,6 +531,11 @@ export const config = {
                               href="template/html.head.twitter.cdn.partytown.html"
                             />
                           `,
+                          'cdn-partytown-fix': `
+                          <link
+                            href="template/html.head.twitter.cdn.partytown.fix.html"
+                          />
+                        `
                         } as Record < ILoadingType, string >,
                       },
                     // ╭─────
@@ -527,7 +548,7 @@ export const config = {
                         // │ NOTE:
                         // │ |: toggle injection
                         // ╰─────
-                        isEnabled: true,
+                        isEnabled: false,
                         // ╭─────
                         // │ NOTE:
                         // │ |: select injection option
@@ -656,7 +677,7 @@ export const config = {
                         // │ NOTE:
                         // │ |: toggle injection
                         // ╰─────
-                        isEnabled: true,
+                        isEnabled: false,
                         // ╭─────
                         // │ NOTE:
                         // │ |: select injection option

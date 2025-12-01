@@ -13,9 +13,9 @@
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
 # │ |: Injects the environment variables into the VITE build files,
-# │ |:  by replacing the 'VITE_X_' with 'VITE_'.
+# │ |  by replacing the 'VITE_X_' with 'VITE_'.
 # │ |: This is done to ensure that the environment variables are available in the
-# │ |:  production build, and that the 'VITE_' variables are not exposed.
+# │ |  production build, and that the 'VITE_' variables are not exposed.
 # │ |: The script is executed during the 'docker build' process.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
@@ -23,18 +23,34 @@
 # source ./env/.env.docker.scores
 # set +o allexport
 
-strDebugPrefix="[docker.env.inject.sh]"
+#region ➤ 📌 VARIABLES
+
+strDebugPrefix="[docker.scores.build.env.inject.sh]"
+
+#endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
 
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+log start
+
 # [🐞]
 # echo "$strDebugPrefix ENV:" $(env)
+
 # [🐞]
-echo "$strDebugPrefix // START"
+echo "$strDebugPrefix 'VITE_X_' values remaining (build) ::" $(find build -type f -exec grep -i "VITE_X" {} \; | wc -l)
+# [🐞]
+echo "$strDebugPrefix 'VITE_X_' values remaining (build.copy) ::" $(find build.copy -type f -exec grep -i "VITE_X" {} \; | wc -l)
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 
 # ╭─────
 # │ NOTE:
-# │ |: Loop through all the environment variables that start with 'VITE_X_[..]'
+# │ |: loop through all the environment variables that start with 'VITE_X_[..]'
 # ╰─────
 counter=0
 for i in $(env | grep VITE_X_)
@@ -46,7 +62,7 @@ do
   key=$(echo $i | cut -d '=' -f 1)
   value=$(echo $i | cut -d '=' -f 2-)
   # [🐞]
-  echo "$strDebugPrefix ASSIGN NEW VALUE:" $key = $value
+  echo "$strDebugPrefix assingement $key = $value"
 
   # ╭─────
   # │ NOTE:
@@ -75,8 +91,8 @@ do
   find build \
     -type f \
     -name '*.js' \
-    -exec sed \
-    -i "s|${key}|${value_adjusted}|g" '{}' +
+    -exec sed -i "s|${key}|${value_adjusted}|g" '{}' +
+    # -exec sh -c 'tmp=$(mktemp); sed "s|'"${key}"'|'"${value_adjusted}"'|g" "$1" > "$tmp"; cat "$tmp" > "$1"; rm "$tmp"' sh {} \;
   #
 
   counter=$((counter+1))
@@ -85,10 +101,9 @@ done
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 # [🐞]
-echo "$strDebugPrefix 'VITE_X_' values remaining ::" $(find build -type f -exec grep -i "VITE_X" {} + | wc -l)
+echo "$strDebugPrefix 'VITE_X_' values remaining (build) ::" $(find build -type f -exec grep -i "VITE_X" {} \; | wc -l)
 # [🐞]
 echo "$strDebugPrefix 'VITE_X_' values replaced ::" $counter
+
 # [🐞]
-echo "$strDebugPrefix // END"
-# [🐞]
-# echo "$strDebugPrefix ENV:" $(env)
+log end

@@ -44,6 +44,9 @@ jobs:
   deployment:
     name: 🔥 JOB /:/ deploy:staging
     needs: docker-image-build-and-push
+    if: ${{
+        !contains(github.event.pull_request.labels.*.name, 'cd/pr/no-deployment')
+      }}
     runs-on: ubuntu-22.04
     environment:
       name: staging

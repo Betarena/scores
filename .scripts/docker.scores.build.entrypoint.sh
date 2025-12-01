@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -7,37 +7,39 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // November 17th, 2025                                           │
+# │ ➤ Created on    // November 29th, 2025                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
+# │ │: Docker entrypoint script for 'scores-build' service.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-strDebugPrefix="[docker.static.update.sh]"
-strDockerContainer=betarena-scores-scores-production-1
-strStaticDirectory=./.docker/scores.production/static
+strDebugPrefix="[docker.scores.build.entrypoint.sh]"
 
 # [🐞]
 echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+# [🐞]
+echo "$strDebugPrefix 🛠️  starting 'scores-build' service"
+
+source ./.scripts/docker.scores.build.check.sh
+
+# [🐞]
+echo "$strDebugPrefix preparing build files for environment injection..."
 
 # ╭─────
-# │ NOTE:
-# │ |: loop through all the files listed in the runtime-config-files.txt
+# │ NOTE: CRITICAL
+# │ |: clean previous 'build/*' files (& docker-volume) and copy fresh build files.
 # ╰─────
-for strFilePath in $(find $strStaticDirectory -type f); do
-  # [🐞]
-  # echo "🔹 processing :: $strFilePath"
-  strFilePathInsideContainer="${strFilePath/'./.docker/scores.production/static/'/'build/client/'}"
-  # [🐞]
-  echo "💽 persisting :: $strFilePathInsideContainer"
-  docker cp \
-    $strFilePath \
-    $strDockerContainer:"/app/$strFilePathInsideContainer"
-  #
-  # [🐞]
-  echo ""
-done
+rm -rf ./build/*
+cp -R ./build.copy/* ./build/
 
-# [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+source ./.scripts/docker.scores.build.check.sh
+
+# ╭─────
+# │ NOTE: CRITICAL
+# │ |: inject environment variables into 'build/*' files.
+# ╰─────
+source ./.scripts/docker.scores.build.env.inject.sh
+
+source ./.scripts/docker.scores.build.check.sh
