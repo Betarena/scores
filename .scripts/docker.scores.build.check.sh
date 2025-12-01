@@ -7,19 +7,16 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // November 26th, 2025.                                          │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Aggregate list of '__run-time-config*.js' configuration files in 'build' directory.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 #region ➤ 📌 VARIABLES
 
-strDebugPrefix="[docker.runtime-config.export.0.sh]"
-strPathConfigFile=/app/build/runtime.config
-strPathBuildFile=/app/build-files.txt
+strDebugPrefix="[docker.scores.build.check.sh]"
 
 #endregion ➤ 📌 VARIABLES
 
@@ -30,48 +27,35 @@ source ./.scripts/lib/functions.sh
 #endregion ➤ 📦 Imports
 
 # [🐞]
-log start
-
-mkdir -p $strPathConfigFile
-
-# ╭─────
-# │ NOTE:
-# │ |: find '__run-time-config*.js' files in the 'build' directory.
-# ╰─────
-find build \
-  -type f \
-  -name '__run-time-config*.js' \
-  > $strPathConfigFile/runtime-config-files.txt
-#
+log start $strDebugPrefix
 
 # [🐞]
-cat $strPathConfigFile/runtime-config-files.txt
+echo "$strDebugPrefix Number of files :: $(ls -R build.copy | wc -l) (./build.copy)"
+# [🐞]
+echo "$strDebugPrefix Number of files (changed) between build and build.copy ::" $(diff -qr build build.copy | wc -l)
+# [🐞]
+echo "$strDebugPrefix"
 
-# ╭─────
-# │ NOTE:
-# │ |: loop through '/app/runtime-config-files.txt' file,
-# │ |: and copy files to 'build/client' directory with proper names.
-# ╰─────
-for i in $(cat $strPathConfigFile/runtime-config-files.txt); do
-  if [[ "$i" == *"/client/"* ]]; then
-    cp /app/$i /app/build/client/__run-time-config.client.js
-    cp /app/$i $strPathConfigFile/__run-time-config.client.js
-    cp /app/$i $strPathConfigFile/__run-time-config.client.original.js
-  elif [[ "$i" == *"/server/"* ]]; then
-    cp /app/$i /app/build/client/__run-time-config.server.js
-    cp /app/$i $strPathConfigFile/__run-time-config.server.js
-    cp /app/$i $strPathConfigFile/__run-time-config.server.original.js
-  fi
-done
+DIFF_OUTPUT=$(diff -qr build build.copy)
 
-# ╭─────
-# │ NOTE:
-# │ |: find '*' (all) files in the 'build' directory.
-# ╰─────
-find build \
-  -type f \
-  > $strPathBuildFile
-#
+if [[ -z "$DIFF_OUTPUT" ]]; then
+  echo -e "$strDebugPrefix 🟩  No differences found"
+elif [[ -n "$DIFF_OUTPUT" ]]; then
+  IFS=$'\n'
+  for line in $DIFF_OUTPUT; do
+    if [[ "$line" == Only* ]]; then
+      echo -e "$strDebugPrefix 💎  $line"
+    elif [[ "$line" == *" differ" ]]; then
+      transformed=$(echo "$line" | sed -E 's/^Files ([^ ]*) and ([^ ]*) differ$/File \1 differs/')
+      echo -e "$strDebugPrefix ⚠️  $transformed"
+    else
+      echo -e "$strDebugPrefix ❓  $line"
+    fi
+  done
+  unset IFS
+fi
 
 # [🐞]
-log end
+echo "$strDebugPrefix"
+# [🐞]
+log end $strDebugPrefix

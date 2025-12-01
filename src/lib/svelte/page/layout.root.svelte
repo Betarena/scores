@@ -153,6 +153,7 @@
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
   $: ({ B_NAV_T: navbarTranslationData, dataArticle } = $page.data);
+  $: ({ isEnabled: isPartytownEnabled, strCodeSampleForPartytownConfig } = config.objApp.objServiceWorkerPartytown());
 
   $: isInitliazed = false;
   $: isInitializationFinished = false;
@@ -550,13 +551,13 @@
   │ NOTE:
   │ |: Integration Injection for :: Partytown
   ╰───── -->
-  {#if config.objApp.objServiceWorkerPartytown.isEnabled}
+  {#if isPartytownEnabled}
     <!--
     ╭─────
     │ NOTE: IMPORTANT
     │ |: Forward the necessary functions to the web worker layer
     ╰───── -->
-    {@html config.objApp.objServiceWorkerPartytown.strCodeSampleForPartytownConfig}
+    {@html strCodeSampleForPartytownConfig}
 
     <!-- CRITICAL -->
     {@html '<script>' + partytownSnippet() + '</script>'}

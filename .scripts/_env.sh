@@ -1,66 +1,60 @@
-# ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 🟩 │ NODE │ NPM                                                                  │
-# ╰──────────────────────────────────────────────────────────────────────────────────╯
+#!/bin/sh
 
-node_modules/
-pnpm-lock.yaml
-vite.config.ts.timestamp-*
+# [🐞]
+echo "exporting for environment :: $1"
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 🏗️ │ LOCAL DEVELOPMENT │ BUILD-OUTPUT                                            │
+# │ 📌 │ DOCKER CONTAINERS                                                           │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-.output/
-.svelte-kit/
-build/
-dist/
+strDockerContainerScores=betarena-scores-scores-production-1
+strDockerContainerScoresBuild=betarena-scores-scores-production-build-1
+strDockerContainerScoresBuildTemp=betarena-scores-scores-build-temp
+strDockerVolumeScores=betarena-scores_scores-production-volume
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 💠 │ MISCELLENOUS                                                                │
+# │ 📌 │ HOST PATHS                                                                  │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-.temp/
-WEBSITE-DEV-README.md
-datalog/
-debug.log
-debug/
+strHostDirRuntimeConfig=./.docker/scores.production/runtime.config
+strHostDirRuntimeConfigTmp=./.docker/scores.production/.tmp/runtime.config
+strHostDirStatic=./.docker/scores.production/static
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 🔑 │ SECRETS                                                                     │
+# │ 📌 │ DOCKER PATHS                                                                │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-.env*
-!.env.vault
-!.env*placeholder*
-!.env.docker.file
-.sentryclirc
+strDockerDirRuntimeConfig=/app/build/runtime.config
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 🐳 │ DOCKER                                                                      │
+# │ 📌 │ FILENAMES                                                                   │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-.docker/.archive
-.docker/*export
-.docker/docker-compose.output.yml
-.docker/goaccess/*.html
-.docker/nginx/logs
-.docker/nginx/cache
-.docker/nginx/auth
-.docker/prometheus/password.txt
-.docker/scores*
-.docker/sitespeedio
-.docker/**/*.zip
+strConfigFileName=runtime-config-files.txt
+strHostConfigFileClientName=__run-time-config.client.js
+strHostConfigFileServerName=__run-time-config.server.js
+
+if [[ "$1" == "staging" ]]; then
+  strDockerContainerScores=betarena-scores-scores-staging-1
+  strDockerContainerScoresBuild=betarena-scores-scores-staging-build-1
+  strDockerVolumeScores=betarena-scores_scores-staging-volume
+  strHostDirRuntimeConfig=./.docker/scores.staging/runtime.config
+  strHostDirRuntimeConfigTmp=./.docker/scores.staging/.tmp/runtime.config
+  strHostDirStatic=./.docker/scores.staging/static
+fi
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 💻 │ MACOS                                                                       │
+# │ 📌 │ DOCKER PATHS (2)                                                            │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-**/.DS_Store
-**/._*
-.flaskenv*
+strDockerRuntimeConfigeConfigFilePath=$strDockerDirRuntimeConfig/$strConfigFileName
+strDockerPathClient=$strDockerDirRuntimeConfig/$strHostConfigFileClientName
+strDockerPathServer=$strDockerDirRuntimeConfig/$strHostConfigFileServerName
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
-# │ 💻 │ WINDOWS stackdumps                                                          │
+# │ 📌 │ HOST PATHS (2)                                                              │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-*.stackdump
+strOutputHostRuntimeConfigFilePath=$strHostDirRuntimeConfig/$strConfigFileName
+strOutputHostPathClient=$strHostDirRuntimeConfig/$strHostConfigFileClientName
+strOutputHostPathServer=$strHostDirRuntimeConfig/$strHostConfigFileServerName

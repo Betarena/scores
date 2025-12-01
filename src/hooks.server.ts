@@ -18,6 +18,7 @@
 
 // #region ➤ 📦 Package Imports
 
+
 import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
@@ -531,6 +532,28 @@ export const handle: Handle = sequence
               return objConfigModule.objHtmlHeadABTestingInjection.fonts.objLoadingOptions
                 [
                   objConfigModule.objHtmlHeadABTestingInjection.fonts.strLoadingType
+                ] ?? ''
+              ;
+            }
+          )
+      ;
+
+      // ╭─────
+      // │ NOTE: IMPORTANT CRITICAL
+      // │ |: rutime injection :: pwa for A/B testing
+      // ╰─────
+      if (objConfigModule.objHtmlHeadABTestingInjection?.pwa.isEnabled)
+        html = html
+          ?.replace
+          (
+            objConfigModule.objHtmlHeadABTestingInjection.pwa.strHtmlHeadForInjection,
+            (
+              _string
+            ) =>
+            {
+              return objConfigModule.objHtmlHeadABTestingInjection.pwa.objLoadingOptions
+                [
+                  objConfigModule.objHtmlHeadABTestingInjection.pwa.strLoadingType
                 ] ?? ''
               ;
             }

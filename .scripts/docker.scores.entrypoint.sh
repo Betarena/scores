@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -7,71 +7,21 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // December 12th, 2024                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: Aggregate list of '__run-time-config*.js' configuration files in 'build' directory.
+# │ │: Docker entrypoint script for 'scores' service.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-#region ➤ 📌 VARIABLES
-
-strDebugPrefix="[docker.runtime-config.export.0.sh]"
-strPathConfigFile=/app/build/runtime.config
-strPathBuildFile=/app/build-files.txt
-
-#endregion ➤ 📌 VARIABLES
-
-#region ➤ 📦 Imports
-
-source ./.scripts/lib/functions.sh
-
-#endregion ➤ 📦 Imports
+strDebugPrefix="[docker.entrypoint.sh]"
 
 # [🐞]
-log start
-
-mkdir -p $strPathConfigFile
-
-# ╭─────
-# │ NOTE:
-# │ |: find '__run-time-config*.js' files in the 'build' directory.
-# ╰─────
-find build \
-  -type f \
-  -name '__run-time-config*.js' \
-  > $strPathConfigFile/runtime-config-files.txt
-#
-
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 # [🐞]
-cat $strPathConfigFile/runtime-config-files.txt
+echo "$strDebugPrefix 🛠️  starting 'scores' service..."
 
-# ╭─────
-# │ NOTE:
-# │ |: loop through '/app/runtime-config-files.txt' file,
-# │ |: and copy files to 'build/client' directory with proper names.
-# ╰─────
-for i in $(cat $strPathConfigFile/runtime-config-files.txt); do
-  if [[ "$i" == *"/client/"* ]]; then
-    cp /app/$i /app/build/client/__run-time-config.client.js
-    cp /app/$i $strPathConfigFile/__run-time-config.client.js
-    cp /app/$i $strPathConfigFile/__run-time-config.client.original.js
-  elif [[ "$i" == *"/server/"* ]]; then
-    cp /app/$i /app/build/client/__run-time-config.server.js
-    cp /app/$i $strPathConfigFile/__run-time-config.server.js
-    cp /app/$i $strPathConfigFile/__run-time-config.server.original.js
-  fi
-done
+source ./.scripts/docker.scores.build.check.sh
 
-# ╭─────
-# │ NOTE:
-# │ |: find '*' (all) files in the 'build' directory.
-# ╰─────
-find build \
-  -type f \
-  > $strPathBuildFile
-#
-
-# [🐞]
-log end
+npm run vite/start/express/docker

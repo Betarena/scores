@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -7,14 +7,39 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // November 29th, 2025                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
-# │ |: <insert-module-summary-here>
+# │ │: Docker entrypoint script for 'scores-build' service.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-source ./.scripts/docker.env.inject.sh
+strDebugPrefix="[docker.scores.build.entrypoint.sh]"
 
-npm run vite/start/express/docker
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+# [🐞]
+echo "$strDebugPrefix 🛠️  starting 'scores-build' service"
+
+source ./.scripts/docker.scores.build.check.sh
+
+# [🐞]
+echo "$strDebugPrefix preparing build files for environment injection..."
+
+# ╭─────
+# │ NOTE: CRITICAL
+# │ |: clean previous 'build/*' files (& docker-volume) and copy fresh build files.
+# ╰─────
+rm -rf ./build/*
+cp -R ./build.copy/* ./build/
+
+source ./.scripts/docker.scores.build.check.sh
+
+# ╭─────
+# │ NOTE: CRITICAL
+# │ |: inject environment variables into 'build/*' files.
+# ╰─────
+source ./.scripts/docker.scores.build.env.inject.sh
+
+source ./.scripts/docker.scores.build.check.sh
