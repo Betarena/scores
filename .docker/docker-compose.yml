@@ -35,7 +35,6 @@ services:
       # │ NOTE: IMPORTANT
       # │ |: volume for: configuration files
       # ╰─────
-      - ./nginx/config:/etc/nginx/config:ro
       - ./nginx/auth:/etc/nginx/auth:ro
       # ╭─────
       # │ NOTE: IMPORTANT
