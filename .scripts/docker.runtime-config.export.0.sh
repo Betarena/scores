@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -54,13 +54,13 @@ cat $strPathConfigFile/runtime-config-files.txt
 # ╰─────
 for i in $(cat $strPathConfigFile/runtime-config-files.txt); do
   if [[ "$i" == *"/client/"* ]]; then
-    cp $i /app/build/client/__run-time-config.client.js
-    cp $i /app/build/runtime.config/__run-time-config.client.js
-    cp $i /app/build/runtime.config/__run-time-config.client.original.js
+    cp /app/$i /app/build/client/__run-time-config.client.js
+    cp /app/$i $strPathConfigFile/__run-time-config.client.js
+    cp /app/$i $strPathConfigFile/__run-time-config.client.original.js
   elif [[ "$i" == *"/server/"* ]]; then
-    cp $i /app/build/client/__run-time-config.server.js
-    cp $i /app/build/runtime.config/__run-time-config.server.js
-    cp $i /app/build/runtime.config/__run-time-config.server.original.js
+    cp /app/$i /app/build/client/__run-time-config.server.js
+    cp /app/$i $strPathConfigFile/__run-time-config.server.js
+    cp /app/$i $strPathConfigFile/__run-time-config.server.original.js
   fi
 done
 
