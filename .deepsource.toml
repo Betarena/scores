@@ -1,12 +1,9 @@
 version = 1
 
+exclude_patterns = ["static/scripts/*.js"]
+
 [[analyzers]]
 name = "docker"
-enabled = true
-
-  [analyzers.meta]
-  dockerfile_paths = ["Dockerfile"]
 
 [[analyzers]]
 name = "javascript"
-enabled = true
