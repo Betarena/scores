@@ -66,7 +66,7 @@ services:
   #
 
   scores-production-build:
-    image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
+    image: ${DOCKER_COMPOSE__BETARENA_SCORES_PRODUCTION_IMAGE:-name4d/betarena:scores-latest}
     env_file: ../env/.env.docker.scores.build.production
     volumes:
       # ╭─────
@@ -83,10 +83,10 @@ services:
   #
 
   scores-production:
-    image: ${BETARNA_SCORES__DOCKER_IMAGE:-name4d/betarena:scores-latest}
+    image: ${DOCKER_COMPOSE__BETARENA_SCORES_PRODUCTION_IMAGE:-name4d/betarena:scores-latest}
     restart: always
     deploy:
-      replicas: ${BETARNA_SCORES__REPLICAS:-3}
+      replicas: ${DOCKER_COMPOSE__BETARENA_SCORES_PRODUCTION_REPLICAS:-3}
     env_file: ../env/.env.docker.scores.production
     volumes:
       # ╭─────
@@ -125,7 +125,7 @@ services:
   #
 
   scores-staging-build:
-    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE:-name4d/betarena:scores-staging-latest}
+    image: ${DOCKER_COMPOSE__BETARENA_SCORES_STAGING_IMAGE:-name4d/betarena:scores-staging-latest}
     env_file: ../env/.env.docker.scores.build.staging
     volumes:
       # ╭─────
@@ -142,10 +142,10 @@ services:
   #
 
   scores-staging:
-    image: ${BETARNA_SCORES_STAGING__DOCKER_IMAGE:-name4d/betarena:scores-staging-latest}
+    image: ${DOCKER_COMPOSE__BETARENA_SCORES_STAGING_IMAGE:-name4d/betarena:scores-staging-latest}
     restart: always
     deploy:
-      replicas: ${BETARNA_SCORES_STAGING__REPLICAS:-1}
+      replicas: ${DOCKER_COMPOSE__BETARENA_SCORES_STAGING_REPLICAS:-1}
     env_file: ../env/.env.docker.scores.staging
     volumes:
       # ╭─────

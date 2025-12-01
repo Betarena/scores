@@ -667,12 +667,6 @@ docker-compose-up:
 		echo "";\
 	fi
 
-	if [[ "$(services)" == *"scores-staging"* && "$(services)" == *"scores-production"* ]]; then\
-		echo "[Makefile::docker-compose-up] Please do not deploy 'scores-production & scores-staging' together";\
-		exit 1;\
-		echo "";\
-	fi
-
 	if [ "$(version)" = "latest" ]; then\
 		cd .docker/; \
 		docker compose pull scores-production scores-staging; \
@@ -717,10 +711,15 @@ docker-compose-up:
 
 	# ╭─────
 	# │ NOTE:
-	# │ |: export current docker container logs before (re)start
+	# │ |: [1] export current docker container logs before (re)start
+	# │ |: for debugging & archive purposes.
+	# │ |: [2] archive 'scores' server changes if version=latest
 	# ╰─────
 
-	# ${MAKE} docker-container-export-logs-all
+	if [ "$(version)" = "latest" ]; then\
+		${MAKE} docker-container-export-logs-all;\
+		${MAKE} docker-scores-archive-server-changes;\
+	fi
 
 	# ╭─────
 	# │ NOTE:
@@ -813,6 +812,50 @@ docker-run-goaccess:
 			$(logPath) \
 			-o /var/www/goaccess/goacces.report.html \
 			--log-format=COMBINED
+	#
+#
+
+.ONESHELL:
+docker-scores-archive-server-changes:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: export all docker container logs to a designated directory    │
+	# │ │: for archive & debugging purposes.                             │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	if [ ! $(type) ]; then\
+		echo "[Makefile::docker-scores-archive-server-changes] Please set a target type via type=\"<staging|production>\"";\
+		exit 1;\
+		echo "";\
+	fi
+
+	TEMP_DATE=$$(date +%Y-%m-%d_%H-%M-%S)
+	PATH_OUTPUT=./.docker/scores.$(type)/.archive/$${TEMP_DATE}
+	PATH_OUTPUT_ZIP=./.docker/.archive/scores.$(type).$${TEMP_DATE}
+
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 📜 │ Exporting docker 'scores' changes                           │\
+		\n├──────────────────────────────────────────────────────────────────┤\
+		\n│ ➤ path: $${PATH_OUTPUT} \
+		\n│ ➤ zip: $${PATH_OUTPUT_ZIP}.zip \
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
+	#
+
+	rsync \
+		-av \
+		--exclude '.archive' \
+		./.docker/scores.$(type)/ $${PATH_OUTPUT}
+	#
+
+	zip \
+		-r \
+		$${PATH_OUTPUT_ZIP}.zip \
+		$${PATH_OUTPUT}
 	#
 #
 
