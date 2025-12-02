@@ -145,6 +145,9 @@
            */
           provider: null | GithubAuthProvider | GoogleAuthProvider = null;
         provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+          prompt: "select_account"
+        })
         disableButton = true;
         const result = await signInWithPopup(auth, provider),
           user = result.user;
