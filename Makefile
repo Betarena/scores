@@ -667,9 +667,20 @@ docker-compose-up:
 		echo "";\
 	fi
 
+	if [[ "$(services)" == *"scores-staging"* && "$(services)" == *"scores-production"* ]]; then\
+		echo "[Makefile::docker-compose-up] Please do not deploy 'scores-production & scores-staging' together";\
+		exit 1;\
+		echo "";\
+	fi
+
 	if [ "$(version)" = "latest" ]; then\
 		cd .docker/; \
-		docker compose pull scores-production scores-staging; \
+		if [[ "$(services)" == *"scores-staging"* ]]; then
+			docker compose pull scores-staging; \
+		fi
+		if [[ "$(services)" == *"scores-production"* ]]; then
+			docker compose pull scores-production; \
+		fi
 		cd ..; \
 	fi
 
@@ -718,7 +729,12 @@ docker-compose-up:
 
 	if [ "$(version)" = "latest" ]; then\
 		${MAKE} docker-container-export-logs-all;\
-		${MAKE} docker-scores-archive-server-changes;\
+		if [[ "$(services)" == *"scores-production"* ]]; then
+			${MAKE} docker-scores-archive-server-changes type="production";\
+		fi
+		if [[ "$(services)" == *"scores-staging"* ]]; then
+			${MAKE} docker-scores-archive-server-changes type="staging";\
+		fi
 	fi
 
 	# ╭─────
@@ -857,6 +873,57 @@ docker-scores-archive-server-changes:
 		$${PATH_OUTPUT_ZIP}.zip \
 		$${PATH_OUTPUT}
 	#
+#
+
+.ONESHELL:
+docker-scores-staging-toggle:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: toggle 'scores' staging container(s) ON/OFF.                  │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	TEMP_PATH=.docker/nginx/config/production/nginx.server.scores.staging.conf
+	TEMP_MODE=""
+
+	if [ -z "$$(docker ps -aq -f name=betarena-scores-scores-staging-1)" ]; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'scores-staging' container not found. Please run 'make docker-compose-up services=scores-staging' to start the container.";\
+		exit 1;\
+		echo "";\
+	fi
+
+	if [ -z "$$(docker ps -aq -f name=betarena-scores-nginx-1)" ]; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'nginx' container not found. Please run 'make docker-compose-up services=nginx' to start the container.";\
+		exit 1;\
+		echo "";\
+	fi
+
+	if grep -q "deny all;" $${TEMP_PATH}; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'scores-staging' nginx config file found. Proceeding to toggle ON"; \
+		TEMP_MODE="on"; \
+	elif grep -q "allow all;" $${TEMP_PATH}; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'scores-staging' nginx config file found. Proceeding to toggle for OFF"; \
+		TEMP_MODE="off"; \
+	fi
+
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🟪 │ Toggling 'scores' staging container(s) $${TEMP_MODE} \
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
+	#
+
+	if [ "$${TEMP_MODE}" = "on" ]; then\
+		gsed -i 's/deny all;/allow all;/g' $${TEMP_PATH};\
+		gsed -i 's|# proxy_pass http://scores-staging:3050;|proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
+	elif [ "$${TEMP_MODE}" = "off" ]; then\
+		gsed -i 's/allow all;/deny all;/g' $${TEMP_PATH};\
+		gsed -i 's|proxy_pass http://scores-staging:3050;|# proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
+	fi
+
+	docker exec betarena-scores-nginx-1 nginx -s reload
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
