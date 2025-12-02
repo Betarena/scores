@@ -1,0 +1,45 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: '🚦 // staging environment toggle'
+
+on:
+  # ╭─────
+  # │ NOTE:
+  # │ |: Debugging / Testing only
+  # ╰─────
+  # push:
+  #   branches:
+  #     - chore/miscellenous/draft/3
+  # ╭─────
+  # │ NOTE:
+  # │ |: Manual trigger from GitHub UI
+  # ╰─────
+  workflow_dispatch:
+#
+
+jobs:
+
+  toggle-staging-environment:
+    name: 🚦 JOB - Toggle Staging Environment
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          key: ${{ secrets.SERVER_KEY }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            # ╭─────
+            # │ NOTE:
+            # │ │: Navigate to target project directory
+            # ╰─────
+            cd web/scores
+            # ╭─────
+            # │ NOTE:
+            # │ │: Run target makefile command to redeploy docker image
+            # ╰─────
+            make docker-scores-staging-toggle
+#
