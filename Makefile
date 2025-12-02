@@ -667,9 +667,20 @@ docker-compose-up:
 		echo "";\
 	fi
 
+	if [[ "$(services)" == *"scores-staging"* && "$(services)" == *"scores-production"* ]]; then\
+		echo "[Makefile::docker-compose-up] Please do not deploy 'scores-production & scores-staging' together";\
+		exit 1;\
+		echo "";\
+	fi
+
 	if [ "$(version)" = "latest" ]; then\
 		cd .docker/; \
-		docker compose pull scores-production scores-staging; \
+		if [[ "$(services)" == *"scores-staging"* ]]; then
+			docker compose pull scores-staging; \
+		fi
+		if [[ "$(services)" == *"scores-production"* ]]; then
+			docker compose pull scores-production; \
+		fi
 		cd ..; \
 	fi
 
@@ -718,7 +729,12 @@ docker-compose-up:
 
 	if [ "$(version)" = "latest" ]; then\
 		${MAKE} docker-container-export-logs-all;\
-		${MAKE} docker-scores-archive-server-changes;\
+		if [[ "$(services)" == *"scores-production"* ]]; then
+			${MAKE} docker-scores-archive-server-changes type="production";\
+		fi
+		if [[ "$(services)" == *"scores-staging"* ]]; then
+			${MAKE} docker-scores-archive-server-changes type="staging";\
+		fi
 	fi
 
 	# ╭─────
