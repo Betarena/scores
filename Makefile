@@ -742,11 +742,6 @@ docker-compose-up:
 	# │ |: docker-compose up (build & deploy)
 	# ╰─────
 
-	# ╭─────
-	# │ NOTE:
-	# │ |: docker-compose up (build & deploy)
-	# ╰─────
-
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
 		-f .docker/docker-compose.yml \
