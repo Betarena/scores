@@ -27,8 +27,6 @@
 
   import WrapperDynamicImport from '$lib/components/misc/WrapperDynamicImport.svelte';
   import Layout from '$lib/svelte/page/layout.root.svelte';
-  import { page } from '$app/stores';
-  import { logoutUser } from '$lib/utils/user.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -57,9 +55,7 @@
 
   // #endregion ➤ 📌 VARIABLES
 
-  $: if ($page.data._dev_wrong_cookies) {
-    logoutUser();
-  }
+
 </script>
 
 <!--
