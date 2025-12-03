@@ -27,6 +27,7 @@
 
   import WrapperDynamicImport from '$lib/components/misc/WrapperDynamicImport.svelte';
   import Layout from '$lib/svelte/page/layout.root.svelte';
+  import { page } from '$app/stores';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -54,7 +55,8 @@
   ;
 
   // #endregion ➤ 📌 VARIABLES
-
+  $: console.log("Layout Root - Locals:", JSON.parse($page.data._dev_locals));
+  $: console.log("Layout Root - Cookies:", JSON.parse($page.data._dev_cookies));
 </script>
 
 <!--
