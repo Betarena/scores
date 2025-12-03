@@ -57,7 +57,7 @@ export async function load
     );
   */
 
-  return {...methodRes0, _dev_cookies: JSON.stringify(event.cookies), _dev_locals: JSON.stringify(event.locals) };
+  return {...methodRes0, _dev_cookies: JSON.stringify(event.cookies.getAll()), _dev_locals: JSON.stringify(event.locals) };
 }
 
 // #endregion ➤ 🔄 LIFECYCLE - [SVELTE-KIT]
