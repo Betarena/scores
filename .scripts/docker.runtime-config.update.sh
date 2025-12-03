@@ -143,8 +143,6 @@ for i in $(cat $strOutputHostRuntimeConfigFilePath); do
       $strDockerContainerScoresBuildTemp:"/app/build/client/__run-time-config.server.js"
     #
   fi
-  # [🐞]
-  echo ""
 done
 
 # ╭─────
