@@ -124,7 +124,7 @@
 
   $: ({ windowWidth, globalState, serverLang } = $sessionStore);
   // $: ({ user } = $userBetarenaSettings);
-  $: ({ user: { scores_user_data: { following: { tags } = {} } = {} } = {}, objHistory: { strContentSelectFeed } } = $userBetarenaSettings);
+  $: ({lang, user: { scores_user_data: { following: { tags } = {} } = {} } = {}, objHistory: { strContentSelectFeed } } = $userBetarenaSettings);
   $: [ VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1] ]
     = viewportChangeV2
     (
@@ -568,7 +568,7 @@
        * @description
        * 📝 URL to be requested.
        */
-      url = `/api/data/author.home?&lang=${serverLang}&page=${page}&type=${strContentSelectFeed}`
+      url = `/api/data/author.home?&lang=${lang || serverLang}&page=${page}&type=${strContentSelectFeed}`
     ;
 
     if (tags?.length)

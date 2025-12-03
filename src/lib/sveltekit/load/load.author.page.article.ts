@@ -184,6 +184,45 @@ export async function main
     parentData.langParam
   );
 
+  const seo_details = objResponse.dataArticle?.article.seo_details;
+
+  if (seo_details) {
+    seo_details.opengraph = {
+      ...(seo_details.opengraph || {}),
+      images: seo_details.opengraph?.images.map(img =>
+      {
+        return {
+          ...img,
+          url: getOptimizedImageUrl(
+            {
+              strImageUrl: img.url,
+              intQuality: 90,
+              intWidth: 750,
+            }
+          )
+        }
+      })
+    };
+    if (seo_details.twitter_card)
+    {
+      seo_details.twitter_card = {
+        ...seo_details.twitter_card || {},
+        image: getOptimizedImageUrl
+          (
+            {
+              strImageUrl: seo_details.twitter_card.image,
+              intQuality: 90,
+              intWidth: 750,
+            }
+          )
+      }
+    }
+    if (objResponse.dataArticle?.article.seo_details)
+    {
+      objResponse.dataArticle.article.seo_details = seo_details;
+    }
+  }
+
   // @ts-expect-error
   objResponse.dataArticle = tryCatch
     (

@@ -100,29 +100,6 @@
           --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-gray
         ) !important;
       }
-
-      &.modern {
-        border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-primary, #d2d2d2);
-        background: var(--colors-background-bg-primary, #fff);
-        color: var(--colors-foreground-fg-secondary-700);
-        /* Shadows/shadow-xs-skeuomorphic */
-        box-shadow: 0 0 0 1px
-            var(
-              --colors-effects-shadows-shadow-skeumorphic-inner-border,
-              rgba(10, 13, 18, 0.18)
-            )
-            inset,
-          0 -2px 0 0 var(
-              --colors-effects-shadows-shadow-skeumorphic-inner,
-              rgba(10, 13, 18, 0.05)
-            ) inset,
-          0 1px 2px 0
-            var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
-        :global(path) {
-          stroke: var(--colors-foreground-fg-secondary-700) !important;
-        }
-      }
     }
 
     &.error {
@@ -147,6 +124,62 @@
         stroke: var(
           --component-colors-components-icons-featured-icons-light-featured-icon-light-fg-success
         ) !important;
+      }
+    }
+
+    &.modern {
+      border-radius: var(--radius-md, 8px);
+      border: 1px solid var(--colors-border-border-primary, #d2d2d2);
+      background: var(--colors-background-bg-primary, #fff);
+      color: var(--colors-foreground-fg-secondary-700);
+      /* Shadows/shadow-xs-skeuomorphic */
+      box-shadow: 0 0 0 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(10, 13, 18, 0.18)
+          )
+          inset,
+        0 -2px 0 0 var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(10, 13, 18, 0.05)
+          ) inset,
+        0 1px 2px 0
+          var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+      :global(path) {
+        stroke: var(--colors-foreground-fg-secondary-700);
+      }
+
+      &.gray {
+        border: 1px solid var(--colors-border-border-primary, #d2d2d2);
+        background: var(--colors-background-bg-primary, #fff);
+      }
+
+      &.brand {
+        color: var(--colors-foreground-fg-white, #ffffff) !important;
+        border: 2px solid
+          var(
+            --gradient-skeuemorphic-gradient-border,
+            rgba(255, 255, 255, 0.12)
+          );
+        background: var(--colors-background-bg-brand-solid, #f5620f);
+
+        /* Shadows/shadow-xs-skeuomorphic */
+        box-shadow: 0 0 0 1px
+            var(
+              --colors-effects-shadows-shadow-skeumorphic-inner-border,
+              rgba(12, 14, 18, 0.18)
+            )
+            inset,
+          0 -2px 0 0 var(
+              --colors-effects-shadows-shadow-skeumorphic-inner,
+              rgba(12, 14, 18, 0.05)
+            ) inset,
+          0 1px 2px 0
+            var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+
+        :global(path) {
+          stroke: var(--colors-foreground-fg-white, #ffffff)
+        }
       }
     }
   }

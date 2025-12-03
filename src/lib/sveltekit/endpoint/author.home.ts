@@ -106,7 +106,7 @@ export async function main
         ;
 
         if (data != undefined)
-          data.mapArticle = data.mapArticle?.map(([id, article]) => ([id, {...article, data: {...article.data, content: "", seo_title: "", meta_description: ""}, seo_details: {}}])) as any;
+          data.mapArticle = data.mapArticle?.map(([id, article]) => ([id, {...article, data: {...article.data, content: "", seo_title: "", meta_description: ""}, seo_details: { opengraph: { ...(article.seo_details?.opengraph || {}) } }}])) as any;
           return json(data);
         ;
       }

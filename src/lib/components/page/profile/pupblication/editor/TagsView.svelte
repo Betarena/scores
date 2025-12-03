@@ -159,7 +159,6 @@
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -174,13 +173,6 @@
   -->
 
 <div class="page-container {viewportType}">
-  {#if viewportType === "mobile"}
-    <Container style="height: unset">
-      <div class="header">
-        <BackButton on:click={goBack} custom_handler={true} />
-      </div>
-    </Container>
-  {/if}
   <div class="content-wrapper">
     <div class="content">
       <div class="content-header-border">
@@ -202,10 +194,16 @@
               </div>
             </div>
             <Input
-              placeholder="Search for tabs"
+              placeholder={translations?.search_for_tag || "Search for a tag"}
               bind:value={search}
+              label={translations?.tags || "Tags"}
               on:keydown={keyHandler}
-            />
+            >
+              <span slot="info"
+                >{selectedTags.length}/{translations?.five_tags_selected ||
+                  "5 tags selected"}</span
+              >
+            </Input>
             {#if selectedTags.length}
               <div class="seleted-tags">
                 {#each selectedTags as tag (tag)}
@@ -219,7 +217,7 @@
                     <Badge
                       color="brand"
                       active={true}
-                      size="md"
+                      size="lg"
                       on:click={() => deselect(tag)}
                       >{tag}
                       <div class="cross-icon">
@@ -259,7 +257,7 @@
               }}
             >
               <Badge
-                size={viewportType === "mobile" ? "xl" : "xxl"}
+                size="lg"
                 active={isActive}
                 color={isActive ? "brand" : "gray"}
                 on:click={() => select(tag)}>{tag}</Badge
@@ -271,12 +269,10 @@
     </div>
     <Container style="height: unset">
       <div class="buttons-wrapper">
-        <Button
-          type="secondary-gray"
-          full={viewportType !== "mobile"}
-          on:click={goBack}>{translations?.go_back || "Go Back"}</Button
+        <Button type="secondary" full={true} on:click={goBack}
+          >{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={viewportType !== "mobile"} on:click={save}
+        <Button full={true} on:click={save}
           >{translations?.save || "Save"}</Button
         >
       </div>
@@ -296,7 +292,7 @@
 
 <style lang="scss">
   .page-container {
-    background-color: var(--colors-background-bg-main);
+    background: var(--colors-background-bg-secondary_alt, #1f1f1f);
     position: absolute;
     top: 0;
     display: flex;
@@ -343,41 +339,38 @@
       .content {
         display: flex;
         flex-direction: column;
-        gap: var(--spacing-xl, 16px);
         flex-grow: 1;
+        gap: 0;
 
         .content-header-border {
-          border-bottom: 1px solid
-            var(--colors-border-border-secondary, #3b3b3b);
-
           .content-header {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            padding-top: var(--spacing-2xl, 20px);
             gap: var(--spacing-2xl, 20px);
             align-self: stretch;
-            padding-bottom: var(--spacing-xl, 16px);
 
             .header-info {
               display: flex;
               flex-direction: column;
-              gap: var(--spacing-md, 8px);
               align-self: stretch;
+              gap: var(--spacing-xs, 4px);
 
               h2 {
-                color: var(--colors-text-text-primary, #fbfbfb);
+                margin: 0;
+                color: var(--colors-text-text-primary-900, #fbfbfb);
 
-                /* Display xs/Semibold */
-                font-family: var(--font-family-font-family-display, Roboto);
-                font-size: var(--font-size-display-xs, 24px);
+                /* Text lg/Semibold */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-lg, 18px);
                 font-style: normal;
                 font-weight: 600;
-                margin: 0;
-                line-height: var(--line-height-display-xs, 32px); /* 133.333% */
+                line-height: var(--line-height-text-lg, 28px); /* 155.556% */
               }
 
               .info-desc {
-                color: var(--colors-text-text-quaternary, #8c8c8c);
+                color: var(--colors-text-text-tertiary-600, #8c8c8c);
 
                 /* Text sm/Regular */
                 font-family: var(--font-family-font-family-body, Roboto);
@@ -392,6 +385,8 @@
               align-items: flex-start;
               gap: var(--spacing-md, 8px);
               flex-wrap: wrap;
+              padding-top: var(--spacing-xl);
+              padding-bottom: var(--spacing-xl);
 
               .cross-icon {
                 display: flex;
@@ -408,6 +403,7 @@
         .tags-wrapper {
           display: flex;
           padding: var(--spacing-none, 0px) var(--spacing-xl, 16px);
+          padding-top: var(--spacing-xl, 16px);
           flex-direction: column;
           align-items: flex-start;
           gap: 12px;
@@ -450,7 +446,8 @@
       .buttons-wrapper {
         display: flex;
         align-items: flex-start;
-        gap: 20px;
+        flex-direction: column-reverse;
+        gap: var(--spacing-lg, 12px);
         align-self: stretch;
 
         :global(.button) {
@@ -487,7 +484,7 @@
         padding-bottom: 0;
 
         .content {
-          gap: var(--spacing-2xl, 20px);
+          gap: 0;
 
           .content-header {
             padding-top: var(--spacing-2xl, 20px);
@@ -506,16 +503,28 @@
               }
 
               h2 {
-                font-size: var(--font-size-text-lg, 18px);
+                color: var(--colors-text-text-primary-900, #fbfbfb);
+
+                /* Text xl/Semibold */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-xl, 20px);
+                font-style: normal;
                 font-weight: 600;
-                line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+                line-height: var(--line-height-text-xl, 30px); /* 150% */
               }
 
               .info-desc {
-                font-size: var(--font-size-text-sm, 14px);
+                color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+                /* Text md/Regular */
+                font-family: var(--font-family-font-family-body, Roboto);
+                font-size: var(--font-size-text-md, 16px);
                 font-style: normal;
                 font-weight: 400;
-                line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+                line-height: var(
+                  --line-height-text-md,
+                  24px
+                ); /* 150% */ /* 142.857% */
               }
             }
           }
@@ -524,12 +533,22 @@
             flex-shrink: 0;
             max-height: calc(215px + 30px + 12px + 5px);
             overflow-y: auto;
+
+            h2 {
+              color: var(--colors-text-text-secondary-700, #d2d2d2);
+
+              /* Text xl/Medium */
+              font-size: var(--font-size-text-lg, 18px);
+              font-style: normal;
+              font-weight: 500;
+              line-height: var(--line-height-text-lg, 28px); /* 155.556% */
+            }
           }
         }
 
         .buttons-wrapper {
+          flex-direction: row;
           gap: var(--spacing-lg, 12px);
-          flex-direction: column-reverse;
         }
       }
     }

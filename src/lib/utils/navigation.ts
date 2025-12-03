@@ -97,7 +97,7 @@ export async function selectLanguage
   // │ CHECK:
   // │ |: for server language is the same as the selected language.
   // ╰─────
-  if (serverLang == strNewLangSelected || !strNewLangSelected)
+  if (strLangUserSaved == strNewLangSelected || !strNewLangSelected)
     return;
   ;
 
