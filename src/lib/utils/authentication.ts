@@ -31,6 +31,7 @@ import { log_v3 } from './debug.js';
 import type { BetarenaUser, IScoreUser } from '$lib/types/types.user-settings.js';
 import type { IAuthType } from '@betarena/scores-lib/types/firebase/firestore.js';
 import type { User } from 'firebase/auth';
+import { invalidateAll } from '$app/navigation';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -129,7 +130,6 @@ export async function successAuthComplete
             scores_user_data: betarenaUser
           }
       ;
-
       userBetarenaSettings.updateData
       (
         [
@@ -145,7 +145,6 @@ export async function successAuthComplete
           ]
         );
       }
-
       // [🐞]
       log_v3
       (
@@ -154,7 +153,7 @@ export async function successAuthComplete
           msgs: []
         }
       );
-
+      invalidateAll();
       return true;
     }
   );

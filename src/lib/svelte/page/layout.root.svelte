@@ -354,7 +354,7 @@
   $: if (browser && document)
     initializeTopLevelConsoleController();
   ;
-  $: if (browser && $page.data._dev_wrong_cookies) {
+  $: if (browser && isInitliazed && _dev_wrong_cookies) {
     logoutUser();
   }
   // ╭─────
