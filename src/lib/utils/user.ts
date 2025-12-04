@@ -18,7 +18,7 @@
 import purify from 'dompurify';
 
 import { userBalanceListen, userDataFetch } from '$lib/firebase/common.js';
-import { setCookie } from '$lib/store/cookie.js';
+import { delCookie, setCookie } from '$lib/store/cookie.js';
 import sessionStore from '$lib/store/session.js';
 import userBetarenaSettings, { type IDataProp } from '$lib/store/user-settings.js';
 import { dlog, log_v3 } from '$lib/utils/debug.js';
@@ -34,6 +34,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { deleteObject, ref as refStorage } from 'firebase/storage';
 
 import type { BetarenaUser } from '$lib/types/types.user-settings.js';
+import { invalidateAll } from '$app/navigation';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -322,6 +323,8 @@ export async function logoutUser
   );
 
   auth.signOut();
+  delCookie("betarenaCookieLoggedIn")
+  invalidateAll();
   return;
 }
 

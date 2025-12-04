@@ -501,7 +501,7 @@
         switchMode();
       },
       (
-        ex: unknown
+        ex
       ): void =>
       {
         scoresAuthStore.updateData
@@ -511,7 +511,7 @@
           ]
         );
         // [🐞]
-        errlog(`❌ Moralis Auth error: ${ex}`);
+        errlog(`❌ Moralis Auth error: ${ex.message}`);
         return;
       }
     );
