@@ -123,9 +123,9 @@
     on:click={() => changeView("tags")}
   >
     <FeaturedIcon
-      color={hoverItem === "tags" ? "brand" : "gray"}
+      color="brand"
       size="md"
-      type="modern"
+      type="gradient"
     >
       <Tag2 />
     </FeaturedIcon>
@@ -172,9 +172,9 @@
     on:click={() => changeView("seo")}
   >
     <FeaturedIcon
-      color={hoverItem === "seo" ? "brand" : "gray"}
+      color="brand"
       size="md"
-      type="modern"
+      type="gradient"
     >
       <FileSearch3 />
     </FeaturedIcon>
