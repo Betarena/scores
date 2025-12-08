@@ -25,7 +25,6 @@
 
   import { browser } from "$app/environment";
   import { get } from "$lib/api/utils.js";
-  import BackButton from "$lib/components/ui/BackButton.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";

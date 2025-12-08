@@ -133,6 +133,7 @@ services:
       # │ |: [disabled] Volume to share scripts, not typically needed, unless experimenting.
       # ╰─────
       # - ../.scripts:/app/.scripts:rw
+      # - ./scores.production/package.json:/app/package.json:ro
       # ╭─────
       # │ NOTE: IMPORTANT
       # │ |: Volume for: 'build' output (pure project files)
