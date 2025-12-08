@@ -21,9 +21,15 @@ services:
 
   nginx:
     ports:
-      - 8080:8080 # Scores
-      - 8081:8081 # GoAccess
+      - 8080:8080 # Scores (production)
+      - 8085:8085 # Scores (staging)
+      - 8090:8090 # GoAccess
     volumes:
+      # ╭─────
+      # │ NOTE: IMPORTANT
+      # │ |: volume for: configuration files
+      # ╰─────
+      - ./nginx/config/local:/etc/nginx/config:ro
       - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
   #
 #

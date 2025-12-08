@@ -1,0 +1,73 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ┣──────────────────────────────────────────────────────────────────┫
+# │ Responsible for:                                                 │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: '🔥 Deployment - staging'
+
+on:
+  push:
+    branches:
+      - ci/deploy/staging
+#
+
+jobs:
+
+  docker-image-build-and-push:
+    name: 🐳 JOB /:/ Docker Image Build & Publish
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: "STEP /:/ build docker image"
+        run: |
+          make docker-image-build
+          # [🐞]
+          docker images
+          # [🐞]
+          docker images betarena-scores --format "{{.ID}}" --no-trunc --filter "label=project=Scores"
+          echo "ENV_IMAGE_TAG_ID=$(docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores")" >> $GITHUB_ENV
+      - name: "STEP /:/ publish docker image"
+        run: |
+          make docker-image-publish-to-registry type="staging"
+        env:
+          ENV_IMAGE_TAG_ID: ${{ env.ENV_IMAGE_TAG_ID }}
+          ENV_DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  #
+
+  deployment:
+    name: 🔥 JOB /:/ deploy:staging
+    needs: docker-image-build-and-push
+    if: ${{
+        !contains(github.event.pull_request.labels.*.name, 'cd/pr/no-deployment')
+      }}
+    runs-on: ubuntu-22.04
+    environment:
+      name: staging
+      url: https://staging.betarena.com/
+    steps:
+      - uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          key: ${{ secrets.SERVER_KEY }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            # ╭─────
+            # │ NOTE:
+            # │ │: Navigate to target project directory
+            # ╰─────
+            cd web/scores
+            # ╭─────
+            # │ NOTE:
+            # │ │: Run target makefile command
+            # ╰─────
+            make docker-compose-up services="nginx scores-staging" version="latest" type="prod"
+  #
+#

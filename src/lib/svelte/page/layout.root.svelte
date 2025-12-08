@@ -46,6 +46,7 @@
   import { page } from '$app/stores';
   import { partytownSnippet } from '@qwik.dev/partytown/integration';
   import { onDestroy, onMount } from 'svelte';
+	import { logoutUser } from '$lib/utils/user.js';
 
   import { loginStore } from '$lib/components/section/login/login-store';
   import { config } from '$lib/constants/config.js';
@@ -96,7 +97,7 @@
   // │ IMPORTANT:
   // │ |: Global Styles Import
   // ╰─────
-  import '../../../../static/app.scss';
+  // import '../../../../static/app.scss';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -152,7 +153,8 @@
   $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
-  $: ({ B_NAV_T: navbarTranslationData, dataArticle } = $page.data);
+  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies } = $page.data);
+  $: ({ isEnabled: isPartytownEnabled, strCodeSampleForPartytownConfig } = config.objApp.objServiceWorkerPartytown());
 
   $: isInitliazed = false;
   $: isInitializationFinished = false;
@@ -352,7 +354,9 @@
   $: if (browser && document)
     initializeTopLevelConsoleController();
   ;
-
+  $: if (browser && isInitliazed && _dev_wrong_cookies) {
+    logoutUser();
+  }
   // ╭─────
   // │ NOTE:
   // │ |: [3rd-party] // Intercom // BOOT (with user data)
@@ -550,13 +554,13 @@
   │ NOTE:
   │ |: Integration Injection for :: Partytown
   ╰───── -->
-  {#if config.objApp.objServiceWorkerPartytown.isEnabled}
+  {#if isPartytownEnabled}
     <!--
     ╭─────
     │ NOTE: IMPORTANT
     │ |: Forward the necessary functions to the web worker layer
     ╰───── -->
-    {@html config.objApp.objServiceWorkerPartytown.strCodeSampleForPartytownConfig}
+    {@html strCodeSampleForPartytownConfig}
 
     <!-- CRITICAL -->
     {@html '<script>' + partytownSnippet() + '</script>'}

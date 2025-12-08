@@ -91,9 +91,10 @@
     timeoutIntent: NodeJS.Timeout;
 
   $: ({ serverLang, currentPageRouteId } = $sessionStore);
-  $: ({ theme } = $userBetarenaSettings);
+  $: ({ theme, lang: userLang  } = $userBetarenaSettings);
   $: ({ globalState: globalStateNavbar } = $scoresNavbarStore);
 
+  $: page_lang = userLang || serverLang;
   $: translatioData = $page.data.B_NAV_T as B_NAV_T | null | undefined;
 
   // #endregion ➤ 📌 VARIABLES
@@ -201,7 +202,7 @@
       uppercase
       "
     >
-      {serverLang}
+      {page_lang}
     </p>
 
     <!--
@@ -232,7 +233,7 @@
   {#if globalStateNavbar.has("LangDropdownActive")}
     <div id="dropdown-menu" transition:fly>
       {#each translatioData?.langArray?.sort() ?? [] as lang}
-        {#if lang.toUpperCase() != serverLang?.toUpperCase()}
+        {#if lang.toUpperCase() != page_lang?.toUpperCase()}
           <div
             class="
             lang-select

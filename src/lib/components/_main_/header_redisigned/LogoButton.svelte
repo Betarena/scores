@@ -2,14 +2,13 @@
   import { page } from "$app/stores";
   import AssetBetarenaLogoFull from "./assets/asset-betarena-logo-full.svelte";
   import BetarenaLogoMobile from "./assets/betarena-logo-mobile.svelte";
-
-  import sessionStore from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
 
   export let mobile, tablet;
-  $: ({ serverLang } = $sessionStore);
-  $: homepageURL = serverLang != "en" ? `/${serverLang}` : "/";
+  $: ({ lang } = $userSettings);
+  $: homepageURL = lang != "en" ? `/${lang}` : "/";
   $: logoLink =
-    serverLang != "en" ? `${$page.url.origin}/${serverLang}` : $page.url.origin;
+    lang != "en" ? `${$page.url.origin}/${lang}` : $page.url.origin;
 
 </script>
 

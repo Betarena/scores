@@ -499,7 +499,7 @@ docker-image-build:
 		"$(COLOUR_B)\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🐳 │ Building Docker Image                                       │\
-		\n┣──────────────────────────────────────────────────────────────────┫\
+		\n├──────────────────────────────────────────────────────────────────┤\
 		\n│ ➤ version: $${TEMP_VERSION} \
 		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n";
@@ -510,10 +510,6 @@ docker-image-build:
 		-f ./.docker/Dockerfile.scores.full \
 		-t betarena-scores:$${TEMP_VERSION} \
 		--platform=linux/amd64 \
-		--progress=plain
-		# --no-cache
-	#
-#
 		--progress=plain
 		# --no-cache
 	#
@@ -534,6 +530,7 @@ docker-image-publish-to-registry:
 		\n│ 🐳 │ Creating Docker Image                                       │\
 		\n│ 	 │: DockerHub Account :: $(ENV_DOCKER_HUB_USERNAME) \
 		\n│ 	 │: Docker ImageId :: $(ENV_IMAGE_TAG_ID) \
+		\n│ 	 │: Type :: $(type) \
 		\n╰──────────────────────────────────────────────────────────────────╯\
 		$(END_COLOUR)\n";
 	#
@@ -544,91 +541,125 @@ docker-image-publish-to-registry:
 	# 	docker.io
 	#
 
-	# ╭─────
-	# │ NOTE:
-	# │ |: Docker Image Tagging (Version)
-	# ╰─────
+	if [ "$(type)" = "production" ]; then\
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Version)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Latest)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest; \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest; \
+	fi
 
-	docker tag \
-		$(ENV_IMAGE_TAG_ID) \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \")
-	#
-
-	docker push \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-$(shell npm pkg get version --workspaces=false | tr -d \")
-	#
-
-	# ╭─────
-	# │ NOTE:
-	# │ |: Docker Image Tagging (Latest)
-	# ╰─────
-
-	docker tag \
-		$(ENV_IMAGE_TAG_ID) \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest
-	#
-
-	docker push \
-		$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-latest
-	#
+	if [ "$(type)" = "staging" ]; then\
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Version)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-$(shell npm pkg get version --workspaces=false | tr -d \"); \
+		# ╭─────
+		# │ NOTE:
+		# │ |: Docker Image Tagging (Latest)
+		# ╰─────
+		docker tag \
+			$(ENV_IMAGE_TAG_ID) \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-latest; \
+		docker push \
+			$(ENV_DOCKER_HUB_USERNAME)/betarena:scores-staging-latest; \
+	fi
 #
 
 .ONESHELL:
-docker-volume-scores-prune-target:
-
-	TEMP_VOLUME_TO_PRUNE="betarena-scores_$(target)-volume"
+docker-image-purge:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: prune docker images for Betarena // Scores service.           │
+	# ╰──────────────────────────────────────────────────────────────────╯
 
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
-		\n│ 💽 │ pruning volumes for scores                                  │\
-		\n│ ➤ type: $(type) \
-		\n│ ➤ target: $(target) \
-		\n│ ➤ TEMP_VOLUME_TO_PRUNE: $$(TEMP_VOLUME_TO_PRUNE) \
+		\n│ 🐳 │ pruning docker images for scores                            │\
 		\n╰──────────────────────────────────────────────────────────────────╯"
 	#
 
-	sleep 5; \
+	docker rmi $$(docker images -f "dangling=true" -q);
+#
 
-	# [🐞]
-	echo "[docker-compose-up] contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
-	# [🐞]
-	docker run \
-		--rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
+.ONESHELL:
+docker-volume-scores-check:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: check docker volumes for Betarena // Scores service.          │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 💽 │ checking volumes for scores                                 │\
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
 	#
 
-	if [ "$(type)" = "reset" ]; then\
-		sleep 5; \
-		docker run --rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine sh -c "rm -rf /v/*"; \
-		sleep 5; \
-	fi
+	sleep 5
 
 	# [🐞]
-	echo "[docker-compose-up] contents of docker volume :: $${TEMP_VOLUME_TO_PRUNE}"
+	echo -e "[Makefile::docker-volume-scores-check] contents of docker volume :: betarena-scores_scores-staging-volume\n"
 	# [🐞]
-	docker run \
-		--rm -v $${TEMP_VOLUME_TO_PRUNE}:/v alpine ls -lha /v
-	#
+	docker run --rm -v betarena-scores_scores-staging-volume:/v alpine ls -lha /v
+
+	# [🐞]
+	echo -e "[Makefile::docker-volume-scores-check] contents of docker volume :: betarena-scores_scores-production-volume\n"
+	# [🐞]
+	docker run --rm -v betarena-scores_scores-production-volume:/v alpine ls -lha /v
 #
 
 .ONESHELL:
 docker-compose-up:
 	@
 	# ╭──────────────────────────────────────────────────────────────────╮
-	# │ DESCRIPTION:
-	# │ ➤ custom wrapper for 'docker-compose'
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: custom wrapper for 'docker-compose'                           │
 	# ╰──────────────────────────────────────────────────────────────────╯
+
+	TEMP_DEBUG_PREFIX="[Makefile::docker-compose-up]"
 
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 🐳 │ (re)start container(s)                                      │\
-		\n│ ➤ version: $(version) \
+		\n├──────────────────────────────────────────────────────────────────┤\
+		\n│ ➤ version: $(or $(version),<undefined>) \
 		\n│ ➤ type: $(type) \
 		\n│ ➤ services: $(services) \
-		\n│ ➤ DOCKER_IMAGE: $(BETARNA_SCORES__DOCKER_IMAGE) \
-		\n╰──────────────────────────────────────────────────────────────────╯"
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
 	#
+
+	# ╭─────
+	# │ CHECK:
+	# │ |: for validate input parameters
+	# ╰─────
 
 	if [ ! $(services) ]; then\
 		echo "[Makefile::docker-compose-up] Please set a target services via services=\"<service-1>\"";\
@@ -644,7 +675,12 @@ docker-compose-up:
 
 	if [ "$(version)" = "latest" ]; then\
 		cd .docker/; \
-		docker compose pull scores; \
+		if [[ "$(services)" == *"scores-staging"* ]]; then
+			docker compose pull scores-staging; \
+		fi
+		if [[ "$(services)" == *"scores-production"* ]]; then
+			docker compose pull scores-production; \
+		fi
 		cd ..; \
 	fi
 
@@ -653,10 +689,10 @@ docker-compose-up:
 			"$(COLOR_R)\
 			\n╭──────────────────────────────────────────────────────────────────╮\
 			\n│ 🐳 │ WARNING:                                                    │\
-		  \n┣──────────────────────────────────────────────────────────────────┫\
+		  \n├──────────────────────────────────────────────────────────────────┤\
 			\n│ ➤ Docker image is not set to 'name4d/betarena:scores-latest'     │\
 			\n│ ➤ Sleeping for 10 seconds                                        │\
-			\n┣──────────────────────────────────────────────────────────────────┫\
+			\n├──────────────────────────────────────────────────────────────────┤\
 			\n│ ➤ Please set the image to 'name4d/betarena:scores-latest'        │\
 			\n╰──────────────────────────────────────────────────────────────────╯\
 			$(END_COLOUR)\n";\
@@ -670,15 +706,11 @@ docker-compose-up:
 		./.docker/nginx/logs/goaccess
 	#
 
-	TEMP_SCORES_ENVIRONMENT="scores-$(type)"
-
-	if [[ "$(services)" == *"scores-staging"* ]]; then\
-		TEMP_SCORES_ENVIRONMENT="scores-staging";\
-	elif [[ "$(services)" == *"scores-production"* ]]; then\
-		TEMP_SCORES_ENVIRONMENT="scores-production";\
-	fi
-
-	${MAKE} docker-volume-scores-prune-target type="prune" target="$${TEMP_SCORES_ENVIRONMENT}"
+	# ╭─────
+	# │ NOTE:
+	# │ |: generate docker-compose output file for debugging
+	# │ |: generated docker-compose.yml from merged files.
+	# ╰─────
 
 	# [🐞]
 	docker compose \
@@ -688,7 +720,27 @@ docker-compose-up:
 		> .docker/docker-compose.output.yml
 	#
 
-	${MAKE} docker-container-log-full-export
+	# ╭─────
+	# │ NOTE:
+	# │ |: [1] export current docker container logs before (re)start
+	# │ |: for debugging & archive purposes.
+	# │ |: [2] archive 'scores' server changes if version=latest
+	# ╰─────
+
+	if [ "$(version)" = "latest" ]; then\
+		${MAKE} docker-container-export-logs-all;\
+		if [[ "$(services)" == *"scores-production"* ]]; then
+			${MAKE} docker-scores-archive-server-changes type="production";\
+		fi
+		if [[ "$(services)" == *"scores-staging"* ]]; then
+			${MAKE} docker-scores-archive-server-changes type="staging";\
+		fi
+	fi
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: docker-compose up (build & deploy)
+	# ╰─────
 
 	BUILDKIT_PROGRESS=plain \
 		docker compose \
@@ -701,57 +753,44 @@ docker-compose-up:
 		$(services)
 	#
 
-	# [🐞]
-	echo "[Makefile::docker-compose-up] contents of docker volume :: betarena-scores_scores-staging-volume"
-	# [🐞]
-	docker run \
-		--rm -v betarena-scores_scores-staging-volume:/v alpine ls -lha /v
-	#
-
-	# [🐞]
-	echo "[Makefile::docker-compose-up] contents of docker volume :: betarena-scores_scores-production-volume"
-	# [🐞]
-	docker run \
-		--rm -v betarena-scores_scores-production-volume:/v alpine ls -lha /v
-	#
-
-	if [ "$(version)" = "latest" ]; then\
-		docker rmi $$(docker images -f "dangling=true" -q); \
-	fi
+	${MAKE} docker-volume-scores-check
 #
 
 .ONESHELL:
 docker-container-export-logs-all:
 	@
 	# ╭──────────────────────────────────────────────────────────────────╮
-	# │ NOTE: │ DESCRIPTION																						   │
-	# │ ➤ export logs from currently running containers, as means of     │
-	# │   troubleshooting and debugging. 								                 │
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: export all docker container logs to a designated directory    │
+	# │ │: for archive & debugging purposes.                             │
 	# ╰──────────────────────────────────────────────────────────────────╯
+
+	PATH_OUTPUT=./.docker/.export/$$(date +%Y_%m_%d_%H_%M_%S)
 
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
 		\n│ 📜 │ Exporting docker container logs                             │\
-		\n╰──────────────────────────────────────────────────────────────────╯"
+		\n├──────────────────────────────────────────────────────────────────┤\
+		\n│ ➤ path: $${PATH_OUTPUT} \
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
 	#
-
-	PATH_OUTPUT=./.docker/.export/$$(date +%Y_%m_%d_%H_%M_%S)
 
 	mkdir -p $${PATH_OUTPUT}
 
-	echo "Saving logs to: $${PATH_OUTPUT}"
-
 	# ╭─────
-	# │ NOTE:
-	# │ |: Export current docker container state to a file, for archive
+	# │ NOTE: IMPORTANT
+	# │ |: Export current docker containers metadata to a file.
+	# │ |: Used for debugging purposes.
 	# ╰─────
 
 	docker ps -a --format="table {{.ID}}\t{{.Image}}\t{{.Command}}\t{{.Status}}" --no-trunc >> $${PATH_OUTPUT}/docker.state.log
 
 	# ╭─────
-	# │ NOTE:
-	# │ |: Exporting all logs from 'scores' containers (replicas)
+	# │ NOTE: IMPORTANT
+	# │ |: Exporting all logs from 'scores' containers (& its replicas)
 	# ╰─────
 
 	for i in $$(docker ps --filter name=^betarena-scores-scores- --format="{{.ID}}" --no-trunc); do\
@@ -762,8 +801,8 @@ docker-container-export-logs-all:
 	done
 
 	# ╭─────
-	# │ NOTE:
-	# │ |: Exporting all logs from all other containers
+	# │ NOTE: IMPORTANT
+	# │ |: Exporting all logs from all other containers to a designated directory
 	# ╰─────
 
 	cp \
@@ -773,17 +812,118 @@ docker-container-export-logs-all:
 #
 
 .ONESHELL:
-docker-container-export-logs-nginx:
+docker-run-goaccess:
 	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: run goaccess log analyzer for nginx logs.                     │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	docker run --rm -it \
+		-v $(logPath):/temp/goaccess/access.log:ro \
+		-v ./.docker/goaccess/output:/var/www/goaccess/goacces.report.html:rw \
+		allinurl/goaccess:1.9.3 \
+		goaccess \
+			$(logPath) \
+			-o /var/www/goaccess/goacces.report.html \
+			--log-format=COMBINED
+	#
+#
+
+.ONESHELL:
+docker-scores-archive-server-changes:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: export all docker container logs to a designated directory    │
+	# │ │: for archive & debugging purposes.                             │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	if [ ! $(type) ]; then\
+		echo "[Makefile::docker-scores-archive-server-changes] Please set a target type via type=\"<staging|production>\"";\
+		exit 1;\
+		echo "";\
+	fi
+
+	TEMP_DATE=$$(date +%Y-%m-%d_%H-%M-%S)
+	PATH_OUTPUT=./.docker/scores.$(type)/.archive/$${TEMP_DATE}
+	PATH_OUTPUT_ZIP=./.docker/.archive/scores.$(type).$${TEMP_DATE}
+
 	echo -e \
 		"\
 		\n╭──────────────────────────────────────────────────────────────────╮\
-		\n│ 📜 │ Exporting docker container logs                             │\
-		\n╰──────────────────────────────────────────────────────────────────╯"
+		\n│ 📜 │ Exporting docker 'scores' changes                           │\
+		\n├──────────────────────────────────────────────────────────────────┤\
+		\n│ ➤ path: $${PATH_OUTPUT} \
+		\n│ ➤ zip: $${PATH_OUTPUT_ZIP}.zip \
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
 	#
 
-	cp ./.docker/nginx/logs/scores/access.log ./.docker/export/scores.access.log
-	truncate -s 0 ./.docker/nginx/logs/scores/access.log
+	rsync \
+		-av \
+		--exclude '.archive' \
+		./.docker/scores.$(type)/ $${PATH_OUTPUT}
+	#
+
+	zip \
+		-r \
+		$${PATH_OUTPUT_ZIP}.zip \
+		$${PATH_OUTPUT}
+	#
+#
+
+.ONESHELL:
+docker-scores-staging-toggle:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: toggle 'scores' staging container(s) ON/OFF.                  │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	TEMP_PATH=.docker/nginx/config/production/nginx.server.scores.staging.conf
+	TEMP_MODE=""
+
+	if [ -z "$$(docker ps -aq -f name=betarena-scores-scores-staging-1)" ]; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'scores-staging' container not found. Please run 'make docker-compose-up services=scores-staging' to start the container.";\
+		exit 1;\
+		echo "";\
+	fi
+
+	if [ -z "$$(docker ps -aq -f name=betarena-scores-nginx-1)" ]; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'nginx' container not found. Please run 'make docker-compose-up services=nginx' to start the container.";\
+		exit 1;\
+		echo "";\
+	fi
+
+	if grep -q "deny all;" $${TEMP_PATH}; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'scores-staging' nginx config file found. Proceeding to toggle ON"; \
+		TEMP_MODE="on"; \
+	elif grep -q "allow all;" $${TEMP_PATH}; then\
+		echo "[Makefile::docker-scores-staging-toggle] 'scores-staging' nginx config file found. Proceeding to toggle for OFF"; \
+		TEMP_MODE="off"; \
+	fi
+
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ 🟪 │ Toggling 'scores' staging container(s) $${TEMP_MODE} \
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
+	#
+
+	if [ "$${TEMP_MODE}" = "on" ]; then\
+		gsed -i 's/deny all;/allow all;/g' $${TEMP_PATH};\
+		gsed -i 's|# proxy_pass http://scores-staging:3050;|proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
+	elif [ "$${TEMP_MODE}" = "off" ]; then\
+		gsed -i 's/allow all;/deny all;/g' $${TEMP_PATH};\
+		gsed -i 's|proxy_pass http://scores-staging:3050;|# proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
+	fi
+
+	docker exec betarena-scores-nginx-1 nginx -s reload
 #
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -793,7 +933,33 @@ docker-container-export-logs-nginx:
 .ONESHELL:
 help:
 	@
-	echo "\nTARGETS:\n"
+	echo "TARGETS:"
 	make -qpRr | egrep -e '^[a-z].*:$$' | sed -e 's~:~~g' | sort
 	echo ""
+#
+
+.ONESHELL:
+sleep:
+	@
+	# ╭──────────────────────────────────────────────────────────────────╮
+	# │ TARGET DESCRIPTION  																						 │
+	# ├──────────────────────────────────────────────────────────────────┤
+	# │ │: sleep for a designated number of seconds.                     │
+	# ╰──────────────────────────────────────────────────────────────────╯
+
+	if [ ! $(seconds) ]; then\
+		echo "Please set a target number of seconds via seconds=";\
+		exit 1;\
+		echo "";\
+	fi
+
+	echo -e \
+		"\
+		\n╭──────────────────────────────────────────────────────────────────╮\
+		\n│ ⏱️ │ sleeping for $(seconds) seconds \
+		\n╰──────────────────────────────────────────────────────────────────╯\
+		\n"
+	#
+
+	sleep $(seconds)
 #

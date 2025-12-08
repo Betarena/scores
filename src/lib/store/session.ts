@@ -45,7 +45,7 @@ const mobileBreakpoint = 575,
       // @ts-expect-error
       window: {},
       deviceType: 'mobile',
-      viewportType: 'mobile',
+      viewportType: null,
       userAgent: undefined,
       isUserActive: true,
       windowWidth: 0,
@@ -381,7 +381,9 @@ function createLocalStore
             }
             else if (dataTarget == 'window')
             {
-              sessionStoreObj.window = dataPoint;
+              // @ts-expect-error
+              sessionStoreObj.window ??= {};
+              sessionStoreObj.window = { ...sessionStoreObj.window, ...dataPoint };
             }
             else if (dataTarget == 'listIntervals')
             {

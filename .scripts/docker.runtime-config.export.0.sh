@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -15,15 +15,24 @@
 # │ |: Aggregate list of '__run-time-config*.js' configuration files in 'build' directory.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+#region ➤ 📌 VARIABLES
+
 strDebugPrefix="[docker.runtime-config.export.0.sh]"
-configFile=/app/runtime-config-files.txt
+strPathConfigFile=/app/build/runtime.config
+strPathBuildFile=/app/build-files.txt
+
+#endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
 
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
-# [🐞]
-echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILES LIST 🟨 // START"
-# [🐞]
-cat $configFile
+log start
+
+mkdir -p $strPathConfigFile
 
 # ╭─────
 # │ NOTE:
@@ -32,10 +41,37 @@ cat $configFile
 find build \
   -type f \
   -name '__run-time-config*.js' \
-  > $configFile
+  > $strPathConfigFile/runtime-config-files.txt
 #
 
 # [🐞]
-echo "$strDebugPrefix EXPORTING RUNTIME CONFIG FILES LIST 🟨 // END"
+cat $strPathConfigFile/runtime-config-files.txt
+
+# ╭─────
+# │ NOTE:
+# │ |: loop through '/app/runtime-config-files.txt' file,
+# │ |: and copy files to 'build/client' directory with proper names.
+# ╰─────
+for i in $(cat $strPathConfigFile/runtime-config-files.txt); do
+  if [[ "$i" == *"/client/"* ]]; then
+    cp /app/$i /app/build/client/__run-time-config.client.js
+    cp /app/$i $strPathConfigFile/__run-time-config.client.js
+    cp /app/$i $strPathConfigFile/__run-time-config.client.original.js
+  elif [[ "$i" == *"/server/"* ]]; then
+    cp /app/$i /app/build/client/__run-time-config.server.js
+    cp /app/$i $strPathConfigFile/__run-time-config.server.js
+    cp /app/$i $strPathConfigFile/__run-time-config.server.original.js
+  fi
+done
+
+# ╭─────
+# │ NOTE:
+# │ |: find '*' (all) files in the 'build' directory.
+# ╰─────
+find build \
+  -type f \
+  > $strPathBuildFile
+#
+
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+log end

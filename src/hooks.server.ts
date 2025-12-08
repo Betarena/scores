@@ -18,6 +18,7 @@
 
 // #region ➤ 📦 Package Imports
 
+
 import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
@@ -537,6 +538,28 @@ export const handle: Handle = sequence
           )
       ;
 
+      // ╭─────
+      // │ NOTE: IMPORTANT CRITICAL
+      // │ |: rutime injection :: pwa for A/B testing
+      // ╰─────
+      if (objConfigModule.objHtmlHeadABTestingInjection?.pwa.isEnabled)
+        html = html
+          ?.replace
+          (
+            objConfigModule.objHtmlHeadABTestingInjection.pwa.strHtmlHeadForInjection,
+            (
+              _string
+            ) =>
+            {
+              return objConfigModule.objHtmlHeadABTestingInjection.pwa.objLoadingOptions
+                [
+                  objConfigModule.objHtmlHeadABTestingInjection.pwa.strLoadingType
+                ] ?? ''
+              ;
+            }
+          )
+      ;
+
       // ╭──────────────────────────────────────────────────────────────────────────────────╮
       // │ ⛩️ │ 3RD-PARTY INJECTION                                                         │
       // ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -728,16 +751,23 @@ export const handle: Handle = sequence
               // │ NOTE:
               // │ |: validate only '_app/' hrefs for inlining
               // ╰─────
-              if (href.includes('_app/'))
+              if (__dirname.includes('chunks'))
               {
-                hrefValid = hrefValid
-                  .split('_app/')[1]
+                if (href.includes('_app/'))
+                {
+                  hrefValid = hrefValid
+                    .split('_app/')[1]
+                  ;
+                  hrefValid = `../../client/_app/${hrefValid}`;
+                }
+                else if (!hrefValid.includes('_app/'))
+                  hrefValid = `../../client/${hrefValid}`;
                 ;
-                hrefValid = `../../client/_app/${hrefValid}`;
               }
-              else if (!hrefValid.includes('_app/'))
-                hrefValid = `../../client/${hrefValid}`;
-              ;
+              else
+              {
+                hrefValid = `../static/${hrefValid}`;
+              }
 
               const
                 // ╭─────

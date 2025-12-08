@@ -235,8 +235,10 @@ export const ImageWithPlaceholder = Image.extend({
                 if (imageType) {
                   const blob = await item.getType(imageType);
                   const objectUrl = URL.createObjectURL(blob);
-
-                  insertImageNode(view, objectUrl);
+                  if (!objectUrl.startsWith('blob'))
+                  {
+                    insertImageNode(view, objectUrl);
+                  }
                   break;
                 }
               }
@@ -254,33 +256,7 @@ export const ImageWithPlaceholder = Image.extend({
             }
           };
         }
-      }),
-
-      new Plugin({
-        props: {
-          handlePaste(view, event: ClipboardEvent) {
-            const clipboard = event.clipboardData;
-            if (!clipboard) return false;
-
-            for (const item of clipboard.items) {
-              if (item.type.startsWith("image/")) {
-              const file = item.getAsFile();
-              if (file) {
-                event.preventDefault();
-                const objectUrl = URL.createObjectURL(file);
-                insertImageNode(view, objectUrl);
-                return true;
-              }
-              }
-              if (item.type === "text/uri-list") {
-              event.preventDefault();
-              return true;
-              }
-            }
-            return false;
-          }
-        },
-      }),
+      })
     ];
   },
 });

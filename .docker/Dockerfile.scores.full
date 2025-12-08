@@ -18,37 +18,42 @@
 # │ 🏗️ STEP 0 │ Define Base Step                                                     │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
-FROM node:18.19.0-alpine as base
-RUN apk add --no-cache python3 make g++
+FROM node:18.19.0-alpine AS base
+RUN apk add --no-cache python3 make g++ git bash
+RUN npm install -g npm@10.2.3
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🏗️ STEP 1 │ Initialize Docker Build                                              │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 FROM base AS prod-deps
-COPY . /app
 WORKDIR /app
-RUN \
-  npm install -g npm@10.2.3 && \
-  npm install --omit=optional --production --ignore-scripts
-#
+COPY package*.json ./
+RUN npm install --omit=optional --production --ignore-scripts
 # [🐞]
 RUN ls -lha
 
 FROM base AS build
-COPY . /app
-COPY ./env/.env.docker.file /app/.env
 WORKDIR /app
-RUN \
-  npm install -g npm@10.2.3 && \
-  npm i --omit=optional
-#
+COPY package*.json ./
+RUN npm install --omit=optional
+COPY . .
+COPY ./env/.env.docker.file .env
 # [🐞]
 RUN ls -lha
 RUN npm run build
 RUN npm run tsc/build/server
 # [🐞]
 RUN ls -lha
+
+FROM base AS meta
+WORKDIR /app
+COPY . .
+RUN \
+  mkdir -p ./.metadata && \
+  git branch --show-current > ./.metadata/branch.txt && \
+  git diff --color > ./.metadata/diff.patch
+#
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🏗️ STEP 2 │ Final Docker Build                                                   │
@@ -58,19 +63,21 @@ FROM base AS final
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules node_modules/
 COPY --from=build /app/build build/
-COPY --from=build /app/dist/~partytown build/client/~partytown
 COPY --from=build /app/dist/server.docker.js server.docker.js
 COPY --from=build /app/package.json /app/.env ./
 COPY --from=build /app/.scripts .scripts/
 COPY --from=build /app/.output .output/
+COPY --from=meta /app/.metadata .metadata/
 # [🐞]
 RUN ls -lha
+# [🐞]
+RUN ls -R build | wc -l
 
 RUN chmod +x .scripts/*.sh
-
 RUN .scripts/docker.runtime-config.export.0.sh
-# [🐞]
-RUN ls -lha
+
+RUN mkdir -p build.copy/
+RUN cp -R build/* build.copy/
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 🏗️ STEP 3 │ Code Deployment                                                      │
@@ -84,6 +91,7 @@ LABEL \
   project="Scores" \
   type="frontend"
 #
+
 # HEALTHCHECK \
 #   --interval=30s \
 #   --timeout=5s \
@@ -94,9 +102,6 @@ LABEL \
 #
 # RUN apk --no-cache add curl
 
-EXPOSE 5055
-ENTRYPOINT [ "/app/.scripts/docker.entrypoint.sh" ]
-# ╭─────
-# │ NOTE: |:| Alternative [1]
-# ╰─────
-# CMD ["npm", "run", "sveltekit|:|start|:|docker"]
+# EXPOSE 5055
+
+ENTRYPOINT [ "/app/.scripts/docker.scores.entrypoint.sh" ]
