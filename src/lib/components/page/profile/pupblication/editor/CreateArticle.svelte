@@ -73,15 +73,18 @@
   let title = "";
   let isSaving = false;
   let isSaved = false;
+  let uploadUrl = "";
 
   $: ({ article } = data);
   $: id = article.id;
   $: translations = (data as any).RESPONSE_PROFILE_DATA
     .sportstack2 as TranslationSportstacksSectionDataJSONSchema;
 
-  $: uploadUrl = selectedSportstack
-    ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
-    : "";
+  $: if (selectedSportstack) {
+    uploadUrl = selectedSportstack?.id
+      ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
+      : "";
+  }
 
   $: ({ viewportType } = $session);
 
@@ -140,8 +143,8 @@
       view: "preview",
       detectedLang: {
         lang: article.lang || "en",
-        iso: article.seo_details?.opengraph.locale || "en_US"
-      }
+        iso: article.seo_details?.opengraph.locale || "en_US",
+      },
     });
     title = article.data?.title || "";
     disablePublishButton =
@@ -154,13 +157,18 @@
 
   function setOptions(data: PageData) {
     if (!data.sportstacks?.length) {
-      goto(`/u/author/create/${userSettings.extractAll().lang}`, {replaceState: true})
-      return
+      goto(`/u/author/create/${userSettings.extractAll().lang}`, {
+        replaceState: true,
+      });
+      return;
     }
     options = data.sportstacks?.map((s) => {
       const sportstack = { ...s, label: s.data?.username || "" };
       if (sportstack.permalink === $page.url.searchParams.get("sportstack")) {
         selectedSportstack = sportstack;
+        uploadUrl = selectedSportstack?.id
+      ? `Betarena_Media/authors/authors_list/${selectedSportstack.id}/media`
+      : "";
       }
       return sportstack;
     });
@@ -215,8 +223,11 @@
     const json = contentEditor.getJSON();
     if (!json) return "";
     for (const node of json.content || []) {
-      if (node.type === "paragraph" && node.content && !node.content.find((n) => n.type === "imageWithPlaceholder")) {
-        debugger
+      if (
+        node.type === "paragraph" &&
+        node.content &&
+        !node.content.find((n) => n.type === "imageWithPlaceholder")
+      ) {
         return (node.content || []).map((n) => n.text).join(" ");
       }
     }
@@ -291,7 +302,7 @@
 
       <DropDownInput
         {options}
-        class= {isSaving || isSaved ? "fixed-width" : ""}
+        class={isSaving || isSaved ? "fixed-width" : ""}
         value={selectedSportstack}
         on:change={selectSportstack}
       />
