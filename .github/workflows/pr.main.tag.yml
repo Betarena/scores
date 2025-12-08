@@ -11,19 +11,15 @@
 
 name: '⚡️ Bump ➔ Publish ➔ Release'
 
-'on':
+on:
   pull_request:
     types:
       - closed
     branches:
       - main
+#
 
 jobs:
-
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
-  # │ ➤ (1) auto-bump & (2) 'tag' project version(s).                  │
-  # ╰──────────────────────────────────────────────────────────────────╯
 
   version-bump:
     name: 🪜 JOB /:/ SemVer Bump Client
@@ -94,11 +90,6 @@ jobs:
           IS_SEMVER_MAJOR: ${{ contains(github.event.pull_request.labels.*.name, 'semver:major') }}
   #
 
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
-  # │ ➤ [2] auto-create release + tag of project.                      │
-  # ╰──────────────────────────────────────────────────────────────────╯
-
   release-create:
     name: 📜 JOB /:/ Create Release
     runs-on: ubuntu-22.04
@@ -114,39 +105,6 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
   #
-
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
-  # │ ➤ [3] [disabled] sentry JS sourcemap upload                      │
-  # ╰──────────────────────────────────────────────────────────────────╯
-
-  sentry-sourcemap-deploy:
-    name: 🟣 Sentry sourcemap (artifacts) upload
-    needs: release-create
-    if: false
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: main
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.19.0
-      - name: 'setup npm'
-        run: |
-          npm install -g npm@10.2.3
-      - name: 'build'
-        env:
-          NODE_OPTIONS: "--max-old-space-size=8192"
-        run: |
-          npm install
-          npm run build-2
-  #
-
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
-  # │ ➤ [4] build & publish docker image                               │
-  # ╰──────────────────────────────────────────────────────────────────╯
 
   docker-image-build-and-push:
     name: 🐳 JOB /:/ Docker Image Build & Publish
@@ -170,21 +128,23 @@ jobs:
           echo "ENV_IMAGE_TAG_ID=$(docker images betarena-scores --format "{{.ID}}"  --no-trunc --filter "label=project=Scores")" >> $GITHUB_ENV
       - name: "STEP /:/ publish docker image"
         run: |
-          make docker-image-publish-to-registry
+          make docker-image-publish-to-registry type="production"
         env:
           ENV_IMAGE_TAG_ID: ${{ env.ENV_IMAGE_TAG_ID }}
           ENV_DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   #
 
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
-  # │ ➤ [5] [disabled] auto-deploy project to target server.           │
-  # ╰──────────────────────────────────────────────────────────────────╯
-
-  deploy:
+  deployment:
     name: 🚀 JOB /:/ Deployment
     needs: docker-image-build-and-push
+    if: ${{
+        needs.version-bump.outputs.isVersionBumped == 'true'
+        && !contains(github.event.pull_request.labels.*.name, 'cd/pr/no-deployment')
+      }}
     runs-on: ubuntu-22.04
+    environment:
+      name: production
+      url: ${{ vars.ENV_URL }}
     steps:
       - uses: appleboy/ssh-action@v0.1.7
         with:
@@ -195,19 +155,23 @@ jobs:
           script: |
             # ╭─────
             # │ NOTE:
-            # │ ➤ [ℹ] Navigate to target project directory
+            # │ │: Navigate to target project directory
             # ╰─────
             cd web/scores
             # ╭─────
             # │ NOTE:
-            # │ ➤ Update the directory with latests changes
+            # │ │: Stash changes
             # ╰─────
             git stash
+            # ╭─────
+            # │ NOTE:
+            # │ ➤ Update the directory with latests changes
+            # ╰─────
             git pull origin main
             # ╭─────
             # │ NOTE:
-            # │ ➤ Run target makefile command
+            # │ │: Run target makefile command to redeploy docker image
             # ╰─────
-            make docker-compose-up type="prod"
+            make docker-compose-up services="nginx scores-production" version="latest" type="prod"
   #
 #

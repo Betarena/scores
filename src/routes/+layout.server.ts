@@ -57,7 +57,16 @@ export async function load
     );
   */
 
-  return methodRes0;
+  // ╭─────
+  // │ NOTE: WARNING:
+  // │ │: fix for incorrect cookies state
+  // ╰─────
+  const _dev_wrong_cookies =
+    event.locals.user
+    && !event.locals.user.uid
+    && !!event.cookies.get('betarenaCookieLoggedIn');
+
+  return {...methodRes0, _dev_wrong_cookies};
 }
 
 // #endregion ➤ 🔄 LIFECYCLE - [SVELTE-KIT]

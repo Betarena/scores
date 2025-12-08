@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
 # │ 📌 High Order Overview                                                           │
@@ -7,54 +7,156 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // November 17th, 2025                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
+# │ |: Update (import) '__run-time-config*.js' configuration files from host-machine to docker-container.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+# #region ➤ 📌 VARIABLES
+
 strDebugPrefix="[docker.runtime-config.update.sh]"
-dockerContainer=betarena-scores-scores-production-1
-dockerRuntimeConfigFilePath=./.docker/scores.production/runtime.config/runtime-config-files.txt
-outputDirClient=./.docker/scores.production/runtime.config/__run-time-config.client.js
-outputDirServer=./.docker/scores.production/runtime.config/__run-time-config.server.js
+
+# #endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/_env.sh $1
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
+
+checkForChanges ()
+{
+  if [[ "$3" == "start" ]]; then
+    mkdir -p $strHostDirRuntimeConfigTmp
+  fi
+
+  # ╭─────
+  # │ NOTE:
+  # │ |: copy runtime-config files from docker-container to host-machine temporary directory
+  # ╰─────
+  docker_cp \
+    $strDockerContainerScoresBuildTemp:$strDockerRuntimeConfigeConfigFilePath \
+    $strHostDirRuntimeConfigTmp/$strConfigFileName
+  #
+  docker_cp \
+    $strDockerContainerScoresBuildTemp:$strDockerPathClient \
+    $strHostDirRuntimeConfigTmp/$strConfigFileName
+  #
+  docker_cp \
+    $strDockerContainerScoresBuildTemp:$strDockerPathServer \
+    $strHostDirRuntimeConfigTmp/$strConfigFileName
+  #
+
+  DIFF_OUTPUT=$(diff -qr $1 $2)
+
+  if [[ -z "$DIFF_OUTPUT" ]]; then
+    echo -e "$strDebugPrefix 🟩 no differences found"
+  elif [[ -n "$DIFF_OUTPUT" ]]; then
+    IFS=$'\n'
+    for line in $DIFF_OUTPUT; do
+      if [[ "$line" == Only* && "$line" == *"$1"* ]]; then
+        transformed=$(echo "$line" | sed -E 's/^Only in ([^:]*): (.*)$/File \2/')
+        echo -e "$strDebugPrefix 🟡 runtime only :: $transformed"
+      # elif [[ "$line" == Only* && "$line" == *"$2"* ]]; then
+        # transformed=$(echo "$line" | sed -E 's/^Only in ([^:]*): (.*)$/File \2/')
+        # echo "$strDebugPrefix 🔹 volume only :: $transformed"
+      elif [[ "$line" == *" differ" ]]; then
+        transformed=$(echo "$line" | sed -E 's/^Files ([^ ]*) and ([^ ]*) differ$/File \1 differs/')
+        filePath1=$(echo "$line" | awk '{print $2}')
+        filePath2=$(echo "$line" | awk '{print $4}')
+        echo -e "$strDebugPrefix ⚠️  $transformed"
+        diff -u $filePath1 $filePath2
+      # else
+      #   echo "$strDebugPrefix ❓ $line"
+      fi
+    done
+    unset IFS
+  fi
+
+  if [[ "$3" == "end" ]]; then
+    rm -rf ./.docker/scores.production/.tmp
+  fi
+}
 
 # [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
-# [🐞]
-echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // START"
+log start $strDebugPrefix
 
 # ╭─────
 # │ NOTE:
-# │ |: loop through all the files listed in the runtime-config-files.txt, and copy each file from the (1) host-machine to the (2) docker-container
+# │ |: create temporary (time-limited) docker-container to copy 'runtime-config' files into
 # ╰─────
-for i in $(cat $dockerRuntimeConfigFilePath); do
+docker run \
+  --rm --detach \
+  --name $strDockerContainerScoresBuildTemp \
+  --volume $strDockerVolumeScores:/app/build:rw \
+  alpine \
+  sleep 30
+#
+
+# ╭─────
+# │ NOTE:
+# │ |: check for changes between the static directory AND the docker container build files
+# │ |: START
+# ╰─────
+checkForChanges \
+  $strHostDirRuntimeConfig \
+  $strHostDirRuntimeConfigTmp \
+  start
+#
+
+# ╭─────
+# │ NOTE:
+# │ |: loop through runtime-config defined in 'runtime-config-files.txt',
+# │ |: and copy (import) each file from (1) host-machine to (2) docker-container
+# ╰─────
+for i in $(cat $strOutputHostRuntimeConfigFilePath); do
   # [🐞]
-  echo "\n$strDebugPrefix 🟧 UPDATING :: $i // INSIGHT"
+  echo -e "$strDebugPrefix 🟧 updating file :: $i"
   if [[ "$i" == *"/client/"* ]]; then
-    # [🐞]
-    # echo "it contains /client/"
-    docker cp \
-      $outputDirClient \
-      $dockerContainer:"/app/$i"
+    docker_cp \
+      $strOutputHostPathClient \
+      $strDockerContainerScoresBuildTemp:"/app/$i"
     #
-  fi
-  if [[ "$i" == *"/server/"* ]]; then
-    # [🐞]
-    # echo "it contains /server/"
-    docker cp \
-      $outputDirServer \
-      $dockerContainer:"/app/$i"
+    docker_cp \
+      $strOutputHostPathClient \
+      $strDockerContainerScoresBuildTemp:"$strDockerDirRuntimeConfig/__run-time-config.client.js"
+    #
+    docker_cp \
+      $strOutputHostPathClient \
+      $strDockerContainerScoresBuildTemp:"/app/build/client/__run-time-config.client.js"
+    #
+  elif [[ "$i" == *"/server/"* ]]; then
+    docker_cp \
+      $strOutputHostPathServer \
+      $strDockerContainerScoresBuildTemp:"/app/$i"
+    #
+    docker_cp \
+      $strOutputHostPathServer \
+      $strDockerContainerScoresBuildTemp:"$strDockerDirRuntimeConfig/__run-time-config.server.js"
+    #
+    docker_cp \
+      $strOutputHostPathServer \
+      $strDockerContainerScoresBuildTemp:"/app/build/client/__run-time-config.server.js"
     #
   fi
   # [🐞]
   echo ""
 done
 
+# ╭─────
+# │ NOTE:
+# │ |: check for changes between the static directory AND the docker container build files
+# │ |: END
+# ╰─────
+checkForChanges \
+  $strHostDirRuntimeConfig \
+  $strHostDirRuntimeConfigTmp \
+  end
+#
+
 # [🐞]
-echo ""
-# [🐞]
-echo "$strDebugPrefix UPDATE RUNTIME CONFIG FILE TO DOCKER CONTAINER 🟨 // END"
-# [🐞]
-echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
+log end $strDebugPrefix

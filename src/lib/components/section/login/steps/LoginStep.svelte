@@ -145,6 +145,9 @@
            */
           provider: null | GithubAuthProvider | GoogleAuthProvider = null;
         provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+          prompt: "select_account"
+        })
         disableButton = true;
         const result = await signInWithPopup(auth, provider),
           user = result.user;
@@ -498,7 +501,7 @@
         switchMode();
       },
       (
-        ex: unknown
+        ex
       ): void =>
       {
         scoresAuthStore.updateData
@@ -508,7 +511,7 @@
           ]
         );
         // [🐞]
-        errlog(`❌ Moralis Auth error: ${ex}`);
+        errlog(`❌ Moralis Auth error: ${ex.message}`);
         return;
       }
     );

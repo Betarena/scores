@@ -7,15 +7,15 @@
 # │ ➤ Status        // 🔒 LOCKED                                                     │
 # │ ➤ Author(s)     // @migbash                                                      │
 # │ ➤ Maintainer(s) // @migbash                                                      │
-# │ ➤ Created on    // 03-12-2024                                                    │
+# │ ➤ Created on    // December 12th, 2024                                           │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ 📝 Description                                                                   │
 # ┣──────────────────────────────────────────────────────────────────────────────────┫
 # │ BETARENA (Module)
 # │ |: Injects the environment variables into the VITE build files,
-# │ |: by replacing the 'VITE_X_' with 'VITE_'.
+# │ |  by replacing the 'VITE_X_' with 'VITE_'.
 # │ |: This is done to ensure that the environment variables are available in the
-# │ |: production build, and that the 'VITE_' variables are not exposed.
+# │ |  production build, and that the 'VITE_' variables are not exposed.
 # │ |: The script is executed during the 'docker build' process.
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
@@ -23,16 +23,34 @@
 # source ./env/.env.docker.scores
 # set +o allexport
 
+#region ➤ 📌 VARIABLES
+
+strDebugPrefix="[docker.scores.build.env.inject.sh]"
+
+#endregion ➤ 📌 VARIABLES
+
+#region ➤ 📦 Imports
+
+source ./.scripts/lib/functions.sh
+
+#endregion ➤ 📦 Imports
+
 # [🐞]
-echo "[docker.env.inject.sh] ────────────────────────────────────────────────────────────────"
+log start
+
 # [🐞]
-# echo "[docker.env.inject.sh] ENV:" $(env)
+# echo "$strDebugPrefix ENV:" $(env)
+
 # [🐞]
-echo "[docker.env.inject.sh] ENVIROMENT INJECTION 🟨 // START"
+echo "$strDebugPrefix 'VITE_X_' values remaining (build) ::" $(find build -type f -exec grep -i "VITE_X" {} \; | wc -l)
+# [🐞]
+echo "$strDebugPrefix 'VITE_X_' values remaining (build.copy) ::" $(find build.copy -type f -exec grep -i "VITE_X" {} \; | wc -l)
+# [🐞]
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 
 # ╭─────
 # │ NOTE:
-# │ |: Loop through all the environment variables that start with 'VITE_X_[..]'
+# │ |: loop through all the environment variables that start with 'VITE_X_[..]'
 # ╰─────
 counter=0
 for i in $(env | grep VITE_X_)
@@ -44,7 +62,7 @@ do
   key=$(echo $i | cut -d '=' -f 1)
   value=$(echo $i | cut -d '=' -f 2-)
   # [🐞]
-  echo "[docker.env.inject.sh] ASSIGN NEW VALUE:" $key = $value
+  echo "$strDebugPrefix assingement $key = $value"
 
   # ╭─────
   # │ NOTE:
@@ -73,24 +91,19 @@ do
   find build \
     -type f \
     -name '*.js' \
-    -exec sed \
-    -i "s|${key}|${value_adjusted}|g" '{}' +
+    -exec sed -i "s|${key}|${value_adjusted}|g" '{}' +
+    # -exec sh -c 'tmp=$(mktemp); sed "s|'"${key}"'|'"${value_adjusted}"'|g" "$1" > "$tmp"; cat "$tmp" > "$1"; rm "$tmp"' sh {} \;
   #
 
   counter=$((counter+1))
 done
 
 # [🐞]
-echo "[docker.env.inject.sh] ────────────────────────────────────────────────────────────────"
+echo "$strDebugPrefix ────────────────────────────────────────────────────────────────"
 # [🐞]
-echo "[docker.env.inject.sh] 'VITE_X_' values remaining" $(find build -type f -exec grep -i "VITE_X" {} + | wc -l)
+echo "$strDebugPrefix 'VITE_X_' values remaining (build) ::" $(find build -type f -exec grep -i "VITE_X" {} \; | wc -l)
 # [🐞]
-echo "[docker.env.inject.sh] 'VITE_X_' values replaced" $counter
+echo "$strDebugPrefix 'VITE_X_' values replaced ::" $counter
+
 # [🐞]
-echo "[docker.env.inject.sh] ENVIROMENT INJECTION 🟨 // END"
-# [🐞]
-# echo "[docker.env.inject.sh] ENV:" $(env)
-# [🐞]
-echo "[docker.env.inject.sh] DONE 🟩"
-# [🐞]
-echo "[docker.env.inject.sh] ────────────────────────────────────────────────────────────────"
+log end
