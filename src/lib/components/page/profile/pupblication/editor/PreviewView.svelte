@@ -39,9 +39,6 @@
   import { modalStore } from "$lib/store/modal.js";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Tag2 from "$lib/components/ui/assets/tag2.svelte";
-  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
-  import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
-  import { modalStore } from "$lib/store/modal.js";
 
   // #endregion ➤ 📦 Package Imports
 
