@@ -199,7 +199,7 @@
             controlType="radio"
           >
             <svelte:fragment slot="icon">
-              <FeaturedIcon><svelte:component this={radio.icon} /></FeaturedIcon>
+              <FeaturedIcon type="gradient" size="md" ><svelte:component this={radio.icon} /></FeaturedIcon>
             </svelte:fragment>
             <div class="radio-text-wrapper" slot="content">
               <span class="title">
@@ -242,7 +242,7 @@
               controlType="radio"
             >
               <svelte:fragment slot="icon">
-                <FeaturedIcon color="gray"><Coins02 /></FeaturedIcon>
+                <FeaturedIcon color="gray" type="gradient"><Coins02 /></FeaturedIcon>
               </svelte:fragment>
               <div class="radio-text-wrapper" slot="content">
                 <span class="title">

@@ -158,11 +158,7 @@
     on:mouseenter={() => mouseenter("tags")}
     on:click={() => changeView("tags")}
   >
-    <FeaturedIcon
-      color="brand"
-      size="md"
-      type="gradient"
-    >
+    <FeaturedIcon color={hoverItem === "tags" ? "brand" : "gray"} size="md" type="modern">
       <Tag2 />
     </FeaturedIcon>
     <div class="info">
@@ -207,11 +203,7 @@
     on:mouseenter={() => mouseenter("seo")}
     on:click={() => changeView("seo")}
   >
-    <FeaturedIcon
-      color="brand"
-      size="md"
-      type="gradient"
-    >
+   <FeaturedIcon color={hoverItem === "seo" ? "brand" : "gray"} size="md" type="modern">
       <FileSearch3 />
     </FeaturedIcon>
     <div class="info">

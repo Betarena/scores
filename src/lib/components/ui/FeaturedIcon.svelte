@@ -37,12 +37,9 @@
       cx="24"
       cy="24"
       r="23.5"
-      fill="var(--component-colors-utility-brand-utility-brand-50, #FEF5F0)"
-      stroke="var(--component-colors-utility-brand-utility-brand-200, #FCD5BF)"
     />
   </svg>
   <div class="gradient-bg" />
-  <!-- <div class="mask" /> -->
 
   <div class="icon-wrapper {size}">
     <slot />
@@ -136,17 +133,9 @@
         mask-repeat: no-repeat;
         display: block;
       }
-      .mask {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: var(--radius-full, 9999px);
-        background: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-        z-index: 0;
-      }
       &.sm {
+        width: 32px;
+        height: 32px;
         .icon-wrapper {
           width: 24px;
           height: 24px;
@@ -159,6 +148,8 @@
       }
 
       &.md {
+        width: 40px;
+        height: 40px;
         .icon-wrapper {
           width: 28px;
           height: 28px;
@@ -170,6 +161,8 @@
         }
       }
       &.lg {
+        width: 48px;
+        height: 48px;
         .icon-wrapper {
           width: 32px;
           height: 32px;
@@ -181,6 +174,8 @@
         }
       }
       &.xl {
+        width: 56px;
+        height: 56px;
         .icon-wrapper {
           width: 36px;
           height: 36px;
@@ -202,6 +197,10 @@
             #fcd5bf
           );
         }
+        circle {
+          fill: var(--component-colors-utility-brand-utility-brand-50, #FEF5F0);
+          stroke: var(--component-colors-utility-brand-utility-brand-200, #FCD5BF)
+        }
       }
       .icon-wrapper {
         background: var(--colors-background-bg-brand-secondary, #feece2);
@@ -221,6 +220,10 @@
             --component-colors-utility-gray-utility-gray-200,
             #ededed
           );
+        }
+        circle {
+          fill: var(--colors-gray-dark-mode-900, #FEF5F0);
+          stroke: var(--component-colors-utility-gray-utility-gray-200, #FCD5BF)
         }
       }
       .icon-wrapper {
