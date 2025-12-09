@@ -49,6 +49,9 @@
   import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
   import AlertCircle from "$lib/components/ui/assets/alert-circle.svelte";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
+  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
+  import { BetarenaUserHelper } from "$lib/firebase/common.js";
+  import { invalidate } from "$app/navigation";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -66,6 +69,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let sportstack = {} as IPageAuthorAuthorData;
   export let type: "tip" | "unlock" = "tip";
+  export let article_id: number = 0;
+  export let article_access =
+    {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
   export let grantAccess = () => {};
   let dotLottie: DotLottie;
 
@@ -73,9 +79,16 @@
     awards_translations: TranslationAwardsDataJSONSchema;
   });
   $: ({ viewportType } = $session);
-  $: user = $userSettings.user?.scores_user_data;
+  $: ({ scores_user_data, firebase_user_data } = $userSettings.user || {});
+  $: user = scores_user_data;
   $: insufficientAmount = user && $walletStore.spending.available < 1;
   $: isRewards = type === "tip";
+  $: ({
+    amountBta = 0,
+    amountUsd = 0,
+    split = { author: 0, userCashback: 0 },
+  } = article_access.reward || {});
+
   let loading = false;
   let step: "info" | "confirm" = "info";
   // #endregion ➤ 📌 VARIABLES
@@ -103,7 +116,7 @@
     return (amount * $session.btaUsdRate).toFixed(2);
   }
 
-  function confirm() {
+  async function confirm() {
     if (!user) {
       gotoSW("/login");
       return;
@@ -112,27 +125,46 @@
       return (step = "confirm");
     }
     loading = true;
-    setTimeout(() => {
-      loading = false;
+    const response = await BetarenaUserHelper.pingArticleUnlockCreate({
+      query: {},
+      body: {
+        strUid: firebase_user_data?.uid ?? "",
+        intArticleId: article_id,
+      },
+    });
+
+    if (response?.success) {
+
+      await invalidate("app:author-article-page");
       if (dotLottie) dotLottie.play();
+      infoMessages.add({
+        type: "awards",
+        title:
+          awards_translations.notification_title?.replace(
+            "{amount}",
+            amountBta.toFixed(2)
+          ) || "You shared 1 BTA!",
+        text:
+          awards_translations.notification_text?.replaceAll(
+            "{amount}",
+            `+${(amountBta / 2).toFixed(2)} BTA`
+          ) || "+0.5 BTA to your Rewards / +0.5 BTA to the author",
+      });
       setTimeout(() => {
         $modalStore.show = false;
         if (!isRewards) {
           grantAccess();
         }
-        infoMessages.add({
-          type: "awards",
-          title:
-            awards_translations.notification_title?.replace("{amount}", "1") ||
-            "You shared 1 BTA!",
-          text:
-            awards_translations.notification_text?.replaceAll(
-              "{amount}",
-              "+0,5"
-            ) || "+0.5 BTA to your Rewards / +0.5 BTA to the author",
-        });
       }, 700);
-    }, 1000);
+    } else {
+      loading = false;
+      infoMessages.add({
+        type: "error",
+        title:
+          awards_translations.notification_error_title ||
+          "Error while sharing BTA",
+      });
+    }
   }
 
   function cancel() {
@@ -223,7 +255,10 @@
             />
             <span class="title-support">
               <TranslationText
-                text={awards_translations.share_to_continue}
+                text={awards_translations.share_to_continue.replace(
+                  "{amount}",
+                  amountBta.toFixed(2)
+                )}
                 fallback={"To continue reading, share 1 BTA as a reward to the creator."}
               />
             </span>
@@ -234,7 +269,10 @@
             />
             <span class="title-support">
               <TranslationText
-                text={awards_translations.you_about_sharing}
+                text={awards_translations.you_about_sharing.replace(
+                  "{amount}",
+                  amountBta.toFixed(2)
+                )}
                 fallback={"You're about to share 1 BTA to unlock this article."}
               />
             </span>
@@ -246,7 +284,7 @@
               <TranslationText
                 text={awards_translations.insufficient_main_text?.replace(
                   "{amount}",
-                  "1"
+                  amountBta.toFixed(2)
                 )}
                 fallback="You need at least 1 BTA in your Balance wallet to award this post."
               />
@@ -297,9 +335,9 @@
                   </div>
                   <div class="description">
                     <div class="numbers">
-                      0.5 BTA
+                      {split.author.toFixed(2)} BTA
                       {#if $session.btaUsdRate}
-                        <span class="usd">{convertToUsd(0.5)}$</span>
+                        <span class="usd">{convertToUsd(split.author)}$</span>
                       {/if}
                     </div>
                     <div class="text-secondary">
@@ -343,9 +381,11 @@
                   </div>
                   <div class="description">
                     <div class="numbers">
-                      0.5 BTA
+                      {split.userCashback.toFixed(2)} BTA
                       {#if $session.btaUsdRate}
-                        <span class="usd">{convertToUsd(0.5)}$</span>
+                        <span class="usd"
+                          >{convertToUsd(split.userCashback)}$</span
+                        >
                       {/if}
                     </div>
                     <div class="text-secondary">
@@ -407,12 +447,15 @@
           >
             {#if step === "info"}
               <TranslationText
-                text={awards_translations.share_bta?.replace("{amount}", "1")}
+                text={awards_translations.share_bta?.replace(
+                  "{amount}",
+                  amountBta.toFixed(2)
+                )}
                 fallback="Share 1BTA"
               />
 
               {#if $session.btaUsdRate}
-                <span class="button-usd">({convertToUsd(1)}$)</span>
+                <span class="button-usd">({amountUsd.toFixed(2)}$)</span>
               {/if}
               <TranslationText
                 text={awards_translations.to_unlock}
@@ -429,13 +472,13 @@
           {#if step === "info"}
             <div class="footer-info-text">
               <TranslationText
-                text={awards_translations.rewards_distribution}
+                text={awards_translations.rewards_distribution
+                  .replace("{author_amount}", split.author.toFixed(2))
+                  .replace("{user_amount}", split.userCashback.toFixed(2))}
                 fallback="50/50 split — 0.5 BTA to the author, 0.5 BTA back to your Rewards wallet."
               />
             </div>
-            <!-- content here -->
           {/if}
-          <!-- else content here -->
         {/if}
         {#if isRewards || step === "confirm"}
           <Button type="secondary" full={true} size="lg" on:click={cancel}

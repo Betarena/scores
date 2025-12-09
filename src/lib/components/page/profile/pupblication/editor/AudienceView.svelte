@@ -35,8 +35,9 @@
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import Lock from "$lib/components/ui/assets/lock.svelte";
   import Coins02 from "$lib/components/ui/assets/coins-02.svelte";
-  import Trophy  from '$lib/components/ui/assets/trophy.svelte';
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import { getRates } from "../../helpers.js";
+  import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,9 +60,10 @@
     | undefined;
 
   const dispatch = createEventDispatcher();
+  let rewardsButtons: BtaRewardTiersMain[] = [];
 
   $: ({ viewportType, btaUsdRate } = $session);
-  $: ({ access, rewards_amount } = $create_article_store);
+  $: ({ access, reward_tier_id } = $create_article_store);
 
   $: radioButtons = [
     {
@@ -74,32 +76,69 @@
       icon: Lock,
     },
     {
-      id: "paid",
+      id: "reward_gated",
       text_fallback: "reward_gated_access",
       label: translations?.reward_gated_access,
       description: translations?.reward_gated_access_description,
       description_fallback: "reward_gated_access_description",
-      selected: access === "paid",
-      icon: Trophy
+      selected: access === "reward_gated",
+      icon: Trophy,
     },
   ];
 
   $: rewardsButtons = [
     {
-      id: "1",
-      value: 1,
+      created_at: "2025-12-02T16:30:58.042303",
+      id: 1,
+      is_active: true,
+      sort_order: 1,
+      tier_key: "reward_tier_1",
+      updated_at: "2025-12-02T16:30:58.042303+00:00",
+      usd_value: 0.1,
     },
     {
-      id: "5",
-      value: 5,
+      created_at: "2025-12-08T14:10:49.602912",
+      id: 2,
+      is_active: true,
+      sort_order: 2,
+      tier_key: "reward_tier_2",
+      updated_at: "2025-12-08T14:10:49.602912+00:00",
+      usd_value: 0.5,
     },
     {
-      id: "10",
-      value: 10,
+      created_at: "2025-12-08T14:11:06.354197",
+      id: 3,
+      is_active: true,
+      sort_order: 3,
+      tier_key: "reward_tier_3",
+      updated_at: "2025-12-08T14:11:06.354197+00:00",
+      usd_value: 1,
     },
   ];
 
   // #endregion ➤ 📌 VARIABLES
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * .
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `` - **kicker**
+   */
+
+  $: if ($create_article_store.access === "reward_gated" && !$create_article_store.reward_tier_id) {
+    const defaultTier = rewardsButtons[0];
+    if (defaultTier) {
+      $create_article_store.reward_tier_id = defaultTier.id;
+    }
+  }
 
   // #region ➤ 🛠️ METHODS
 
@@ -124,7 +163,7 @@
     $create_article_store.access = radio.id;
   }
   function checkAmount(radio) {
-    $create_article_store.rewards_amount = radio.value;
+    $create_article_store.reward_tier_id = radio.id;
   }
   // #endregion ➤ 🛠️ METHODS
 
@@ -199,7 +238,9 @@
             controlType="radio"
           >
             <svelte:fragment slot="icon">
-              <FeaturedIcon type="gradient" size="md" ><svelte:component this={radio.icon} /></FeaturedIcon>
+              <FeaturedIcon type="gradient" size="md"
+                ><svelte:component this={radio.icon} /></FeaturedIcon
+              >
             </svelte:fragment>
             <div class="radio-text-wrapper" slot="content">
               <span class="title">
@@ -217,7 +258,7 @@
             </div>
           </RadioGroupItem>
         {/each}
-        {#if access === "paid"}
+        {#if access === "reward_gated"}
           <div class="access-amount-text">
             <span class="title">
               <TranslationText
@@ -234,23 +275,29 @@
           </div>
 
           {#each rewardsButtons as radio}
-            <RadioGroupItem
-              full={true}
-              clickHandler={true}
-              selected={rewards_amount === radio.value}
-              on:click={() => checkAmount(radio)}
-              controlType="radio"
-            >
-              <svelte:fragment slot="icon">
-                <FeaturedIcon color="gray" type="gradient"><Coins02 /></FeaturedIcon>
-              </svelte:fragment>
-              <div class="radio-text-wrapper" slot="content">
-                <span class="title">
-                  {radio.value} BTA
-                </span>
-                <span class="description"> ≈ ${(radio.value * btaUsdRate).toFixed(2)} USD </span>
-              </div>
-            </RadioGroupItem>
+            {#if radio.usd_value}
+              <RadioGroupItem
+                full={true}
+                clickHandler={true}
+                selected={reward_tier_id === radio.id}
+                on:click={() => checkAmount(radio)}
+                controlType="radio"
+              >
+                <svelte:fragment slot="icon">
+                  <FeaturedIcon color="gray" type="gradient"
+                    ><Coins02 /></FeaturedIcon
+                  >
+                </svelte:fragment>
+                <div class="radio-text-wrapper" slot="content">
+                  <span class="title">
+                    {(btaUsdRate * radio.usd_value).toFixed(5)} BTA
+                  </span>
+                  <span class="description">
+                    ≈ ${radio.usd_value.toFixed(2)}
+                  </span>
+                </div>
+              </RadioGroupItem>
+            {/if}
           {/each}
           <div class="rewards-distribution">
             <TranslationText

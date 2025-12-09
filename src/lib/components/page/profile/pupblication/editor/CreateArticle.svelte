@@ -218,7 +218,6 @@
     if (!json) return "";
     for (const node of json.content || []) {
       if (node.type === "paragraph" && node.content && !node.content.find((n) => n.type === "imageWithPlaceholder")) {
-        debugger
         return (node.content || []).map((n) => n.text).join(" ");
       }
     }

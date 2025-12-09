@@ -16,8 +16,11 @@
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TranslationText from "../misc/Translation-Text.svelte";
   import session from "$lib/store/session.js";
+  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
 
   export let sportstack = {} as IPageAuthorAuthorData;
+  export let article_access = {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
+  export let article_id= 0;
   export let grantAccess = () => {};
 
   $: ({ awards_translations } = $page.data as {
@@ -66,14 +69,15 @@
       fallback="Locked content"
     />
   </div>
-
-  <Button type="secondary-gray" size="sm"
-    ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> (1
-    BTA)</Button
-  >
+  {#if  article_access.reward?.amountBta}
+     <Button type="secondary-gray" size="sm"
+       ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> ({(article_access.reward?.amountBta).toFixed(2)}
+       BTA)</Button
+     >
+  {/if}
   <div class="fade {viewportType}" />
   <div bind:this={modalNode} class="locked-tips-modal-wrapper  {viewportType}">
-    <TipsModal type="unlock" {sportstack} {grantAccess} />
+    <TipsModal type="unlock" {sportstack} {grantAccess} {article_id} {article_access}/>
   </div>
 </div>
 

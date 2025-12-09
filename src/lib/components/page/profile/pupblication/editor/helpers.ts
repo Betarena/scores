@@ -138,7 +138,7 @@ export async function upsert({
   const sanitizedTitle = DOMPurify.sanitize(title);
   const image = await getFirstImageWithSize(editor);
 
-  const { seo, tags, detectedLang } = create_article_store.get();
+  const { seo, tags, detectedLang,  access,  reward_tier_id} = create_article_store.get();
   const detectedLangFromText = detectLanguage(text_content);
   let locale = detectedLang;
   const isNewPt = detectedLangFromText.lang === "br";
@@ -171,6 +171,8 @@ export async function upsert({
     image,
     uid: author.uid,
     locale,
+    access_type: access,
+    reward_tier_id,
   })) as any;
   if (showLoaders && loadingId) {
     infoMessages.remove(loadingId);

@@ -63,6 +63,7 @@
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { walletStore } from "$lib/store/wallets.js";
+  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -83,7 +84,9 @@
   export let /**
      * @augments IPageAuhtorArticleDataFinal
      */
-    widgetData: IPageAuhtorArticleDataFinal;
+    widgetData:  IPageAuhtorArticleDataFinal & {
+            article_access?: IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
+          };
 
   /**
    * @description
@@ -142,11 +145,12 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
-  $: ({ author: sportstack, article } = widgetData);
-  $: ({ paid = true } = article);
+  $: ({ author: sportstack, article, article_access } = widgetData);
+  $: ({ access_type = "free", id } = article);
+  $: accessGranted = article_access?.hasAccess ?? true;
+  $: paid = access_type === "reward_gated";
   $: user = $userSettings.user?.scores_user_data;
   $: insufficientAmount = user && $walletStore.spending.available < 1;
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -194,20 +198,7 @@
 
     if (paid && !accessGranted) {
       const directChildren = Array.from(container.children) as HTMLElement[];
-      let isFirst = true;
-      let targetIndex = 0;
-      const target = directChildren.find((child, index) => {
-        const isP =
-          child.tagName?.toLowerCase() === "p" && !child.querySelector("img");
-        if (isP && !isFirst) {
-          targetIndex = index;
-          return true;
-        }
-        if (isP) {
-          isFirst = false;
-        }
-        return false;
-      });
+      const target = directChildren.reverse()[0]
       if (target) {
         try {
           const p_node = document.createElement("p");
@@ -220,23 +211,13 @@
             target: p_node,
             props: {
               sportstack,
+              article_access,
+              article_id: id,
               grantAccess: () => {
                 accessGranted = true;
               },
             },
           });
-
-          const contentToRemove = directChildren.slice(targetIndex + 1);
-          const userAgent = navigator.userAgent.toLowerCase();
-          const isBot =
-            /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|mj12bot|semrushbot|ahrefsbot|rogerbot|dotbot/.test(
-              userAgent
-            );
-          if (!isBot) {
-            contentToRemove.forEach((child) => {
-              child.textContent = "";
-            });
-          }
         } catch (error) {
           console.error("Error inserting locked widget:", error);
         }
