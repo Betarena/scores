@@ -92,6 +92,7 @@
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
   import WidgetAdEngine from '@betarena/ad-engine';
+  import { getRates } from '$lib/utils/web3.js';
 
   // ╭─────
   // │ IMPORTANT:
@@ -434,6 +435,7 @@
     async (
     ): Promise < void > =>
     {
+      getRates(sessionStore);
       // ╭─────
       // │ CRITICAL
       // ╰─────

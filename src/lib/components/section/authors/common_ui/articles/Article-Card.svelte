@@ -42,6 +42,15 @@
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TipsModal from "./TipsModal.svelte";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import { BetarenaUserHelper } from "$lib/firebase/common.js";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
+  import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
+  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
+  import { get } from "$lib/api/utils.js";
+  import { redirect } from "@sveltejs/kit";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -75,23 +84,67 @@
     /**
      * @description mobile view
      */
-    mobile = false;
+    mobile = false,
+    /**
+     * @description awards tier info for reward gated articles
+     */
+    award_tier_info: null | BtaRewardTiersMain = null,
+    /**
+     * @description check user access
+     */
+    article_access:
+      | null
+      | IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"] =
+      null;
 
   $: translations = ($page.data?.translations ||
     {}) as IPageAuthorTranslationDataFinal;
 
-  $: ({ permalink, tags_data, published_date, data, seo_details, author } =
-    article);
+  $: ({
+    permalink,
+    tags_data,
+    access_type,
+    reward_tier_id,
+    published_date,
+    data,
+    seo_details,
+    author,
+    id,
+  } = article);
 
   $: ({ avatar, username } = author.data || {
     username: "unknow",
     avatar: defaultAvatar,
   });
+  $: ({ firebase_user_data } = $userSettings.user || {});
   $: ({ images = [] } = seo_details?.opengraph || {});
   $: ({ title = "", content = "", featured_image } = data || {});
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead = content && readingTime(content);
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and/or reactively for 'this' .svelte file is ran.          │
+  // │ WARNING:                                                               │
+  // │ ❗️ Can go out of control.                                              │
+  // │ (a.k.a cause infinite loops and/or cause bottlenecks).                 │
+  // │ Please keep very close attention to these methods and                  │
+  // │ use them carefully.                                                    │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (firebase_user_data?.uid && access_type === "reward_gated" && id) {
+    getRewardsAccessInfo(firebase_user_data.uid, id);
+  }
+
+  $:if(access_type === "reward_gated" && reward_tier_id && !award_tier_info){
+    getRewardsTier(reward_tier_id);
+  }
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
 
@@ -106,12 +159,39 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function sendTip() {
+    if(article_access?.hasAccess) return;
+    if (!firebase_user_data?.uid) {
+      gotoSW(`/login`)
+    }
     modalStore.set({
       modal: true,
       component: TipsModal,
       show: true,
-      props: {sportstack: author}
-    })
+      props: { sportstack: author, article_id: id, article_access: article_access || {} },
+    });
+  }
+
+  async function getRewardsAccessInfo(uid: string, article_id: number) {
+    const res = await BetarenaUserHelper.pingArticleAccessCheck({
+      query: {},
+      body: {
+        strUid: uid,
+        intArticleId: article_id,
+      },
+    });
+    const access = res.success ? res.success.data : null;
+    if (article_access) {
+      article_access = access;
+    }
+  }
+  async function getRewardsTier(tier_id: number) {
+    const res = await get<{ rewards_tiers: BtaRewardTiersMain[] }>(
+      `/api/data/rewards_tiers?id=${tier_id}`
+    );
+    if (res) {
+      const { rewards_tiers } = res;
+      award_tier_info = rewards_tiers[0];
+    }
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -186,34 +266,15 @@
         </ExpandDataWrapper>
       {/if}
     </div> -->
-    <div class="tips-wrapper" on:click={sendTip}>
-      <div class="tip-info">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-        >
-          <g clip-path="url(#clip0_3408_9815)">
-            <path
-              d="M8.00065 9.99998C5.79151 9.99998 4.00065 8.20912 4.00065 5.99998V2.29628C4.00065 2.02038 4.00065 1.88243 4.04086 1.77197C4.10826 1.58679 4.25413 1.44092 4.4393 1.37352C4.54977 1.33331 4.68772 1.33331 4.96361 1.33331H11.0377C11.3136 1.33331 11.4515 1.33331 11.562 1.37352C11.7472 1.44092 11.893 1.58679 11.9604 1.77197C12.0007 1.88243 12.0007 2.02038 12.0007 2.29628V5.99998C12.0007 8.20912 10.2098 9.99998 8.00065 9.99998ZM8.00065 9.99998V12M12.0007 2.66665H13.6673C13.9779 2.66665 14.1333 2.66665 14.2558 2.71739C14.4191 2.78506 14.5489 2.91484 14.6166 3.07819C14.6673 3.2007 14.6673 3.35602 14.6673 3.66665V3.99998C14.6673 4.61996 14.6673 4.92995 14.5992 5.18428C14.4142 5.87447 13.8751 6.41356 13.185 6.5985C12.9306 6.66665 12.6206 6.66665 12.0007 6.66665M4.00065 2.66665H2.33398C2.02336 2.66665 1.86804 2.66665 1.74553 2.71739C1.58218 2.78506 1.45239 2.91484 1.38473 3.07819C1.33398 3.2007 1.33398 3.35602 1.33398 3.66665V3.99998C1.33398 4.61996 1.33398 4.92995 1.40213 5.18428C1.58707 5.87447 2.12616 6.41356 2.81635 6.5985C3.07068 6.66665 3.38067 6.66665 4.00065 6.66665M4.96361 14.6666H11.0377C11.2013 14.6666 11.334 14.534 11.334 14.3704C11.334 13.0612 10.2727 12 8.96361 12H7.03769C5.72857 12 4.66732 13.0612 4.66732 14.3704C4.66732 14.534 4.79997 14.6666 4.96361 14.6666Z"
-              stroke="currentColor"
-              stroke-width="1.66667"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </g>
-          <defs>
-            <clipPath id="clip0_3408_9815">
-              <rect width="16" height="16" fill="white" />
-            </clipPath>
-          </defs>
-        </svg>
-        <span class="tips-count">45</span>
-      </div>
-      <div class="tip-amount">1 BTA</div>
-    </div>
+    {#if access_type === "reward_gated" && award_tier_info}
+       <div class="tips-wrapper" on:click={sendTip}>
+         <div class="tip-info">
+           <Trophy />
+           <span class="tips-count">45</span>
+         </div>
+         <div class="tip-amount">{((award_tier_info?.usd_value || 1) / $session.btaUsdRate).toFixed(2)} BTA</div>
+       </div>
+    {/if}
   </div>
   {#if images[0]?.url || featured_image}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
@@ -392,13 +453,14 @@
         }
         .tip-amount {
           display: flex;
-          width: 40px;
+          width: auto;
+          padding-inline: 3px;
           height: 20px;
           flex-direction: column;
           justify-content: center;
           flex-shrink: 0;
 
-          background: var(--colors-background-bg-disabled, #3B3B3B);
+          background: var(--colors-background-bg-disabled, #3b3b3b);
 
           color: var(--colors-foreground-fg-brand-primary-600, #f5620f);
           text-align: center;

@@ -87,7 +87,11 @@
     amountBta = 0,
     amountUsd = 0,
     split = { author: 0, userCashback: 0 },
-  } = article_access.reward || {});
+  } = article_access.reward || {} as {
+    amountBta: number;
+    amountUsd: number;
+    split: { author: number; userCashback: number };
+  });
 
   let loading = false;
   let step: "info" | "confirm" = "info";
