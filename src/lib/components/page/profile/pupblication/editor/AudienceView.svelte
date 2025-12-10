@@ -38,6 +38,7 @@
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import { getRates } from "../../helpers.js";
   import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
+  import { get } from "$lib/api/utils.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -165,6 +166,18 @@
   function checkAmount(radio) {
     $create_article_store.reward_tier_id = radio.id;
   }
+
+  async function getRewardsTiers() {
+    const res = await get<{rewards_tiers:BtaRewardTiersMain[]}>('/api/data/rewards_tiers');
+    if (res) {
+      const { rewards_tiers } = res;
+      rewardsButtons = rewards_tiers;
+      const current_tier = rewardsButtons.find(tier => tier.id === $create_article_store.reward_tier_id);
+      if (!current_tier && access === "reward_gated" && rewards_tiers.length > 0) {
+        $create_article_store.reward_tier_id = rewards_tiers[0].id;
+      }
+    }
+  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -178,6 +191,7 @@
 
   onMount(() => {
     getRates(session);
+    getRewardsTiers();
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

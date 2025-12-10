@@ -142,8 +142,8 @@
         lang: article.lang || "en",
         iso: article.seo_details?.opengraph.locale || "en_US"
       },
-      access: "free",
-      rewards_amount: 1
+      access: (article.access_type || "free") as "free" | "reward_gated",
+      reward_tier_id: article.reward_tier_id,
     });
     title = article.data?.title || "";
     disablePublishButton =
