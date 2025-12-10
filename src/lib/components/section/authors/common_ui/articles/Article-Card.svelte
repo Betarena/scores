@@ -180,7 +180,7 @@
       },
     });
     const access = res.success ? res.success.data : null;
-    if (article_access) {
+    if (access) {
       article_access = access;
     }
   }

@@ -433,12 +433,12 @@
         {:else if isRewards}
           <Button type="primary" full={true} size="lg" on:click={confirm}>
             <TranslationText
-              text={awards_translations.share_bta?.replace("{amount}", "1")}
+              text={awards_translations.share_bta?.replace("{amount}", amountBta.toFixed(2))}
               fallback="Share 1BTA"
             />
 
             {#if $session.btaUsdRate}
-              <span class="button-usd">({convertToUsd(1)}$)</span>
+              <span class="button-usd">({amountUsd.toFixed(2)}$)</span>
             {/if}
           </Button>
         {:else}
