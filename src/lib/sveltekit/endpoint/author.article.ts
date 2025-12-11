@@ -59,9 +59,9 @@ export async function main(request: RequestEvent): Promise<Response> {
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const queryParamPermalink = request.url.searchParams.get("permalink"),
-      const protect = request.url.searchParams.get("protect"),
-      queryParamLanguage = request.url.searchParams.get("lang"),
-      queryParamArticleId = request.url.searchParams.get("articleId");
+        protect = request.url.searchParams.get("protect"),
+        queryParamLanguage = request.url.searchParams.get("lang"),
+        queryParamArticleId = request.url.searchParams.get("articleId");
       // ╭──────────────────────────────────────────────────────────────────╮
       // │:| (output) fetch TARGET article data.                            │
       // ╰──────────────────────────────────────────────────────────────────╯
