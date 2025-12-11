@@ -29,7 +29,7 @@ export const load = (async ({ fetch, params }) =>
         ERROR_CODE_INVALID
       );
   ;
-  const res = await fetch(`/api/data/author/article?permalink=${permalink}`);
+  const res = await fetch(`/api/data/author/article?permalink=${permalink}&edit=true`);
   const article = await res.json() as IPageAuhtorArticleDataFinal;
   return { ...article };
 }) satisfies PageLoad;

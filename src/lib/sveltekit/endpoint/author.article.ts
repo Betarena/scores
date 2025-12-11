@@ -32,7 +32,7 @@ import { API_DATA_ERROR_RESPONSE } from "$lib/utils/debug.js";
 import { BetarenaUserHelper } from "$lib/firebase/common.js";
 import type {  IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 import type {  IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
-
+import * as parse5 from "parse5";
 // #endregion ➤ 📦 Package Imports
 
 // ╭──────────────────────────────────────────────────────────────────╮
@@ -59,7 +59,7 @@ export async function main(request: RequestEvent): Promise<Response> {
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const queryParamPermalink = request.url.searchParams.get("permalink"),
-        protect = request.url.searchParams.get("protect"),
+        edit = request.url.searchParams.get("edit"),
         queryParamLanguage = request.url.searchParams.get("lang"),
         queryParamArticleId = request.url.searchParams.get("articleId");
       // ╭──────────────────────────────────────────────────────────────────╮
@@ -96,7 +96,7 @@ export async function main(request: RequestEvent): Promise<Response> {
           const userAgent = request.request.headers.get("user-agent") || "";
           const isBot = isRequestFromBot(userAgent);
 
-          if (!article_access?.hasAccess && data.article.data && !isBot)
+          if (!article_access?.hasAccess && data.article.data && !isBot && !edit)
           {
             data.article.data.content = await removeContentAfterTarget(data.article.data.content);
           }
@@ -192,42 +192,59 @@ export async function main(request: RequestEvent): Promise<Response> {
  * @returns { Promise < string > }
  *  📤 Modified HTML content string.
  */
-async function removeContentAfterTarget(htmlContent: string): Promise<string> {
-   try {
-    const { JSDOM } = await import("jsdom");
-    const dom = new JSDOM(htmlContent);
-    const doc = dom.window.document;
-    const directChildren = Array.from(doc.body.children) as HTMLElement[];
+export function removeContentAfterTarget(htmlContent: string): string {
+  try {
+    const document = parse5.parse(htmlContent) as any;
 
-    let isFirst = true;
+    const htmlElement = document.childNodes?.find(
+      (node: any) => node.nodeName === "html"
+    );
+    if (!htmlElement) return htmlContent;
+
+    const bodyElement = htmlElement.childNodes?.find(
+      (node: any) => node.nodeName === "body"
+    );
+    if (!bodyElement) return htmlContent;
+
+    const children = bodyElement.childNodes as any[];
+    let paragraphCount = 0;
     let targetIndex = -1;
 
-    // Find the second paragraph without images
-    for (let i = 0; i < directChildren.length; i++) {
-      const child = directChildren[i];
-      const isP = child.tagName?.toLowerCase() === "p" && !child.querySelector("img");
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (!child) continue;
 
-      if (isP && !isFirst) {
-        targetIndex = i;
-        break;
-      }
-      if (isP) {
-        isFirst = false;
+      if (child.nodeName === "p") {
+        const hasImage =
+          child.childNodes?.some((node: any) => node.nodeName === "img") ??
+          false;
+
+        if (!hasImage) {
+          paragraphCount++;
+          if (paragraphCount === 2) {
+            targetIndex = i;
+            break;
+          }
+        }
       }
     }
 
-    // Remove content after target
     if (targetIndex > -1) {
-      const contentToRemove = directChildren.slice(targetIndex + 1);
-      contentToRemove.forEach((child) => {
-        child.remove();
-      });
+      for (let i = children.length - 1; i > targetIndex; i--) {
+        children.splice(i, 1);
+      }
     }
 
-    return doc.body.innerHTML;
+    let result = parse5.serialize(document);
+    result = result.replace(/<\/?html[^>]*>/gi, "");
+    result = result.replace(/<head[^>]*>.*?<\/head>/gis, "");
+    result = result.replace(/<body[^>]*>/gi, "");
+    result = result.replace(/<\/body>/gi, "");
+
+    return result.trim();
   } catch (e) {
     console.error("Error in removeContentAfterTarget: ", e);
-    return e.message;
+    return htmlContent;
   }
 }
 
