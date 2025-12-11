@@ -27,7 +27,6 @@ import {
 } from "@betarena/scores-lib/dist/functions/v8/authors.articles.js";
 import { entryTargetDataArticle } from "@betarena/scores-lib/dist/functions/v8/main.preload.authors.js";
 import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common.js";
-import { JSDOM } from "jsdom";
 import { postv2 } from "$lib/api/utils.js";
 import { API_DATA_ERROR_RESPONSE } from "$lib/utils/debug.js";
 import { BetarenaUserHelper } from "$lib/firebase/common.js";
@@ -60,8 +59,9 @@ export async function main(request: RequestEvent): Promise<Response> {
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const queryParamPermalink = request.url.searchParams.get("permalink"),
-        queryParamLanguage = request.url.searchParams.get("lang"),
-        queryParamArticleId = request.url.searchParams.get("articleId");
+      const protect = request.url.searchParams.get("protect"),
+      queryParamLanguage = request.url.searchParams.get("lang"),
+      queryParamArticleId = request.url.searchParams.get("articleId");
       // ╭──────────────────────────────────────────────────────────────────╮
       // │:| (output) fetch TARGET article data.                            │
       // ╰──────────────────────────────────────────────────────────────────╯
@@ -98,7 +98,7 @@ export async function main(request: RequestEvent): Promise<Response> {
 
           if (!article_access?.hasAccess && data.article.data && !isBot)
           {
-            data.article.data.content = removeContentAfterTarget(data.article.data.content);
+            data.article.data.content = await removeContentAfterTarget(data.article.data.content);
           }
         }
         // console.log('data-091', data);
@@ -189,11 +189,12 @@ export async function main(request: RequestEvent): Promise<Response> {
  *  📝 Remove content after the second paragraph without images.
  * @param { string } htmlContent
  *  💠 **[required]** HTML content string.
- * @returns { string }
+ * @returns { Promise < string > }
  *  📤 Modified HTML content string.
  */
-function removeContentAfterTarget(htmlContent: string): string {
+async function removeContentAfterTarget(htmlContent: string): Promise<string> {
    try {
+    const { JSDOM } = await import("jsdom");
     const dom = new JSDOM(htmlContent);
     const doc = dom.window.document;
     const directChildren = Array.from(doc.body.children) as HTMLElement[];
