@@ -44,9 +44,9 @@
   import { browser } from '$app/environment';
   import { afterNavigate, beforeNavigate } from '$app/navigation';
   import { page } from '$app/stores';
+  import { logoutUser } from '$lib/utils/user.js';
   import { partytownSnippet } from '@qwik.dev/partytown/integration';
   import { onDestroy, onMount } from 'svelte';
-	import { logoutUser } from '$lib/utils/user.js';
 
   import { loginStore } from '$lib/components/section/login/login-store';
   import { config } from '$lib/constants/config.js';
@@ -146,6 +146,14 @@
      */
     objConfig
       = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')!
+  ;
+
+  let
+    [
+      isBetarenaWidgetAdEngineEnabled
+    ] = [
+      false
+    ]
   ;
 
   $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window } = { ...$sessionStore });
@@ -354,9 +362,10 @@
   $: if (browser && document)
     initializeTopLevelConsoleController();
   ;
-  $: if (browser && isInitliazed && _dev_wrong_cookies) {
+  $: if (browser && isInitliazed && _dev_wrong_cookies) 
+  
     logoutUser();
-  }
+  
   // ╭─────
   // │ NOTE:
   // │ |: [3rd-party] // Intercom // BOOT (with user data)
@@ -455,6 +464,15 @@
       if ($page.url.searchParams.get('admin'))
         scoresAdminStore.toggleAdminState($page.url.searchParams.get('admin') == 'true' ? true : false);
       ;
+
+      setTimeout
+      (
+        () =>
+        {
+          isBetarenaWidgetAdEngineEnabled = true;
+        },
+        (objConfig.intBetarenaAdEngineDelayMs ?? 0)
+      );
 
       return;
     }
@@ -651,7 +669,7 @@
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
-  {#if config.objApp.isBetareAgEngineEnabled}
+  {#if isBetarenaWidgetAdEngineEnabled && config.objApp.isBetareAgEngineEnabled}
     {#key pageRouteId}
       <WidgetAdEngine
         authorId={dataArticle?.author?.id}
