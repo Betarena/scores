@@ -370,7 +370,7 @@
         {widgetData.article.data?.title ?? ""}
       </h1>
       <div class="user-box-wrapper">
-        {#if accessGranted}
+        {#if accessGranted && access_type === "reward_gated"}
           <Badge size="sm" color="orange">
             <CheckCircle />
             <TranslationText
@@ -404,7 +404,7 @@
             </div>
           </AvatarLabel>
         </a>
-        {#if accessGranted}
+        {#if accessGranted && access_type === "reward_gated"}
           <div class="rewards-info">
             <Trophy />
             <div class="rewards-text">
@@ -444,60 +444,6 @@
       {/key}
 
     </div>
-    <div class="test-text">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis
-      quibusdam rerum eum, maxime quaerat dolores labore harum et temporibus
-      omnis adipisci eveniet nostrum corporis doloribus eos ipsa saepe! Id, cum!
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita
-      reprehenderit magnam est aperiam sequi assumenda illo aut perferendis,
-      eligendi nobis nesciunt ab facere doloremque fuga odio architecto optio,
-      dicta consectetur! Reiciendis facere nam nostrum dolorem, ab beatae
-      incidunt, et nisi quam ex quas placeat similique animi asperiores cum
-      perspiciatis facilis quae accusamus dicta expedita aliquam commodi rem
-      non. Quas, voluptatibus? Voluptate nisi nemo vero asperiores totam
-      accusamus sequi expedita porro dolor aliquid, illo quae quia rem in
-      accusantium. Sunt nobis veniam dolorem excepturi, sed suscipit impedit
-      ipsam voluptas repudiandae optio. Illo soluta fuga voluptas eos eveniet
-      nesciunt iure reprehenderit tempora tempore quis. Nisi magnam deserunt
-      debitis? Aliquam, suscipit enim maxime libero perferendis, maiores nulla
-      officia possimus ut magnam sint neque. Laudantium numquam possimus rerum
-      natus fugiat beatae nisi facilis voluptatem, iure unde quae atque. Commodi
-      iure totam quaerat expedita ipsam, earum porro illo? Vitae, aperiam
-      consequatur mollitia praesentium a dicta! Lorem ipsum dolor sit amet
-      consectetur adipisicing elit. Deleniti aperiam sint fugiat quaerat, quam,
-      illum placeat ipsum quibusdam itaque quas labore modi molestiae iusto
-      eveniet consequuntur a! Provident, nulla commodi. A aut amet ratione
-      molestiae! Quo consectetur quasi eum dolore hic modi minima iure! Ipsa
-      possimus quaerat quasi consectetur ex ratione sapiente soluta saepe
-      aliquid, totam nemo adipisci earum eos. Sed, dicta itaque illum magnam
-      corporis tenetur soluta, perspiciatis consectetur odio facilis officia.
-      Explicabo nesciunt ipsum in deserunt quia quas quo possimus! Numquam in
-      quibusdam, unde eius illum harum magnam. Natus voluptate quod deserunt
-      quis, animi molestiae laudantium deleniti quae! Vel deserunt voluptate ad
-      exercitationem neque nisi consequatur omnis praesentium saepe esse est
-      dolorum ratione, a fugiat libero rem? Rerum. Velit non veniam quia nobis
-      aspernatur saepe omnis enim error? Quidem aspernatur laboriosam nisi
-      aliquid impedit sint dicta non, inventore doloremque maiores fugit aut
-      cupiditate reiciendis commodi eligendi, alias distinctio. Corrupti vitae
-      quam eveniet nisi sapiente. Sed incidunt ullam libero optio accusantium
-      amet reiciendis molestias atque sit corrupti officia doloremque autem ab
-      eligendi doloribus porro odit totam, ducimus perspiciatis distinctio.
-      Delectus repellendus consequatur rerum aperiam, ad voluptate illo, eaque
-      culpa maxime accusantium fuga ab quasi est quam, corrupti omnis!
-      Distinctio consequatur provident laborum fugiat. Cumque sapiente provident
-      vel quibusdam quos? Consequuntur impedit quam dolores sed quaerat
-      laboriosam atque nesciunt alias. Doloremque illo accusamus similique,
-      veritatis temporibus suscipit omnis odit, sint, veniam saepe aspernatur
-      molestiae aperiam non aut. Aliquam, excepturi tempore. Veritatis eum amet
-      optio consequatur placeat quaerat commodi assumenda quos magnam ullam
-      voluptate eveniet aperiam, provident at culpa corporis dolorem voluptatum
-      quisquam molestiae fugiat laboriosam ipsum? Pariatur ab facilis quo!
-      Praesentium temporibus rerum placeat! Ut accusantium quibusdam fuga amet
-      dolorum beatae doloremque quam iste assumenda. Perferendis, et incidunt
-      laudantium libero dolorem dolore delectus beatae facere. Soluta et facilis
-      ipsa eius.
-    </div>
-
   {/key}
 </div>
 

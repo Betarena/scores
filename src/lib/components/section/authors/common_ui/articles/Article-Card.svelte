@@ -51,6 +51,10 @@
   import { get } from "$lib/api/utils.js";
   import { redirect } from "@sveltejs/kit";
   import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
+  import Badge from "$lib/components/ui/Badge.svelte";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -140,7 +144,7 @@
     getRewardsAccessInfo(firebase_user_data.uid, id);
   }
 
-  $:if(access_type === "reward_gated" && reward_tier_id && !award_tier_info){
+  $: if (access_type === "reward_gated" && reward_tier_id && !award_tier_info) {
     getRewardsTier(reward_tier_id);
   }
 
@@ -159,15 +163,19 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   function sendTip() {
-    if(article_access?.hasAccess) return;
+    if (article_access?.hasAccess) return;
     if (!firebase_user_data?.uid) {
-      gotoSW(`/login`)
+      gotoSW(`/login`);
     }
     modalStore.set({
       modal: true,
       component: TipsModal,
       show: true,
-      props: { sportstack: author, article_id: id, article_access: article_access || {} },
+      props: {
+        sportstack: author,
+        article_id: id,
+        article_access: article_access || {},
+      },
     });
   }
 
@@ -236,44 +244,53 @@
         {title}
       </div>
     </a>
-    <!-- <div class="tags-wrapper">
-      {#if mobile}
-        <ScrollDataWrapper showArrows={false} data={tags_data} let:item={tag}>
-          <div
-            class="tag"
-            data-sveltekit-preload-data="hover"
-            in:fade={{ duration: 500 }}
-          >
-            <Badge link="/a/tag/{tag?.permalink}" size="lg" color="gray">{tag?.name}</Badge>
-          </div>
-        </ScrollDataWrapper>
-      {:else}
-        <ExpandDataWrapper data={tags_data}>
-          <slot slot="item" let:item={tag}>
+
+    {#if access_type === "reward_gated" && award_tier_info}
+      <div class="tips-wrapper" on:click={sendTip}>
+        <div class="tip-info">
+          <Trophy />
+          <span class="tips-count">45</span>
+        </div>
+        <div class="tip-amount">
+          {((award_tier_info?.usd_value || 1) / $session.btaUsdRate).toFixed(2)}
+          BTA
+        </div>
+      </div>
+    {:else}
+      <div class="tags-wrapper">
+        {#if mobile}
+          <ScrollDataWrapper showArrows={false} data={tags_data} let:item={tag}>
             <div
               class="tag"
               data-sveltekit-preload-data="hover"
               in:fade={{ duration: 500 }}
             >
-              <Badge size="lg" color="gray" link="/a/tag/{tag?.permalink}">{tag?.name}</Badge>
+              <Badge link="/a/tag/{tag?.permalink}" size="lg" color="gray"
+                >{tag?.name}</Badge
+              >
             </div>
-          </slot>
-          <slot slot="count" let:count
-            ><div in:fade={{ duration: 500 }}>
-              <Badge size="lg" color="gray">+{count}</Badge>
-            </div></slot
-          >
-        </ExpandDataWrapper>
-      {/if}
-    </div> -->
-    {#if access_type === "reward_gated" && award_tier_info}
-       <div class="tips-wrapper" on:click={sendTip}>
-         <div class="tip-info">
-           <Trophy />
-           <span class="tips-count">45</span>
-         </div>
-         <div class="tip-amount">{((award_tier_info?.usd_value || 1) / $session.btaUsdRate).toFixed(2)} BTA</div>
-       </div>
+          </ScrollDataWrapper>
+        {:else}
+          <ExpandDataWrapper data={tags_data}>
+            <slot slot="item" let:item={tag}>
+              <div
+                class="tag"
+                data-sveltekit-preload-data="hover"
+                in:fade={{ duration: 500 }}
+              >
+                <Badge size="lg" color="gray" link="/a/tag/{tag?.permalink}"
+                  >{tag?.name}</Badge
+                >
+              </div>
+            </slot>
+            <slot slot="count" let:count
+              ><div in:fade={{ duration: 500 }}>
+                <Badge size="lg" color="gray">+{count}</Badge>
+              </div></slot
+            >
+          </ExpandDataWrapper>
+        {/if}
+      </div>
     {/if}
   </div>
   {#if images[0]?.url || featured_image}
