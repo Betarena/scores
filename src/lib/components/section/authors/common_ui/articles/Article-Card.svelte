@@ -125,6 +125,8 @@
   $: ({ title = "", content = "", featured_image } = data || {});
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead = content && readingTime(content);
+  $: img = images[0]?.url || featured_image;
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -139,6 +141,10 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  $: if (img && !decodeURI(img).startsWith('https://img.betarena.com')) {
+    img = getOptimizedImageUrl({ strImageUrl: img });
+  }
 
   $: if (firebase_user_data?.uid && access_type === "reward_gated" && id) {
     getRewardsAccessInfo(firebase_user_data.uid, id);
@@ -293,12 +299,10 @@
       </div>
     {/if}
   </div>
-  {#if images[0]?.url || featured_image}
+  {#if img}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
       <img
-        src={getOptimizedImageUrl({
-          strImageUrl: images[0]?.url || featured_image,
-        })}
+        src={img}
         alt={images[0]?.alt || title}
         srcset=""
       />
