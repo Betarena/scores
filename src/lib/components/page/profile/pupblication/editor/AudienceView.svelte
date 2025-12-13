@@ -304,7 +304,7 @@
                 </svelte:fragment>
                 <div class="radio-text-wrapper" slot="content">
                   <span class="title">
-                    {(btaUsdRate * radio.usd_value).toFixed(5)} BTA
+                    {(radio.usd_value / btaUsdRate).toFixed(5)} BTA
                   </span>
                   <span class="description">
                     ≈ ${radio.usd_value.toFixed(2)}
