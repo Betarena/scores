@@ -114,8 +114,10 @@
     seo_details,
     author,
     id,
+    authors__article_reward_unlocks_snapshot__article_id__nested
   } = article);
 
+  $: ({ total_reward_unlocks = 0 } = (authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {}))
   $: ({ avatar, username } = author.data || {
     username: "unknow",
     avatar: defaultAvatar,
@@ -126,6 +128,10 @@
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead = content && readingTime(content);
   $: img = images[0]?.url || featured_image;
+
+  $: console.log(
+    "Article: ", article
+  )
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -255,7 +261,7 @@
       <div class="tips-wrapper" on:click={sendTip}>
         <div class="tip-info">
           <Trophy />
-          <span class="tips-count">45</span>
+          <span class="tips-count">{total_reward_unlocks}</span>
         </div>
         <div class="tip-amount">
           {((award_tier_info?.usd_value || 1) / $session.btaUsdRate).toFixed(2)}

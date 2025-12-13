@@ -146,11 +146,14 @@
     awards_translations: TranslationAwardsDataJSONSchema;
   });
   $: ({ author: sportstack, article, article_access } = widgetData);
-  $: ({ access_type = "free", id } = article);
+  $: ({ access_type = "free", id, authors__article_reward_unlocks_snapshot__article_id__nested } = article);
+  $: ({ total_bta_amount = 0, total_reward_unlocks = 0 } = (authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {}))
   $: accessGranted = article_access?.hasAccess ?? true;
   $: paid = access_type === "reward_gated";
   $: user = $userSettings.user?.scores_user_data;
   $: insufficientAmount = user && $walletStore.spending.available < 1;
+
+  $:  console.log("DATA: ", widgetData)
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -408,11 +411,11 @@
           <div class="rewards-info">
             <Trophy />
             <div class="rewards-text">
-              <span class="amount">245 BTA</span>
+              <span class="amount">{total_bta_amount} BTA</span>
               <TranslationText
                 text={awards_translations.earnd_from_unlocks?.replace(
                   "{count}",
-                  490
+                  total_reward_unlocks
                 )}
               />
             </div>
