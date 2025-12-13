@@ -477,8 +477,8 @@
             <div class="footer-info-text">
               <TranslationText
                 text={awards_translations.rewards_distribution
-                  .replace("{author_amount}", split.author.toFixed(2))
-                  .replace("{user_amount}", split.userCashback.toFixed(2))}
+                  .replace("{amount}", split.author.toFixed(2))
+                  .replace("{amount}", split.userCashback.toFixed(2))}
                 fallback="50/50 split — 0.5 BTA to the author, 0.5 BTA back to your Rewards wallet."
               />
             </div>
