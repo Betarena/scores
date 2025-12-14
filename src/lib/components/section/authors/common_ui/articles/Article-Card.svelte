@@ -250,7 +250,7 @@
 
     {#if access_type === "reward_gated" && award_tier_info}
       <div class="tips-wrapper" on:click={sendTip}>
-        <div class="tip-info">
+        <div class="tip-info" class:access={article_access?.hasAccess}>
           <Trophy />
           <span class="tips-count">{total_reward_unlocks}</span>
         </div>
@@ -432,6 +432,9 @@
             font-weight: 500;
             line-height: var(--line-height-text-xs, 18px); /* 150% */
             transform: translateY(1px);
+          }
+          &.access {
+            color: var(--colors-foreground-fg-brand-primary-600, #f5620f);
           }
         }
         .tip-amount {
