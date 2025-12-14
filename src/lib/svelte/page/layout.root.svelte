@@ -653,7 +653,13 @@
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
-  {#if config.objApp.isBetareAgEngineEnabled}
+  {#if
+    config.objApp.isBetareAgEngineEnabled
+    && (
+      (dataArticle?.article != null && dataArticle?.article?.access_type === 'free')
+      || (dataArticle?.article == null)
+    )
+  }
     {#key pageRouteId}
       <WidgetAdEngine
         authorId={dataArticle?.author?.id}
