@@ -270,7 +270,9 @@
 
     return () => {
       document.body.classList.remove("disable-scroll");
-      instanceIntercom.style.display = prevIntercomState || "unset";
+      if (instanceIntercom) {
+        instanceIntercom.style.display = prevIntercomState || "unset";
+      }
       if (unsubscribe) unsubscribe();
     };
   });

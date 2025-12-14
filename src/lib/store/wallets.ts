@@ -36,15 +36,15 @@ async function initWalletStore(uid: string) {
   walletStore.set({
     primary: {
       available: Number(user_data.main_balance ?? 0),
-      updatedAt: user_data.main_balance.updatedAt,
+      updatedAt: user_data.main_balance?.updatedAt || now,
     },
     spending: {
       available: Number((user_data.spending_balance ?? {}).available ?? 0),
-      updatedAt: user_data.spending_balance.updatedAt,
+      updatedAt: user_data.spending_balance?.updatedAt || now,
     },
     rewards: {
       available: Number((user_data.rewards_balance ?? {}).available ?? 0),
-      updatedAt: user_data.rewards_balance.updatedAt,
+      updatedAt: user_data.rewards_balance?.updatedAt || now,
     },
     loaded: true,
   });
@@ -77,9 +77,9 @@ async function initWalletStore(uid: string) {
         spending: {
           available: spendingAvailable,
           growthPct: pct(spendingChange, spendingPast),
-          updatedAt: now,
+          updatedAt: spending?.updatedAt || now,
         },
-        rewards: { available: rewardsAvailable, updatedAt: now }, // frozen for now
+        rewards: { available: rewardsAvailable, updatedAt: user_data.rewards_balance?.updatedAt || now }, // frozen for now
         loaded: true,
       });
     },
