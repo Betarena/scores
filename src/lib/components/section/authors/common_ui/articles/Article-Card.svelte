@@ -41,7 +41,6 @@
     IPageAuthorAuthorData,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import TipsModal from "./TipsModal.svelte";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import { BetarenaUserHelper } from "$lib/firebase/common.js";
@@ -51,6 +50,7 @@
   import { get } from "$lib/api/utils.js";
   import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
+  import type { SvelteComponent } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -95,7 +95,8 @@
     article_access:
       | null
       | IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"] =
-      null;
+      null,
+    TipsModal: SvelteComponent;
 
   $: translations = ($page.data?.translations ||
     {}) as IPageAuthorTranslationDataFinal;
@@ -151,6 +152,12 @@
     getRewardsTier(reward_tier_id);
   }
 
+  $: if(access_type === "reward_gated" && !article_access?.hasAccess) {
+    import('./TipsModal.svelte').then((res) => {
+      TipsModal = res.default;
+    } )
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -165,11 +172,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function sendTip() {
+   function sendTip() {
     if (article_access?.hasAccess) return;
     if (!firebase_user_data?.uid) {
       gotoSW(`/login`);
     }
+
     modalStore.set({
       modal: true,
       component: TipsModal,

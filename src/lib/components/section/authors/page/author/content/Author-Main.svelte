@@ -58,7 +58,7 @@
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
-  import LockedWidget from "$lib/components/widgets/LockedWidget.svelte";
+  // import LockedWidget from "$lib/components/widgets/LockedWidget.svelte";
   import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
@@ -196,7 +196,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
 
-  function insertWidgets(container: HTMLElement) {
+  async function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
 
     if (paid && !accessGranted) {
@@ -210,6 +210,13 @@
 
           container.insertBefore(p_node, target);
           secondP = target;
+
+          const LockedWidget =   (
+            await import
+            (
+              "$lib/components/widgets/LockedWidget.svelte"
+            )
+          ).default
           unlockComponent = new LockedWidget({
             target: p_node,
             props: {
