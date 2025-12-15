@@ -64,7 +64,6 @@
   ) => void;
   $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
   $: ({viewportType} = $session)
-  $: console.log("TRNALSTIONS: ", profile)
   let step = 1;
   let value = "";
   let loading = false;
@@ -101,10 +100,13 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    window.Intercom("update", {
-      hide_default_launcher: true,
-    });
+    if (window.Intercom) {
+      window.Intercom("update", {
+        hide_default_launcher: true,
+      });
+    }
     return () => {
+      if (!window.Intercom) return;
       window.Intercom("update", {
         hide_default_launcher: false,
       });
