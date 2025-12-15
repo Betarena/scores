@@ -56,7 +56,6 @@
   export let icon_leading = false;
   export let loading = false;
 
-  loading = true
   const dispatch = createEventDispatcher();
   let hover = false;
   // #endregion ➤ 📌 VARIABLES
