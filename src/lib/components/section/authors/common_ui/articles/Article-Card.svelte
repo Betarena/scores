@@ -95,8 +95,7 @@
     article_access:
       | null
       | IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"] =
-      null,
-    TipsModal: SvelteComponent;
+      null;
 
   $: translations = ($page.data?.translations ||
     {}) as IPageAuthorTranslationDataFinal;
@@ -152,11 +151,6 @@
     getRewardsTier(reward_tier_id);
   }
 
-  $: if(access_type === "reward_gated" && !article_access?.hasAccess) {
-    import('./TipsModal.svelte').then((res) => {
-      TipsModal = res.default;
-    } )
-  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -172,12 +166,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-   function sendTip() {
+  async  function sendTip() {
     if (article_access?.hasAccess) return;
     if (!firebase_user_data?.uid) {
       gotoSW(`/login`);
     }
-
+    const TipsModal = (await import('./TipsModal.svelte')).default;
     modalStore.set({
       modal: true,
       component: TipsModal,

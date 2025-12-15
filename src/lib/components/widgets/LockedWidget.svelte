@@ -10,28 +10,53 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import TipsModal from "../section/authors/common_ui/articles/TipsModal.svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import TranslationText from "../misc/Translation-Text.svelte";
   import session from "$lib/store/session.js";
   import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import { tick } from "svelte";
 
   export let sportstack = {} as IPageAuthorAuthorData;
-  export let article_access = {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
-  export let article_id= 0;
+  export let article_access =
+    {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
+  export let article_id = 0;
   export let grantAccess = () => {};
 
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
+  $: ({ user } = $userSettings);
 
   $: ({ viewportType } = $session);
 
-  let lockNode: HTMLDivElement;
-  let modalNode: HTMLDivElement;
+  let TipsModalComponent;
+  let TipsModalAnonComponent;
+  let setClass = false;
+  $: loadComponents(user?.firebase_user_data);
 
+  async function loadComponents(user) {
+    if (!user?.uid && !TipsModalAnonComponent) {
+      const res = await import(
+        "../section/authors/common_ui/articles/TipsModalAnon.svelte"
+      );
+      TipsModalAnonComponent = res.default;
+      await tick();
+      setClass = true;
+      return;
+    }
+    if (user?.uid && !TipsModalComponent) {
+      const res = await import(
+        "../section/authors/common_ui/articles/TipsModal.svelte"
+      );
+      TipsModalComponent = res.default;
+      await tick();
+      setClass = true;
+      return;
+    }
+  }
 </script>
 
 <!--
@@ -45,7 +70,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="lock-widget-wrapper {viewportType}" bind:this={lockNode}>
+<div class="lock-widget-wrapper {viewportType}">
   <FeaturedIcon size="md" color="gray" type="modern"
     ><svg
       xmlns="http://www.w3.org/2000/svg"
@@ -69,16 +94,31 @@
       fallback="Locked content"
     />
   </div>
-  {#if  article_access.reward?.amountBta}
-     <Button type="secondary-gray" size="sm"
-       ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> ({(article_access.reward?.amountBta).toFixed(2)}
-       BTA)</Button
-     >
+  {#if article_access.reward?.amountBta}
+    <Button type="secondary-gray" size="sm"
+      ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> ({(article_access.reward?.amountBta).toFixed(
+        2
+      )}
+      BTA)</Button
+    >
   {/if}
   <div class="fade {viewportType}" />
-  <div bind:this={modalNode} class="locked-tips-modal-wrapper  {viewportType}">
-    <TipsModal type="unlock" {sportstack} {grantAccess} {article_id} {article_access}/>
-  </div>
+
+  {#if !user?.firebase_user_data?.uid && TipsModalAnonComponent}
+    <div class="locked-tips-modal-wrapper {viewportType}" class:pos={setClass}>
+      <TipsModalAnonComponent type="unlock" {sportstack} {article_access} />
+    </div>
+  {:else if user?.firebase_user_data?.uid && TipsModalComponent}
+    <div class="locked-tips-modal-wrapper {viewportType}" class:pos={setClass}>
+      <TipsModalComponent
+        type="unlock"
+        {sportstack}
+        {grantAccess}
+        {article_id}
+        {article_access}
+      />
+    </div>
+  {/if}
 </div>
 
 <!--
@@ -141,14 +181,15 @@
     z-index: 2000;
     transform: translateY(100%);
 
-      background: linear-gradient(
+    background: linear-gradient(
       180deg,
       transparent 20%,
-       color-mix(
+      color-mix(
           in srgb,
           var(--colors-background-bg-secondary_alt, #1f1f1f) 80%,
           transparent
-        ) 60%,
+        )
+        60%,
       var(--colors-background-bg-secondary_alt, #1f1f1f) 90%
     );
     &.mobile {
@@ -166,15 +207,17 @@
     bottom: 0px;
     z-index: 3000;
     left: -5px;
-    width: calc(100% + 10px);
-    transform: translateY(calc(100% + 120px));
 
-    :global(.tips-modal-wrapper) {
-      position: static;
-    }
-    &.mobile {
-      width: 100vw;
-      left: calc(-50vw + 50%);
+    &.pos {
+      width: calc(100% + 10px);
+      transform: translateY(calc(100% + 120px));
+      &.mobile {
+        width: 100vw;
+        left: calc(-50vw + 50%);
+      }
+      :global(.tips-modal-wrapper) {
+        position: static;
+      }
     }
   }
 </style>
