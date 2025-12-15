@@ -9,6 +9,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import SpinnerLoader from "$lib/components/ui/assets/spinner-loader.svelte"
 
   // #region ➤ 📌 VARIABLES
 
@@ -55,6 +56,7 @@
   export let icon_leading = false;
   export let loading = false;
 
+  loading = true
   const dispatch = createEventDispatcher();
   let hover = false;
   // #endregion ➤ 📌 VARIABLES
@@ -134,31 +136,8 @@
   >
     {#if loading}
       <div class="loading-icon">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-        >
-          <path
-            opacity="0.3"
-            d="M19 10C19 11.1819 18.7672 12.3522 18.3149 13.4442C17.8626 14.5361 17.1997 15.5282 16.364 16.364C15.5282 17.1997 14.5361 17.8626 13.4441 18.3149C12.3522 18.7672 11.1819 19 10 19C8.8181 19 7.64778 18.7672 6.55585 18.3149C5.46392 17.8626 4.47176 17.1997 3.63604 16.364C2.80031 15.5282 2.13738 14.5361 1.68508 13.4441C1.23279 12.3522 1 11.1819 1 10C1 8.8181 1.23279 7.64778 1.68509 6.55585C2.13738 5.46392 2.80031 4.47176 3.63604 3.63604C4.47177 2.80031 5.46392 2.13737 6.55585 1.68508C7.64778 1.23279 8.81811 0.999999 10 1C11.1819 1 12.3522 1.23279 13.4442 1.68509C14.5361 2.13738 15.5282 2.80031 16.364 3.63604C17.1997 4.47177 17.8626 5.46392 18.3149 6.55585C18.7672 7.64778 19 8.81811 19 10L19 10Z"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M10 1C11.1819 1 12.3522 1.23279 13.4442 1.68508C14.5361 2.13738 15.5282 2.80031 16.364 3.63604C17.1997 4.47177 17.8626 5.46392 18.3149 6.55585C18.7672 7.64778 19 8.8181 19 10"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+        <SpinnerLoader />
       </div>
-      <!-- content here -->
     {/if}
     <slot />
   </button>
