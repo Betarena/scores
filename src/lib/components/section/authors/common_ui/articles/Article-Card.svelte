@@ -109,7 +109,8 @@
     seo_details,
     author,
     id,
-    authors__article_reward_unlocks_snapshot__article_id__nested
+    authors__article_reward_unlocks_snapshot__article_id__nested,
+    authors__article_reward_unlocks__article_id__nested = []
   } = article);
 
   $: ({ total_reward_unlocks = 0 } = (authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {}))
@@ -118,12 +119,13 @@
     avatar: defaultAvatar,
   });
   $: ({ firebase_user_data } = $userSettings.user || {});
+  $: ({uid} = firebase_user_data || {});
   $: ({ images = [] } = seo_details?.opengraph || {});
   $: ({ title = "", content = "", featured_image } = data || {});
   $: date = timeAgo(published_date, translations.time_ago);
   $: timeToRead = content && readingTime(content);
   $: img = images[0]?.url || featured_image;
-
+  $: hasAccess = author.uid === uid ||  (authors__article_reward_unlocks__article_id__nested as []).some(({uid:rewards_uid}) => uid === rewards_uid);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -250,9 +252,9 @@
       </div>
     </a>
 
-    {#if access_type === "reward_gated" && award_tier_info}
+    {#if access_type === "reward_gated"}
       <div class="tips-wrapper" on:click={sendTip}>
-        <div class="tip-info" class:access={article_access?.hasAccess}>
+        <div class="tip-info" class:access={hasAccess}>
           <Trophy />
           <span class="tips-count">{total_reward_unlocks}</span>
         </div>
