@@ -41,7 +41,6 @@
   } from "@lottiefiles/dotlottie-svelte";
   import { modalStore } from "$lib/store/modal.js";
   import { walletStore } from "$lib/store/wallets.js";
-  import { showDepositModal } from "$lib/components/page/profile/deposit/showDeposit.js";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import { page } from "$app/stores";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
@@ -169,6 +168,11 @@
           "Error while sharing BTA",
       });
     }
+  }
+
+  async function showDeposit() {
+    const res = await import('$lib/components/page/profile/deposit/showDeposit.js');
+    res.showDepositModal();
   }
 
   function cancel() {
@@ -409,7 +413,7 @@
     <div class="footer">
       {#if insufficientAmount}
         <div class="insufficient-buttons">
-          <Button full={true} on:click={showDepositModal}>
+          <Button full={true} on:click={showDeposit}>
             <TranslationText
               text={awards_translations.buy_bta}
               fallback="Buy BTA"

@@ -146,14 +146,13 @@
     awards_translations: TranslationAwardsDataJSONSchema;
   });
   $: ({ author: sportstack, article, article_access } = widgetData);
-  $: ({ access_type = "free", id, authors__article_reward_unlocks_snapshot__article_id__nested } = article);
+  $: ({ access_type = "free", id, authors__article_reward_unlocks_snapshot__article_id__nested, authors__article_reward_unlocks__article_id__nested = [] } = article);
   $: ({ total_bta_amount = 0, total_reward_unlocks = 0 } = (authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {}))
-  $: accessGranted = article_access?.hasAccess ?? true;
+  $: ({scores_user_data: user, firebase_user_data} = $userSettings.user || {})
+  $: accessGranted = article_access?.hasAccess || authors__article_reward_unlocks__article_id__nested.some(({uid: rewards_uid}) => uid === rewards_uid);
   $: paid = access_type === "reward_gated";
-  $: user = $userSettings.user?.scores_user_data;
+  $: uid = firebase_user_data?.uid
   $: insufficientAmount = user && $walletStore.spending.available < 1;
-
-  $:  console.log("DATA: ", widgetData)
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
