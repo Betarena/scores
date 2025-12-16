@@ -9,15 +9,18 @@
 
 <script lang="ts">
   import { page } from "$app/stores";
+  import { get } from "$lib/api/utils";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
   import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { tick } from "svelte";
   import TranslationText from "../misc/Translation-Text.svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
+  import LoaderLine from "../ui/loaders/LoaderLine.svelte";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let article_access =
@@ -36,8 +39,9 @@
   let TipsModalComponent;
   let TipsModalAnonComponent;
   let setClass = false;
+  let award_tier_info: null | BtaRewardTiersMain = null;
   $: loadComponents(user?.firebase_user_data);
-
+  $: getRewardTier(tier_id);
   async function loadComponents(user) {
     if (!user?.uid && !TipsModalAnonComponent) {
       const res = await import(
@@ -56,6 +60,16 @@
       await tick();
       setClass = true;
       return;
+    }
+  }
+
+  async function getRewardTier(tier_id) {
+    const res = await get<{ rewards_tiers: BtaRewardTiersMain[] }>(
+      `/api/data/rewards_tiers?id=${tier_id}`
+    );
+    if (res) {
+      const { rewards_tiers } = res;
+      award_tier_info = rewards_tiers[0];
     }
   }
 </script>
@@ -95,19 +109,26 @@
       fallback="Locked content"
     />
   </div>
-  {#if article_access.reward?.amountBta}
-    <Button type="secondary-gray" size="sm"
-      ><TranslationText text={awards_translations.unlock} fallback="Unlock " /> ({(article_access.reward?.amountBta).toFixed(
-        2
-      )}
-      BTA)</Button
-    >
-  {/if}
+  <Button type="secondary-gray" size="sm">
+    {#if award_tier_info}
+      <TranslationText text={awards_translations.unlock} fallback="Unlock " /> ({(
+        (award_tier_info.usd_value || 0) / $session.btaUsdRate
+      ).toFixed(2)}
+      BTA)
+      {:else}
+      <LoaderLine width={120}/>
+    {/if}
+  </Button>
   <div class="fade {viewportType}" />
 
   {#if !user?.firebase_user_data?.uid && TipsModalAnonComponent}
     <div class="locked-tips-modal-wrapper {viewportType}" class:pos={setClass}>
-      <TipsModalAnonComponent type="unlock" {tier_id} {sportstack} {article_access} />
+      <TipsModalAnonComponent
+        type="unlock"
+        {tier_id}
+        {sportstack}
+        {article_access}
+      />
     </div>
   {:else if user?.firebase_user_data?.uid && TipsModalComponent}
     <div class="locked-tips-modal-wrapper {viewportType}" class:pos={setClass}>

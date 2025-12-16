@@ -68,12 +68,12 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
-  $: ({ viewportType } = $session);
+  $: ({ viewportType, btaUsdRate } = $session);
   $: ({ scores_user_data } = $userSettings.user || {});
   $: user = scores_user_data;
 
   $: ({ usd_value: amountUsd = 0 } = award_tier_info || { usd_value: 0 });
-  $: amountBta = (amountUsd || 0) / $session.btaUsdRate;
+  $: amountBta = (amountUsd || 0) / (btaUsdRate || 1);
 
   let loading = false;
   let step: "info" | "confirm" = "info";
@@ -100,10 +100,6 @@
     return scale(node, { duration: out ? 200 : 400, easing });
   }
 
-  function convertToUsd(amount: number) {
-    return (amount * $session.btaUsdRate).toFixed(2);
-  }
-
   async function confirm() {
     gotoSW("/login");
     return;
@@ -120,7 +116,6 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
-
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -149,124 +144,123 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<div
-  class="tips-modal-wrapper {viewportType} {type}"
-  in:chooseTransition={{ easing: cubicOut }}
-  out:chooseTransition={{ easing: cubicIn, out: true }}
->
-  <div class="tips-body">
-    <div class="header">
-      <div class="icon-wrapper">
-        <FeaturedIcon color="brand" type="gradient" size="lg">
-          <Trophy />
-        </FeaturedIcon>
-      </div>
-      <div class="text-wrapper">
-        <div class="title">
-          <TranslationText
-            text={awards_translations.rewards_gated}
-            fallback={"This article is reward-gated"}
-          />
-          <span class="title-support">
+{#if btaUsdRate && award_tier_info}
+  <div
+    class="tips-modal-wrapper {viewportType} {type}"
+    in:chooseTransition={{ easing: cubicOut }}
+    out:chooseTransition={{ easing: cubicIn, out: true }}
+  >
+    <div class="tips-body">
+      <div class="header">
+        <div class="icon-wrapper">
+          <FeaturedIcon color="brand" type="gradient" size="lg">
+            <Trophy />
+          </FeaturedIcon>
+        </div>
+        <div class="text-wrapper">
+          <div class="title">
             <TranslationText
-              text={awards_translations.share_to_continue.replace(
-                "{amount}",
-                amountBta.toFixed(2)
-              )}
-              fallback={"To continue reading, share 1 BTA as a reward to the creator."}
+              text={awards_translations.rewards_gated}
+              fallback={"This article is reward-gated"}
             />
-          </span>
-        </div>
-
-        <div class="awards-flow">
-          <div class="sportstack-wrapper award-item">
-            <div class="avatar-wrapper">
-              <SportstackAvatar size="lg" src={sportstack.data?.avatar} />
-              <div class="connector-wrapper">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="2"
-                  height="67"
-                  viewBox="0 0 2 67"
-                  fill="none"
-                >
-                  <path
-                    d="M1 1L1 65.0115"
-                    stroke="#525252"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-dasharray="0.1 6"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div class="award-content">
-              <div class="award-candidate">
-                <div class="name">{sportstack.data?.username}</div>
-                <div class="type">
-                  <TranslationText
-                    text={awards_translations.sportstack}
-                    fallback="Sportstack"
-                  />
-                </div>
-              </div>
-              <div class="amount">
-                <div class="bta-icon">
-                  <img src={bta_icon} alt="BTA Icon" width="40" height="40" />
-                </div>
-                <div class="description">
-                  <div class="numbers">
-                    {(amountBta / 2).toFixed(2)} BTA
-                    {#if $session.btaUsdRate}
-                      <span class="usd">{(amountUsd / 2).toFixed(2)}$</span>
-                    {/if}
-                  </div>
-                  <div class="text-secondary">
-                    <TranslationText
-                      text={awards_translations.goes_to_the_publication}
-                      fallback="goes to the publication"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            <span class="title-support">
+              <TranslationText
+                text={awards_translations.share_to_continue.replace(
+                  "{amount}",
+                  amountBta.toFixed(2)
+                )}
+                fallback={"To continue reading, share 1 BTA as a reward to the creator."}
+              />
+            </span>
           </div>
-          <div class="award-item">
-            <Avatar size="lg" src={user?.profile_photo} />
-            <div class="award-content">
-              <div class="award-candidate">
-                <div class="name">
-                  <TranslationText
-                    text={awards_translations.betarena_user}
-                    fallback="Betarena User"
-                  />
-                </div>
-                <div class="type">
-                  @<TranslationText
-                    text={awards_translations.user.toLocaleLowerCase()}
-                    fallback="user"
-                  />
+
+          <div class="awards-flow">
+            <div class="sportstack-wrapper award-item">
+              <div class="avatar-wrapper">
+                <SportstackAvatar size="lg" src={sportstack.data?.avatar} />
+                <div class="connector-wrapper">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="2"
+                    height="67"
+                    viewBox="0 0 2 67"
+                    fill="none"
+                  >
+                    <path
+                      d="M1 1L1 65.0115"
+                      stroke="#525252"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-dasharray="0.1 6"
+                    />
+                  </svg>
                 </div>
               </div>
-              <div class="amount">
-                <div class="bta-icon">
-                  <img src={bta_icon} alt="BTA Icon" width="40" height="40" />
-                </div>
-                <div class="description">
-                  <div class="numbers">
-                     {( amountBta / 2 ).toFixed(2)} BTA
-                    {#if $session.btaUsdRate}
-                      <span class="usd"
-                        >{(amountUsd / 2).toFixed(2)}$</span
-                      >
-                    {/if}
-                  </div>
-                  <div class="text-secondary">
+              <div class="award-content">
+                <div class="award-candidate">
+                  <div class="name">{sportstack.data?.username}</div>
+                  <div class="type">
                     <TranslationText
-                      text={awards_translations.returns_to_wallet}
-                      fallback="returns to your Rewards wallet"
+                      text={awards_translations.sportstack}
+                      fallback="Sportstack"
                     />
+                  </div>
+                </div>
+                <div class="amount">
+                  <div class="bta-icon">
+                    <img src={bta_icon} alt="BTA Icon" width="40" height="40" />
+                  </div>
+                  <div class="description">
+                    <div class="numbers">
+                      {(amountBta / 2).toFixed(2)} BTA
+                      {#if $session.btaUsdRate}
+                        <span class="usd">{(amountUsd / 2).toFixed(2)}$</span>
+                      {/if}
+                    </div>
+                    <div class="text-secondary">
+                      <TranslationText
+                        text={awards_translations.goes_to_the_publication}
+                        fallback="goes to the publication"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="award-item">
+              <Avatar size="lg" src={user?.profile_photo} />
+              <div class="award-content">
+                <div class="award-candidate">
+                  <div class="name">
+                    <TranslationText
+                      text={awards_translations.betarena_user}
+                      fallback="Betarena User"
+                    />
+                  </div>
+                  <div class="type">
+                    @<TranslationText
+                      text={awards_translations.user.toLocaleLowerCase()}
+                      fallback="user"
+                    />
+                  </div>
+                </div>
+                <div class="amount">
+                  <div class="bta-icon">
+                    <img src={bta_icon} alt="BTA Icon" width="40" height="40" />
+                  </div>
+                  <div class="description">
+                    <div class="numbers">
+                      {(amountBta / 2).toFixed(2)} BTA
+                      {#if $session.btaUsdRate}
+                        <span class="usd">{(amountUsd / 2).toFixed(2)}$</span>
+                      {/if}
+                    </div>
+                    <div class="text-secondary">
+                      <TranslationText
+                        text={awards_translations.returns_to_wallet}
+                        fallback="returns to your Rewards wallet"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -274,37 +268,43 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="footer">
-      <Button type="primary" full={true} size="lg" {loading} on:click={confirm}>
-        <TranslationText
-          text={awards_translations.share_bta?.replace(
-            "{amount}",
-            amountBta.toFixed(2)
-          )}
-          fallback="Share 1BTA"
-        />
+      <div class="footer">
+        <Button
+          type="primary"
+          full={true}
+          size="lg"
+          {loading}
+          on:click={confirm}
+        >
+          <TranslationText
+            text={awards_translations.share_bta?.replace(
+              "{amount}",
+              amountBta.toFixed(2)
+            )}
+            fallback="Share 1BTA"
+          />
 
-        {#if $session.btaUsdRate}
-          <span class="button-usd">({amountUsd.toFixed(2)}$)</span>
-        {/if}
-        <TranslationText
-          text={awards_translations.to_unlock}
-          fallback="to Unlock"
-        />
-      </Button>
+          {#if $session.btaUsdRate}
+            <span class="button-usd">({amountUsd.toFixed(2)}$)</span>
+          {/if}
+          <TranslationText
+            text={awards_translations.to_unlock}
+            fallback="to Unlock"
+          />
+        </Button>
 
-      <div class="footer-info-text">
-        <TranslationText
-          text={awards_translations.rewards_distribution
-            .replace("{amount}", (amountBta / 2).toFixed(2))
-            .replace("{amount}", (amountBta / 2).toFixed(2))}
-          fallback="50/50 split — 0.5 BTA to the author, 0.5 BTA back to your Rewards wallet."
-        />
+        <div class="footer-info-text">
+          <TranslationText
+            text={awards_translations.rewards_distribution
+              .replace("{amount}", (amountBta / 2).toFixed(2))
+              .replace("{amount}", (amountBta / 2).toFixed(2))}
+            fallback="50/50 split — 0.5 BTA to the author, 0.5 BTA back to your Rewards wallet."
+          />
+        </div>
       </div>
     </div>
   </div>
-</div>
+{/if}
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -577,6 +577,10 @@
       align-self: stretch;
       position: relative;
 
+      :global(.button) {
+        width: max-content;
+        min-width: 100%;
+      }
       .checkbox-wrapp {
         flex-shrink: 0;
       }
