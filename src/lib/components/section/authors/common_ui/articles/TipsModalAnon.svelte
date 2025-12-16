@@ -23,25 +23,27 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from "$app/stores";
+  import { get } from "$lib/api/utils";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import bta_icon from "$lib/components/ui/assets/bta_icon.png";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
+  import Avatar from "$lib/components/ui/Avatar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
   import session from "$lib/store/session";
-  import { cubicIn, cubicOut } from "svelte/easing";
-  import { fly, scale } from "svelte/transition";
-  import bta_icon from "$lib/components/ui/assets/bta_icon.png";
-  import Avatar from "$lib/components/ui/Avatar.svelte";
   import userSettings from "$lib/store/user-settings.js";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
+  import { getRates } from "$lib/utils/web3.js";
+  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
+  import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { onMount } from "svelte";
-  import { getRates } from "$lib/utils/web3.js";
-  import { page } from "$app/stores";
-  import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
-  import Trophy from "$lib/components/ui/assets/trophy.svelte";
-  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
-    // #endregion ➤ 📦 Package Imports
+  import { cubicIn, cubicOut } from "svelte/easing";
+  import { fly, scale } from "svelte/transition";
+  // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
@@ -60,28 +62,25 @@
   export let type: "tip" | "unlock" = "tip";
   export let article_access =
     {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
+  export let tier_id: number = 0;
 
+  let award_tier_info: null | BtaRewardTiersMain = null;
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
   $: ({ viewportType } = $session);
   $: ({ scores_user_data } = $userSettings.user || {});
   $: user = scores_user_data;
-  $: ({
-    amountBta = 0,
-    amountUsd = 0,
-    split = { author: 0, userCashback: 0 },
-  } = article_access.reward ||
-  ({} as {
-    amountBta: number;
-    amountUsd: number;
-    split: { author: number; userCashback: number };
-  }));
+
+  $: ({ usd_value: amountUsd = 0 } = award_tier_info || { usd_value: 0 });
+  $: amountBta = (amountUsd || 0) / $session.btaUsdRate;
 
   let loading = false;
   let step: "info" | "confirm" = "info";
   // #endregion ➤ 📌 VARIABLES
-
+  $: if (tier_id && !award_tier_info) {
+    getRewardsTier(tier_id);
+  }
   // #region ➤ 🛠️ METHODS
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -110,8 +109,18 @@
     return;
   }
 
+  async function getRewardsTier(tier_id: number) {
+    const res = await get<{ rewards_tiers: BtaRewardTiersMain[] }>(
+      `/api/data/rewards_tiers?id=${tier_id}`
+    );
+    if (res) {
+      const { rewards_tiers } = res;
+      award_tier_info = rewards_tiers[0];
+    }
+  }
 
   // #endregion ➤ 🛠️ METHODS
+
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -208,9 +217,9 @@
                 </div>
                 <div class="description">
                   <div class="numbers">
-                    {split.author.toFixed(2)} BTA
+                    {(amountBta / 2).toFixed(2)} BTA
                     {#if $session.btaUsdRate}
-                      <span class="usd">{convertToUsd(split.author)}$</span>
+                      <span class="usd">{(amountUsd / 2).toFixed(2)}$</span>
                     {/if}
                   </div>
                   <div class="text-secondary">
@@ -246,10 +255,10 @@
                 </div>
                 <div class="description">
                   <div class="numbers">
-                    {split.userCashback.toFixed(2)} BTA
+                     {( amountBta / 2 ).toFixed(2)} BTA
                     {#if $session.btaUsdRate}
                       <span class="usd"
-                        >{convertToUsd(split.userCashback)}$</span
+                        >{(amountUsd / 2).toFixed(2)}$</span
                       >
                     {/if}
                   </div>
@@ -285,14 +294,14 @@
         />
       </Button>
 
-        <div class="footer-info-text">
-          <TranslationText
-            text={awards_translations.rewards_distribution
-              .replace("{amount}", split.author.toFixed(2))
-              .replace("{amount}", split.userCashback.toFixed(2))}
-            fallback="50/50 split — 0.5 BTA to the author, 0.5 BTA back to your Rewards wallet."
-          />
-        </div>
+      <div class="footer-info-text">
+        <TranslationText
+          text={awards_translations.rewards_distribution
+            .replace("{amount}", (amountBta / 2).toFixed(2))
+            .replace("{amount}", (amountBta / 2).toFixed(2))}
+          fallback="50/50 split — 0.5 BTA to the author, 0.5 BTA back to your Rewards wallet."
+        />
+      </div>
     </div>
   </div>
 </div>

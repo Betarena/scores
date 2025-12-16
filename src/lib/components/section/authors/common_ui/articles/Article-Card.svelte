@@ -34,19 +34,19 @@
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import SportstackAvatar from "$lib/components/ui/SportstackAvatar.svelte";
 
+  import { get } from "$lib/api/utils.js";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
   import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
+  import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
     IPageAuthorTagData,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import Trophy from "$lib/components/ui/assets/trophy.svelte";
-  import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
-  import { get } from "$lib/api/utils.js";
-  import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
 
   // #endregion ➤ 📦 Package Imports
@@ -167,6 +167,7 @@
       props: {
         sportstack: author,
         article_id: id,
+        tier_id: reward_tier_id
       },
     });
   }

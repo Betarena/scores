@@ -48,6 +48,8 @@
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
+  import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
@@ -55,13 +57,11 @@
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import AiPredictorWidget from "$lib/components/widgets/AiPredictorWidget.svelte";
   import userSettings from "$lib/store/user-settings.js";
-  import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
-  import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
-  import Trophy from "$lib/components/ui/assets/trophy.svelte";
-  import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { walletStore } from "$lib/store/wallets.js";
   import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
+  import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -150,6 +150,8 @@
   $: paid = access_type === "reward_gated";
   $: uid = firebase_user_data?.uid
   $: insufficientAmount = user && $walletStore.spending.available < 1;
+
+  $: console.log("REWARD: ", article )
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -220,6 +222,7 @@
             props: {
               sportstack,
               article_id: id,
+              tier_id: article.reward_tier_id,
               grantAccess: () => {
                 accessGranted = true;
               },

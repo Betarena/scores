@@ -9,21 +9,22 @@
 
 <script lang="ts">
   import { page } from "$app/stores";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
+  import { tick } from "svelte";
+  import TranslationText from "../misc/Translation-Text.svelte";
   import Button from "../ui/Button.svelte";
   import FeaturedIcon from "../ui/FeaturedIcon.svelte";
-  import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import TranslationText from "../misc/Translation-Text.svelte";
-  import session from "$lib/store/session.js";
-  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import { tick } from "svelte";
 
   export let sportstack = {} as IPageAuthorAuthorData;
   export let article_access =
     {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
   export let article_id = 0;
   export let grantAccess = () => {};
+  export let tier_id = 0;
 
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
@@ -106,7 +107,7 @@
 
   {#if !user?.firebase_user_data?.uid && TipsModalAnonComponent}
     <div class="locked-tips-modal-wrapper {viewportType}" class:pos={setClass}>
-      <TipsModalAnonComponent type="unlock" {sportstack} {article_access} />
+      <TipsModalAnonComponent type="unlock" {tier_id} {sportstack} {article_access} />
     </div>
   {:else if user?.firebase_user_data?.uid && TipsModalComponent}
     <div class="locked-tips-modal-wrapper {viewportType}" class:pos={setClass}>
@@ -115,6 +116,7 @@
         {sportstack}
         {grantAccess}
         {article_id}
+        {tier_id}
         {article_access}
       />
     </div>
