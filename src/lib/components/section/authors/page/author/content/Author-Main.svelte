@@ -44,7 +44,6 @@
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { getOptimizedImageUrl } from "$lib/utils/image.js";
   import { readingTime } from "../../helpers.js";
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
@@ -58,7 +57,6 @@
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
-  // import LockedWidget from "$lib/components/widgets/LockedWidget.svelte";
   import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
@@ -84,9 +82,7 @@
   export let /**
      * @augments IPageAuhtorArticleDataFinal
      */
-    widgetData:  IPageAuhtorArticleDataFinal & {
-            article_access?: IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
-          };
+    widgetData:  IPageAuhtorArticleDataFinal
 
   /**
    * @description
@@ -125,13 +121,14 @@
      */
     contentContainer: HTMLElement,
     author,
-    unlockComponent: LockedWidget;
+    unlockComponent;
 
   const widgetsMap = {
     1: AiPredictorWidget,
   };
   let accessGranted = false;
   let secondP: HTMLElement | null = null;
+  let article_access:IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"] | undefined;
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
     windowWidth,
@@ -145,7 +142,7 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
-  $: ({ author: sportstack, article, article_access } = widgetData);
+  $: ({ author: sportstack, article } = widgetData);
   $: ({ access_type = "free", id, authors__article_reward_unlocks_snapshot__article_id__nested, authors__article_reward_unlocks__article_id__nested = [] } = article);
   $: ({ total_bta_amount = 0, total_reward_unlocks = 0 } = (authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {}))
   $: ({scores_user_data: user, firebase_user_data} = $userSettings.user || {})
@@ -172,7 +169,9 @@
   $: if (contentContainer) {
     insertWidgets(contentContainer);
   }
+  $: if (uid && !accessGranted && paid) {
 
+  }
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
   }
@@ -220,7 +219,6 @@
             target: p_node,
             props: {
               sportstack,
-              article_access,
               article_id: id,
               grantAccess: () => {
                 accessGranted = true;

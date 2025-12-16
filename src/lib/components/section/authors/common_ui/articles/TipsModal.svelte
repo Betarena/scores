@@ -33,9 +33,8 @@
   import Avatar from "$lib/components/ui/Avatar.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import { getRates } from "$lib/utils/web3.js";
-  import { type DotLottie } from "@lottiefiles/dotlottie-svelte";
   import { modalStore } from "$lib/store/modal.js";
   import { walletStore } from "$lib/store/wallets.js";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
@@ -66,16 +65,17 @@
   export let sportstack = {} as IPageAuthorAuthorData;
   export let type: "tip" | "unlock" = "tip";
   export let article_id: number = 0;
-  export let article_access =
-    {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
   export let grantAccess = () => {};
   let dotLottie;
   let LottieComponent;
+  let article_access =
+    {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
   $: ({ viewportType } = $session);
   $: ({ scores_user_data, firebase_user_data } = $userSettings.user || {});
+  $: ({ uid } = firebase_user_data || { uid: "" })
   $: user = scores_user_data;
   $: insufficientAmount = user && $walletStore.spending.available < 1;
   $: isRewards = type === "tip";
@@ -93,6 +93,25 @@
   let loading = false;
   let step: "info" | "confirm" = "info";
   // #endregion ➤ 📌 VARIABLES
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * .
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `` - **kicker**
+   */
+
+   $: if (uid && article_id) {
+    checkAccess(uid, article_id);
+   }
 
   // #region ➤ 🛠️ METHODS
 
@@ -136,8 +155,9 @@
 
     if (response?.success) {
       LottieComponent = (await import("./ConfityLottie.svelte")).default;
+      await tick();
       await invalidate("app:author-article-page");
-      if (dotLottie) (dotLottie as DotLottie).play();
+      if (dotLottie) dotLottie.play();
       infoMessages.add({
         type: "awards",
         title:
@@ -173,6 +193,19 @@
       "$lib/components/page/profile/deposit/showDeposit.js"
     );
     res.showDepositModal();
+  }
+
+  async function checkAccess(uid, article_id) {
+   const res = await  BetarenaUserHelper.pingArticleAccessCheck({
+      query: {},
+      body: {
+        strUid: uid || "",
+        intArticleId: article_id,
+      },
+    })
+    if (res?.success) {
+      article_access = res.success.data;
+    }
   }
 
   function cancel() {

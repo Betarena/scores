@@ -77,26 +77,14 @@ export async function main(request: RequestEvent): Promise<Response> {
           }) as  IPageAuhtorArticleDataFinal & {
             article_access?: IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
           };
-        const { access_type, reward_tier_id, id } = data.article;
+        const { access_type, reward_tier_id, id, authors__article_reward_unlocks__article_id__nested } = data.article;
         if (access_type === "reward_gated" && reward_tier_id) {
           const uid = request.locals.uid || "";
-          const res = (await BetarenaUserHelper.pingArticleAccessCheck({
-            query: {},
-            body: {
-              strUid: uid,
-              intArticleId: id || 0
-            }
-          }));
-          const article_access = res.success ? res.success.data : null;
-          if (article_access)
-          {
-            data.article_access = article_access;
-
-          }
+          const hasAccess = authors__article_reward_unlocks__article_id__nested?.some(({ uid: unlocks_uid }) => uid === unlocks_uid);
           const userAgent = request.request.headers.get("user-agent") || "";
           const isBot = isRequestFromBot(userAgent);
 
-          if (!article_access?.hasAccess && data.article.data && !isBot && !edit)
+          if (!hasAccess && data.article.data && !isBot && !edit)
           {
             data.article.data.content = await removeContentAfterTarget(data.article.data.content);
           }

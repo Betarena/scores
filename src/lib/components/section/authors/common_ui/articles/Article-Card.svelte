@@ -43,14 +43,11 @@
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import session from "$lib/store/session.js";
   import userSettings from "$lib/store/user-settings.js";
-  import { BetarenaUserHelper } from "$lib/firebase/common.js";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
-  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
   import { get } from "$lib/api/utils.js";
   import { gotoSW } from "$lib/utils/sveltekitWrapper.js";
   import type { IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.tags.js";
-  import type { SvelteComponent } from "svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -88,14 +85,7 @@
     /**
      * @description awards tier info for reward gated articles
      */
-    award_tier_info: null | BtaRewardTiersMain = null,
-    /**
-     * @description check user access
-     */
-    article_access:
-      | null
-      | IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"] =
-      null;
+    award_tier_info: null | BtaRewardTiersMain = null;
 
   $: translations = ($page.data?.translations ||
     {}) as IPageAuthorTranslationDataFinal;
@@ -145,10 +135,6 @@
     img = getOptimizedImageUrl({ strImageUrl: img });
   }
 
-  $: if (firebase_user_data?.uid && access_type === "reward_gated" && id) {
-    getRewardsAccessInfo(firebase_user_data.uid, id);
-  }
-
   $: if (access_type === "reward_gated" && reward_tier_id && !award_tier_info) {
     getRewardsTier(reward_tier_id);
   }
@@ -169,7 +155,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   async  function sendTip() {
-    if (article_access?.hasAccess) return;
+    if (hasAccess) return;
     if (!firebase_user_data?.uid) {
       gotoSW(`/login`);
     }
@@ -181,24 +167,10 @@
       props: {
         sportstack: author,
         article_id: id,
-        article_access: article_access || {},
       },
     });
   }
 
-  async function getRewardsAccessInfo(uid: string, article_id: number) {
-    const res = await BetarenaUserHelper.pingArticleAccessCheck({
-      query: {},
-      body: {
-        strUid: uid,
-        intArticleId: article_id,
-      },
-    });
-    const access = res.success ? res.success.data : null;
-    if (access) {
-      article_access = access;
-    }
-  }
   async function getRewardsTier(tier_id: number) {
     const res = await get<{ rewards_tiers: BtaRewardTiersMain[] }>(
       `/api/data/rewards_tiers?id=${tier_id}`
