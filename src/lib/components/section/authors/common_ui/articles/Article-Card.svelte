@@ -158,6 +158,7 @@
     if (hasAccess) return;
     if (!firebase_user_data?.uid) {
       gotoSW(`/login`);
+      return;
     }
     const TipsModal = (await import('./TipsModal.svelte')).default;
     modalStore.set({
