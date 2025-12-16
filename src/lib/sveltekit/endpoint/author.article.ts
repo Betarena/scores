@@ -21,17 +21,16 @@
 import { json, type RequestEvent } from "@sveltejs/kit";
 // import { dev } from '$app/environment';
 
+import { postv2 } from "$lib/api/utils.js";
+import { API_DATA_ERROR_RESPONSE } from "$lib/utils/debug.js";
 import {
   entryAuthorArticleTranslation,
   entryAuthorArticleViewsIncrement,
 } from "@betarena/scores-lib/dist/functions/v8/authors.articles.js";
 import { entryTargetDataArticle } from "@betarena/scores-lib/dist/functions/v8/main.preload.authors.js";
 import { tryCatchAsync } from "@betarena/scores-lib/dist/util/common.js";
-import { postv2 } from "$lib/api/utils.js";
-import { API_DATA_ERROR_RESPONSE } from "$lib/utils/debug.js";
-import { BetarenaUserHelper } from "$lib/firebase/common.js";
-import type {  IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
-import type {  IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
+import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
+import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 import * as parse5 from "parse5";
 // #endregion ➤ 📦 Package Imports
 
@@ -74,18 +73,22 @@ export async function main(request: RequestEvent): Promise<Response> {
           data = await entryTargetDataArticle({
             permalinkTarget: queryParamPermalink,
             cacheCheck: false,
-          }) as  IPageAuhtorArticleDataFinal & {
+          }) as IPageAuhtorArticleDataFinal & {
             article_access?: IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
           };
-        const { access_type, reward_tier_id, id, authors__article_reward_unlocks__article_id__nested } = data.article;
+        const {
+          access_type,
+          reward_tier_id,
+          authors__article_reward_unlocks__article_id__nested,
+          authors__authors__id__nested
+        } = data.article;
         if (access_type === "reward_gated" && reward_tier_id) {
           const uid = request.locals.uid || "";
-          const hasAccess = authors__article_reward_unlocks__article_id__nested?.some(({ uid: unlocks_uid }) => uid === unlocks_uid);
+          const hasAccess = authors__authors__id__nested?.uid === uid || authors__article_reward_unlocks__article_id__nested?.some(({ uid: unlocks_uid }) => uid === unlocks_uid);
           const userAgent = request.request.headers.get("user-agent") || "";
           const isBot = isRequestFromBot(userAgent);
 
-          if (!hasAccess && data.article.data && !isBot && !edit)
-          {
+          if (!hasAccess && data.article.data && !isBot && !edit) {
             data.article.data.content = await removeContentAfterTarget(data.article.data.content);
           }
         }

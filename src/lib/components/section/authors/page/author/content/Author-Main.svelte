@@ -58,7 +58,6 @@
   import AiPredictorWidget from "$lib/components/widgets/AiPredictorWidget.svelte";
   import userSettings from "$lib/store/user-settings.js";
   import { walletStore } from "$lib/store/wallets.js";
-  import type { IFirebaseFunctionArticleAccessCheck } from "@betarena/scores-lib/types/firebase/functions.js";
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
@@ -82,7 +81,7 @@
   export let /**
      * @augments IPageAuhtorArticleDataFinal
      */
-    widgetData:  IPageAuhtorArticleDataFinal
+    widgetData: IPageAuhtorArticleDataFinal;
 
   /**
    * @description
@@ -128,7 +127,7 @@
   };
   let accessGranted = false;
   let secondP: HTMLElement | null = null;
-  let article_access:IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"] | undefined;
+
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
     windowWidth,
@@ -143,15 +142,26 @@
     awards_translations: TranslationAwardsDataJSONSchema;
   });
   $: ({ author: sportstack, article } = widgetData);
-  $: ({ access_type = "free", id, authors__article_reward_unlocks_snapshot__article_id__nested, authors__article_reward_unlocks__article_id__nested = [] } = article);
-  $: ({ total_bta_amount = 0, total_reward_unlocks = 0 } = (authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {}))
-  $: ({scores_user_data: user, firebase_user_data} = $userSettings.user || {})
-  $: accessGranted = article_access?.hasAccess || authors__article_reward_unlocks__article_id__nested.some(({uid: rewards_uid}) => uid === rewards_uid);
+  $: ({
+    access_type = "free",
+    id,
+    authors__article_reward_unlocks_snapshot__article_id__nested,
+    authors__article_reward_unlocks__article_id__nested = [],
+    authors__authors__id__nested
+  } = article);
+  $: ({ total_bta_amount = 0, total_reward_unlocks = 0 } =
+    authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {});
+  $: ({ scores_user_data: user, firebase_user_data } =
+    $userSettings.user || {});
+  $: accessGranted =
+    authors__authors__id__nested?.uid === uid ||
+    authors__article_reward_unlocks__article_id__nested.some(
+      ({ uid: rewards_uid }) => uid === rewards_uid
+    );
   $: paid = access_type === "reward_gated";
-  $: uid = firebase_user_data?.uid
+  $: uid = firebase_user_data?.uid;
   $: insufficientAmount = user && $walletStore.spending.available < 1;
 
-  $: console.log("REWARD: ", article )
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -172,13 +182,14 @@
     insertWidgets(contentContainer);
   }
   $: if (uid && !accessGranted && paid) {
-
   }
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
   }
   $: if (secondP && paid && !accessGranted) {
-    secondP.style.minHeight = `${insufficientAmount ? "calc(270px + 120px)" : "calc(515px + 120px)"}`
+    secondP.style.minHeight = `${
+      insufficientAmount ? "calc(270px + 120px)" : "calc(515px + 120px)"
+    }`;
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -195,13 +206,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-
   async function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
 
     if (paid && !accessGranted) {
       const directChildren = Array.from(container.children) as HTMLElement[];
-      const target = directChildren.reverse()[0]
+      const target = directChildren.reverse()[0];
       if (target) {
         try {
           const p_node = document.createElement("p");
@@ -211,12 +221,9 @@
           container.insertBefore(p_node, target);
           secondP = target;
 
-          const LockedWidget =   (
-            await import
-            (
-              "$lib/components/widgets/LockedWidget.svelte"
-            )
-          ).default
+          const LockedWidget = (
+            await import("$lib/components/widgets/LockedWidget.svelte")
+          ).default;
           unlockComponent = new LockedWidget({
             target: p_node,
             props: {
@@ -447,12 +454,10 @@
   ╰─────
   -->
   {#key $userSettings.theme}
-
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
       {#key accessGranted}
         {@html widgetData.article.data?.content}
       {/key}
-
     </div>
   {/key}
 </div>
