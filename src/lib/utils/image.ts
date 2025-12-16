@@ -51,6 +51,10 @@ export function getOptimizedImageUrl
   }
 ): string
 {
+  if (strImageUrl.startsWith('https://img.betarena.com'))
+  {
+    return strImageUrl;
+  }
   const
     /**
      * @description
