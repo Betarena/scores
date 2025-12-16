@@ -35,10 +35,7 @@
   import type { IPageAuthorAuthorData } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { onMount } from "svelte";
   import { getRates } from "$lib/utils/web3.js";
-  import {
-    type DotLottie,
-    DotLottieSvelte,
-  } from "@lottiefiles/dotlottie-svelte";
+  import { type DotLottie } from "@lottiefiles/dotlottie-svelte";
   import { modalStore } from "$lib/store/modal.js";
   import { walletStore } from "$lib/store/wallets.js";
   import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
@@ -72,8 +69,8 @@
   export let article_access =
     {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
   export let grantAccess = () => {};
-  let dotLottie: DotLottie;
-
+  let dotLottie;
+  let LottieComponent;
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
@@ -86,11 +83,12 @@
     amountBta = 0,
     amountUsd = 0,
     split = { author: 0, userCashback: 0 },
-  } = article_access.reward || {} as {
+  } = article_access.reward ||
+  ({} as {
     amountBta: number;
     amountUsd: number;
     split: { author: number; userCashback: number };
-  });
+  }));
 
   let loading = false;
   let step: "info" | "confirm" = "info";
@@ -137,9 +135,9 @@
     });
 
     if (response?.success) {
-
+      LottieComponent = (await import("./ConfityLottie.svelte")).default;
       await invalidate("app:author-article-page");
-      if (dotLottie) dotLottie.play();
+      if (dotLottie) (dotLottie as DotLottie).play();
       infoMessages.add({
         type: "awards",
         title:
@@ -171,7 +169,9 @@
   }
 
   async function showDeposit() {
-    const res = await import('$lib/components/page/profile/deposit/showDeposit.js');
+    const res = await import(
+      "$lib/components/page/profile/deposit/showDeposit.js"
+    );
     res.showDepositModal();
   }
 
@@ -422,14 +422,13 @@
         </div>
       {:else}
         <div class="confetti">
-          <DotLottieSvelte
-            dotLottieRefCallback={(ref) => (dotLottie = ref)}
-            src="/assets/lottie/Confetti.lottie"
-          />
+          {#if LottieComponent}
+             <LottieComponent bind:dotLottie />
+          {/if}
         </div>
         {#if loading}
           <Button type="primary" full={true} size="lg" {loading}>
-            <TranslationText
+          <TranslationText
               text={awards_translations.processing}
               fallback="Processing"
             />
@@ -437,7 +436,10 @@
         {:else if isRewards}
           <Button type="primary" full={true} size="lg" on:click={confirm}>
             <TranslationText
-              text={awards_translations.share_bta?.replace("{amount}", amountBta.toFixed(2))}
+              text={awards_translations.share_bta?.replace(
+                "{amount}",
+                amountBta.toFixed(2)
+              )}
               fallback="Share 1BTA"
             />
 
