@@ -23,22 +23,22 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { get } from "$lib/api/utils.js";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
+  import Coins02 from "$lib/components/ui/assets/coins-02.svelte";
+  import Lock from "$lib/components/ui/assets/lock.svelte";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import session from "$lib/store/session.js";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import { createEventDispatcher, onMount } from "svelte";
-  import { create_article_store } from "./create_article.store.js";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import Lock from "$lib/components/ui/assets/lock.svelte";
-  import Coins02 from "$lib/components/ui/assets/coins-02.svelte";
-  import Trophy from "$lib/components/ui/assets/trophy.svelte";
-  import { getRates } from "../../helpers.js";
   import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
-  import { get } from "$lib/api/utils.js";
+  import { createEventDispatcher, onMount } from "svelte";
+  import { getRates } from "../../helpers.js";
+  import { create_article_store } from "./create_article.store.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -537,6 +537,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       height: auto;
+      min-height: 0;
       padding-bottom: 0;
       border-radius: var(--radius-xl, 12px);
 
