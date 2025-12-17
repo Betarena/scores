@@ -111,8 +111,8 @@ export const config = {
       // │ |: Configuration Settings for :: Partytown
       // ╰─────
       objServiceWorkerPartytown:
-      (
-      ) =>
+        (
+        ) =>
         {
           return {
             // ╭─────
@@ -838,6 +838,15 @@ export const config = {
                 // │ |: svelte component :: toggle 'hidden' state
                 // ╰─────
                 isHidden: false,
+                // ╭─────
+                // │ NOTE:
+                // │ |: Delay in ms before initializing Betarena/Ad-Engine
+                // │ WARNING:
+                // │ |: This is a global delay affecting ALL Ad units on the website.
+                // ┣─────
+                // │ |: "env/production/typical" :: 10000 ms
+                // ╰─────
+                intBetarenaAdEngineDelayMs: 10000,
                 // ╭─────
                 // │ NOTE:
                 // │ |: Holds target `component(s)` of dynamic nature.
