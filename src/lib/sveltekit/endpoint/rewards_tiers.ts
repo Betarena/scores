@@ -12,7 +12,7 @@ import type {
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit";
 
-export const GetRewardsTiers: RequestHandler = async ({ request, url }) => {
+export const GetRewardsTiers: RequestHandler = async ({ url }) => {
   const id = url.searchParams.get("id");
   if (id) {
     const data = await new _GraphQL().wrapQuery<

@@ -37,8 +37,8 @@
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
   import { createEventDispatcher, onMount } from "svelte";
-  import { getRates } from "../../helpers.js";
   import { create_article_store } from "./create_article.store.js";
+  import { getRates } from "$lib/utils/web3.js";
 
   // #endregion ➤ 📦 Package Imports
 

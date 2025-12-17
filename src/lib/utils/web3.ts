@@ -83,7 +83,7 @@ export const chainObjectWalletConnect: Record<
   },
 };
 
-let timer: ReturnType<typeof setInterval>;
+let timer: ReturnType<typeof setInterval> | null = null;
 export async function getRates(store: Writable<any>) {
   const res = (await get("/api/data/bta-rates")) as {
     data?: { [key: string]: any };
