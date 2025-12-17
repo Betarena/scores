@@ -60,8 +60,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let sportstack = {} as IPageAuthorAuthorData;
   export let type: "tip" | "unlock" = "tip";
-  export let article_access =
-    {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
   export let tier_id: number = 0;
 
   let award_tier_info: null | BtaRewardTiersMain = null;

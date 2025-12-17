@@ -127,7 +127,6 @@
         type="unlock"
         {tier_id}
         {sportstack}
-        {article_access}
       />
     </div>
   {:else if user?.firebase_user_data?.uid && TipsModalComponent}
@@ -138,7 +137,6 @@
         {grantAccess}
         {article_id}
         {tier_id}
-        {article_access}
       />
     </div>
   {/if}
