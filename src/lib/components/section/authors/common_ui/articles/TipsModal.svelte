@@ -82,13 +82,13 @@
   $: ({ scores_user_data, firebase_user_data } = $userSettings.user || {});
   $: ({ uid } = firebase_user_data || { uid: "" });
   $: user = scores_user_data;
-  $: insufficientAmount =
-    user && $walletStore.loaded && $walletStore.spending.available < 1;
-  $: isRewards = type === "tip";
 
+  $: isRewards = type === "tip";
   $: ({ usd_value: amountUsd = 0 } = award_tier_info || { usd_value: 0 });
   $: amountBta = (amountUsd || 0) / (btaUsdRate || 1);
-
+  $: insufficientAmount =
+    user && $walletStore.loaded && $walletStore.spending.available < amountBta;
+  
   let loading = false;
   let step: "info" | "confirm" = "info";
   // #endregion ➤ 📌 VARIABLES
@@ -788,6 +788,7 @@
           .warning-main {
             color: var(--colors-text-text-secondary-700, #fbfbfb);
             overflow: visible;
+            text-align: center;
             white-space: nowrap;
 
             /* Text sm/Regular */
@@ -801,7 +802,7 @@
             overflow: visible;
             white-space: nowrap;
             color: var(--colors-text-text-tertiary-600, #8c8c8c);
-
+            text-align: center;
             /* Text sm/Regular */
             font-family: var(--font-family-font-family-body, Roboto);
             font-size: var(--font-size-text-sm, 14px);
