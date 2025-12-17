@@ -13,9 +13,11 @@
     DotLottieSvelte,
   } from "@lottiefiles/dotlottie-svelte";
   export let dotLottie: DotLottie | null = null;
+  export let url: string | null = null;
 </script>
 
 <DotLottieSvelte
   dotLottieRefCallback={(ref) => (dotLottie = ref)}
-  src="/assets/lottie/Confetti.lottie"
+  src={url}
+  {...$$restProps}
 />

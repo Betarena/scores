@@ -153,9 +153,25 @@
     });
 
     if (response?.success) {
-      LottieComponent = (await import("./ConfityLottie.svelte")).default;
+      LottieComponent = (await import("$lib/components/ui/WrapperLottie.svelte")).default;
       await tick();
-      await invalidate("app:author-article-page");
+      setTimeout(() => {
+        finishReward();
+      }, 500);
+      return;
+    } else {
+      loading = false;
+      infoMessages.add({
+        type: "error",
+        title:
+          awards_translations.notification_error_title ||
+          "Error while sharing BTA",
+      });
+    }
+  }
+
+  async function finishReward(params:type) {
+      loading = false;
       if (dotLottie) dotLottie.play();
       infoMessages.add({
         type: "awards",
@@ -176,15 +192,7 @@
           grantAccess();
         }
       }, 700);
-    } else {
-      loading = false;
-      infoMessages.add({
-        type: "error",
-        title:
-          awards_translations.notification_error_title ||
-          "Error while sharing BTA",
-      });
-    }
+    await invalidate("app:author-article-page");
   }
 
   async function showDeposit() {
@@ -463,7 +471,7 @@
          {:else}
            <div class="confetti">
              {#if LottieComponent}
-               <LottieComponent bind:dotLottie />
+               <LottieComponent bind:dotLottie  url="/assets/lottie/Confetti.lottie"/>
              {/if}
            </div>
            {#if loading}

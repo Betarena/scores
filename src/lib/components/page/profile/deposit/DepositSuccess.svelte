@@ -26,8 +26,8 @@
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import session from "$lib/store/session";
-  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   import { depositStore } from "./deposit-store";
+  import { onMount } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -46,6 +46,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
+  let LottieComponent;
   $: ({ viewportType, btaUsdRate } = $session);
   $: ({ deposit_translations = {} } = $page.data);
 
@@ -81,6 +82,24 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+  
+    onMount(() => {
+      import("$lib/components/ui/WrapperLottie.svelte").then(module => {
+        LottieComponent = module.default;
+      });
+    })
+  
+  
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -97,7 +116,9 @@
 <div class="deposit-confirmation-wrapper {viewportType}">
   <div class="header">
     <div class="animation">
-      <DotLottieSvelte src="/assets/lottie/Success.lottie" loop autoplay />
+      {#if LottieComponent}
+          <LottieComponent  url="/assets/lottie/Success.lottie"loop autoplay/>
+        {/if}
     </div>
     <div class="title"><TranslationText fallback="Funds Added Successfully!" text={deposit_translations.funds_added_successfully} /></div>
   </div>
