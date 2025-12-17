@@ -24,7 +24,8 @@ COMPONENT JS (w/ TS)
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 	import { getOptimizedImageUrl } from '$lib/utils/image.js';
 	import { fade, fly } from 'svelte/transition';
-	import { showDepositModal } from './deposit/showDeposit';
+
+  import { modalStore } from '$lib/store/modal.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -95,7 +96,19 @@ COMPONENT JS (w/ TS)
       targetUrl = `/u/partners/${$userBetarenaSettings.lang}`
     ;
     if (selectedMenuOpt == "Deposit") {
-      showDepositModal();
+      modalStore.updateData
+      (
+        [
+          [
+            'ModalDeposit',
+            {
+              props: {},
+              show: true,
+              modal: true
+            }
+          ]
+        ]
+      );
       selectedMenuOpt = "Dashboard";
       targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
     }
