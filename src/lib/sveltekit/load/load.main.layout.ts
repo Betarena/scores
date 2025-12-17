@@ -131,6 +131,7 @@ interface IPreloadResponse
   app_install_translations?: TranslationAppInstallDataJSONSchema;
   deposit_translations?: TranslationDepositDataJSONSchema;
   awards_translations?: TranslationAwardsDataJSONSchema;
+  loggedIn: boolean;
 }
 
 // #endregion ➤ ⛩️ TYPES
@@ -335,8 +336,7 @@ export async function main
       }
     );
   */
-
-  return objResponse;
+  return {...objResponse, loggedIn: Boolean(event.cookies.get("betarenaCookieLoggedIn"))};
 }
 
 // ╭──────────────────────────────────────────────────────────────────────────────────╮

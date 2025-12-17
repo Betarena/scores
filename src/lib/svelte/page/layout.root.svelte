@@ -70,7 +70,6 @@
   import { initWalletStore } from '$lib/store/wallets';
   import { Browser } from '$lib/utils/browser.js';
   import { dlogv2, log_v3 } from '$lib/utils/debug';
-  import { mainDeepLinkCheck } from '$lib/utils/deeplink.js';
   import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
   import { setUserGeoLocation } from '$lib/utils/geo.js';
   import { Intercom } from '$lib/utils/service.intercom.js';
@@ -154,7 +153,7 @@
   $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
-  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies } = $page.data);
+  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies, loggedIn } = $page.data);
   $: ({ isEnabled: isPartytownEnabled, strCodeSampleForPartytownConfig } = config.objApp.objServiceWorkerPartytown());
 
   $: isInitliazed = false;
@@ -283,7 +282,11 @@
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
-    await mainDeepLinkCheck();
+
+    if (loggedIn) {
+      const { mainDeepLinkCheck } = (await import('$lib/utils/deeplink.js'));
+      await mainDeepLinkCheck();
+    }
     new Browser().initiateSubscription();
     isInitializationFinished = true;
     return;
