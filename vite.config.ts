@@ -29,7 +29,6 @@ import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import { isSSR } from './.vite/env.ts';
 import { sveltekitCssPurge } from './.vite/sveltekit-build-css-unused.2.ts';
 import { sveltekitSsrOrCsrBuild } from './.vite/sveltekit-build-env.ts';
-import { sveltekitBuildMinifyPlugin } from './.vite/sveltekit-build-minify.ts';
 import { buildSizePlugin } from './.vite/sveltekit-build-size.ts';
 
 import { dependencies, version } from './package.json';
@@ -58,14 +57,6 @@ const
         isEnabled: false,
         outputPath: './static/css/one-css-chunk.css',
       },
-      partytown:
-      {
-        // ╭─────
-        // │ NOTE:
-        // │ |: Disabled because already added manually to 'static/~partytown' folder.
-        // ╰─────
-        isEnabled: false,
-      },
       visualizer:
       {
         isEnabled: true,
@@ -85,11 +76,7 @@ const
       _customSveltekitPurgeCssPlugin:
       {
         isEnabled: false,
-      },
-      _customSveltekitBuildMinifyPlugin:
-      {
-        isEnabled: true,
-      },
+      }
     },
     /**
      * @description
@@ -328,7 +315,7 @@ export default defineConfig
         // │ IMPORTANT
         // │ │: Partytown integration plugin
         // ╰─────
-        objViteConfigOptions.objPluginConfig.partytown.isEnabled && partytownVite
+        partytownVite
         (
            {
             dest: path.join(__dirname, "dist", "~partytown"),
@@ -469,11 +456,6 @@ export default defineConfig
         // │ │: [CUSTOM] :: lightweight progress indicator plugin.
         // ╰─────
         // progressLite(),
-        // ╭─────
-        // │ NOTE:
-        // │ │: [CUSTOM] :: minify build output plugin.
-        // ╰─────
-        objViteConfigOptions.objPluginConfig._customSveltekitBuildMinifyPlugin.isEnabled && sveltekitBuildMinifyPlugin()
       ],
 
       build:
@@ -483,7 +465,7 @@ export default defineConfig
         // │ │: 'cssCodeSplit' gets overridden by 'svelte-kit' plugin.
         // ╰─────
         // cssCodeSplit: false,
-        minify: false,
+        minify: 'esbuild',
         cssMinify: 'lightningcss',
 
         rollupOptions:

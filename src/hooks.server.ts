@@ -18,7 +18,6 @@
 
 // #region ➤ 📦 Package Imports
 
-
 import { convertLocaleToLang, mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { getCookie } from '$lib/store/cookie.js';
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
@@ -753,21 +752,14 @@ export const handle: Handle = sequence
               // ╰─────
               if (__dirname.includes('chunks'))
               {
-                if (href.includes('_app/'))
-                {
-                  hrefValid = hrefValid
-                    .split('_app/')[1]
-                  ;
-                  hrefValid = `../../client/_app/${hrefValid}`;
-                }
-                else if (!hrefValid.includes('_app/'))
-                  hrefValid = `../../client/${hrefValid}`;
+                hrefValid = hrefValid
+                  .split('_app/')[1]
                 ;
+                hrefValid = `../../client/_app/${hrefValid}`;
               }
-              else
-              {
-                hrefValid = `../static/${hrefValid}`;
-              }
+              else if (!hrefValid.includes('_app/'))
+                hrefValid = `../../client/${hrefValid}`;
+              ;
 
               const
                 // ╭─────

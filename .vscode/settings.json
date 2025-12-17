@@ -17,6 +17,24 @@
   "editor.showFoldingControls": "always",
   "editor.foldingStrategy": "indentation",
   "editor.foldingImportsByDefault": true,
+  "files.exclude":
+  {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true,
+    "**/.git/objects/**": true,
+    "**/tmp": true,
+    "**/bower_components": true,
+    "**/.svelte-kit/**": true,
+    "**/._*": true
+  },
   // ╭─────
   // │ NOTE:
   // │ EsLint |:| workspace (folder) configuration

@@ -63,6 +63,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules node_modules/
 COPY --from=build /app/build build/
+COPY --from=build /app/dist/~partytown build/client/~partytown
 COPY --from=build /app/dist/server.docker.js server.docker.js
 COPY --from=build /app/package.json /app/.env ./
 COPY --from=build /app/.scripts .scripts/

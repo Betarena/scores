@@ -97,7 +97,7 @@
   // │ IMPORTANT:
   // │ |: Global Styles Import
   // ╰─────
-  // import '../../../../static/app.scss';
+  import '../../../../static/app.scss';
 
   // #endregion ➤ 📦 Package Imports
 
