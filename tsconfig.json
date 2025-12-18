@@ -81,7 +81,7 @@
     "src/**/*.d.ts",
     "src/**/*.js",
     "src/**/*.ts",
-    "src/**/*.svelte", "src/lib/components/ui/infomessages/awards.svg",
+    "src/**/*.svelte",
   ],
   "exclude":
   [
