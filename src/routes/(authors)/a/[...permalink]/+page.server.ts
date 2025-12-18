@@ -51,7 +51,7 @@ export async function load
 
     } = await event.parent()
   ;
-
+  event.depends('app:author-article-page');
   return await main
   (
     event,

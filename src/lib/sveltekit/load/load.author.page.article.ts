@@ -19,9 +19,9 @@ import { redirect, ServerLoadEvent } from '@sveltejs/kit';
 
 import { mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { dlogv2, ERROR_CODE_INVALID } from '$lib/utils/debug.js';
+import { getOptimizedImageUrl } from '$lib/utils/image.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 import { parseObject } from '$lib/utils/string.2.js';
-import { getOptimizedImageUrl } from '$lib/utils/image.js';
 import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
 
 import type { IPageAuhtorArticleDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
@@ -169,6 +169,8 @@ export async function main
     );
   ;
 
+  const userAgent = event.request.headers.get("user-agent") || "";
+  
   // ╭──────────────────────────────────────────────────────────────────────────────────╮
   // │ 🏗️ │ PAGE DATA BUNDLING                                                          │
   // ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -181,7 +183,8 @@ export async function main
   (
     event.fetch,
     permalink!,
-    parentData.langParam
+    parentData.langParam,
+    userAgent
   );
 
   const seo_details = objResponse.dataArticle?.article.seo_details;
@@ -344,7 +347,8 @@ async function fetchData
 (
   fetch: any,
   permalink: string,
-  lang: string
+  lang: string,
+  user_agent: string
 ): Promise < PreloadPromise0 >
 {
   const
@@ -366,7 +370,10 @@ async function fetchData
       = await promiseUrlsPreload
       (
         listUrls,
-        fetch
+        fetch,
+        {
+          "user-agent": user_agent
+        }
       ) as PreloadPromise0
   ;
 

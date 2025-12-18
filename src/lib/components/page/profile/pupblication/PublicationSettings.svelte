@@ -257,7 +257,7 @@
     $modalStore.show = false;
     const loadingId = infoMessages.add({
       type: "loading",
-      text: "Deleting publication...",
+      title: "Deleting publication...",
     });
     const res = await fetch(`/api/data/author/sportstack`, {
       method: "DELETE",
@@ -268,7 +268,7 @@
     if (data.success) {
       infoMessages.add({
         type: "success",
-        text: translations?.publication_deleted || "Publication deleted!",
+        title: translations?.publication_deleted || "Publication deleted!",
       });
       setTimeout(() => {
         goto(`/u/author/${session.extract("lang")}`);
@@ -276,7 +276,7 @@
     } else {
       infoMessages.add({
         type: "error",
-        text: "Failed to delete publication.",
+        title: "Failed to delete publication.",
       });
     }
   }

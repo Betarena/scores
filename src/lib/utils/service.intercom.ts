@@ -251,4 +251,11 @@ export class Intercom
 
     return;
   }
+
+  changeVisibility(hide = true) {
+    if (!this.isReady || !this.isBooted)
+      return;
+    window.Intercom('update', { hide_default_launcher: hide });
+    return;
+  }
 }

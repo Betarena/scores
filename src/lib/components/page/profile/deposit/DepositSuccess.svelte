@@ -25,8 +25,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import WrapperDynamicImport from "$lib/components/misc/WrapperDynamicImport.svelte";
   import session from "$lib/store/session";
-  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   import { depositStore } from "./deposit-store";
 
   // #endregion ➤ 📦 Package Imports
@@ -46,6 +46,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
 
+  let LottieComponent;
   $: ({ viewportType, btaUsdRate } = $session);
   $: ({ deposit_translations = {} } = $page.data);
 
@@ -81,6 +82,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!--
@@ -97,7 +99,7 @@
 <div class="deposit-confirmation-wrapper {viewportType}">
   <div class="header">
     <div class="animation">
-      <DotLottieSvelte src="/assets/lottie/Success.lottie" loop autoplay />
+      <WrapperDynamicImport importComponentPath="DotLottie" url="/assets/lottie/Success.lottie" loop autoplay/>
     </div>
     <div class="title"><TranslationText fallback="Funds Added Successfully!" text={deposit_translations.funds_added_successfully} /></div>
   </div>

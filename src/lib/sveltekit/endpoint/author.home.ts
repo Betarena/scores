@@ -53,15 +53,17 @@ export async function main
     async (
     ): Promise < Response > =>
     {
+
+      const { url, locals: {user} } = request;
       // ╭──────────────────────────────────────────────────────────────────╮
       // │:| extract url query data.                                        │
       // ╰──────────────────────────────────────────────────────────────────╯
 
       const
-        queryLanguage = request.url.searchParams.get('lang') ?? "",
-        queryParamPage = request.url.searchParams.get('page') ?? 0,
-        queryUserFollowingTagIds = request.url.searchParams.get('followingTags'),
-        queryTypeQuery = request.url.searchParams.get('type')
+        queryLanguage = url.searchParams.get('lang') ?? "",
+        queryParamPage = url.searchParams.get('page') ?? 0,
+        queryUserFollowingTagIds = url.searchParams.get('followingTags'),
+        queryTypeQuery = url.searchParams.get('type')
       ;
 
       // ╭──────────────────────────────────────────────────────────────────╮
@@ -79,6 +81,7 @@ export async function main
             = await entryTargetDataAuthorHome
             (
               {
+                uid: user.uid || undefined,
                 language: (queryLanguage === "all" ? undefined : queryLanguage),
                 page: Number(queryParamPage),
                 // @ts-expect-error

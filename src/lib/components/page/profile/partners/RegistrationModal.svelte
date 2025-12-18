@@ -24,23 +24,24 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
+  import { post } from "$lib/api/utils.js";
   import Button from "$lib/components/ui/Button.svelte";
+  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
   import Input from "$lib/components/ui/Input.svelte";
   import PaginationDots from "$lib/components/ui/PaginationDots.svelte";
-  import { fly, scale } from "svelte/transition";
-  import Banner1 from "../assets/partner-banner/banner-registration-1.png";
-  import Banner2 from "../assets/partner-banner/banner-registration-2.png";
-  import { cubicIn, cubicOut } from "svelte/easing";
+  import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import { Intercom } from "$lib/utils/service.intercom";
   import type {
     PartnersPartnerRegistrationSubmissionsMain,
     PartnersPartnersListMain,
   } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { onMount } from "svelte";
-  import { post } from "$lib/api/utils.js";
-  import userSettings from "$lib/store/user-settings.js";
-  import { modalStore } from "$lib/store/modal.js";
-  import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
-  import session from "$lib/store/session.js";
+  import { cubicIn, cubicOut } from "svelte/easing";
+  import { fly, scale } from "svelte/transition";
+  import Banner1 from "../assets/partner-banner/banner-registration-1.png";
+  import Banner2 from "../assets/partner-banner/banner-registration-2.png";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -64,7 +65,6 @@
   ) => void;
   $: ({ profile } = $page.data.RESPONSE_PROFILE_DATA);
   $: ({viewportType} = $session)
-  $: console.log("TRNALSTIONS: ", profile)
   let step = 1;
   let value = "";
   let loading = false;
@@ -101,13 +101,10 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    window.Intercom("update", {
-      hide_default_launcher: true,
-    });
+    const intercom = new Intercom();
+    intercom.changeVisibility(true);  
     return () => {
-      window.Intercom("update", {
-        hide_default_launcher: false,
-      });
+      intercom.changeVisibility(false);
     };
   });
 
@@ -142,7 +139,7 @@
       }
         infoMessages.add({
           type: res?.ok ? "success" : "error",
-          text: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
+          title: res?.ok ? profile?.success || "Success!" : profile?.error || "Error",
         });
 
       $modalStore.show = !res?.ok;

@@ -143,8 +143,10 @@
       view: "preview",
       detectedLang: {
         lang: article.lang || "en",
-        iso: article.seo_details?.opengraph.locale || "en_US",
+        iso: article.seo_details?.opengraph.locale || "en_US"
       },
+      access: (article.access_type || "free") as "free" | "reward_gated",
+      reward_tier_id: article.reward_tier_id,
     });
     title = article.data?.title || "";
     disablePublishButton =
@@ -223,11 +225,7 @@
     const json = contentEditor.getJSON();
     if (!json) return "";
     for (const node of json.content || []) {
-      if (
-        node.type === "paragraph" &&
-        node.content &&
-        !node.content.find((n) => n.type === "imageWithPlaceholder")
-      ) {
+      if (node.type === "paragraph" && node.content && !node.content.find((n) => n.type === "imageWithPlaceholder")) {
         return (node.content || []).map((n) => n.text).join(" ");
       }
     }

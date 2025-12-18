@@ -48,16 +48,22 @@
      * @description
      *  📝 path component to be dynamically imported.
      */
-    importComponentPath:
-      | 'Layout-Root'
-      | 'Page-Author-Article'
-      | 'Splash-Screen'
-      | 'Banner-Offline-Alert'
-      | 'Banner-Platform-Alert'
-      | 'Modal-Email-Subscribe'
-  ;
+    importComponentPath: keyof typeof componentsMap;
 
   let _DynamicComponent;
+
+  const componentsMap = {
+    "Layout-Root": () => import( "$lib/svelte/page/layout.root.svelte"),
+    "Page-Author-Article": () => import( "$lib/svelte/page/page.author.svelte"),
+    "Splash-Screen": () => import( "$lib/components/misc/Splash-Screen.svelte"),
+    "Banner-Offline-Alert": () => import(
+      "$lib/components/misc/banner/Banner-Offline-Alert.svelte"),
+    "Banner-Platform-Alert": () => import(
+      "$lib/components/misc/banner/Banner-Platform-Alert.svelte"),
+    "Modal-Email-Subscribe": () => import(
+      "$lib/components/misc/modal/Modal-Email-Subscribe.svelte"),
+    "DotLottie": () => import("$lib/components/misc/WrapperLottie.svelte"),
+  };
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -70,85 +76,23 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onMount
-  (
-    async (
-    ) =>
-    {
-      // [🐞]
-      log_v3
-      (
-        {
-          strGroupName: 'WrapperDynamicImport ⮕ onMount',
-          msgs:
-          [
-            `importComponentPath: ${importComponentPath}`
-          ]
-        }
-      );
-
-      if (importComponentPath == 'Layout-Root')
-        _DynamicComponent
-          = (
-            await import
-            (
-              '$lib/svelte/page/layout.root.svelte'
-            )
-          ).default
-        ;
-      else if (importComponentPath == 'Page-Author-Article')
-        _DynamicComponent
-          = (
-            await import
-            (
-              '$lib/svelte/page/page.author.svelte'
-            )
-          ).default
-        ;
-      else if (importComponentPath == 'Splash-Screen')
-        _DynamicComponent
-          = (
-            await import
-            (
-              '$lib/components/misc/Splash-Screen.svelte'
-            )
-          ).default
-        ;
-      else if (importComponentPath == 'Banner-Offline-Alert')
-        _DynamicComponent
-          = (
-            await import
-            (
-              '$lib/components/misc/banner/Banner-Offline-Alert.svelte'
-            )
-          ).default
-        ;
-      else if (importComponentPath == 'Banner-Platform-Alert')
-        _DynamicComponent
-          = (
-            await import
-            (
-              '$lib/components/misc/banner/Banner-Platform-Alert.svelte'
-            )
-          ).default
-        ;
-      else if (importComponentPath == 'Modal-Email-Subscribe')
-        _DynamicComponent
-          = (
-            await import
-            (
-              '$lib/components/misc/modal/Modal-Email-Subscribe.svelte'
-            )
-          ).default
-        ;
-      ;
-
+  onMount(async () => {
+    // [🐞]
+    log_v3({
+      strGroupName: "WrapperDynamicImport ⮕ onMount",
+      msgs: [`importComponentPath: ${importComponentPath}`],
+    });
+    const loader = componentsMap[importComponentPath];
+    if (!loader) {
+      console.error(`Component '${importComponentPath}' not found`);
       return;
     }
-  );
+
+    _DynamicComponent = (await loader()).default;
+
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -159,9 +103,8 @@
 │ - access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.     │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
-<svelte:component
-  this={_DynamicComponent}
->
-  <slot/>
-</svelte:component>
+{#if _DynamicComponent}
+  <svelte:component this={_DynamicComponent} {...$$restProps}>
+    <slot />
+  </svelte:component>
+{/if}

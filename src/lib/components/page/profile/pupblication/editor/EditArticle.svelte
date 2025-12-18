@@ -129,6 +129,9 @@
         description: article.seo_details?.main_data.description || "",
       },
       view: "preview",
+      access: (article.access_type || "free") as "free" | "reward_gated",
+      reward_tier_id: article.reward_tier_id,
+
     });
   }
 

@@ -3,7 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import VisaIcon from './../../../ui/assets/VisaIcon.svelte';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -25,8 +24,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import WrapperDynamicImport from "$lib/components/misc/WrapperDynamicImport.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
-  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   import { depositStore } from "./deposit-store";
 
   // #endregion ➤ 📦 Package Imports
@@ -45,6 +44,8 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
   export let buttonDisabled;
+
+  let LottieComponent;
 
   $: ({status} = $depositStore);
   $: ({deposit_translations = {}} = $page.data)
@@ -87,6 +88,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!--
@@ -103,7 +105,7 @@
 <div class="deposit-confirmation-wrapper">
   <div class="header">
     <div class="animation">
-      <DotLottieSvelte src="/assets/lottie/Waiting.lottie" loop autoplay />
+      <WrapperDynamicImport importComponentPath="DotLottie" url="/assets/lottie/Waiting.lottie" loop autoplay/>
     </div>
     <div class="title"> <TranslationText fallback="Transaction in Progress" text={deposit_translations.transaction_in_progress} /></div>
   </div>

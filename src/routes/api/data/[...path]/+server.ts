@@ -39,6 +39,7 @@ import { GetTranslations } from '$lib/sveltekit/endpoint/translations.js';
 import { GetAiPredictionWidgetData } from '$lib/sveltekit/endpoint/widgets/ai-predictor';
 import type { RequestHandler } from '@sveltejs/kit';
 import { GetBtaRates } from '$lib/sveltekit/endpoint/bta-rates.js';
+import { GetRewardsTiers } from '$lib/sveltekit/endpoint/rewards_tiers.js';
 
 // #endregion ➤ 📦 Package
 
@@ -62,7 +63,8 @@ const getEndpointsMap = {
   'partners': GetPartners,
   "login": GetLoginData,
   'widgets.ai-prediction': GetAiPredictionWidgetData,
-  'bta-rates': GetBtaRates
+  'bta-rates': GetBtaRates,
+  'rewards_tiers': GetRewardsTiers
 }
 type EndPointsMapKeys = keyof typeof getEndpointsMap;
 export const GET: RequestHandler = async (

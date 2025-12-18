@@ -91,9 +91,7 @@
       {/if}
     </div>
     <div class="tags-wrapper">
-      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
-      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
-      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
+
     </div>
   </div>
   <div class="preview" class:tablet class:mobile>

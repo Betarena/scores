@@ -33,6 +33,7 @@
   import { modalStore } from "$lib/store/modal";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
+  import { getRates } from "$lib/utils/web3.js";
   import { onMount } from "svelte";
   import { depositStore } from "./deposit-store";
   import DepositAmount from "./DepositAmount.svelte";
@@ -41,7 +42,6 @@
   import DepositOptions from "./DepositOptions.svelte";
   import DepositRevolut from "./DepositRevolut.svelte";
   import DepositSuccess from "./DepositSuccess.svelte";
-  import { get } from "$lib/api/utils.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -237,18 +237,6 @@
     $depositStore.revolut = {};
     buttonDisabled = false;
   }
-
-  async function getRates() {
-      const res = await get("/api/data/bta-rates") as {
-      data?:      { [key: string]: any };
-      symbol?:    string;
-      timestamp?: string;
-      [property: string]: any;
-    }
-    if( res) {
-      $session.btaUsdRate = res.bta_rates?.data.price_in.usd || 0
-    }
-  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -271,7 +259,7 @@
       )[0] as unknown as HTMLElement;
     const prevIntercomState = instanceIntercom?.style.display;
     if (instanceIntercom) instanceIntercom.style.display = "none";
-    getRates();
+    getRates(session);
     const { orderId } = $depositStore.revolut || {};
     if (orderId && !unsubscribe) {
       unsubscribe = subscribeRevolutTransactionListen(
@@ -280,9 +268,14 @@
       ).unsubscribe;
     }
 
+    // Preload Lottie library to prevent animation rendering delays
+    import("$lib/components/misc/WrapperLottie.svelte");
+
     return () => {
       document.body.classList.remove("disable-scroll");
-      instanceIntercom.style.display = prevIntercomState || "unset";
+      if (instanceIntercom) {
+        instanceIntercom.style.display = prevIntercomState || "unset";
+      }
       if (unsubscribe) unsubscribe();
     };
   });

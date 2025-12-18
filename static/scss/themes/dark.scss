@@ -187,8 +187,8 @@
 .dark-mode {
 // UNTITLED
   --colors-text-text-primary-900: var(--colors-base-white);
-  --colors-text-text-primary_on-brand: var(--colors-gray-dark-mode-50);
-  --colors-text-text-secondary-700: var(--colors-gray-dark-mode-300);
+  --colors-text-text-primary_on-brand: var(--colors-brand-500);
+  --colors-text-text-secondary-700: var(--colors-gray-dark-mode-50);
   --colors-text-text-secondary_hover: var(--colors-gray-dark-mode-300);
   --colors-text-text-secondary_on-brand: var(--colors-gray-dark-mode-200);
   --colors-text-text-tertiary-600: var(--colors-gray-dark-mode-400);
@@ -492,7 +492,6 @@
 
 //BTA2.0
  --colors-text-text-primary: var(--colors-gray-50);
-  --colors-text-text-primary_on-brand: var(--colors-gray-50);
   --colors-text-text-secondary: var(--colors-gray-300);
   --colors-text-text-secondary_hover: var(--colors-gray-200);
   --colors-text-text-secondary_on-brand: var(--colors-gray-300);
@@ -706,7 +705,6 @@
   --colors-foreground-fg-warning-secondary: var(--colors-warning-400);
   --colors-foreground-fg-success-primary: var(--colors-success-500);
   --colors-foreground-fg-success-secondary: var(--colors-success-400);
-  --colors-background-bg-primary: var(--colors-gray-950);
   --colors-effects-focus-rings-focus-ring: var(--colors-brand-500);
   --colors-effects-focus-rings-focus-ring-error: var(--colors-error-500);
   --colors-effects-shadows-shadow-xs: var(--colors-base-transparent);

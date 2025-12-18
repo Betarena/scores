@@ -9,6 +9,7 @@
 
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import SpinnerLoader from "$lib/components/ui/assets/spinner-loader.svelte"
 
   // #region ➤ 📌 VARIABLES
 
@@ -53,6 +54,7 @@
   export let size: "lg" | "md" | "sm" | "xl" | "xxl" = "lg";
   export let destructive = false;
   export let icon_leading = false;
+  export let loading = false;
 
   const dispatch = createEventDispatcher();
   let hover = false;
@@ -75,6 +77,7 @@
     class="button {type} {classname} {size}"
     class:full
     class:disabled
+    class:loading
     class:icon_leading
     {...$$restProps}
     type={submit ? "submit" : "button"}
@@ -94,7 +97,7 @@
       return (hover = false);
     }}
     on:click={() => {
-      if (disabled) return;
+      if (disabled || loading) return;
       dispatch("click");
       hover = false;
     }}
@@ -107,6 +110,7 @@
     class:full
     class:disabled
     class:icon_leading
+    class:loading
     {...$$restProps}
     type={submit ? "submit" : "button"}
     class:hover
@@ -124,11 +128,16 @@
       return (hover = false);
     }}
     on:click={() => {
-      if (disabled) return;
+      if (disabled || loading) return;
       dispatch("click");
       hover = false;
     }}
   >
+    {#if loading}
+      <div class="loading-icon">
+        <SpinnerLoader />
+      </div>
+    {/if}
     <slot />
   </button>
 {/if}
@@ -221,13 +230,24 @@
   }
 
   .primary {
-   
-    color: var(--colors-text-text-white, #FFF);
-    background: var(--colors-background-bg-brand-solid, #F5620F);
-    border: 2px solid var(--gradient-skeuemorphic-gradient-border, rgba(255, 255, 255, 0.12)) !important;
-    box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00));
+    color: var(--colors-text-text-white, #fff);
+    background: var(--colors-background-bg-brand-solid, #f5620f);
+    border: 2px solid
+      var(--gradient-skeuemorphic-gradient-border, rgba(255, 255, 255, 0.12)) !important;
+    box-shadow: 0 0 0 1px
+        var(
+          --colors-effects-shadows-shadow-skeumorphic-inner-border,
+          rgba(12, 14, 18, 0.18)
+        )
+        inset,
+      0 -2px 0 0 var(
+          --colors-effects-shadows-shadow-skeumorphic-inner,
+          rgba(12, 14, 18, 0.05)
+        ) inset,
+      0 1px 2px 0
+        var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
     &.hover {
-     background: var(--colors-background-bg-brand-solid_hover, #F5620F);
+      background: var(--colors-background-bg-brand-solid_hover, #f5620f);
     }
 
     &.disabled {
@@ -254,6 +274,44 @@
           #ea2b2b
         );
         color: var(--colors-foreground-fg-white, #fff);
+      }
+    }
+
+    &.loading {
+      border-radius: var(--radius-md, 8px);
+      cursor: not-allowed;
+      border: 2px solid
+        var(--gradient-skeuemorphic-gradient-border, rgba(255, 255, 255, 0.12));
+
+      background: var(--colors-background-bg-brand-solid_hover, #ae460b);
+
+      /* Shadows/shadow-xs-skeuomorphic */
+      box-shadow: 0 0 0 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(12, 14, 18, 0.18)
+          )
+          inset,
+        0 -2px 0 0 var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(12, 14, 18, 0.05)
+          ) inset,
+        0 1px 2px 0
+          var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0));
+
+      .loading-icon {
+        color: var(--component-colors-components-buttons-button-primary-icon);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transform-origin: center;
+        animation: spin 1s linear infinite;
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
       }
     }
   }
@@ -331,28 +389,53 @@
 
     &.destructive {
       border-radius: var(--radius-md, 8px);
-      border: 1px solid var(--colors-border-border-error_subtle, #FDA29B) !important;
-      background: var(--colors-background-bg-primary, #FFF);
+      border: 1px solid var(--colors-border-border-error_subtle, #fda29b) !important;
+      background: var(--colors-background-bg-primary, #fff);
       /* Shadows/shadow-xs */
-      box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(10, 13, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(10, 13, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
+      box-shadow: 0 0 0 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(10, 13, 18, 0.18)
+          )
+          inset,
+        0 -2px 0 0 var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(10, 13, 18, 0.05)
+          ) inset,
+        0 1px 2px 0
+          var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05));
 
-      color: var(--colors-text-text-error-primary-600, #D92D20);
+      color: var(--colors-text-text-error-primary-600, #d92d20);
 
       &.hover {
         border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-error_subtle, #FDA29B) !important;
-        background: var(--colors-background-bg-error-primary, #FEF3F2);
+        border: 1px solid var(--colors-border-border-error_subtle, #fda29b) !important;
+        background: var(--colors-background-bg-error-primary, #fef3f2);
 
-        color: var(--colors-text-text-error-primary_hover, #B42318);
+        color: var(--colors-text-text-error-primary_hover, #b42318);
       }
 
-      &:focus, &:focus-within {
+      &:focus,
+      &:focus-within {
         border-radius: var(--radius-md, 8px);
-        border: 1px solid var(--colors-border-border-error_subtle, #FDA29B) !important;
-        background: var(--colors-background-bg-primary, #FFF);
+        border: 1px solid var(--colors-border-border-error_subtle, #fda29b) !important;
+        background: var(--colors-background-bg-primary, #fff);
 
         /* Focus rings/focus-ring-error-shadow-xs-skeuomorphic */
-        box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(10, 13, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(10, 13, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05)), 0 0 0 2px var(--colors-background-bg-primary, #FFF), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring-error, #F04438);
+        box-shadow: 0 0 0 1px
+            var(
+              --colors-effects-shadows-shadow-skeumorphic-inner-border,
+              rgba(10, 13, 18, 0.18)
+            )
+            inset,
+          0 -2px 0 0 var(
+              --colors-effects-shadows-shadow-skeumorphic-inner,
+              rgba(10, 13, 18, 0.05)
+            ) inset,
+          0 1px 2px 0
+            var(--colors-effects-shadows-shadow-xs, rgba(10, 13, 18, 0.05)),
+          0 0 0 2px var(--colors-background-bg-primary, #fff),
+          0 0 0 4px var(--colors-effects-focus-rings-focus-ring-error, #f04438);
       }
     }
 
@@ -365,12 +448,25 @@
       box-shadow: 0 1px 2px 0
         var(--colors-effects-shadows-shadow-xs, rgba(31, 31, 31, 0.05));
 
-
-      color: var(--colors-foreground-fg-disabled, #8C8C8C);
+      color: var(--colors-foreground-fg-disabled, #8c8c8c);
     }
 
-    &:focus, &:focus-within {
-      box-shadow: 0 0 0 1px var(--colors-effects-shadows-shadow-skeumorphic-inner-border, rgba(12, 14, 18, 0.18)) inset, 0 -2px 0 0 var(--colors-effects-shadows-shadow-skeumorphic-inner, rgba(12, 14, 18, 0.05)) inset, 0 1px 2px 0 var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0.00)), 0 0 0 2px var(--colors-background-bg-primary, #1F1F1F), 0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #F5620F)
+    &:focus,
+    &:focus-within {
+      box-shadow: 0 0 0 1px
+          var(
+            --colors-effects-shadows-shadow-skeumorphic-inner-border,
+            rgba(12, 14, 18, 0.18)
+          )
+          inset,
+        0 -2px 0 0 var(
+            --colors-effects-shadows-shadow-skeumorphic-inner,
+            rgba(12, 14, 18, 0.05)
+          ) inset,
+        0 1px 2px 0
+          var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0)),
+        0 0 0 2px var(--colors-background-bg-primary, #1f1f1f),
+        0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
     }
   }
   .secondary-gray {
@@ -510,9 +606,10 @@
     padding: 0 !important;
     cursor: pointer;
     background: inherit;
-    color: var(--colors-text-text-tertiary-600, #8C8C8C);
-    &:hover, &.hover {
-      color: var(--colors-text-text-tertiary_hover, #D2D2D2);
+    color: var(--colors-text-text-tertiary-600, #8c8c8c);
+    &:hover,
+    &.hover {
+      color: var(--colors-text-text-tertiary_hover, #d2d2d2);
       text-decoration: underline;
     }
   }

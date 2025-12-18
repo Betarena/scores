@@ -24,7 +24,6 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import LoaderBadge from '$lib/components/ui/loaders/LoaderBadge.svelte';
   import LoaderImage from '$lib/components/ui/loaders/LoaderImage.svelte';
   import LoaderLine from '$lib/components/ui/loaders/LoaderLine.svelte';
   import LoaderSporttackAvatar from '$lib/components/ui/loaders/LoaderSporttackAvatar.svelte';
@@ -91,9 +90,7 @@
       {/if}
     </div>
     <div class="tags-wrapper">
-      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
-      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
-      <LoaderBadge height={!mobile && !tablet ? 26: 24 }/>
+
     </div>
   </div>
   <div class="preview" class:tablet class:mobile>
