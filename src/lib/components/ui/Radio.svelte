@@ -1,4 +1,4 @@
-<!--
+ó<!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
@@ -27,37 +27,6 @@
   let focused = false;
   let hovered = false;
 
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ Event Handlers                                                         │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  function handleChange(e: Event) {
-    if (!disabled) {
-      const target = e.target as HTMLInputElement;
-      checked = target.checked;
-    }
-  }
-
-  function handleClick() {
-    if (!disabled) {
-      checked = !checked;
-    }
-  }
-
-  function handleFocus() {
-    focused = true;
-  }
-
-  function handleBlur() {
-    focused = false;
-  }
-
-  function handleMouseEnter() {
-    hovered = true;
-  }
-
-  function handleMouseLeave() {
-    hovered = false;
-  }
 
   // #endregion ➤ 📌 VARIABLES
 </script>
@@ -75,9 +44,13 @@
     class:disabled
     class:focused
     class:hovered={hovered && !disabled}
-    on:mouseenter={handleMouseEnter}
-    on:mouseleave={handleMouseLeave}
-    on:click={handleClick}
+    on:mouseenter={() => { hovered = true}}
+    on:mouseleave={() => { hovered = false}}
+    on:click={() => {
+        if (!disabled) {
+        checked = !checked;
+      }
+    }}
     role="button"
     tabindex={disabled ? -1 : 0}
   >
@@ -88,9 +61,14 @@
       {name}
       {value}
       {id}
-      on:change={handleChange}
-      on:focus={handleFocus}
-      on:blur={handleBlur}
+      on:change={e => {
+          if (!disabled) {
+          const target = e.currentTarget;
+          checked = target.checked;
+        }
+      }}
+      on:focus={() => { focused = true }}
+      on:blur={() => { focused = false }}
       class="native-radio"
     />
     <span class="radio-control">

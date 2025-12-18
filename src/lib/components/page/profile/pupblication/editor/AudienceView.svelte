@@ -23,7 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { get } from "$lib/api/utils.js";
+  import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
@@ -34,11 +34,11 @@
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import session from "$lib/store/session.js";
+  import { getRates } from "$lib/utils/web3.js";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
   import { createEventDispatcher, onMount } from "svelte";
   import { create_article_store } from "./create_article.store.js";
-  import { getRates } from "$lib/utils/web3.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -65,6 +65,7 @@
 
   $: ({ viewportType, btaUsdRate } = $session);
   $: ({ access, reward_tier_id } = $create_article_store);
+  $: ({rewards_tiers: rewardsButtons} = $page.data);
 
   $: radioButtons = [
     {
@@ -84,36 +85,6 @@
       description_fallback: "reward_gated_access_description",
       selected: access === "reward_gated",
       icon: Trophy,
-    },
-  ];
-
-  $: rewardsButtons = [
-    {
-      created_at: "2025-12-02T16:30:58.042303",
-      id: 1,
-      is_active: true,
-      sort_order: 1,
-      tier_key: "reward_tier_1",
-      updated_at: "2025-12-02T16:30:58.042303+00:00",
-      usd_value: 0.1,
-    },
-    {
-      created_at: "2025-12-08T14:10:49.602912",
-      id: 2,
-      is_active: true,
-      sort_order: 2,
-      tier_key: "reward_tier_2",
-      updated_at: "2025-12-08T14:10:49.602912+00:00",
-      usd_value: 0.5,
-    },
-    {
-      created_at: "2025-12-08T14:11:06.354197",
-      id: 3,
-      is_active: true,
-      sort_order: 3,
-      tier_key: "reward_tier_3",
-      updated_at: "2025-12-08T14:11:06.354197+00:00",
-      usd_value: 1,
     },
   ];
 
@@ -156,28 +127,6 @@
     dispatch("changeView", "preview");
   }
 
-  function save() {
-    goBack();
-  }
-
-  function checkRadio(radio) {
-    $create_article_store.access = radio.id;
-  }
-  function checkAmount(radio) {
-    $create_article_store.reward_tier_id = radio.id;
-  }
-
-  async function getRewardsTiers() {
-    const res = await get<{rewards_tiers:BtaRewardTiersMain[]}>('/api/data/rewards_tiers');
-    if (res) {
-      const { rewards_tiers } = res;
-      rewardsButtons = rewards_tiers;
-      const current_tier = rewardsButtons.find(tier => tier.id === $create_article_store.reward_tier_id);
-      if (!current_tier && access === "reward_gated" && rewards_tiers.length > 0) {
-        $create_article_store.reward_tier_id = rewards_tiers[0].id;
-      }
-    }
-  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -191,7 +140,6 @@
 
   onMount(() => {
     getRates(session);
-    getRewardsTiers();
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -248,7 +196,7 @@
             clickHandler={true}
             full={true}
             selected={radio.id === access}
-            on:click={() => checkRadio(radio)}
+            on:click={() => { $create_article_store.access = radio.id }}
             controlType="radio"
           >
             <svelte:fragment slot="icon">
@@ -294,7 +242,7 @@
                 full={true}
                 clickHandler={true}
                 selected={reward_tier_id === radio.id}
-                on:click={() => checkAmount(radio)}
+                on:click={() => { $create_article_store.reward_tier_id = radio.id }}
                 controlType="radio"
               >
                 <svelte:fragment slot="icon">
@@ -327,7 +275,7 @@
         <Button full={true} type="secondary" on:click={goBack}
           >{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={true} on:click={save}
+        <Button full={true} on:click={goBack}
           >{translations?.save || "Save"}</Button
         >
       </div>

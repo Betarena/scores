@@ -22,10 +22,10 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import session from "$lib/store/session.js";
+  import { createEventDispatcher } from "svelte";
   import Checkbox from "./Checkbox.svelte";
   import Radio from "./Radio.svelte";
-  import { createEventDispatcher } from "svelte";
-  import session from "$lib/store/session.js";
 
   // #endregion ➤ 📦 Package Imports
   // #region ➤ 📌 VARIABLES
@@ -56,26 +56,6 @@
 
   // #region ➤ 🛠️ METHODS
 
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'methods' that are to be           │
-  // │ and are expected to be used by 'this' .svelte file / component.        │
-  // │ IMPORTANT                                                              │
-  // │ Please, structure the imports as follows:                              │
-  // │ 1. function (..)                                                       │
-  // │ 2. async function (..)                                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-
-  function handleClick() {
-    if (disabled) return;
-    if (clickHandler) {
-      dispatch("click");
-      return;
-    }
-    selected = !selected;
-  }
-
-  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
@@ -88,12 +68,21 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   class="radio-group-item {size} {viewportType}"
   class:selected
   class:full
   class:disabled
-  on:click={handleClick}
+  on:click={() => {
+    if (disabled) return;
+    if (clickHandler) {
+      dispatch("click");
+      return;
+    }
+    selected = !selected;
+  }}
   tabindex="0"
 >
   <div class="content">
