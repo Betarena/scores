@@ -698,6 +698,7 @@ export async function promiseUrlsPreload
 (
   endpoints: string[],
   fetch: any,
+  headers?: HeadersInit
 ): Promise < any[] >
 {
   const
@@ -715,13 +716,17 @@ export async function promiseUrlsPreload
               _url: string
             ): Promise < any > =>
             {
+              const requestInit = {} as RequestInit;
+              if (headers) {
+                requestInit.headers = headers;
+              }
               const
                 // [🐞]
                 t0: number = performance.now(),
                 /**
                    * @description
                    */
-                response: Response = await fetch(_url)
+                response: Response = await fetch(_url, requestInit)
               ;
 
               let
