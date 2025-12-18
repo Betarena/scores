@@ -25,8 +25,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import WrapperDynamicImport from "$lib/components/misc/WrapperDynamicImport.svelte";
   import session from "$lib/store/session";
-  import { DotLottieSvelte } from "@lottiefiles/dotlottie-svelte";
   import { onDestroy } from "svelte";
   import { depositStore } from "./deposit-store";
   // #endregion ➤ 📦 Package Imports
@@ -44,23 +44,24 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  $: ({ deposit_translations = {}} = $page.data);
+
+  $: ({ deposit_translations = {} } = $page.data);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
-  
+
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
   // │ Please add inside 'this' region the 'logic' that should run            │
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   onDestroy(() => {
     $depositStore.revolut = {};
-  })
-  
+  });
+
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -78,7 +79,7 @@
 <div class="deposit-confirmation-wrapper {viewportType}">
   <div class="header">
     <div class="animation">
-      <DotLottieSvelte src="/assets/lottie/Failed.lottie" loop autoplay />
+      <WrapperDynamicImport importComponentPath="DotLottie" url="/assets/lottie/Failed.lottie" loop autoplay/>
     </div>
     <div class="title">
       <TranslationText

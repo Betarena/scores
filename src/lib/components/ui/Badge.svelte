@@ -95,6 +95,7 @@
     display: flex;
     padding: var(--spacing-xxs, 2px) var(--spacing-md, 8px);
     align-items: center;
+    gap: var(--spacing-xxs, 2px);
 
     border-radius: var(--radius-full, 9999px);
     border: 1px solid

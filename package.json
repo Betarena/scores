@@ -63,7 +63,7 @@
 	},
 	"dependencies": {
 		"@betarena/ad-engine": "0.0.73",
-		"@betarena/scores-lib": "4.8.15",
+		"@betarena/scores-lib": "4.9.15",
 		"@lottiefiles/dotlottie-svelte": "0.8.4",
 		"@lukeed/uuid": "2.0.1",
 		"@metamask/sdk": "0.1.0",
@@ -110,6 +110,7 @@
 		"masonry-layout": "4.2.2",
 		"moralis": "2.18.4",
 		"nodemon": "2.0.20",
+		"parse5": "8.0.0",
 		"prosemirror-state": "1.4.3",
 		"request-ip": "3.3.0",
 		"serialize-error": "11.0.3",

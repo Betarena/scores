@@ -156,6 +156,7 @@
   class={viewportType}
   class:sticky={$page.route.id === routeIdPageAuthors && isPWA && mobile}
   class:mobile
+  class:transparent={$page.route.id === routeIdPageAuthors}
 
 >
   {#if !["ProfilePage","AuthorsPage", "Standard"].includes(currentPageRouteId || "")}
@@ -209,7 +210,7 @@
     align-items: center;
     background-color: var(--colors-background-bg-primary);
     position: relative;
-    &.desktop {
+    &.desktop:not(.transparent) {
       background-color: var(--colors-background-bg-secondary);
 
     }

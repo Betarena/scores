@@ -38,17 +38,18 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { tick } from "svelte";
+  import { onDestroy, tick } from "svelte";
 
   import { getUserById } from "$lib/firebase/common.js";
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { getOptimizedImageUrl } from "$lib/utils/image.js";
   import { readingTime } from "../../helpers.js";
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
+  import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
   import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
@@ -56,6 +57,8 @@
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import AiPredictorWidget from "$lib/components/widgets/AiPredictorWidget.svelte";
   import userSettings from "$lib/store/user-settings.js";
+  import { walletStore } from "$lib/store/wallets.js";
+  import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
 
@@ -116,11 +119,14 @@
      *  📣 Target `HTMLELement` for **Content*.
      */
     contentContainer: HTMLElement,
-    author;
+    author,
+    unlockComponent;
 
   const widgetsMap = {
     1: AiPredictorWidget,
   };
+  let accessGranted = false;
+  let secondP: HTMLElement | null = null;
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
@@ -132,7 +138,29 @@
     | IPageArticleTranslationDataFinal
     | null
     | undefined;
-  $: ({ author: sportstack } = widgetData);
+  $: ({ awards_translations } = $page.data as {
+    awards_translations: TranslationAwardsDataJSONSchema;
+  });
+  $: ({ author: sportstack, article } = widgetData);
+  $: ({
+    access_type = "free",
+    id,
+    authors__article_reward_unlocks_snapshot__article_id__nested,
+    authors__article_reward_unlocks__article_id__nested = [],
+    authors__authors__id__nested
+  } = article);
+  $: ({ total_bta_amount = 0, total_reward_unlocks = 0 } =
+    authors__article_reward_unlocks_snapshot__article_id__nested?.[0] || {});
+  $: ({ scores_user_data: user, firebase_user_data } =
+    $userSettings.user || {});
+  $: accessGranted =
+    authors__authors__id__nested?.uid === uid ||
+    authors__article_reward_unlocks__article_id__nested.some(
+      ({ uid: rewards_uid }) => uid === rewards_uid
+    );
+  $: paid = access_type === "reward_gated";
+  $: uid = firebase_user_data?.uid;
+  $: insufficientAmount = user && $walletStore.spending.available < 1;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -150,7 +178,19 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: getAuthor(sportstack?.uid);
-  $: insertWidgets(contentContainer);
+  $: if (contentContainer) {
+    insertWidgets(contentContainer);
+  }
+  $: if (uid && !accessGranted && paid) {
+  }
+  $: if (paid && accessGranted && unlockComponent) {
+    unlockComponent.$destroy();
+  }
+  $: if (secondP && paid && !accessGranted) {
+    secondP.style.minHeight = `${
+      insufficientAmount ? "calc(270px + 120px)" : "calc(515px + 120px)"
+    }`;
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -166,8 +206,42 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function insertWidgets(container: HTMLElement) {
+  async function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
+
+    if (paid && !accessGranted) {
+      const directChildren = Array.from(container.children) as HTMLElement[];
+      const target = directChildren.reverse()[0];
+      if (target) {
+        try {
+          const p_node = document.createElement("p");
+          p_node.setAttribute("data-widget", "locked-widget");
+          p_node.style.width = "100%";
+
+          container.insertBefore(p_node, target);
+          secondP = target;
+
+          const LockedWidget = (
+            await import("$lib/components/widgets/LockedWidget.svelte")
+          ).default;
+          unlockComponent = new LockedWidget({
+            target: p_node,
+            props: {
+              sportstack,
+              article_id: id,
+              tier_id: article.reward_tier_id,
+              grantAccess: () => {
+                accessGranted = true;
+              },
+            },
+          });
+        } catch (error) {
+          console.error("Error inserting locked widget:", error);
+        }
+      }
+      return;
+    }
+
     const widget_targets = container.querySelectorAll("[data-widget-id]");
 
     widget_targets.forEach((target) => {
@@ -184,10 +258,10 @@
           props[propName] = attr.value;
         }
       });
-       const prevElement = target.previousElementSibling as HTMLElement;
-        if (prevElement) {
-          prevElement.style.marginBottom = "0";
-        }
+      const prevElement = target.previousElementSibling as HTMLElement;
+      if (prevElement) {
+        prevElement.style.marginBottom = "0";
+      }
 
       new widget({
         target: target as HTMLElement,
@@ -264,6 +338,21 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'logic' that should run            │
+  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
+  // │ as soon as 'this' .svelte file is ran.                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onDestroy(() => {
+    if (unlockComponent) unlockComponent.$destroy();
+  });
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -285,36 +374,68 @@
     ╰─────
     -->
     <div class="article-title">
+      <div class="sportstack-box">
+        <ListSportsTackItem
+          translations={$page.data.translations}
+          includeAbout={true}
+          user={widgetData.author}
+          size="lg"
+          action_button={true}
+        />
+      </div>
       <h1 class="title">
         {widgetData.article.data?.title ?? ""}
       </h1>
-
-      <a
-        href="/a/user/{author?.usernamePermalink}"
-        class="user-box"
-        class:animate={executeAnimation}
-      >
-        <AvatarLabel
-          size="lg"
-          avatar={author?.profile_photo ?? ""}
-          name={author?.name ?? author?.username ?? ""}
-        >
-          <div slot="label">
-            {timeAgo(
-              widgetData?.article?.published_date,
-              $page.data.translations.time_ago
-            )}
-            •
-            {readingTime(widgetData.article.data?.content)}
+      <div class="user-box-wrapper">
+        {#if accessGranted && access_type === "reward_gated"}
+          <Badge size="sm" color="orange">
+            <CheckCircle />
             <TranslationText
-              key={"uknown"}
-              text={widgetDataTranslation?.translation?.reading_time}
-              fallback={"mins"}
+              text={awards_translations.rewarded_access}
+              fallback="Rewarded Access"
             />
+          </Badge>
+        {/if}
+        <a
+          href="/a/user/{author?.usernamePermalink}"
+          class="user-box"
+          class:animate={executeAnimation}
+        >
+          <AvatarLabel
+            size="lg"
+            avatar={author?.profile_photo ?? ""}
+            name={author?.name ?? author?.username ?? ""}
+          >
+            <div slot="label">
+              {timeAgo(
+                widgetData?.article?.published_date,
+                $page.data.translations.time_ago
+              )}
+              •
+              {readingTime(widgetData.article.data?.content)}
+              <TranslationText
+                key={"uknown"}
+                text={widgetDataTranslation?.translation?.reading_time}
+                fallback={"mins"}
+              />
+            </div>
+          </AvatarLabel>
+        </a>
+        {#if accessGranted && access_type === "reward_gated"}
+          <div class="rewards-info">
+            <Trophy />
+            <div class="rewards-text">
+              <span class="amount">{total_bta_amount} BTA</span>
+              <TranslationText
+                text={awards_translations.earnd_from_unlocks?.replace(
+                  "{count}",
+                  total_reward_unlocks
+                )}
+              />
+            </div>
           </div>
-        </AvatarLabel>
-      </a>
-
+        {/if}
+      </div>
       {#if widgetData.article.tags?.length}
         <div class="tags-wrapper">
           <ScrollDataWrapper data={Array.from(tagMap)} let:item>
@@ -327,27 +448,17 @@
     </div>
   </div>
 
-  <div class="sportstack-box">
-    <ListSportsTackItem
-      translations={$page.data.translations}
-      includeAbout={true}
-      user={widgetData.author}
-      size="lg"
-      action_button={true}
-    />
-  </div>
-
   <!--
   ╭─────
   │ > article text
   ╰─────
   -->
   {#key $userSettings.theme}
-
     <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
-      {@html widgetData.article.data?.content}
+      {#key accessGranted}
+        {@html widgetData.article.data?.content}
+      {/key}
     </div>
-
   {/key}
 </div>
 
@@ -362,6 +473,10 @@
 -->
 
 <style lang="scss">
+  .test-text {
+    color: var(--text-color);
+    font-size: var(--font-size-text-md);
+  }
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -403,6 +518,45 @@
           letter-spacing: -0.96px;
         }
       }
+      .user-box-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        align-self: stretch;
+        :global(.badge svg) {
+          width: 12px;
+          height: 12px;
+          transform: translateY(-1px);
+        }
+
+        .rewards-info {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: var(--spacing-md, 8px);
+          align-self: stretch;
+          color: var(--colors-foreground-fg-brand-primary-600, #fcd5c0);
+
+          .rewards-text {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-1);
+            color: var(--colors-text-text-tertiary_on-brand, #8c8c8c);
+
+            /* Text sm/Medium */
+            font-family: var(--font-family-font-family-body, Roboto);
+            font-size: var(--font-size-text-sm, 14px);
+            font-style: normal;
+            font-weight: 500;
+            line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+
+            .amount {
+              color: var(--colors-text-text-primary_on-brand, #f5620f);
+            }
+          }
+        }
+      }
       .user-box {
         :global(.avatar-wrapper) {
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -431,15 +585,29 @@
       width: 100%;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      border-radius: 12px;
+      border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+      background: var(--colors-background-bg-primary_alt, #232323);
+      height: 80px;
 
       :global(.list-item) {
-        padding: 0;
+        display: flex;
+        height: 52px;
+        padding: 16px var(--spacing-lg, 12px);
+        justify-content: center;
+        align-items: center;
+        gap: 29px;
         border: none;
-        width: 100%;
+        flex: 1 0 0;
+      }
+      :global(.list-item .user-info) {
+        align-items: center;
       }
     }
 
     #content {
+      position: relative;
       // ▓ IMPORTANT
       :global {
         color: var(--colors-text-text-primary-900, #fff);
@@ -586,6 +754,20 @@
             all: unset;
           }
         }
+      }
+
+      .blur-content {
+        position: absolute;
+        bottom: 0;
+        left: -10px;
+        right: -10px;
+        top: 0;
+        z-index: 1;
+        background: var(
+          --component-colors-alpha-alpha-white-10,
+          rgba(12, 14, 18, 0.1)
+        );
+        backdrop-filter: blur(5px);
       }
     }
 

@@ -130,11 +130,11 @@
 {#if objConfig.isSeoBoxEnabled}
   <SeoBox>
     <h1>
-      {widgetDataMain?.article.data.title}
+      {widgetDataMain?.article.data?.title}
     </h1>
-    {@html widgetDataMain?.article.data.content}
+    {@html widgetDataMain?.article.data?.content}
     <a
-      href="/a/sportstack/{mutateStringToPermalink(widgetDataMain?.author.data?.username)}"
+      href="/a/sportstack/{mutateStringToPermalink(widgetDataMain?.author.data?.username || "")}"
     >
       {widgetDataMain?.author.data?.username}
     </a>

@@ -51,14 +51,14 @@ export async function getUserById
       true
     );
 
-  const { success } = await BetarenaUserHelper.obtainPublicInformationTargetUsers({
+  const res = await BetarenaUserHelper.obtainPublicInformationTargetUsers({
     query: {},
     body: {
       user_uids: uid
     }
   });
-  if (!success) return [];
-  return success.data
+  if (!res?.success) return [];
+  return res.success.data
 }
 /**
  * @author

@@ -50,7 +50,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   {
     if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
     const body = await request.json();
-    const { content, title, author_id, id, seo, tags, uid, locale } = body;
+    const { content, title, author_id, id, seo, tags, uid, locale, access_type, reward_tier_id } = body;
     const image = (body.image || {}) as { src: string; width: number; height: number };
     if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
 
@@ -95,7 +95,9 @@ export const POST: RequestHandler = async ({ request, locals }) =>
         title,
         meta_description: seoDescription,
         seo_title: seoTitle,
-      }
+      },
+      access_type,
+      reward_tier_id
     });
     return json({ success: true, id: articleId });
 

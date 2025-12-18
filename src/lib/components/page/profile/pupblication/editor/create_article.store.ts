@@ -6,6 +6,8 @@ interface ICreateArticleStore
     title: string,
     description: string,
   },
+  access: "free" | "reward_gated",
+  reward_tier_id?: number,
   view: "editor" | "preview",
   detectedLang?: {
     lang: string,
@@ -21,6 +23,8 @@ function articleStore()
       title: "",
       description: "",
     },
+    reward_tier_id: 1,
+    access: "free",
     view: "editor" as "editor" | "preview",
   }
 
@@ -28,7 +32,7 @@ function articleStore()
 
   subscribe((newState) =>
   {
-    state = { tags: newState.tags, seo: newState.seo, view: newState.view, detectedLang: newState.detectedLang };
+    state = {access: newState.access, reward_tier_id: newState.reward_tier_id, tags: newState.tags, seo: newState.seo, view: newState.view, detectedLang: newState.detectedLang };
   })
 
   return {

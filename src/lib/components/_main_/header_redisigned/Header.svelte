@@ -146,8 +146,8 @@
   {/if}
 
   <div class="actions">
-    {#if viewportType === "desktop" && ![routeIdSearch, routeIdPageAuthors].includes( $page.route.id || "")}
-       <HeaderSearch />
+    {#if viewportType === "desktop" && ![routeIdSearch, routeIdPageAuthors].includes($page.route.id || "")}
+      <HeaderSearch />
     {/if}
     <HeaderCLang />
     <HeaderCTheme />

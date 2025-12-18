@@ -23,19 +23,21 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import Badge from "$lib/components/ui/Badge.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
+  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
+  import User1 from "$lib/components/ui/assets/user-1.svelte";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { createEventDispatcher } from "svelte";
   import { cubicIn, cubicOut } from "svelte/easing";
   import { fly, scale } from "svelte/transition";
   import { create_article_store } from "./create_article.store.js";
-  import session from "$lib/store/session.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import Badge from "$lib/components/ui/Badge.svelte";
-  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
-  import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
-  import { modalStore } from "$lib/store/modal.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -60,7 +62,7 @@
 
   const dispatch = createEventDispatcher();
 
-  $: ({ seo, tags } = $create_article_store);
+  $: ({ seo, tags, access } = $create_article_store);
   $: ({ viewportType } = $session);
   let hoverItem = "";
 
@@ -115,6 +117,39 @@
   in:chooseTransition={{ easing: cubicOut }}
   out:chooseTransition={{ easing: cubicIn, out: true }}
 >
+  <div class="option-wrapper" class:hover={hoverItem === "audience"}
+    on:mouseleave={() => mouseleave()}
+    on:mouseenter={() => mouseenter("audience")} on:click={() => changeView("audience")}>
+    <FeaturedIcon color={hoverItem === "audience" ? "brand" : "gray"} size="md" type="modern">
+      <User1 />
+    </FeaturedIcon>
+    <div class="info">
+      <h3>
+        <TranslationText text={translations?.audience} fallback="audience" />
+      </h3>
+      <div class="info-message">
+        <TranslationText
+          text={translations?.[access === "free" ? "free_access" : "reward_gated_access" ]}
+          fallback={access === "free" ? "free_access" : "reward_gated_access" }
+        />
+      </div>
+    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="21"
+      height="20"
+      viewBox="0 0 21 20"
+      fill="none"
+    >
+      <path
+        d="M8.35254 15L13.4115 10L8.35254 5"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
   <div
     class="option-wrapper"
     class:hover={hoverItem === "tags"}
@@ -122,11 +157,7 @@
     on:mouseenter={() => mouseenter("tags")}
     on:click={() => changeView("tags")}
   >
-    <FeaturedIcon
-      color={hoverItem === "tags" ? "brand" : "gray"}
-      size="md"
-      type="modern"
-    >
+    <FeaturedIcon color={hoverItem === "tags" ? "brand" : "gray"} size="md" type="modern">
       <Tag2 />
     </FeaturedIcon>
     <div class="info">
@@ -171,11 +202,7 @@
     on:mouseenter={() => mouseenter("seo")}
     on:click={() => changeView("seo")}
   >
-    <FeaturedIcon
-      color={hoverItem === "seo" ? "brand" : "gray"}
-      size="md"
-      type="modern"
-    >
+   <FeaturedIcon color={hoverItem === "seo" ? "brand" : "gray"} size="md" type="modern">
       <FileSearch3 />
     </FeaturedIcon>
     <div class="info">

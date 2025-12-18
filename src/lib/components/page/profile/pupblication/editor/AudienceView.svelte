@@ -23,12 +23,20 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { page } from "$app/stores";
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
   import Button from "$lib/components/ui/Button.svelte";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import RadioGroupItem from "$lib/components/ui/RadioGroupItem.svelte";
+  import Coins02 from "$lib/components/ui/assets/coins-02.svelte";
+  import Lock from "$lib/components/ui/assets/lock.svelte";
+  import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import XClose from "$lib/components/ui/infomessages/x-close.svelte";
-  import Input from "$lib/components/ui/Input.svelte";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import session from "$lib/store/session.js";
+  import { getRates } from "$lib/utils/web3.js";
   import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
+  import type { BtaRewardTiersMain } from "@betarena/scores-lib/types/v8/_HASURA-1_.js";
   import { createEventDispatcher, onMount } from "svelte";
   import { create_article_store } from "./create_article.store.js";
 
@@ -53,27 +61,53 @@
     | undefined;
 
   const dispatch = createEventDispatcher();
+  let rewardsButtons: BtaRewardTiersMain[] = [];
 
-  let description = "";
-  let title = "";
-
-  $: ({ viewportType } = $session);
-  $: ({ seo, detectedLang } = $create_article_store);
+  $: ({ viewportType, btaUsdRate } = $session);
+  $: ({ access, reward_tier_id } = $create_article_store);
+  $: ({rewards_tiers: rewardsButtons} = $page.data);
 
   $: radioButtons = [
     {
-      id: "pt_PT",
-      value: "pt",
-      label: translations?.pt || "Portuguese Portugal",
+      id: "free",
+      text_fallback: "free_access",
+      label: translations?.free_access,
+      description: translations?.free_access_description,
+      description_fallback: "free_access_description",
+      selected: access === "free",
+      icon: Lock,
     },
     {
-      id: "pt_BR",
-      value: "br",
-      label: translations?.["pt-br"] || "Portuguese Brazil",
+      id: "reward_gated",
+      text_fallback: "reward_gated_access",
+      label: translations?.reward_gated_access,
+      description: translations?.reward_gated_access_description,
+      description_fallback: "reward_gated_access_description",
+      selected: access === "reward_gated",
+      icon: Trophy,
     },
   ];
 
   // #endregion ➤ 📌 VARIABLES
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * .
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `` - **kicker**
+   */
+
+  $: if (access === "reward_gated" && reward_tier_id) {
+    setDefaultTier()
+  }
 
   // #region ➤ 🛠️ METHODS
 
@@ -86,21 +120,15 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
   function goBack() {
     dispatch("changeView", "preview");
   }
 
-  function save() {
-    $create_article_store.seo = { title, description };
-    goBack();
-  }
-
-  function checkRadio(radio) {
-    $create_article_store.detectedLang = {
-      lang: radio.value,
-      iso: radio.id,
-    };
+  function setDefaultTier() {
+  const defaultTier = rewardsButtons[0];
+    if (defaultTier) {
+      $create_article_store.reward_tier_id = defaultTier.id;
+    }
   }
   // #endregion ➤ 🛠️ METHODS
 
@@ -114,8 +142,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    title = seo.title || "";
-    description = seo.description || "";
+    getRates(session);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -139,7 +166,12 @@
         <Container>
           <div class="header-info">
             <div class="title-wrapper">
-              <h2>{translations?.seo || "SEO"}</h2>
+              <h2>
+                <TranslationText
+                  text={translations?.set_access_conditions}
+                  fallback="set_access_conditions"
+                />
+              </h2>
               {#if viewportType !== "mobile"}
                 <div class="close" on:click={goBack}>
                   <XClose />
@@ -147,53 +179,96 @@
               {/if}
             </div>
             <div class="info-desc">
-              {translations?.seo_changes ||
-                `The changes made in the SEO details will affect how the article
-              appears in public laces like Betarena homepage and in subscribers’
-              inboxes — not the contents of the story itself.`}
+              <TranslationText
+                text={translations?.audience_description}
+                fallback="audience_description"
+              />
             </div>
           </div>
         </Container>
       </div>
       <div class="form-wrapper">
-        <Input
-          bind:value={title}
-          placeholder={translations?.title || "Default title"}
-          label={translations?.title || "SEO title"}
-        />
-        <Input
-          inputType="textarea"
-          height="176px"
-          bind:value={description}
-          placeholder={translations?.description_place_holder || "Description"}
-          label={translations?.seo_descriptions || "SEO description"}
-        />
-
-        {#if ["pt", "br"].includes(detectedLang?.lang || "")}
-          <div class="confirm-lang-box">
-            <span
-              >{translations?.lang_preference ||
-                "Confirm the article language:"}
-            </span>
-            <div class="checkboxes-wrapper">
-              {#each radioButtons as radio}
-                <div
-                  class="radio-button-wrapper"
-                  class:active={$create_article_store.detectedLang?.iso ===
-                    radio.id}
-                  on:click={() => checkRadio(radio)}
-                >
-                  <div
-                    class="radio-input"
-                    class:active={$create_article_store.detectedLang?.iso ===
-                      radio.id}
-                  >
-                    <div class="input-inset" />
-                  </div>
-                  <div class="radio-label">{radio.label}</div>
-                </div>
-              {/each}
+        <span>
+          <TranslationText
+            text={translations?.access_type}
+            fallback="access_type"
+          />
+        </span>
+        {#each radioButtons as radio}
+          <RadioGroupItem
+            clickHandler={true}
+            full={true}
+            selected={radio.id === access}
+            on:click={() => { $create_article_store.access = radio.id }}
+            controlType="radio"
+          >
+            <svelte:fragment slot="icon">
+              <FeaturedIcon type="gradient" size="md"
+                ><svelte:component this={radio.icon} /></FeaturedIcon
+              >
+            </svelte:fragment>
+            <div class="radio-text-wrapper" slot="content">
+              <span class="title">
+                <TranslationText
+                  text={radio.label}
+                  fallback={radio.text_fallback}
+                />
+              </span>
+              <span class="description">
+                <TranslationText
+                  text={radio.description}
+                  fallback={radio.description_fallback}
+                />
+              </span>
             </div>
+          </RadioGroupItem>
+        {/each}
+        {#if access === "reward_gated"}
+          <div class="access-amount-text">
+            <span class="title">
+              <TranslationText
+                text={translations?.select_rewards_amount}
+                fallback="select_rewards_amount"
+              />
+            </span>
+            <span class="supporting-text">
+              <TranslationText
+                text={translations?.select_rewards_amount_description}
+                fallback="select_rewards_amount_description"
+              />
+            </span>
+          </div>
+
+          {#each rewardsButtons as radio}
+            {#if radio.usd_value}
+              <RadioGroupItem
+                full={true}
+                clickHandler={true}
+                selected={reward_tier_id === radio.id}
+                on:click={() => { $create_article_store.reward_tier_id = radio.id }}
+                controlType="radio"
+              >
+                <svelte:fragment slot="icon">
+                  <FeaturedIcon color="gray" type="gradient"
+                    ><Coins02 /></FeaturedIcon
+                  >
+                </svelte:fragment>
+                <div class="radio-text-wrapper" slot="content">
+                  <span class="title">
+                    {(radio.usd_value / btaUsdRate).toFixed(5)} BTA
+                  </span>
+                  <span class="description">
+                    ≈ ${radio.usd_value.toFixed(2)}
+                  </span>
+                </div>
+              </RadioGroupItem>
+            {/if}
+          {/each}
+          <div class="rewards-distribution">
+            <TranslationText
+              text={translations?.rewards_distribution}
+              fallback="rewards_distribution"
+            />
           </div>
         {/if}
       </div>
@@ -203,7 +278,7 @@
         <Button full={true} type="secondary" on:click={goBack}
           >{translations?.go_back || "Go Back"}</Button
         >
-        <Button full={true} on:click={save}
+        <Button full={true} on:click={goBack}
           >{translations?.save || "Save"}</Button
         >
       </div>
@@ -228,9 +303,11 @@
     top: 0;
     display: flex;
     flex-direction: column;
-    height: 100dvh;
-    max-height: 100dvh;
-    padding-bottom: 34px;
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
+
+    overflow-y: auto;
 
     .header {
       display: flex;
@@ -242,7 +319,9 @@
     }
 
     .content-wrapper {
+      flex-shrink: 0;
       display: flex;
+      width: 100%;
       padding-bottom: var(--spacing-lg, 12px);
       flex-direction: column;
       align-items: center;
@@ -250,8 +329,10 @@
       flex-grow: 1;
       min-height: 0;
       align-self: stretch;
+      padding-bottom: 34px;
 
       .content {
+        width: 100%;
         display: flex;
         flex-direction: column;
         gap: var(--spacing-xl, 16px);
@@ -260,8 +341,8 @@
 
         .content-header-border {
           .header-info {
-            display: flex;
             padding-top: var(--spacing-2xl, 20px);
+            display: flex;
             flex-direction: column;
             align-self: stretch;
             gap: var(--spacing-xs, 4px);
@@ -300,79 +381,86 @@
           flex: 1 0 0;
           align-self: stretch;
 
-          .confirm-lang-box {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          gap: var(--spacing-xl, 16px);
+          color: var(--colors-text-text-secondary-700, #d2d2d2);
+
+          /* Text sm/Medium */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 500;
+          line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+          .radio-text-wrapper {
             display: flex;
             flex-direction: column;
-            width: 100%;
-            gap: var(--spacing-xl, 16px);
-            color: var(--colors-text-text-secondary-700, #d2d2d2);
+            align-items: flex-start;
+            gap: var(--spacing-xxs, 2px);
+            flex: 1 0 0;
 
-            /* Text sm/Medium */
+            .title {
+              color: var(--colors-text-text-secondary-700, #fbfbfb);
+
+              /* Text md/Medium */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-sm, 14px);
+              font-style: normal;
+              font-weight: 500;
+              line-height: var(--line-height-text-sm, 20px);
+            }
+            .description {
+              color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+              /* Text md/Regular */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-sm, 14px);
+              font-style: normal;
+              font-weight: 400;
+              line-height: var(--line-height-text-sm, 20px);
+            }
+          }
+
+          .access-amount-text {
+            display: flex;
+            padding: 0 var(--spacing-none, 0);
+            flex-direction: column;
+            align-items: start;
+            gap: var(--spacing-md, 8px);
+            align-self: stretch;
+
+            .title {
+              color: var(--colors-text-text-primary-900, #fbfbfb);
+
+              /* Text sm/Medium */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-sm, 14px);
+              font-style: normal;
+              font-weight: 500;
+              line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+            }
+            .supporting-text {
+              color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+              /* Text sm/Regular */
+              font-family: var(--font-family-font-family-body, Roboto);
+              font-size: var(--font-size-text-sm, 14px);
+              font-style: normal;
+              font-weight: 400;
+              line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+            }
+          }
+          .rewards-distribution {
+            color: var(--colors-text-text-secondary-700, #fbfbfb);
+            text-align: center;
+            align-self: stretch;
+            /* Text sm/Regular */
             font-family: var(--font-family-font-family-body, Roboto);
             font-size: var(--font-size-text-sm, 14px);
             font-style: normal;
-            font-weight: 500;
+            font-weight: 400;
             line-height: var(--line-height-text-sm, 20px); /* 142.857% */
-
-            .checkboxes-wrapper {
-              display: flex;
-              flex-direction: column;
-              gap: var(--spacing-xl, 16px);
-              width: 100%;
-
-              .radio-button-wrapper {
-                cursor: pointer;
-                display: flex;
-                width: 100%;
-                height: 52px;
-                padding: var(--spacing-xl, 16px);
-                align-items: flex-start;
-                align-self: stretch;
-                display: flex;
-                align-items: flex-start;
-                gap: var(--spacing-lg, 12px);
-                flex: 1 0 0;
-                border-radius: var(--radius-xl, 12px);
-                border-radius: var(--radius-xl, 12px);
-                border: 1px solid var(--colors-border-border-secondary, #3b3b3b);
-                background: var(--colors-background-bg-primary, #1f1f1f);
-                .radio-input {
-                  display: flex;
-                  width: 16px;
-                  height: 16px;
-                  padding: 5px;
-                  flex-shrink: 0;
-                  justify-content: center;
-                  align-items: center;
-                  border-radius: var(--radius-full, 9999px);
-                  border: 1px solid var(--colors-border-border-primary, #6a6a6a);
-
-                  .input-inset {
-                    width: 6px;
-                    height: 6px;
-                    flex-shrink: 0;
-                    background-color: inherit;
-                    border-radius: var(--radius-full, 9999px);
-                  }
-                  &.active {
-                    background: var(
-                      --colors-background-bg-brand-solid,
-                      #f5620f
-                    );
-                    border: 1px solid
-                      var(--colors-background-bg-brand-solid, #6a6a6a);
-
-                    .input-inset {
-                      background: var(--colors-foreground-fg-white, #fff);
-                    }
-                  }
-                }
-
-                &.active {
-                  border: 2px solid var(--colors-border-border-brand, #f5620f);
-                }
-              }
-            }
           }
         }
       }
@@ -400,6 +488,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       height: auto;
+      min-height: 0;
       padding-bottom: 0;
       border-radius: var(--radius-xl, 12px);
 
@@ -452,8 +541,12 @@
             }
           }
           .form-wrapper {
-            .confirm-lang-box .checkboxes-wrapper .radio-button-wrapper {
-              height: 56px;
+            .radio-text-wrapper {
+              .title,
+              .description {
+                font-size: var(--font-size-text-md, 16px);
+                line-height: var(--line-height-text-md, 24px);
+              }
             }
           }
         }

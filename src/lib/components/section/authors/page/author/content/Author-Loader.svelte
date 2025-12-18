@@ -22,7 +22,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -87,11 +86,24 @@
     │ > article title
     ╰─────
     -->
+    <div class="sportstack-box">
+      <ListSportsTackLoader size="lg" action_button={true} />
+    </div>
+
     <div class="article-title">
       <div class="title">
-        <LoaderLine width="70%" height={viewportType === "mobile" ? "25px" : "32px"} />
-        <LoaderLine width="100%" height={viewportType === "mobile" ? "25px" : "32px"} />
-        <LoaderLine width="80%" height={viewportType === "mobile" ? "25px" : "32px"} />
+        <LoaderLine
+          width="70%"
+          height={viewportType === "mobile" ? "25px" : "32px"}
+        />
+        <LoaderLine
+          width="100%"
+          height={viewportType === "mobile" ? "25px" : "32px"}
+        />
+        <LoaderLine
+          width="80%"
+          height={viewportType === "mobile" ? "25px" : "32px"}
+        />
       </div>
 
       <div class="user-box">
@@ -106,10 +118,6 @@
     </div>
   </div>
 
-  <div class="sportstack-box">
-    <ListSportsTackLoader size="lg" action_button={true} />
-  </div>
-
   <!--
   ╭─────
   │ > article text
@@ -121,9 +129,9 @@
       <div class="section">
         {#each ["30%", "90%", "95%", "80%", "100%", "85%", "90%", "70%", "10%"] as item, index}
           {#if !index}
-          <div class="h">
-            <LoaderLine width={item} height={"25px"} />
-          </div>
+            <div class="h">
+              <LoaderLine width={item} height={"25px"} />
+            </div>
           {:else}
             <LoaderLine width={item} height={"16px"} />
           {/if}
@@ -132,9 +140,9 @@
       <div class="section">
         {#each ["30%", "90%", "95%", "80%", "100%", "85%", "90%", "70%", "10%"] as item, index}
           {#if !index}
-          <div class="h">
-            <LoaderLine width={item} height={"25px"} />
-          </div>
+            <div class="h">
+              <LoaderLine width={item} height={"25px"} />
+            </div>
           {:else}
             <LoaderLine width={item} height={"16px"} />
           {/if}
@@ -213,7 +221,7 @@
       gap: 16px;
       margin-top: 30px;
 
-      .h{
+      .h {
         margin-top: 32px;
         margin-bottom: 16px;
       }
