@@ -25,8 +25,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import WrapperDynamicImport from "$lib/components/misc/WrapperDynamicImport.svelte";
   import session from "$lib/store/session";
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy } from "svelte";
   import { depositStore } from "./deposit-store";
   // #endregion ➤ 📦 Package Imports
 
@@ -43,7 +44,6 @@
   // │ 3. let [..]                                                            │
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  let LottieComponent;
 
   $: ({ deposit_translations = {} } = $page.data);
   $: ({ viewportType } = $session);
@@ -57,12 +57,6 @@
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
-  onMount(() => {
-    import("$lib/components/ui/WrapperLottie.svelte").then((module) => {
-      LottieComponent = module.default;
-    });
-  });
 
   onDestroy(() => {
     $depositStore.revolut = {};
@@ -85,9 +79,7 @@
 <div class="deposit-confirmation-wrapper {viewportType}">
   <div class="header">
     <div class="animation">
-      {#if LottieComponent}
-          <LottieComponent  url="/assets/lottie/Failed.lottie" loop autoplay/>
-        {/if}
+      <WrapperDynamicImport importComponentPath="DotLottie" url="/assets/lottie/Failed.lottie" loop autoplay/>
     </div>
     <div class="title">
       <TranslationText

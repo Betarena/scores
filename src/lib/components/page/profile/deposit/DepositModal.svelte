@@ -33,6 +33,7 @@
   import { modalStore } from "$lib/store/modal";
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
+  import { getRates } from "$lib/utils/web3.js";
   import { onMount } from "svelte";
   import { depositStore } from "./deposit-store";
   import DepositAmount from "./DepositAmount.svelte";
@@ -41,7 +42,6 @@
   import DepositOptions from "./DepositOptions.svelte";
   import DepositRevolut from "./DepositRevolut.svelte";
   import DepositSuccess from "./DepositSuccess.svelte";
-  import { getRates } from "$lib/utils/web3.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -267,6 +267,9 @@
         depositStore
       ).unsubscribe;
     }
+
+    // Preload Lottie library to prevent animation rendering delays
+    import("$lib/components/misc/WrapperLottie.svelte");
 
     return () => {
       document.body.classList.remove("disable-scroll");

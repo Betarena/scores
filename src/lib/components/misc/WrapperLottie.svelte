@@ -13,11 +13,13 @@
     DotLottieSvelte,
   } from "@lottiefiles/dotlottie-svelte";
   export let dotLottie: DotLottie | null = null;
-  export let url: string | null = null;
+  export let url: string;
 </script>
 
-<DotLottieSvelte
-  dotLottieRefCallback={(ref) => (dotLottie = ref)}
-  src={url}
-  {...$$restProps}
-/>
+{#if url}
+  <DotLottieSvelte
+    dotLottieRefCallback={(ref) => (dotLottie = ref)}
+    src={url}
+    {...$$restProps}
+  />
+{/if}

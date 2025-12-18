@@ -27,6 +27,7 @@
   import { page } from "$app/stores";
   import { get } from "$lib/api/utils";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import WrapperDynamicImport from "$lib/components/misc/WrapperDynamicImport.svelte";
   import AlertCircle from "$lib/components/ui/assets/alert-circle.svelte";
   import bta_icon from "$lib/components/ui/assets/bta_icon.png";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
@@ -90,6 +91,7 @@
     user && $walletStore.loaded && $walletStore.spending.available < amountBta;
   
   let loading = false;
+  let success = false;
   let step: "info" | "confirm" = "info";
   // #endregion ➤ 📌 VARIABLES
 
@@ -144,6 +146,7 @@
       return (step = "confirm");
     }
     loading = true;
+     import("$lib/components/misc/WrapperLottie.svelte");
     const response = await BetarenaUserHelper.pingArticleUnlockCreate({
       query: {},
       body: {
@@ -153,7 +156,7 @@
     });
 
     if (response?.success) {
-      LottieComponent = (await import("$lib/components/ui/WrapperLottie.svelte")).default;
+      success = true;
       await tick();
       setTimeout(() => {
         finishReward();
@@ -170,9 +173,8 @@
     }
   }
 
-  async function finishReward(params:type) {
+  async function finishReward() {
       loading = false;
-      if (dotLottie) dotLottie.play();
       infoMessages.add({
         type: "awards",
         title:
@@ -470,8 +472,8 @@
            </div>
          {:else}
            <div class="confetti">
-             {#if LottieComponent}
-               <LottieComponent bind:dotLottie  url="/assets/lottie/Confetti.lottie"/>
+             {#if step === "confirm" && success}
+             <WrapperDynamicImport autoplay importComponentPath="DotLottie" url="/assets/lottie/Confetti.lottie" />    
              {/if}
            </div>
            {#if loading}

@@ -24,9 +24,9 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import WrapperDynamicImport from "$lib/components/misc/WrapperDynamicImport.svelte";
   import StepBase from "$lib/components/ui/StepBase.svelte";
   import { depositStore } from "./deposit-store";
-  import { onMount } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -89,23 +89,6 @@
 
   // #endregion ➤ 🛠️ METHODS
 
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-  
-  // ╭────────────────────────────────────────────────────────────────────────╮
-  // │ NOTE:                                                                  │
-  // │ Please add inside 'this' region the 'logic' that should run            │
-  // │ immediately and as part of the 'lifecycle' of svelteJs,                │
-  // │ as soon as 'this' .svelte file is ran.                                 │
-  // ╰────────────────────────────────────────────────────────────────────────╯
-  
-    onMount(() => {
-      import("$lib/components/ui/WrapperLottie.svelte").then(module => {
-        LottieComponent = module.default;
-      });
-    })
-  
-  
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
 <!--
@@ -122,9 +105,7 @@
 <div class="deposit-confirmation-wrapper">
   <div class="header">
     <div class="animation">
-        {#if LottieComponent}
-          <LottieComponent  url="/assets/lottie/Waiting.lottie" loop autoplay/>
-        {/if}
+      <WrapperDynamicImport importComponentPath="DotLottie" url="/assets/lottie/Waiting.lottie" loop autoplay/>
     </div>
     <div class="title"> <TranslationText fallback="Transaction in Progress" text={deposit_translations.transaction_in_progress} /></div>
   </div>
