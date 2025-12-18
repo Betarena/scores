@@ -105,11 +105,8 @@
    * - `` - **kicker**
    */
 
-  $: if ($create_article_store.access === "reward_gated" && !$create_article_store.reward_tier_id) {
-    const defaultTier = rewardsButtons[0];
-    if (defaultTier) {
-      $create_article_store.reward_tier_id = defaultTier.id;
-    }
+  $: if (access === "reward_gated" && reward_tier_id) {
+    setDefaultTier()
   }
 
   // #region ➤ 🛠️ METHODS
@@ -127,6 +124,12 @@
     dispatch("changeView", "preview");
   }
 
+  function setDefaultTier() {
+  const defaultTier = rewardsButtons[0];
+    if (defaultTier) {
+      $create_article_store.reward_tier_id = defaultTier.id;
+    }
+  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
