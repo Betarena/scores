@@ -3,7 +3,6 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	import { access } from 'fs';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -24,21 +23,21 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
+  import Badge from "$lib/components/ui/Badge.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
+  import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
+  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
+  import User1 from "$lib/components/ui/assets/user-1.svelte";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import { modalStore } from "$lib/store/modal.js";
+  import session from "$lib/store/session.js";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { createEventDispatcher } from "svelte";
   import { cubicIn, cubicOut } from "svelte/easing";
   import { fly, scale } from "svelte/transition";
   import { create_article_store } from "./create_article.store.js";
-  import session from "$lib/store/session.js";
-  import Button from "$lib/components/ui/Button.svelte";
-  import Badge from "$lib/components/ui/Badge.svelte";
-  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
-  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
-  import FeaturedIcon from "$lib/components/ui/FeaturedIcon.svelte";
-  import User1 from "$lib/components/ui/assets/user-1.svelte";
-  import FileSearch3 from "$lib/components/ui/assets/file-search3.svelte";
-  import { modalStore } from "$lib/store/modal.js";
-  import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import Tag2 from "$lib/components/ui/assets/tag2.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
