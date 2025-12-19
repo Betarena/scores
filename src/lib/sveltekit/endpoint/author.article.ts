@@ -252,6 +252,67 @@ export function removeContentAfterTarget(htmlContent: string): string {
  *  📤 True if the request is from a bot, otherwise false.
  */
 function isRequestFromBot(userAgent: string): boolean {
-  const botPattern = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|mj12bot|semrushbot|ahrefsbot|rogerbot|dotbot/i;
+  if (!userAgent) return false;
+
+  const botPattern = new RegExp(
+    [
+      // --- AI & LLM Crawlers ---
+      'gptbot',
+      'chatgpt',
+      'oai-searchbot',
+      'claudebot',
+      'anthropic',
+      'google-extended',
+      'ccbot',             // Common Crawl
+      'perplexity',
+      'cohere',            // Cohere AI
+      'bytespider',        // ByteDance/TikTok AI
+      'diffbot',
+      'facebookbot',       // Meta AI crawler
+      'applebot-extended', // Apple AI training
+      'timpibot',
+
+      // --- Search Engines (Classic) ---
+      'google-inspectiontool',
+      'googlebot',
+      'bingbot',
+      'yandex',            // YandexBot, YandexAccessibilityBot, etc.
+      'duckduckbot',
+      'baiduspider',
+      'sogou',
+      'exabot',
+      'slurp',             // Yahoo
+
+      // --- SEO & Analytics Tools ---
+      'mj12bot',           // Majestic
+      'ahrefsbot',
+      'semrushbot',
+      'dotbot',            // Moz
+      'rogerbot',          // Moz
+      'screaming frog',
+      'serpstatbot',
+
+      // --- Social Media & Previews ---
+      'twitterbot',
+      'discordbot',
+      'telegrambot',
+      'whatsapp',
+      'linkedinbot',
+      'pinterest',
+      'slackbot',
+      'vkshare',
+
+      // --- Generic / Libraries  ---
+      'python-requests',
+      'aiohttp',
+      'httpx',
+      'libwww-perl',
+      'http_client',
+      'curl',
+      'wget'
+    ].join('|'),
+    'i' // case-insensitive
+  );
+
   return botPattern.test(userAgent);
 }
