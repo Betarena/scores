@@ -23,6 +23,7 @@ import { json, type RequestEvent } from "@sveltejs/kit";
 
 import { postv2 } from "$lib/api/utils.js";
 import { API_DATA_ERROR_RESPONSE } from "$lib/utils/debug.js";
+import { isRequestFromBot } from "$lib/utils/device";
 import {
   entryAuthorArticleTranslation,
   entryAuthorArticleViewsIncrement,
@@ -237,82 +238,4 @@ export function removeContentAfterTarget(htmlContent: string): string {
     console.error("Error in removeContentAfterTarget: ", e);
     return htmlContent;
   }
-}
-
-/**
- * @author
- *  @izobov
- * @summary
- *  🟥 HELPER
- * @description
- *  📝 Identify if the request is from a bot based on the user agent string.
- * @param { string } userAgent
- *  💠 **[required]** User agent string.
- * @returns { boolean }
- *  📤 True if the request is from a bot, otherwise false.
- */
-function isRequestFromBot(userAgent: string): boolean {
-  if (!userAgent) return false;
-
-  const botPattern = new RegExp(
-    [
-      // --- AI & LLM Crawlers ---
-      'gptbot',
-      'chatgpt',
-      'oai-searchbot',
-      'claudebot',
-      'anthropic',
-      'google-extended',
-      'ccbot',             // Common Crawl
-      'perplexity',
-      'cohere',            // Cohere AI
-      'bytespider',        // ByteDance/TikTok AI
-      'diffbot',
-      'facebookbot',       // Meta AI crawler
-      'applebot-extended', // Apple AI training
-      'timpibot',
-
-      // --- Search Engines (Classic) ---
-      'google-inspectiontool',
-      'googlebot',
-      'bingbot',
-      'yandex',            // YandexBot, YandexAccessibilityBot, etc.
-      'duckduckbot',
-      'baiduspider',
-      'sogou',
-      'exabot',
-      'slurp',             // Yahoo
-
-      // --- SEO & Analytics Tools ---
-      'mj12bot',           // Majestic
-      'ahrefsbot',
-      'semrushbot',
-      'dotbot',            // Moz
-      'rogerbot',          // Moz
-      'screaming frog',
-      'serpstatbot',
-
-      // --- Social Media & Previews ---
-      'twitterbot',
-      'discordbot',
-      'telegrambot',
-      'whatsapp',
-      'linkedinbot',
-      'pinterest',
-      'slackbot',
-      'vkshare',
-
-      // --- Generic / Libraries  ---
-      'python-requests',
-      'aiohttp',
-      'httpx',
-      'libwww-perl',
-      'http_client',
-      'curl',
-      'wget'
-    ].join('|'),
-    'i' // case-insensitive
-  );
-
-  return botPattern.test(userAgent);
 }
