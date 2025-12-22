@@ -907,7 +907,7 @@
               id="user-profile-picture"
               data-testid="{CNAME}/user-avatar"
               loading="lazy"
-              src={profile_photo != undefined ? getOptimizedImageUrl({ strImageUrl: profile_photo }) : dynamicAssetMap.get("profile_avatar")}
+              src={profile_photo != undefined ? getOptimizedImageUrl({ strImageUrl: profile_photo, intWidth: 48 }) : dynamicAssetMap.get("profile_avatar")}
               alt="profile_avatar"
               title="Profile Picture"
               on:click={() => {

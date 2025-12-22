@@ -149,7 +149,7 @@
   </div>
   {#if images[0]?.url}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url })} alt={images[0].alt} srcset="" />
+      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url, intWidth: 360 })} alt={images[0].alt} srcset="" />
     </a>
   {/if}
 </div>
