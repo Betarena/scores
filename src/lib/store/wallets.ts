@@ -1,4 +1,4 @@
-import { db_firestore } from "$lib/firebase/init";
+import { auth, db_firestore } from "$lib/firebase/init";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { type Writable, writable } from "svelte/store";
 
@@ -29,6 +29,8 @@ const walletStore: Writable<WalletStoreData> = writable({
 let unsub: () => void;
 async function initWalletStore(uid: string) {
   if (unsub) unsub();
+  console.log("USER_UID: ", uid);
+  console.log("AUTH CURRENT USER UID: ",  auth.currentUser?.uid);
   const ref = doc(db_firestore, "betarena_users", uid);
   const snap = await getDoc(ref);
   const user_data = snap.data() ?? {};
