@@ -23,6 +23,7 @@ import { json, type RequestEvent } from "@sveltejs/kit";
 
 import { postv2 } from "$lib/api/utils.js";
 import { API_DATA_ERROR_RESPONSE } from "$lib/utils/debug.js";
+import { isRequestFromBot } from "$lib/utils/device";
 import {
   entryAuthorArticleTranslation,
   entryAuthorArticleViewsIncrement,
@@ -237,21 +238,4 @@ export function removeContentAfterTarget(htmlContent: string): string {
     console.error("Error in removeContentAfterTarget: ", e);
     return htmlContent;
   }
-}
-
-/**
- * @author
- *  @izobov
- * @summary
- *  🟥 HELPER
- * @description
- *  📝 Identify if the request is from a bot based on the user agent string.
- * @param { string } userAgent
- *  💠 **[required]** User agent string.
- * @returns { boolean }
- *  📤 True if the request is from a bot, otherwise false.
- */
-function isRequestFromBot(userAgent: string): boolean {
-  const botPattern = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|mj12bot|semrushbot|ahrefsbot|rogerbot|dotbot/i;
-  return botPattern.test(userAgent);
 }
