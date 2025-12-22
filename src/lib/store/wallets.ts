@@ -20,6 +20,11 @@ interface WalletStoreData {
   error?: string;
 }
 
+function logUser(uid) {
+  console.log("STORE USER UID: ", uid);
+  console.log("FIREBASE CurrentUser UID: ", auth.currentUser?.uid);
+}
+
 const walletStore: Writable<WalletStoreData> = writable({
   primary: { available: 0 },
   spending: { available: 0 },
@@ -29,8 +34,7 @@ const walletStore: Writable<WalletStoreData> = writable({
 let unsub: () => void;
 async function initWalletStore(uid: string) {
   if (unsub) unsub();
-  console.log("USER_UID: ", uid);
-  console.log("AUTH CURRENT USER UID: ",  auth.currentUser?.uid);
+  (window as any).hiddenLog = () => logUser(uid);
   const ref = doc(db_firestore, "betarena_users", uid);
   const snap = await getDoc(ref);
   const user_data = snap.data() ?? {};
@@ -98,3 +102,4 @@ async function initWalletStore(uid: string) {
 }
 
 export { initWalletStore, walletStore };
+
