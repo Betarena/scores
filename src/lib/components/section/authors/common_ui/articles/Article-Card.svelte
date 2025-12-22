@@ -132,7 +132,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: if (img && !decodeURI(img).startsWith('https://img.betarena.com')) {
-    img = getOptimizedImageUrl({ strImageUrl: img, intWidth: 360 });
+    img = getOptimizedImageUrl({ strImageUrl: img, intWidth: 400 });
   }
 
   $: if (access_type === "reward_gated" && reward_tier_id && !award_tier_info) {

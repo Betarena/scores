@@ -200,7 +200,7 @@ export async function main
             {
               strImageUrl: img.url,
               intQuality: 90,
-              intWidth: 750,
+              intWidth: 800,
             }
           )
         }
@@ -215,7 +215,7 @@ export async function main
             {
               strImageUrl: seo_details.twitter_card.image,
               intQuality: 90,
-              intWidth: 750,
+              intWidth: 800,
             }
           )
       }
@@ -266,9 +266,9 @@ export async function main
                   intWidth: width,
                 });
 
-                const newSrc = getUrl(360);
+                const newSrc = getUrl(400);
 
-                const srcSet = [360, 720, 1000]
+                const srcSet = [400, 800, 1200]
                   .map(width => `${getUrl(width)} ${width}w`)
                   .join(', ');
 

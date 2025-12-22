@@ -9,9 +9,9 @@
 
 <script lang="ts">
   import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Tag from "$lib/components/ui/Tag.svelte";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import { timeAgo } from "$lib/utils/dates.js";
-  import defaultAvatar from "./assets/profile-avatar.svg";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
@@ -19,12 +19,11 @@
     IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { fade } from "svelte/transition";
-  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
-  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import defaultAvatar from "./assets/profile-avatar.svg";
 
-  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
-  import { getOptimizedImageUrl } from "$lib/utils/image.js";
   import Badge from "$lib/components/ui/Badge.svelte";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -149,7 +148,7 @@
   </div>
   {#if images[0]?.url}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url, intWidth: 360 })} alt={images[0].alt} srcset="" />
+      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url, intWidth: 400 })} alt={images[0].alt} srcset="" />
     </a>
   {/if}
 </div>
