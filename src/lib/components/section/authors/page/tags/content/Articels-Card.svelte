@@ -151,10 +151,10 @@
   {#if img}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
        <img
-        src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 })}
+        src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 })}
         alt={images[0]?.alt || title}
-        srcset={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 }) + ' 150w, ' + getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + ' 250w'}
-        sizes='(max-width: 600px) 150px, 250px'
+        srcset={getOptimizedImageUrl({ strImageUrl: img, intWidth: 350 }) + ' 350w, ' + getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + ' 250w'}
+        sizes='(max-width: 600px) 350px, 250px'
       />
     </a>
   {/if}
