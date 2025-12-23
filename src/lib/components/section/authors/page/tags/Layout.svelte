@@ -39,13 +39,12 @@
 
   import sessionStore from "$lib/store/session.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { page } from "$app/stores";
 
   import SvelteSeo from "svelte-seo";
 
-  import TagsWidget from "./content/Tags-Widget.svelte";
-  import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
   import { helperExpectedCanonicalUrl } from "$lib/utils/string.js";
+  import { tryCatch } from "@betarena/scores-lib/dist/util/common.js";
+  import TagsWidget from "./content/Tags-Widget.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -85,7 +84,6 @@
     VIEWPORT_TABLET_INIT[0]
   );
   $: pageSeo = data.seoTamplate;
-
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -111,7 +109,7 @@
     nofollow={tryCatch(() => {
       return JSON.parse(pageSeo.main_data.nofollow);
     }) ?? false}
-    canonical={helperExpectedCanonicalUrl(`${$page.url.origin}/a/tag/${pageSeo.main_data.canonical}`)}
+    canonical={helperExpectedCanonicalUrl(pageSeo.main_data.canonical)}
     twitter={pageSeo.twitter_card}
     openGraph={pageSeo.opengraph}
   />
