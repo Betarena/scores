@@ -154,10 +154,9 @@
         src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 350 })}
         alt={images[0]?.alt || title}
         srcset={
-          getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + " 250w, " +
-          getOptimizedImageUrl({ strImageUrl: img, intWidth: 360 }) + " 360w, " +
-          getOptimizedImageUrl({ strImageUrl: img, intWidth: 450 }) + " 450w, " +
-          getOptimizedImageUrl({ strImageUrl: img, intWidth: 500 }) + " 500w, "
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 240 }) + " 240w, " +
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 400 }) + " 400w, " +
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 800 }) + " 800w, "
           }
         sizes="(max-width: 575px) 450px, (max-width: 1160px) 250px, 360px"
       />
