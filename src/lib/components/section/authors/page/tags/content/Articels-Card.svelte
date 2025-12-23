@@ -61,7 +61,7 @@
     permalink,
     tags_data,
     published_date,
-    data: { title },
+    data: { title, featured_image },
     seo_details: {
       opengraph: { images },
     },
@@ -72,6 +72,8 @@
     username: "unknow",
     avatar: defaultAvatar,
   });
+
+  $: img = images[0]?.url || featured_image;
 
   $: date = timeAgo(published_date, translations?.time_ago);
 
@@ -146,9 +148,14 @@
       {/if}
     </div>
   </div>
-  {#if images[0]?.url}
+  {#if img}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url, intWidth: 250 })} alt={images[0].alt} srcset="" />
+       <img
+        src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 })}
+        alt={images[0]?.alt || title}
+        srcset={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 }) + ' 150w, ' + getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + ' 250w'}
+        sizes='(max-width: 600px) 150px, 250px'
+      />
     </a>
   {/if}
 </div>

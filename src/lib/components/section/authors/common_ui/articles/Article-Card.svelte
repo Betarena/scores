@@ -131,9 +131,6 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (img && !decodeURI(img).startsWith('https://img.betarena.com')) {
-    img = getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 });
-  }
 
   $: if (access_type === "reward_gated" && reward_tier_id && !award_tier_info) {
     getRewardsTier(reward_tier_id);
@@ -242,9 +239,10 @@
   {#if img}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
       <img
-        src={img}
+        src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 })}
         alt={images[0]?.alt || title}
-        srcset=""
+        srcset={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 }) + ' 150w, ' + getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + ' 250w'}
+        sizes='(max-width: 600px) 150px, 250px'
       />
     </a>
   {/if}
