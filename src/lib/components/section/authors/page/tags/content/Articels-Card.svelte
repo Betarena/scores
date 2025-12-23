@@ -150,11 +150,16 @@
   </div>
   {#if img}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-       <img
-        src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 })}
+      <img
+        src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 350 })}
         alt={images[0]?.alt || title}
-        srcset={getOptimizedImageUrl({ strImageUrl: img, intWidth: 350 }) + ' 350w, ' + getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + ' 250w'}
-        sizes='(max-width: 600px) 350px, 250px'
+        srcset={
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + " 250w, " +
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 360 }) + " 360w, " +
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 450 }) + " 450w, " +
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 500 }) + " 500w, "
+          }
+        sizes="(max-width: 575px) 450px, (max-width: 1160px) 250px, 360px"
       />
     </a>
   {/if}
@@ -227,8 +232,6 @@
         min-height: 100%;
         min-height: 100%;
         max-width: 360px;
-        height: 200px;
-        max-height: 200px;
         width: 100%;
         flex-shrink: 0;
 
@@ -236,8 +239,8 @@
           border-radius: 0px 12px 12px 0px;
           width: 100%;
           height: 100%;
-            object-fit: cover;
-            object-position: center;
+          object-fit: cover;
+          object-position: center;
         }
 
         &.tablet {
@@ -248,6 +251,8 @@
         &.mobile {
           width: 100%;
           max-width: 100%;
+          max-height: 200px;
+          height: 200px;
         }
       }
     }
@@ -265,8 +270,8 @@
         --text-button-size: var(--text-size-s);
         --gradient-color-rgb: var(--bg-color-second-rgb-consts);
         .tag {
-            flex-shrink: 0;
-          }
+          flex-shrink: 0;
+        }
 
         &.expanded {
           flex-wrap: wrap;
