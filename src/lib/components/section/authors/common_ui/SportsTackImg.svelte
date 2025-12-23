@@ -9,8 +9,8 @@
   class="sportstack-image"
   style=
   "
-  background: url({getOptimizedImageUrl({ strImageUrl: src })}) lightgray -10.166px -9.798px / 143.179% 143.179% no-repeat;
-  background-image: url({getOptimizedImageUrl({ strImageUrl: src })});
+  background: url({getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}) lightgray -10.166px -9.798px / 143.179% 143.179% no-repeat;
+  background-image: url({getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })});
   "
 />
 
