@@ -26,12 +26,12 @@
   import { browser } from "$app/environment";
   import { page } from "$app/stores";
   import { get } from "$lib/api/utils.js";
-  import { showDepositModal } from "$lib/components/page/profile/deposit/showDeposit";
   import Button from "$lib/components/ui/Button.svelte";
   import sessionStore from "$lib/store/session.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import { createEventDispatcher } from "svelte";
   import buyOptionsTranslations from "./store";
+  import { modalStore } from "$lib/store/modal.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -73,7 +73,19 @@
 
   function click() {
     dispatch("click");
-    showDepositModal();
+    modalStore.updateData
+    (
+      [
+        [
+          'ModalDeposit',
+          {
+            props: {},
+            show: true,
+            modal: true
+          }
+        ]
+      ]
+    );
   }
 
   async function fetchOptions(lang?: string) {
