@@ -54,12 +54,14 @@ checkForChanges ()
   DIFF_OUTPUT=$(diff -qr $1 $2)
 
   if [[ -z "$DIFF_OUTPUT" ]]; then
+    # [🐞]
     echo -e "$strDebugPrefix 🟩 no differences found"
   elif [[ -n "$DIFF_OUTPUT" ]]; then
     IFS=$'\n'
     for line in $DIFF_OUTPUT; do
       if [[ "$line" == Only* && "$line" == *"$1"* ]]; then
         transformed=$(echo "$line" | sed -E 's/^Only in ([^:]*): (.*)$/File \2/')
+        # [🐞]
         echo -e "$strDebugPrefix 🟡 runtime only :: $transformed"
       # elif [[ "$line" == Only* && "$line" == *"$2"* ]]; then
         # transformed=$(echo "$line" | sed -E 's/^Only in ([^:]*): (.*)$/File \2/')
@@ -68,6 +70,7 @@ checkForChanges ()
         transformed=$(echo "$line" | sed -E 's/^Files ([^ ]*) and ([^ ]*) differ$/File \1 differs/')
         filePath1=$(echo "$line" | awk '{print $2}')
         filePath2=$(echo "$line" | awk '{print $4}')
+        # [🐞]
         echo -e "$strDebugPrefix ⚠️  $transformed"
         diff -u $filePath1 $filePath2
       # else
@@ -78,7 +81,7 @@ checkForChanges ()
   fi
 
   if [[ "$3" == "end" ]]; then
-    rm -rf ./.docker/scores.production/.tmp
+    rm -rf $strHostDirScores/.tmp
   fi
 }
 

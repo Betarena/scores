@@ -16,6 +16,7 @@ strDockerVolumeScores=betarena-scores_scores-production-volume
 # │ 📌 │ HOST PATHS                                                                  │
 # ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+strHostDirScores=./.docker/scores.production
 strHostDirRuntimeConfig=./.docker/scores.production/runtime.config
 strHostDirRuntimeConfigTmp=./.docker/scores.production/.tmp/runtime.config
 strHostDirStatic=./.docker/scores.production/static
@@ -33,6 +34,7 @@ strDockerDirRuntimeConfig=/app/build/runtime.config
 strConfigFileName=runtime-config-files.txt
 strHostConfigFileClientName=__run-time-config.client.js
 strHostConfigFileServerName=__run-time-config.server.js
+strStaticOverrideFileName=static.files.override.txt
 
 if [[ "$1" == "staging" ]]; then
   strDockerContainerScores=betarena-scores-scores-staging-1
@@ -41,6 +43,7 @@ if [[ "$1" == "staging" ]]; then
   strHostDirRuntimeConfig=./.docker/scores.staging/runtime.config
   strHostDirRuntimeConfigTmp=./.docker/scores.staging/.tmp/runtime.config
   strHostDirStatic=./.docker/scores.staging/static
+  strHostDirScores=./.docker/scores.staging
 fi
 
 # ╭──────────────────────────────────────────────────────────────────────────────────╮
@@ -58,3 +61,4 @@ strDockerPathServer=$strDockerDirRuntimeConfig/$strHostConfigFileServerName
 strOutputHostRuntimeConfigFilePath=$strHostDirRuntimeConfig/$strConfigFileName
 strOutputHostPathClient=$strHostDirRuntimeConfig/$strHostConfigFileClientName
 strOutputHostPathServer=$strHostDirRuntimeConfig/$strHostConfigFileServerName
+strStaticOverrideFilePath=$strHostDirScores/$strStaticOverrideFileName
