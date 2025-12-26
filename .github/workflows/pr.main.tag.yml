@@ -162,12 +162,12 @@ jobs:
             # │ NOTE:
             # │ │: Stash changes
             # ╰─────
-            git stash
+            # git stash
             # ╭─────
             # │ NOTE:
             # │ ➤ Update the directory with latests changes
             # ╰─────
-            git pull origin main
+            # git pull origin main
             # ╭─────
             # │ NOTE:
             # │ │: Run target makefile command to redeploy docker image
