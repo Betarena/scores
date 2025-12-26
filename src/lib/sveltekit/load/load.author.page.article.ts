@@ -200,7 +200,7 @@ export async function main
             {
               strImageUrl: img.url,
               intQuality: 90,
-              intWidth: 750,
+              intWidth: 800,
             }
           )
         }
@@ -215,7 +215,7 @@ export async function main
             {
               strImageUrl: seo_details.twitter_card.image,
               intQuality: 90,
-              intWidth: 750,
+              intWidth: 800,
             }
           )
       }
@@ -255,31 +255,28 @@ export async function main
             // │ NOTE: IMPORTANT CRITICAL
             // │ |: [0] Optimize all images in the article content.
             // ╰─────
-            ?.replaceAll
-            (
-              /<img[^>]+src=\\["']([^\\"'>]+)[\\"']/g,
-              (
-                match,
-                src
-              ) =>
-              {
-                // [🐞]
-                console.log('match', match, src);
+           ?.replaceAll(
 
-                return match
-                  .replace
-                  (
-                    src,
-                    getOptimizedImageUrl
-                    (
-                      {
-                        strImageUrl: src,
-                        intQuality: 90,
-                        intWidth: 750,
-                      }
-                    )
-                  )
-                ;
+              /<img[^>]+src=\\["']([^\\"'>]+)(\\?["'])/g,
+              (match, src) => {
+
+                const getUrl = (width) => getOptimizedImageUrl({
+                  strImageUrl: src,
+                  intQuality: 90,
+                  intWidth: width,
+                });
+
+                const newSrc = getUrl(400);
+
+                const srcSet = [400, 800, 1200]
+                  .map(width => `${getUrl(width)} ${width}w`)
+                  .join(', ');
+
+                const sizes = '(max-width: 768px) 90vw, 720px';
+
+                const optimized_img = match.replace(src, newSrc);
+
+                return optimized_img + ` srcset=\\"${srcSet}\\" sizes=\\"${sizes}\\"`;
               }
             )
             // ╭─────
