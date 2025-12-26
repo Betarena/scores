@@ -661,14 +661,14 @@ docker-compose-up:
 	# │ |: for validate input parameters
 	# ╰─────
 
-	if [ ! $(services) ]; then\
-		echo "[Makefile::docker-compose-up] Please set a target services via services=\"<service-1>\"";\
+	if [ -z "$(services)" ]; then\
+		echo "[Makefile::docker-compose-up] [ERR:❌] Please set a target services via services=\"<service-1>\"";\
 		exit 1;\
 		echo "";\
 	fi
 
 	if [[ "$(services)" == *"scores-staging"* && "$(services)" == *"scores-production"* ]]; then\
-		echo "[Makefile::docker-compose-up] Please do not deploy 'scores-production & scores-staging' together";\
+		echo "[Makefile::docker-compose-up] [ERR:❌] Please do not deploy 'scores-production & scores-staging' together";\
 		exit 1;\
 		echo "";\
 	fi
@@ -677,8 +677,7 @@ docker-compose-up:
 		cd .docker/; \
 		if [[ "$(services)" == *"scores-staging"* ]]; then
 			docker compose pull scores-staging; \
-		fi
-		if [[ "$(services)" == *"scores-production"* ]]; then
+		elif [[ "$(services)" == *"scores-production"* ]]; then
 			docker compose pull scores-production; \
 		fi
 		cd ..; \
@@ -731,8 +730,7 @@ docker-compose-up:
 		${MAKE} docker-container-export-logs-all;\
 		if [[ "$(services)" == *"scores-production"* ]]; then
 			${MAKE} docker-scores-archive-server-changes type="production";\
-		fi
-		if [[ "$(services)" == *"scores-staging"* ]]; then
+		elif [[ "$(services)" == *"scores-staging"* ]]; then
 			${MAKE} docker-scores-archive-server-changes type="staging";\
 		fi
 	fi
@@ -752,6 +750,17 @@ docker-compose-up:
 		-d \
 		$(services)
 	#
+
+	# ╭─────
+	# │ NOTE:
+	# │ |: update static files for 'scores' service after (re)start
+	# ╰─────
+
+	if [[ "$(services)" == *"scores-production"* ]]; then
+		bash .scripts/docker.scores.build.static.update.sh "production";\
+	elif [[ "$(services)" == *"scores-staging"* ]]; then
+		bash .scripts/docker.scores.build.static.update.sh "staging";\
+	fi
 
 	${MAKE} docker-volume-scores-check
 #
