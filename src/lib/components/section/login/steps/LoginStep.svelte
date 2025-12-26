@@ -598,10 +598,23 @@
     disableButton = false;
   }
 
+  async function goBack() {
+    const canGoBack = window.history.length > 1;
+    $session.currentActiveModal = null;
+    if (canGoBack){
+      window.history.back();
+      return;
+    }
+    gotoSW("/", true);
+    return;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   onMount(() => {
     preloadData("/");
+    const prevPage = $history_store.at(-1) || "/";
+    preloadData(prevPage);
   });
 </script>
 
@@ -741,10 +754,7 @@
   >
   <div
     class="quest-wrapper"
-    on:click={() => {
-      $session.currentActiveModal = null;
-      gotoSW("/", true);
-    }}
+    on:click={goBack}
   >
     <span class="text"
       >{translations.skip_continue_as || "Skip and continue as "}
