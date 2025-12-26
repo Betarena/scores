@@ -916,11 +916,11 @@ docker-scores-staging-toggle:
 	#
 
 	if [ "$${TEMP_MODE}" = "on" ]; then\
-		gsed -i 's/deny all;/allow all;/g' $${TEMP_PATH};\
-		gsed -i 's|# proxy_pass http://scores-staging:3050;|proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
+		sed -i 's/deny all;/allow all;/g' $${TEMP_PATH};\
+		sed -i 's|# proxy_pass http://scores-staging:3050;|proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
 	elif [ "$${TEMP_MODE}" = "off" ]; then\
-		gsed -i 's/allow all;/deny all;/g' $${TEMP_PATH};\
-		gsed -i 's|proxy_pass http://scores-staging:3050;|# proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
+		sed -i 's/allow all;/deny all;/g' $${TEMP_PATH};\
+		sed -i 's|proxy_pass http://scores-staging:3050;|# proxy_pass http://scores-staging:3050;|g' $${TEMP_PATH};\
 	fi
 
 	docker exec betarena-scores-nginx-1 nginx -s reload
