@@ -941,16 +941,16 @@ export const handle: Handle = sequence
             }
           );
 
-          html = html
-            .replace
-            (
-              `</head>`,
-              `
-                <link rel="preload" as="image" href="${element[1]}" fetchpriority="high">
-              </head>
-              `
-            )
-          ;
+          // html = html
+          //   .replace
+          //   (
+          //     `</head>`,
+          //     `
+          //       <link rel="preload" as="image" href="${element[1]}" fetchpriority="high">
+          //     </head>
+          //     `
+          //   )
+          // ;
         }
       ;
 

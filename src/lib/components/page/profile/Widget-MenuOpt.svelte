@@ -268,7 +268,7 @@ COMPONENT JS (w/ TS)
 			id="menu-summary-profile-picture"
 			src={
         $userBetarenaSettings?.user?.scores_user_data?.profile_photo != undefined
-          ? getOptimizedImageUrl({ strImageUrl: $userBetarenaSettings?.user?.scores_user_data?.profile_photo })
+          ? getOptimizedImageUrl({ strImageUrl: $userBetarenaSettings?.user?.scores_user_data?.profile_photo, intWidth: 48 })
           : profile_avatar
       }
 			alt="Profile Icon"

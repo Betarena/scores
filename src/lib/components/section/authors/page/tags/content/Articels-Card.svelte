@@ -9,9 +9,9 @@
 
 <script lang="ts">
   import Avatar from "$lib/components/ui/Avatar.svelte";
-  import Tag from "$lib/components/ui/Tag.svelte";
+  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import { timeAgo } from "$lib/utils/dates.js";
-  import defaultAvatar from "./assets/profile-avatar.svg";
   import type {
     IPageAuthorArticleData,
     IPageAuthorAuthorData,
@@ -19,12 +19,11 @@
     IPageAuthorTranslationDataFinal,
   } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import { fade } from "svelte/transition";
-  import ExpandDataWrapper from "$lib/components/ui/wrappers/ExpandDataWrapper.svelte";
-  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
+  import defaultAvatar from "./assets/profile-avatar.svg";
 
-  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
-  import { getOptimizedImageUrl } from "$lib/utils/image.js";
   import Badge from "$lib/components/ui/Badge.svelte";
+  import { getOptimizedImageUrl } from "$lib/utils/image.js";
+  import { mutateStringToPermalink } from "@betarena/scores-lib/dist/util/language.js";
 
   // #region ➤ 📌 VARIABLES
 
@@ -62,7 +61,7 @@
     permalink,
     tags_data,
     published_date,
-    data: { title },
+    data: { title, featured_image },
     seo_details: {
       opengraph: { images },
     },
@@ -73,6 +72,8 @@
     username: "unknow",
     avatar: defaultAvatar,
   });
+
+  $: img = images[0]?.url || featured_image;
 
   $: date = timeAgo(published_date, translations?.time_ago);
 
@@ -147,9 +148,18 @@
       {/if}
     </div>
   </div>
-  {#if images[0]?.url}
+  {#if img}
     <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
-      <img src={getOptimizedImageUrl({ strImageUrl: images[0]?.url })} alt={images[0].alt} srcset="" />
+      <img
+        src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 350 })}
+        alt={images[0]?.alt || title}
+        srcset={
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 240 }) + " 240w, " +
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 400 }) + " 400w, " +
+          getOptimizedImageUrl({ strImageUrl: img, intWidth: 800 }) + " 800w, "
+          }
+        sizes="(max-width: 575px) 450px, (max-width: 1160px) 250px, 360px"
+      />
     </a>
   {/if}
 </div>
@@ -221,8 +231,6 @@
         min-height: 100%;
         min-height: 100%;
         max-width: 360px;
-        height: 200px;
-        max-height: 200px;
         width: 100%;
         flex-shrink: 0;
 
@@ -230,8 +238,8 @@
           border-radius: 0px 12px 12px 0px;
           width: 100%;
           height: 100%;
-            object-fit: cover;
-            object-position: center;
+          object-fit: cover;
+          object-position: center;
         }
 
         &.tablet {
@@ -242,6 +250,8 @@
         &.mobile {
           width: 100%;
           max-width: 100%;
+          max-height: 200px;
+          height: 200px;
         }
       }
     }
@@ -259,8 +269,8 @@
         --text-button-size: var(--text-size-s);
         --gradient-color-rgb: var(--bg-color-second-rgb-consts);
         .tag {
-            flex-shrink: 0;
-          }
+          flex-shrink: 0;
+        }
 
         &.expanded {
           flex-wrap: wrap;

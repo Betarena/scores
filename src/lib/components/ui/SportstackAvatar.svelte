@@ -69,8 +69,8 @@
     class="sportstack-image"
     style=
     "
-    background: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src })}) center center / cover no-repeat;
-    background-image: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src })});
+    background: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}) center center / cover no-repeat;
+    background-image: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })});
     {styles}
     border-radius: {radius};
     "
@@ -85,7 +85,7 @@
     style="
     {styles}
     border-radius: {radius};
-    background-image: url({src?.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src })});
+    background-image: url({!src || src?.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })});
     "
   >
     <ImgPlaceholder size={numSize / 2} />
