@@ -47,8 +47,8 @@ services:
       # │ NOTE: IMPORTANT
       # │ |: volume for: cache files
       # ╰─────
-      - ./nginx/cache/scores.production:/var/cache/nginx/scores_production:rw
-      - ./nginx/cache/scores.staging:/var/cache/nginx/scores_staging:rw
+      - ./nginx/cache/scores.production:/var/cache/nginx/scores.production:rw
+      - ./nginx/cache/scores.staging:/var/cache/nginx/scores.staging:rw
       # ╭─────
       # │ NOTE: IMPORTANT
       # │ |: volume for: go-access monitoring

@@ -10,12 +10,12 @@ import { entryTargetDataTag } from '@betarena/scores-lib/dist/functions/v8/main.
 import { tryCatchAsync } from '@betarena/scores-lib/dist/util/common.js';
 // import type { IArticleTranslation } from '@betarena/scores-lib/types/types.authors.articles.js';
 import { entryTargetDataAuthorTranslation } from '@betarena/scores-lib/dist/functions/v8/authors.tags.js';
+import { entryProfileTabAuthorSearchTag } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { TableAuthorTagsMutation0, type ITableAuthorTagsMutation0Out, type ITableAuthorTagsMutation0Var } from "@betarena/scores-lib/dist/graphql/v8/table.authors.tags.js";
 import type { AuthorsSEODetailsDataJSONSchema } from '@betarena/scores-lib/types/v8/_HASURA-0.js';
 import type { IPageAuthorTagDataFinal } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 import { json, type RequestEvent } from '@sveltejs/kit';
-import { entryProfileTabAuthorSearchTag } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 
 // ╭──────────────────────────────────────────────────────────────────╮
 // │ 🛠️ MAIN METHODS                                                  │
@@ -33,6 +33,7 @@ function covertSEOTemplate
   const tag = currentTag[1];
   const { name, permalink } = tag;
   const description = tag.description || name;
+  const url = permalink?.startsWith('http') ? permalink : `https://${domain}/a/tag/${permalink}`;
   const newSeo: AuthorsSEODetailsDataJSONSchema = {
     ...seoTamplate,
     main_data: {
@@ -40,11 +41,11 @@ function covertSEOTemplate
       description,
       title: main_data.title.replaceAll("{name}", name),
       keywords: name,
-      canonical: `https://${domain}/a/tag/${permalink}`,
+      canonical: url,
     },
     opengraph: {
       ...opengraph,
-      url: `https://${domain}/a/tag/${permalink}`,
+      url,
       description,
       images: opengraph.images.map((img) => ({ ...img, alt: name })),
       title: opengraph.title.replaceAll("{name}", name),
