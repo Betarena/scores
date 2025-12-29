@@ -48,7 +48,6 @@
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
-  import { browser } from "$app/environment";
   import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
@@ -184,7 +183,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: getAuthor(sportstack?.uid);
-  $: if (browser && sportstack?.permalink) getMoreArticles(sportstack.permalink)
   $: if (contentContainer) {
     insertWidgets(contentContainer);
   }
