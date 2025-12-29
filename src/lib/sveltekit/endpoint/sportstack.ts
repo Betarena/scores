@@ -135,7 +135,7 @@ async function fallbackDataGenerate0
 {
 
   const dataRes1 = await getSportstackByPermalink(permalink);
-  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, page: Number(page), isUsingAuthorData: true, optsQuery });
+  const dataRes0: IPageAuthorProfileData = await entryTargetDataAuthorSportstack({ permalink, cacheCheck: true, page: Number(page), isUsingAuthorData: true, optsQuery });
   (dataRes0 as any).sportstack = dataRes1?.sportstack;
   dataRes0.mapArticle = (dataRes0?.mapArticle ? dataRes0.mapArticle.map(([id, article]) => [id, {...article, data: { title: article.data?.title || "" }}]) : []) as IPageAuthorTagDataFinal['mapArticle'];
   return dataRes0

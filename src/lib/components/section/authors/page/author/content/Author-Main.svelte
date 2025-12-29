@@ -64,8 +64,6 @@
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
   import ArticleCard from "../../../common_ui/articles/Article-Card.svelte";
-  import ArticleLoader from "../../../common_ui/articles/Article-Loader.svelte";
-  import { fetchArticlesBySportstack } from "../../../common_ui/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -132,8 +130,6 @@
   };
   let accessGranted = false;
   let secondP: HTMLElement | null = null;
-  let loadingArticles = true;
-  let moreArticles: Map<number, IArticle> = new Map();
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
@@ -148,7 +144,7 @@
   $: ({ awards_translations } = $page.data as {
     awards_translations: TranslationAwardsDataJSONSchema;
   });
-  $: ({ author: sportstack, article } = widgetData);
+  $: ({ author: sportstack, article, related_articles } = widgetData);
   $: ({
     access_type = "free",
     id,
@@ -170,6 +166,8 @@
   $: insufficientAmount = user && $walletStore.spending.available < 1;
   $: mobile = viewportType === "mobile";
   $: tablet = viewportType === "tablet";
+  $: related_articles_map = new Map(related_articles) as Map<Number, IArticle>;
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -285,16 +283,6 @@
     setTimeout(() => {
       executeAnimation = true;
     }, 100);
-  }
-
-  async function getMoreArticles(permalink: string) {
-    loadingArticles = true;
-    const data = await fetchArticlesBySportstack({permalink, page: 0, options: {sortPublishDate: "desc", limit: 5}});
-    if(data?.mapArticle?.length) {
-      const articles = data.mapArticle.filter(([article_id]) => id !== article_id).slice(0, 5).map(([_id, article]) => ({...article, author: sportstack}));
-      moreArticles = new Map(articles.map(article => [article.id, article])) as Map<number, IArticle>;
-    }
-    loadingArticles = false;
   }
 
   $: if (widgetData.article.data?.content && contentContainer) {
@@ -485,15 +473,10 @@
 
   <div class="more-content">
     <h2> <TranslationText text={widgetDataTranslation?.translation?.from_the_sportstack} fallback="from_the_sportstack"  /></h2>
-    {#if loadingArticles}
-      {#each Array(5) as _item}
-        <ArticleLoader {mobile} {tablet} />
-      {/each}
-    {:else}
-     {#each [...moreArticles.entries()] as [id, article] (id)}
-        <ArticleCard {article} {mobile} {tablet} />
-      {/each}
-       <!-- else content here -->
+    {#if related_articles_map.size}
+        {#each [...related_articles_map.entries()] as [_id, article] (_id)}
+          <ArticleCard article={{...article, author: sportstack}} {mobile} {tablet} />
+        {/each}
     {/if}
     <Button href="/a/sportstack/{sportstack?.permalink}">
       <TranslationText text={widgetDataTranslation?.translation?.view_all_posts} fallback="view_all_posts" />
