@@ -44,14 +44,16 @@
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { readingTime } from "../../helpers.js";
+  import { type IArticle, readingTime } from "../../helpers.js";
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
+  import { browser } from "$app/environment";
   import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
   import Badge from "$lib/components/ui/Badge.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
   import ListSportsTackItem from "$lib/components/ui/composed/sportstack_list/ListSportsTackItem.svelte";
   import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
   import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
@@ -61,6 +63,9 @@
   import type { TranslationAwardsDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import type { IPageAuhtorArticleDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
   import type { IPageArticleTranslationDataFinal } from "@betarena/scores-lib/types/v8/segment.authors.articles.js";
+  import ArticleCard from "../../../common_ui/articles/Article-Card.svelte";
+  import ArticleLoader from "../../../common_ui/articles/Article-Loader.svelte";
+  import { fetchArticlesBySportstack } from "../../../common_ui/helpers.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -127,6 +132,8 @@
   };
   let accessGranted = false;
   let secondP: HTMLElement | null = null;
+  let loadingArticles = true;
+  let moreArticles: Map<number, IArticle> = new Map();
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
@@ -161,7 +168,8 @@
   $: paid = access_type === "reward_gated";
   $: uid = firebase_user_data?.uid;
   $: insufficientAmount = user && $walletStore.spending.available < 1;
-
+  $: mobile = viewportType === "mobile";
+  $: tablet = viewportType === "tablet";
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -178,6 +186,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: getAuthor(sportstack?.uid);
+  $: if (browser && sportstack?.permalink) getMoreArticles(sportstack.permalink)
   $: if (contentContainer) {
     insertWidgets(contentContainer);
   }
@@ -205,7 +214,6 @@
   // │ 1. function (..)                                                       │
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
   async function insertWidgets(container: HTMLElement) {
     if (!contentContainer) return;
 
@@ -277,6 +285,16 @@
     setTimeout(() => {
       executeAnimation = true;
     }, 100);
+  }
+
+  async function getMoreArticles(permalink: string) {
+    loadingArticles = true;
+    const data = await fetchArticlesBySportstack({permalink, page: 0, options: {sortPublishDate: "desc", limit: 5}});
+    if(data?.mapArticle?.length) {
+      const articles = data.mapArticle.filter(([article_id]) => id !== article_id).slice(0, 5).map(([_id, article]) => ({...article, author: sportstack}));
+      moreArticles = new Map(articles.map(article => [article.id, article])) as Map<number, IArticle>;
+    }
+    loadingArticles = false;
   }
 
   $: if (widgetData.article.data?.content && contentContainer) {
@@ -453,13 +471,34 @@
   │ > article text
   ╰─────
   -->
-  {#key $userSettings.theme}
-    <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
-      {#key accessGranted}
-        {@html widgetData.article.data?.content}
-      {/key}
-    </div>
-  {/key}
+  <div class="content-wrapper">
+    {#key $userSettings.theme}
+
+      <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
+        {#key accessGranted}
+          {@html widgetData.article.data?.content}
+        {/key}
+      </div>
+    {/key}
+    <div class="actions-buttons"></div>
+  </div>
+
+  <div class="more-content">
+    <h2> <TranslationText text={widgetDataTranslation?.translation?.from_the_sportstack} fallback="from_the_sportstack"  /></h2>
+    {#if loadingArticles}
+      {#each Array(5) as _item}
+        <ArticleLoader {mobile} {tablet} />
+      {/each}
+    {:else}
+     {#each [...moreArticles.entries()] as [id, article] (id)}
+        <ArticleCard {article} {mobile} {tablet} />
+      {/each}
+       <!-- else content here -->
+    {/if}
+    <Button href="/a/sportstack/{sportstack?.permalink}">
+      <TranslationText text={widgetDataTranslation?.translation?.view_all_posts} fallback="view_all_posts" />
+    </Button>
+  </div>
 </div>
 
 <!--
@@ -606,6 +645,16 @@
       }
     }
 
+    .content-wrapper  {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      .actions-buttons {
+        width: 100%;
+        border-top: 1px solid var(--colors-border-border-secondary, #3B3B3B);
+      }
+    }
     #content {
       position: relative;
       // ▓ IMPORTANT
@@ -771,6 +820,27 @@
       }
     }
 
+    .more-content {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--spacing-xl, 16px);
+
+      h2 {
+        margin: 0;
+        width: 100%;
+        color: var(--colors-text-text-primary-900, #FFF);
+
+        /* Display md/Semibold */
+        font-family: var(--font-family-font-family-display, Roboto);
+        font-size: var(--font-size-display-md, 36px);
+        font-style: normal;
+        font-weight: 600;
+        line-height: var(--line-height-display-md, 44px); /* 122.222% */
+        letter-spacing: -0.72px;
+      }
+    }
     //   /*
     // ╭──────────────────────────────────────────────────────────────────────────────╮
     // │ ⚡️ RESPONSIVNESS                                                              │
@@ -891,6 +961,15 @@
           iframe.youtube-shorts {
             width: 100%;
           }
+        }
+      }
+
+      .more-content {
+        gap: var(--spacing-lg, 12px);
+        h2 {
+          /* Display xs/Semibold */
+          font-size: var(--font-size-display-xs, 24px);
+          line-height: var(--line-height-display-xs, 32px); /* 133.333% */
         }
       }
     }
