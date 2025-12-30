@@ -96,7 +96,7 @@ export async function main(request: RequestEvent): Promise<Response> {
           }
         }
         
-        const related_articles_res  = await request.fetch(`/api/data/author/sportstack?permalink=${author.permalink}&page=0`)
+        const related_articles_res  = await request.fetch(`/api/data/author/sportstack?permalink=${author.permalink}&page=0&sortPublishDate=desc`)
         const related_articles = await related_articles_res.json();
         if (related_articles.mapArticle) {
           data.related_articles = related_articles.mapArticle
