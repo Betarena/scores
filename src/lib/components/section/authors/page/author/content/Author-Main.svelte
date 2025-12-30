@@ -476,7 +476,7 @@
           <ArticleCard article={{...article, author: sportstack}} {mobile} {tablet} />
         {/each}
     {/if}
-    <Button href="/a/sportstack/{sportstack?.permalink}">
+    <Button href="/a/sportstack/{sportstack?.permalink}" full={mobile}>
       <TranslationText text={widgetDataTranslation?.translation?.view_all_posts} fallback="view_all_posts" />
     </Button>
   </div>
