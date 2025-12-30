@@ -8,8 +8,8 @@
 -->
 
 <script lang="ts">
+  import SpinnerLoader from "$lib/components/ui/assets/spinner-loader.svelte";
   import { createEventDispatcher } from "svelte";
-  import SpinnerLoader from "$lib/components/ui/assets/spinner-loader.svelte"
 
   // #region ➤ 📌 VARIABLES
 
@@ -166,6 +166,7 @@
     font-weight: 500;
     line-height: 150%; /* 24px */
     cursor: pointer;
+    justify-content: center;
 
     /* Text sm/Medium */
     font-family: var(--font-family-font-family-body, Roboto);
