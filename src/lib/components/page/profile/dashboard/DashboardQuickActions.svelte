@@ -3,7 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
-	
+
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -31,7 +31,7 @@
   import session from "$lib/store/session";
   import userSettings from "$lib/store/user-settings";
   import type { IProfileTrs } from "@betarena/scores-lib/types/types.profile";
-  import { showDepositModal } from "../deposit/showDeposit";
+  import { modalStore } from "$lib/store/modal.js";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -84,7 +84,19 @@
   function click(id: string) {
     switch (id) {
       case "deposit":
-        showDepositModal();
+        modalStore.updateData
+        (
+          [
+            [
+              'ModalDeposit',
+              {
+                props: {},
+                show: true,
+                modal: true
+              }
+            ]
+          ]
+        );
         break;
     }
   }
@@ -189,8 +201,8 @@
     }
     &:not(.mobile) {
       .action-label {
-        width: 105px; 
-        max-width: 105px;        
+        width: 105px;
+        max-width: 105px;
       }
     }
   }
