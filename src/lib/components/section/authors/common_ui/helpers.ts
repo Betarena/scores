@@ -1,6 +1,6 @@
-import type { IPageAuthorArticleData, IPageAuthorTagData, IPageAuthorAuthorData, IPageAuthorTranslationDataFinal, IPageAuthorTagDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 import { get } from "$lib/api/utils.js";
 import { dlogv2 } from "$lib/utils/debug.js";
+import type { IPageAuthorArticleData, IPageAuthorAuthorData, IPageAuthorTagData, IPageAuthorTagDataFinal, IPageAuthorTranslationDataFinal } from "@betarena/scores-lib/types/v8/preload.authors.js";
 
 export interface IArticle extends IPageAuthorArticleData
 {
@@ -132,6 +132,7 @@ export async function fetchArticlesBySportstack({ permalink = "", page = 0, opti
     sortPublishDate?: 'desc' | 'asc';
     sortEditedDate?: 'desc' | 'asc';
     status?: 'published' | 'unpublished' | 'draft' | 'all';
+    limit?: number;
   }
 })
 {

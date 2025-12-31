@@ -4824,7 +4824,6 @@ body {
   --colors-background-bg-disabled_subtle: var(--colors-gray-900);
   --colors-background-bg-overlay: rgba(0, 0, 0, 0.5);
   --colors-background-bg-brand-primary: var(--colors-brand-400);
-  --colors-background-bg-brand-primary_alt: var(--colors-background-bg-secondary);
   --colors-background-bg-brand-secondary: var(--colors-brand-500);
   --colors-background-bg-brand-solid: var(--colors-brand-500);
   --colors-background-bg-brand-solid_hover: var(--colors-brand-700);
@@ -5293,7 +5292,7 @@ body {
   --colors-background-bg-disabled_subtle: var(--colors-gray-light-mode-50);
   --colors-background-bg-overlay: var(--colors-gray-light-mode-950);
   --colors-background-bg-brand-primary: var(--colors-brand-50);
-  --colors-background-bg-brand-primary_alt: var(--colors-brand-50);
+  --colors-background-bg-brand-primary_alt: var( --colors-gray-dark-mode-50);
   --colors-background-bg-brand-secondary: var(--colors-brand-100);
   --colors-background-bg-brand-solid: var(--colors-brand-600);
   --colors-background-bg-brand-section: var(--colors-brand-800);
@@ -5565,7 +5564,6 @@ body {
   --colors-background-bg-disabled_subtle: var(--colors-gray-50);
   --colors-background-bg-overlay: var(--component-colors-alpha-alpha-black-50);
   --colors-background-bg-brand-primary: var(--colors-brand-50);
-  --colors-background-bg-brand-primary_alt: var(--colors-brand-50);
   --colors-background-bg-brand-secondary: var(--colors-brand-100);
   --colors-background-bg-brand-solid: var(--colors-brand-500);
   --colors-background-bg-brand-solid_hover: var(--colors-brand-700);
