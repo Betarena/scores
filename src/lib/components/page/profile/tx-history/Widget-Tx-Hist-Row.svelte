@@ -205,7 +205,7 @@ COMPONENT JS (w/ TS)
             "
           />
           <p>
-            { txTypeTrans[tx_data?.type] || tx_data?.type || '-'}
+            { txTypeTrans[tx_data?.type.toLowerCase()] || tx_data?.type || '-'}
           </p>
         </div>
         <p
@@ -306,7 +306,7 @@ COMPONENT JS (w/ TS)
             "
           />
           <p>
-            { txTypeTrans[tx_data?.type] || tx_data?.type || '-'}
+            { txTypeTrans[tx_data?.type.toLowerCase()] || tx_data?.type || '-'}
           </p>
         </div>
         <p
