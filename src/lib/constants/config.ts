@@ -726,9 +726,10 @@ export const config = {
                         // │ |: select injection option
                         // ┣─────
                         // │ |: Available Options:
+                        // │ |: -> 'local'         :: Locally hosted
                         // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
                         // ╰─────
-                        strLoadingType: 'cdn' as ILoadingType,
+                        strLoadingType: "local",
                         // ╭─────
                         // │ NOTE: IMPORTANT
                         // │ |: HTML Head Injection Point Identifier
@@ -740,12 +741,22 @@ export const config = {
                         // ╰─────
                         objLoadingOptions:
                         {
-                          'cdn': `
+                          "local": `
+                            <link
+                              rel="manifest"
+                              href="https://progressier.app/A0K7kzxcIrOaWtW8h3Ol/progressier.json"
+                            />
+                            <link
+                              href="scripts/service.progressier.js"
+                              as="script"
+                            />
+                          `,
+                          "cdn": `
                             <link
                               href="template/html.head.pwa.cdn.html"
                             />
-                          `,
-                        } as Record < ILoadingType, string >,
+                          `
+                        }
                       }
                   },
                 // ╭──────────────────────────────────────────────────────────────────────────────────╮
