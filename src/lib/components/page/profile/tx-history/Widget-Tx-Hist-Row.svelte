@@ -26,7 +26,8 @@ COMPONENT JS (w/ TS)
     isViewMobile: boolean = false,
     isViewTablet: boolean = false,
     txTranslation: B_H_TT_Field,
-    txStatusTrans: B_H_TT_Status
+    txStatusTrans: B_H_TT_Status,
+    txTypeTrans: {[key: string]: string} = {}
   ;
 
   let
@@ -204,7 +205,7 @@ COMPONENT JS (w/ TS)
             "
           />
           <p>
-            {tx_data?.type ?? '-'}
+            { txTypeTrans[tx_data?.type] || tx_data?.type || '-'}
           </p>
         </div>
         <p
@@ -305,7 +306,7 @@ COMPONENT JS (w/ TS)
             "
           />
           <p>
-            {tx_data?.type ?? '-'}
+            { txTypeTrans[tx_data?.type] || tx_data?.type || '-'}
           </p>
         </div>
         <p

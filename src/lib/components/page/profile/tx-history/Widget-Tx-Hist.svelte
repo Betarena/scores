@@ -995,6 +995,7 @@ MAIN DEPOST WIDGET
                 {isViewTablet}
                 txTranslation={RESPONSE_PROFILE_DATA?.tx?.fields}
                 txStatusTrans={RESPONSE_PROFILE_DATA?.tx?.status}
+                txTypeTrans={RESPONSE_PROFILE_DATA?.tx?.types}
               />
             {/each}
 
