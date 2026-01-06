@@ -286,7 +286,7 @@
         text-overflow: ellipsis;
         max-width: 100%;
         height: max-content;
-        font-family: Inter;
+        font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--text-size-l);
         font-style: normal;
         font-weight: 600;
@@ -325,7 +325,7 @@
 
         &-name {
           color: var(--text-color);
-          font-family: Inter;
+          font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--text-size-s);
           font-style: normal;
           font-weight: 500;

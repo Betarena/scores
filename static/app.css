@@ -125,10 +125,6 @@ a.disable-anchor {
   pointer-events: none;
 }
 
-.inter-font {
-  font-family: Inter;
-}
-
 p {
   font-style: normal;
   font-weight: 400; /* 400 / 500 */

@@ -74,8 +74,14 @@ COMPONENT JS (w/ TS)
     event: any
   ): void
   {
-		selectedMenuOpt = event?.detail?.opt || event;
-		showDropdown = false;
+    showDropdown = false;
+    const opt = event?.detail?.opt || event;
+    if (opt === "Deposit") {
+      showDepositModal();
+      return;
+    }
+		selectedMenuOpt = opt;
+		
 
     let targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
 
@@ -94,11 +100,6 @@ COMPONENT JS (w/ TS)
 		if (selectedMenuOpt == 'Partners')
       targetUrl = `/u/partners/${$userBetarenaSettings.lang}`
     ;
-    if (selectedMenuOpt == "Deposit") {
-      showDepositModal();
-      selectedMenuOpt = "Dashboard";
-      targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`;
-    }
     if (selectedMenuOpt == 'Transaction History')
       targetUrl = `/u/transaction-history/${$userBetarenaSettings.lang}`
     ;

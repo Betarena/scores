@@ -338,7 +338,7 @@
 
         h1 {
           color: var(--text-color);
-          font-family: Inter;
+          font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--text-size-2xl);
           margin: 0;
           font-style: normal;
