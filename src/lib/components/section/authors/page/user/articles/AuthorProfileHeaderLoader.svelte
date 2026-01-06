@@ -10,12 +10,12 @@
 <script lang="ts">
   // #region ➤ 📌 VARIABLES
 
-  import session from "$lib/store/session.js";
   import LoaderAvatar from "$lib/components/ui/loaders/LoaderAvatar.svelte";
+  import LoaderButton from "$lib/components/ui/loaders/LoaderButton.svelte";
   import LoaderLine from "$lib/components/ui/loaders/LoaderLine.svelte";
   import LoaderSporttackAvatar from "$lib/components/ui/loaders/LoaderSporttackAvatar.svelte";
-  import LoaderButton from "$lib/components/ui/loaders/LoaderButton.svelte";
   import LoaderStackedAvatar from "$lib/components/ui/loaders/LoaderStackedAvatar.svelte";
+  import session from "$lib/store/session.js";
 
   // ╭────────────────────────────────────────────────────────────────────────╮
   // │ NOTE:                                                                  │
@@ -318,7 +318,7 @@
           }
           .owner {
             color: var(--text-color);
-            font-family: Inter;
+            font-family: var(--font-family-font-family-body, Roboto);
             opacity: 0.8;
             font-size: 12px;
             font-style: normal;

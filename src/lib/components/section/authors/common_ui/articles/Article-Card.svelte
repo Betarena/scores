@@ -196,13 +196,12 @@
 
 <div class="card-wrapper" class:mobile class:tablet in:fade={{ duration: 500 }}>
   <div class="card-content">
-    <a
-      href={`/a/sportstack/${mutateStringToPermalink(username)}`}
+    <div
       class="author-wrapper"
     >
       <SportstackAvatar src={avatar} size={!mobile ? "md" : "sm"} />
       <div class="author-info">
-        <div class="author-name">{username}</div>
+        <a href={`/a/sportstack/${mutateStringToPermalink(username)}`} class="author-name">{username}</a>
         <div class="publication-date">
           {#if timeToRead}
             {timeToRead}
@@ -216,7 +215,7 @@
           {date}
         </div>
       </div>
-    </a>
+    </div>
     <a href="/a/{permalink}">
       <div class="title">
         {title}
@@ -268,7 +267,8 @@
     padding: 20px;
     box-sizing: border-box;
     justify-content: space-between;
-    background: var(--colors-background-bg-secondary);
+    border-radius: 10px;
+    background: var(--colors-background-bg-brand-primary_alt, #232323);
     align-items: start;
 
     a {
@@ -339,7 +339,7 @@
         text-overflow: ellipsis;
         max-width: 100%;
         height: max-content;
-        font-family: Inter;
+        font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--font-size-text-xl, 20px);
         font-style: normal;
         font-weight: 600;
@@ -449,7 +449,6 @@
 
     &.mobile {
       flex-direction: row-reverse;
-      background: var(--colors-background-bg-primary);
       gap: 16px;
       border-radius: 0;
       padding: 20px 16px;

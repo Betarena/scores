@@ -61,7 +61,7 @@
   let content = "";
   let selectedTeam = "Draw";
   let translations = {} as TranslationWidgetAipredictionDataJSONSchema;
-  $: ({ user } = $userSettings);
+  $: ({ user, lang } = $userSettings);
   $: ({ serverLang } = $session);
   $: ({ viewportType } = $session);
   // #endregion ➤ 📌 VARIABLES
@@ -79,7 +79,7 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: fetchWidgetData(serverLang);
+  $: fetchWidgetData(lang);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -119,13 +119,13 @@
     }
   }
 
-  async function fetchWidgetData(serverLang) {
+  async function fetchWidgetData(lang) {
     loading = true;
     const res = await get<{
       widget_data: WidgetsAIPredictionMain | null;
       widget_translations: TranslationWidgetAipredictionDataJSONSchema;
     }>(
-      `/api/data/widgets.ai-prediction?id=${aiPredictionId}&lang=${serverLang}`
+      `/api/data/widgets.ai-prediction?id=${aiPredictionId}&lang=${lang}`
     );
     if (!res) return;
     const { widget_data, widget_translations } = res;
@@ -151,7 +151,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    fetchWidgetData(serverLang);
+    fetchWidgetData(lang || serverLang);
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

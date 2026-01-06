@@ -73,16 +73,18 @@ export async function main(request: RequestEvent): Promise<Response> {
            */
           data = await entryTargetDataArticle({
             permalinkTarget: queryParamPermalink,
-            cacheCheck: false,
+            cacheCheck: true,
           }) as IPageAuhtorArticleDataFinal & {
             article_access?: IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
-          };
+            related_articles?: IPageAuhtorArticleDataFinal['article'][];
+            };
+        const { author, article } = data;
         const {
           access_type,
           reward_tier_id,
           authors__article_reward_unlocks__article_id__nested,
           authors__authors__id__nested
-        } = data.article;
+        } = article;
         if (access_type === "reward_gated" && reward_tier_id) {
           const uid = request.locals.uid || "";
           const hasAccess = authors__authors__id__nested?.uid === uid || authors__article_reward_unlocks__article_id__nested?.some(({ uid: unlocks_uid }) => uid === unlocks_uid);
@@ -92,6 +94,23 @@ export async function main(request: RequestEvent): Promise<Response> {
           if (!hasAccess && data.article.data && !isBot && !edit) {
             data.article.data.content = await removeContentAfterTarget(data.article.data.content);
           }
+        }
+        
+        const related_articles_res  = await request.fetch(`/api/data/author/sportstack?permalink=${author.permalink}&page=0&sortPublishDate=desc`)
+        const related_articles = await related_articles_res.json();
+        if (related_articles.mapArticle) {
+          data.related_articles = related_articles.mapArticle
+            .filter(([id]) => id !== article.id)
+            .slice(0, 5)
+            .map(([id, article_content]) => [
+              id,
+              {
+                ...article_content,
+                data: { title: article_content?.data.title },
+                tags: null,
+                seo_details: { opengraph: { images:  article_content.seo_details?.opengraph.images || [] } } 
+              }]
+            );
         }
         // console.log('data-091', data);
 
