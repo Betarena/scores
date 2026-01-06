@@ -28,21 +28,21 @@
   import { page } from '$app/stores';
   import { onDestroy } from 'svelte';
 
-  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
   import { BetarenaUserHelper, listenRealTimeUserUpdates } from '$lib/firebase/common.js';
-  import userSettings from '$lib/store/user-settings.js';
   import session from '$lib/store/session.js';
+  import userSettings from '$lib/store/user-settings.js';
+  import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
+  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import Avatar from '$lib/components/ui/Avatar.svelte';
   import Button from '$lib/components/ui/Button.svelte';
-  import StackedAvatars from '$lib/components/ui/StackedAvatars.svelte';
-  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
-  import TranslationText from '$lib/components/misc/Translation-Text.svelte';
   import ShareButton from '$lib/components/ui/ShareButton.svelte';
+  import SportstackAvatar from '$lib/components/ui/SportstackAvatar.svelte';
+  import StackedAvatars from '$lib/components/ui/StackedAvatars.svelte';
 
+  import type { BetarenaUser } from '$lib/types/types.user-settings.js';
   import type { IBetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
   import type { IPageAuthorAuthorData } from '@betarena/scores-lib/types/v8/preload.authors.js';
-  import type { BetarenaUser } from '$lib/types/types.user-settings.js';
   import type { IPageAuthorTranslationDataFinal } from '@betarena/scores-lib/types/v8/segment.authors.tags.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -539,7 +539,7 @@
           }
           .owner {
             color: var(--text-color);
-            font-family: Inter;
+            font-family: var(--font-family-font-family-body, Roboto);
             opacity: 0.8;
             font-size: 12px;
             font-style: normal;
