@@ -89,7 +89,7 @@
   $: amountBta = (amountUsd || 0) / (btaUsdRate || 1);
   $: insufficientAmount =
     user && $walletStore.loaded && $walletStore.spending.available < amountBta;
-  
+
   let loading = false;
   let success = false;
   let step: "info" | "confirm" = "info";
@@ -195,13 +195,6 @@
         }
       }, 700);
     await invalidate("app:author-article-page");
-  }
-
-  async function showDeposit() {
-    const res = await import(
-      "$lib/components/page/profile/deposit/showDeposit.js"
-    );
-    res.showDepositModal();
   }
 
   async function checkAccess(uid, article_id) {
@@ -463,7 +456,30 @@
        <div class="footer">
          {#if insufficientAmount}
            <div class="insufficient-buttons">
-             <Button full={true} on:click={showDeposit}>
+             <Button
+              full={true}
+              on:click=
+                {
+                  () =>
+                  {
+                    modalStore.updateData
+                    (
+                      [
+                        [
+                          'ModalDeposit',
+                          {
+                            props: {},
+                            show: true,
+                            modal: true
+                          }
+                        ]
+                      ]
+                    );
+
+                    return;
+                  }
+                }
+              >
                <TranslationText
                  text={awards_translations.buy_bta}
                  fallback="Buy BTA"
@@ -473,7 +489,7 @@
          {:else}
            <div class="confetti">
              {#if step === "confirm" && success}
-             <WrapperDynamicImport autoplay importComponentPath="DotLottie" url="/assets/lottie/Confetti.lottie" />    
+             <WrapperDynamicImport autoplay importComponentPath="DotLottie" url="/assets/lottie/Confetti.lottie" />
              {/if}
            </div>
            {#if loading}
@@ -492,7 +508,7 @@
                  )}
                  fallback="Share 1BTA"
                />
-   
+
                {#if $session.btaUsdRate}
                  <span class="button-usd">({amountUsd.toFixed(2)}$)</span>
                {/if}
@@ -513,7 +529,7 @@
                    )}
                    fallback="Share 1BTA"
                  />
-   
+
                  {#if $session.btaUsdRate}
                    <span class="button-usd">({amountUsd.toFixed(2)}$)</span>
                  {/if}
@@ -528,7 +544,7 @@
                  />
                {/if}
              </Button>
-   
+
              {#if step === "info"}
                <div class="footer-info-text">
                  <TranslationText
