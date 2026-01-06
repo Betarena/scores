@@ -729,7 +729,7 @@ export const config = {
                         // │ |: -> 'local'         :: Locally hosted
                         // │ |: -> 'cdn'           :: 3rd-Party scripts loaded via CDN
                         // ╰─────
-                        strLoadingType: "local",
+                        strLoadingType: "cdn",
                         // ╭─────
                         // │ NOTE: IMPORTANT
                         // │ |: HTML Head Injection Point Identifier
