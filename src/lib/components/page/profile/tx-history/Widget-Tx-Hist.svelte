@@ -988,9 +988,10 @@ MAIN DEPOST WIDGET
               />
             {/each} -->
 
-            {#each txHistList.slice(0, txHistListLimit) as item}
+            {#each txHistList.slice(0, txHistListLimit) as item, index}
               <WidgetTxHistRow
                 tx_data={item}
+                {index}
                 {isViewMobile}
                 {isViewTablet}
                 txTranslation={RESPONSE_PROFILE_DATA?.tx?.fields}

@@ -27,6 +27,7 @@ COMPONENT JS (w/ TS)
     isViewTablet: boolean = false,
     txTranslation: B_H_TT_Field,
     txStatusTrans: B_H_TT_Status,
+    index: number,
     txTypeTrans: {[key: string]: string} = {}
   ;
 
@@ -48,6 +49,7 @@ COMPONENT JS (w/ TS)
     walletAddrTrunc: string
   ;
 
+  
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -183,7 +185,7 @@ COMPONENT JS (w/ TS)
     <!--
     TX TYPE
     -->
-    <td>
+    <td class="type-col">
       <div
         class=
         "
@@ -193,6 +195,7 @@ COMPONENT JS (w/ TS)
         <div
           class=
           "
+          type-col-title
           row-space-start
           "
         >
@@ -435,11 +438,13 @@ COMPONENT JS (w/ TS)
       column-start-grid-start
       tx-extra-info
       "
+      class:odd-row={index % 2 !== 0}
     >
       {#each Object.entries(txExtraInfoStruct) as item}
         <div
           class=
           "
+          mobile-row-more
           row-space-out
           "
         >
@@ -455,11 +460,13 @@ COMPONENT JS (w/ TS)
           <p
             class=
             "
+            tx-extra-info-desc
             s-14
             color-black-2
             "
+           
           >
-            {['payment_processor_fee', 'amount'].includes(item[0]) ? '$' : ''}{tx_data?.[item[0]] ?? '-'}
+            {['payment_processor_fee', 'amount'].includes(item[0]) ? '$' : ''}{item[0] === "type" ? txTypeTrans[tx_data?.[item[0]]?.toLowerCase()] :  tx_data?.[item[0]] ?? '-'}
           </p>
         </div>
       {/each}
@@ -560,6 +567,7 @@ COMPONENT JS (w/ TS)
   {
     /* 🎨 style */
     padding: 0 20px;
+    overflow: hidden;
     position: absolute;
     top: 56px;
     right: 0;
@@ -568,4 +576,41 @@ COMPONENT JS (w/ TS)
     gap: 12px;
   }
 
+  .type-col {
+    max-width: 240px;
+    text-overflow: ellipsis;
+  }
+  .type-col div {
+    max-width: 100%;
+    width: 100%;
+  }
+  .type-col .type-col-title {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .type-col .type-col-title  p {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-row-more {
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  .tx-extra-info-desc {
+    text-overflow: ellipsis;
+    text-align: end;
+    flex-grow: 1;
+
+  }
+
+  .tx-extra-info.odd-row {
+    background-color: var(--dark-theme-1-shade);
+    border-radius: 4px;
+  }
 </style>
