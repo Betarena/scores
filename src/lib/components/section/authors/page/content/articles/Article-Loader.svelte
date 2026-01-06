@@ -25,7 +25,6 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import LoaderAvatar from '$lib/components/ui/loaders/LoaderAvatar.svelte';
-  import LoaderBadge from '$lib/components/ui/loaders/LoaderBadge.svelte';
   import LoaderImage from '$lib/components/ui/loaders/LoaderImage.svelte';
   import LoaderLine from '$lib/components/ui/loaders/LoaderLine.svelte';
   import { fade } from 'svelte/transition';
@@ -177,7 +176,7 @@
         text-overflow: ellipsis;
         max-width: 100%;
         height: max-content;
-        font-family: Inter;
+        font-family: var(--font-family-font-family-body, Roboto);
         font-size: var(--text-size-l);
         font-style: normal;
         font-weight: 600;
@@ -209,7 +208,7 @@
 
         &-name {
           color: var(--text-color);
-          font-family: Inter;
+          font-family: var(--font-family-font-family-body, Roboto);
           font-size: var(--text-size-s);
           font-style: normal;
           font-weight: 500;
