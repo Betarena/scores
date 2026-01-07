@@ -638,6 +638,7 @@ export default defineConfig
 
       css:
       {
+        transformer: 'lightningcss',
         lightningcss:
         {
           unusedSymbols: false,
