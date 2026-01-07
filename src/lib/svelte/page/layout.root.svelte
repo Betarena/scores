@@ -50,17 +50,16 @@
 
   import { loginStore } from '$lib/components/section/login/login-store';
   import { config } from '$lib/constants/config.js';
-  import
-    {
-      routeIdContent,
-      routeIdLogin,
-      routeIdPageProfile,
-      routeIdPageProfileArticleCreation,
-      routeIdPageProfileEditArticle,
-      routeIdPageProfilePublication,
-      routeIdRegister,
-      routeIdSearch
-    } from '$lib/constants/paths.js';
+  import {
+    routeIdContent,
+    routeIdLogin,
+    routeIdPageProfile,
+    routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
+    routeIdRegister,
+    routeIdSearch
+  } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
   import history_store from '$lib/store/history.js';
@@ -90,8 +89,8 @@
   import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
   import { getRates } from '$lib/utils/web3.js';
+  import WidgetAdEngine from '@betarena/ad-engine';
 
   // ╭─────
   // │ IMPORTANT:
@@ -802,9 +801,8 @@
 
 <style lang="scss">
 
-  :global
-  {
-    @import 'static/scss/themes/index.scss';
+  :global{
+     @import 'static/app.scss';
   }
 
   /*

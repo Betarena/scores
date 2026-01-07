@@ -53,39 +53,6 @@ $fontSize: 50;
   color: var(--grey) !important;
 }
 
-.x-large,
-p.x-large,
-span.x-large
-{
-  font-size: 18px;
-}
-
-.large,
-p.large,
-span.large
-{
-  font-size: 16px;
-}
-
-.medium,
-p.medium,
-span.medium
-{
-  font-size: 14px;
-}
-
-.small,
-p.small
-{
-  font-size: 12px;
-}
-
-.s_small,
-p.s_small
-{
-  font-size: 12px;
-}
-
 @media only screen and (min-width: 768px)
 {
   .s-t-16
@@ -106,20 +73,10 @@ p.s_small
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 */
 
-@mixin defaultHeader
-{
-  /* 🎨 style */
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2;
-}
-
 @for $i from 1 through 6
 {
   h#{$i}
   {
-    @include defaultHeader;
     font-weight: 700;
     line-height: 140%;
 
@@ -184,15 +141,6 @@ p.s_small
   }
 }
 
-.color-blue-green-gradient
-{
-  /* 🎨 style */
-  background: -webkit-linear-gradient rgb(0, 255, 117), rgb(0, 163, 255);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
 .hover-color-primary:hover
 {
   /* 🎨 style */
@@ -219,11 +167,6 @@ p.s_small
 {
   font-style: normal;
   font-weight: bold;
-}
-
-.not-bold
-{
-  font-weight: normal;
 }
 
 .lowercase
@@ -262,11 +205,6 @@ p.s_small
   text-align: -moz-right;
 }
 
-.place-center
-{
-  place-self: center;
-}
-
 .cursor-pointer
 {
   cursor: pointer;
@@ -285,11 +223,6 @@ p.s_small
 .display-unset
 {
   display: unset !important;
-}
-
-.visibility-none
-{
-  visibility: hidden;
 }
 
 .opacity-0-4

@@ -13,12 +13,9 @@ are generally used throughout the project in a consistant and repetetive manner.
 @import './scss/spacing.scss';
 @import './scss/animation.scss';
 @import './scss/font.scss';
-@import './scss/button.scss';
 @import './scss/layout.scss';
 @import './scss/common.scss';
 @import './scss/misc.scss';
 
 // themes vars
-@import './scss//themes/common.scss';
-@import './scss/themes/dark.scss';
-@import './scss/themes/light.scss';
+@import './scss/themes/index.scss';

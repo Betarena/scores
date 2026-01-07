@@ -46,31 +46,6 @@
   }
 }
 
-section
-{
-  min-height: calc(100vh - 128px);
-  padding: 22px 16px;
-  padding-bottom: 100px !important;
-  margin: auto;
-
-  @media only screen and (min-width: 768px)
-  {
-    padding: 26px 34px;
-    margin: auto;
-  }
-
-  @media only screen and (min-width: 1025px)
-  {
-    padding: 26px 34px;
-    margin: auto;
-  }
-}
-
-.flex-start
-{
-  align-items: flex-start !important;
-}
-
 .row
 {
   @mixin default
