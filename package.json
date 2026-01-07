@@ -62,7 +62,7 @@
 		"vitest/coverage": "vitest run --coverage"
 	},
 	"dependencies": {
-		"@betarena/ad-engine": "0.0.75",
+		"@betarena/ad-engine": "0.0.77",
 		"@betarena/scores-lib": "4.9.15",
 		"@lottiefiles/dotlottie-svelte": "0.8.4",
 		"@lukeed/uuid": "2.0.1",
