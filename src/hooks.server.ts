@@ -737,7 +737,7 @@ export const handle: Handle = sequence
               // ╰─────
               if (_substring.includes('as="script"'))
                 injectionType = 'script'
-              else if (_substring.includes('rel="stylesheet"'))
+              else if (_substring.includes('rel="stylesheet"') &&  !_substring.includes("purged.clean.css"))
                 injectionType = 'style';
               else if (_substring.includes('.html'))
                 injectionType = 'html';

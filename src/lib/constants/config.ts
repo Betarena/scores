@@ -363,14 +363,14 @@ export const config = {
                         {
                           'purged': `
                             <link
-                              href="css/app.purged.clean.css"
+                              href="/css/app.purged.clean.css"
                               rel="stylesheet"
                               text="text/css"
                             />
                           `,
                           'standard': `
                             <link
-                              href="app.css"
+                              href="/app.css"
                               rel="stylesheet"
                               text="text/css"
                             />
