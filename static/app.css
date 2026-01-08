@@ -1,5 +1,6 @@
 @charset "UTF-8";
 /*
+
 This is the main (global) css file used throughout the project - that                  
 sets out the general desing language, such as: margins/paddings/colors that            
 are generally used throughout the project in a consistant and repetetive manner.       
@@ -2136,34 +2137,6 @@ p {
   color: var(--grey) !important;
 }
 
-.x-large,
-p.x-large,
-span.x-large {
-  font-size: 18px;
-}
-
-.large,
-p.large,
-span.large {
-  font-size: 16px;
-}
-
-.medium,
-p.medium,
-span.medium {
-  font-size: 14px;
-}
-
-.small,
-p.small {
-  font-size: 12px;
-}
-
-.s_small,
-p.s_small {
-  font-size: 12px;
-}
-
 @media only screen and (min-width: 768px) {
   .s-t-16 {
     font-size: 16px;
@@ -2180,65 +2153,35 @@ p.s_small {
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 */
 h1 {
-  /* 🎨 style */
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2;
   font-weight: 700;
   line-height: 140%;
   font-size: 32px;
 }
 
 h2 {
-  /* 🎨 style */
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2;
   font-weight: 700;
   line-height: 140%;
   font-size: 20px;
 }
 
 h3 {
-  /* 🎨 style */
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2;
   font-weight: 700;
   line-height: 140%;
   font-size: 18px;
 }
 
 h4 {
-  /* 🎨 style */
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2;
   font-weight: 700;
   line-height: 140%;
   font-size: 14px;
 }
 
 h5 {
-  /* 🎨 style */
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2;
   font-weight: 700;
   line-height: 140%;
 }
 
 h6 {
-  /* 🎨 style */
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2;
   font-weight: 700;
   line-height: 140%;
 }
@@ -2528,14 +2471,6 @@ h6 {
   color: var(--dark-theme-1-5-shade-o-0-5) !important;
 }
 
-.color-blue-green-gradient {
-  /* 🎨 style */
-  background: -webkit-linear-gradient rgb(0, 255, 117), rgb(0, 163, 255);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
 .hover-color-primary:hover {
   /* 🎨 style */
   color: var(--primary) !important;
@@ -2557,10 +2492,6 @@ h6 {
 .bold {
   font-style: normal;
   font-weight: bold;
-}
-
-.not-bold {
-  font-weight: normal;
 }
 
 .lowercase {
@@ -2593,10 +2524,6 @@ h6 {
   text-align: -moz-right;
 }
 
-.place-center {
-  place-self: center;
-}
-
 .cursor-pointer {
   cursor: pointer;
 }
@@ -2613,203 +2540,10 @@ h6 {
   display: unset !important;
 }
 
-.visibility-none {
-  visibility: hidden;
-}
-
 .opacity-0-4 {
   opacity: 0.4;
 }
 
-/* #region ➤ [MAIN] [BUTTONS] Website Layout */
-/*
-╭──────────────────────────────────────────────────────────────────╮
-│ 📌 BUTTON STYLES                                                 │
-╰──────────────────────────────────────────────────────────────────╯
-*/
-button {
-  /* 🎨 style */
-  outline: none !important;
-  border: none !important;
-  opacity: 1;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  align-items: center;
-  white-space: nowrap;
-  display: flex;
-  justify-content: center;
-  /*
-  ╭──────────────────────────────────────────────────────────────────╮
-  │ 📌 EXTRA BUTTON STYLES                                           │
-  ╰──────────────────────────────────────────────────────────────────╯
-  */
-}
-button:disabled {
-  cursor: default;
-}
-button.btn-primary {
-  /* 🎨 style */
-  background: var(--primary);
-}
-button.btn-primary p {
-  /* 🎨 style */
-  color: var(--white);
-}
-button.btn-secondary {
-  /* 🎨 style */
-  background: var(--secondary);
-}
-button.btn-secondary p {
-  /* 🎨 style */
-  color: var(--white);
-}
-button.btn-blue {
-  /* 🎨 style */
-  background-color: var(--blue);
-}
-button.btn-blue p {
-  /* 🎨 style */
-  color: var(--white);
-}
-button.btn-blue:hover {
-  /* 🎨 style */
-  background-color: var(--white);
-}
-button.btn-blue:hover p {
-  /* 🎨 style */
-  color: var(--secondary);
-}
-button.btn-white {
-  /* 🎨 style */
-  background-color: var(--white);
-}
-button.btn-white p {
-  /* 🎨 style */
-  color: var(--black);
-}
-button.btn-primary-v2 {
-  /* 🎨 style */
-  height: 44px;
-  padding: 11.5px 24px;
-  background: var(--primary);
-  border-radius: 8px;
-  color: var(--white);
-}
-button.btn-primary-v2:hover {
-  /* 🎨 style */
-  background-color: var(--primary-fade);
-}
-button.btn-hollow {
-  /* 🎨 style */
-  height: 44px;
-  padding: 11.5px 20px;
-  background: transparent;
-  border: 1px solid var(--grey-color) !important;
-  border-radius: 8px;
-  color: var(--dark-theme);
-  /*
-  Variant (2)
-  */
-  /*
-  Variant (3)
-  */
-  /*
-  Variant (4)
-  */
-  /*
-  Variant (6)
-  */
-}
-button.btn-hollow:hover {
-  /* 🎨 style */
-  border: 1px solid var(--primary) !important;
-  color: var(--primary);
-}
-button.btn-hollow.danger {
-  /* 🎨 style */
-  border: 1px solid var(--red) !important;
-}
-button.btn-hollow.cta {
-  /* 🎨 style */
-  border: 1px solid var(--primary) !important;
-}
-button.btn-hollow.cta:hover {
-  /* 🎨 style */
-  background-color: var(--primary);
-  color: var(--white) !important;
-}
-button.btn-hollow.v4:hover {
-  /* 🎨 style */
-  border: 1px solid var(--grey-shade) !important;
-  color: initial;
-}
-button.btn-hollow.v6 {
-  /* 🎨 style */
-  background: #292929;
-  height: 44px;
-  padding: 12px 24px 11px 24px;
-  border-radius: 8px;
-  border: 1px;
-  gap: 10px;
-}
-.dark-background button.btn-hollow.v6, .dark-background-1 button.btn-hollow.v6, .dark-mode button.btn-hollow.v6 {
-  /* 🎨 style */
-  border: 1px solid #FFFFFF;
-}
-.dark-background button.btn-hollow.v2, .dark-background-1 button.btn-hollow.v2, .dark-mode button.btn-hollow.v2 {
-  /* 🎨 style */
-  border: 1px solid var(--dark-theme-1) !important;
-}
-.dark-background button.btn-hollow.v3d, .dark-background-1 button.btn-hollow.v3d, .dark-mode button.btn-hollow.v3d {
-  /* 🎨 style */
-  border: 1px solid var(--grey) !important;
-}
-.dark-background button.btn-hollow.v3d:hover, .dark-background-1 button.btn-hollow.v3d:hover, .dark-mode button.btn-hollow.v3d:hover {
-  /* 🎨 style */
-  border: 1px solid var(--grey-shade) !important;
-}
-.dark-background button.btn-hollow.v5d, .dark-background-1 button.btn-hollow.v5d, .dark-mode button.btn-hollow.v5d {
-  /* 🎨 style */
-  border: 1px solid var(--dark-theme-1-shade) !important;
-}
-button.btn-dark {
-  /* 🎨 style */
-  padding: 10px 17px;
-  border-radius: 12px;
-  background-color: var(--grey-color);
-}
-button.btn-dark:hover {
-  /* 🎨 style */
-  background-color: var(--white-3);
-}
-.dark-background button.btn-dark, .dark-background-1 button.btn-dark, .dark-mode button.btn-dark {
-  /* 🎨 style */
-  background-color: var(--dark-theme-1-4-shade);
-}
-.dark-background button.btn-dark:hover, .dark-background-1 button.btn-dark:hover, .dark-mode button.btn-dark:hover {
-  /* 🎨 style */
-  background-color: var(--dark-theme);
-}
-button.btn-right-icon {
-  /* 🎨 style */
-  padding: 5px 45px 5px 6px !important;
-  background-position: right 11px top 50%;
-  background-size: 16.17px 16.17px;
-  background-repeat: no-repeat;
-}
-button.btn-left-icon {
-  /* 🎨 style */
-  padding: 5px 6px 5px 37px !important;
-  background-position: left 11px top 50%;
-  background-size: 16.17px 16.17px;
-  background-repeat: no-repeat;
-}
-button.btn-shadow-1 {
-  /* 🎨 style */
-  box-shadow: 0px 3px 8px 0px rgba(212, 84, 12, 0.32);
-}
-
-/* #endregion ➤ [MAIN] [BUTTONS] Website Layout */
 /* #region ➤ [MAIN] [CONTAINERS] Website Layout */
 .widget-component {
   display: grid;
@@ -2846,29 +2580,6 @@ button.btn-shadow-1 {
 .container input:checked ~ .checkmark {
   background-color: var(--primary);
   border: 1.5px solid transparent;
-}
-
-section {
-  min-height: calc(100vh - 128px);
-  padding: 22px 16px;
-  padding-bottom: 100px !important;
-  margin: auto;
-}
-@media only screen and (min-width: 768px) {
-  section {
-    padding: 26px 34px;
-    margin: auto;
-  }
-}
-@media only screen and (min-width: 1025px) {
-  section {
-    padding: 26px 34px;
-    margin: auto;
-  }
-}
-
-.flex-start {
-  align-items: flex-start !important;
 }
 
 .row-space-out {
@@ -3102,9 +2813,9 @@ img.google-aspect-ratio {
 }
 
 /*
-
- DARK-THEME :: GENERAL                                                                
-
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+◼️ DARK-THEME :: GENERAL                                                                ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 */
 .dark-background {
   /* 🎨 style */
@@ -3117,9 +2828,9 @@ img.google-aspect-ratio {
 }
 
 /*
-
- DARK-THEME :: OTHER                                                                  
-
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+◼️ DARK-THEME :: OTHER                                                                  ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 */
 .dark-background .hover-color-primary:hover,
 .dark-background-1 .hover-color-primary:hover,

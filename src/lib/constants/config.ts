@@ -365,7 +365,8 @@ export const config = {
                             <link
                               href="/css/app.purged.clean.css"
                               rel="stylesheet"
-                              text="text/css"
+                              fetchpriority="high"
+                              type="text/css"
                             />
                           `,
                           'standard': `
