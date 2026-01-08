@@ -106,7 +106,6 @@
 		"ibantools": "4.3.3",
 		"ioredis": "5.3.2",
 		"json-stringify-safe": "5.0.1",
-		"lightningcss": "1.30.2",
 		"lz-string": "1.5.0",
 		"masonry-layout": "4.2.2",
 		"moralis": "2.18.4",
@@ -185,10 +184,5 @@
 		"watch": [
 			"build"
 		]
-	},
-	"optionalDependencies": {
-		"lightningcss-linux-arm64-musl": "1.30.2",
-		"lightningcss-linux-x64-gnu": "1.30.2",
-		"lightningcss-linux-x64-musl": "1.30.2"
 	}
 }
