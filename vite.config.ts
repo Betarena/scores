@@ -636,15 +636,15 @@ export default defineConfig
         // sourcemap: "hidden"
       },
 
-      // css:
-      // {
-      //   transformer: 'lightningcss',
-      //   lightningcss:
-      //   {
-      //     unusedSymbols: false,
-      //     minify: true
-      //   }
-      // },
+      css:
+      {
+        transformer: 'lightningcss',
+        lightningcss:
+        {
+          unusedSymbols: false,
+          minify: true
+        }
+      },
 
       server:
       {
