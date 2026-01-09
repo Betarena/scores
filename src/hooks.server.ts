@@ -737,8 +737,8 @@ export const handle: Handle = sequence
               // ╰─────
               if (_substring.includes('as="script"'))
                 injectionType = 'script'
-              // else if (_substring.includes('rel="stylesheet"'))
-              //   injectionType = 'style';
+              else if (_substring.includes('rel="stylesheet"'))
+                injectionType = 'style';
               else if (_substring.includes('.html'))
                 injectionType = 'html';
               else if (!_substring.includes('_app'))
@@ -746,6 +746,15 @@ export const handle: Handle = sequence
               else
                 return _substring;
               ;
+
+              if (injectionType === 'style') {
+                  if (_substring.includes('onload=')) return _substring;
+
+                  return _substring.replace(
+                      'rel="stylesheet"',
+                      'rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"'
+                  ) + `<noscript><link rel="stylesheet" href="${href}"></noscript>`;
+              }
 
               // ╭─────
               // │ NOTE:
@@ -1079,7 +1088,7 @@ export const handle: Handle = sequence
                 }
               );
 
-              return config.objApp.objComponentConfiguration.get('src/hooks.server.ts')?.isPreload ?? true;
+              return type !== "css";
             }
           }
         )
