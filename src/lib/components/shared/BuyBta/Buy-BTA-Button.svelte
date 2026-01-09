@@ -26,7 +26,6 @@
   import { browser } from "$app/environment";
   import { page } from "$app/stores";
   import { get } from "$lib/api/utils.js";
-  import { showDepositModal } from "$lib/components/page/profile/deposit/showDeposit";
   import Button from "$lib/components/ui/Button.svelte";
   import sessionStore from "$lib/store/session.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
@@ -71,9 +70,12 @@
   // │ 2. async function (..)                                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  function click() {
+  async function click() {
     dispatch("click");
-    showDepositModal();
+    const res = await import(
+      "$lib/components/page/profile/deposit/showDeposit.js"
+    );
+    res.showDepositModal();
   }
 
   async function fetchOptions(lang?: string) {

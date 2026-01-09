@@ -24,7 +24,6 @@ import { defineConfig } from 'vitest/config';
 
 import { partytownVite } from "@qwik.dev/partytown/utils";
 import { visualizer } from 'rollup-plugin-visualizer';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
 import { isSSR } from './.vite/env.ts';
 import { sveltekitCssPurge } from './.vite/sveltekit-build-css-unused.2.ts';
@@ -350,76 +349,76 @@ export default defineConfig
         // │ │: [5] Copy new `CSS` to `src/app.html > <head> <style> (designated area).
         // │ │: [6] Push to `Production`.
         // ╰─────
-        objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.isEnabled && cssInjectedByJsPlugin
-        (
-          {
-            // relativeCSSInjection: true,
+        // objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.isEnabled && cssInjectedByJsPlugin
+        // (
+        //   {
+        //     // relativeCSSInjection: true,
 
-            // topExecutionPriority: true,
+        //     // topExecutionPriority: true,
 
-            // jsAssetsFilterFunction: function customJsAssetsfilterFunction
-            // (
-            //   outputChunk
-            // )
-            // {
-            // ╭─────
-            // │ NOTE:
-            // │ |: It appears, the 'outputChunk.filename' is of type:
-            // │ |: - _app/immutable/chunks/index.088b98a6.js
-            // │ |: - _app/immutable/chunks/index.8e8ca4ce.js
-            // ╰─────
-            // console.log(outputChunk.fileName);
-            //   return outputChunk.fileName == 'index.js';
-            // }
+        //     // jsAssetsFilterFunction: function customJsAssetsfilterFunction
+        //     // (
+        //     //   outputChunk
+        //     // )
+        //     // {
+        //     // ╭─────
+        //     // │ NOTE:
+        //     // │ |: It appears, the 'outputChunk.filename' is of type:
+        //     // │ |: - _app/immutable/chunks/index.088b98a6.js
+        //     // │ |: - _app/immutable/chunks/index.8e8ca4ce.js
+        //     // ╰─────
+        //     // console.log(outputChunk.fileName);
+        //     //   return outputChunk.fileName == 'index.js';
+        //     // }
 
-            // ╭─────
-            // │ NOTE:
-            // │ |: 🟩 definitive 'HACK' (solution) for 'single CSS file' output chunk.
-            // ╰─────
-            injectCode:
-            (
-              cssCode,
-              options
-            ): string =>
-            {
-              // [🐞]
-              console.log('🚦 Running cssInjectedByJsPlugin :: injectCode ...');
+        //     // ╭─────
+        //     // │ NOTE:
+        //     // │ |: 🟩 definitive 'HACK' (solution) for 'single CSS file' output chunk.
+        //     // ╰─────
+        //     injectCode:
+        //     (
+        //       cssCode,
+        //       options
+        //     ): string =>
+        //     {
+        //       // [🐞]
+        //       console.log('🚦 Running cssInjectedByJsPlugin :: injectCode ...');
 
-              // ╭─────
-              // │ NOTE:
-              // │ |: the 'cssCode' generated contains some 'formatting' issues.
-              // │ WARNING: IMPORTANT
-              // │ |: remove 1st and last speech marks.
-              // │ |: remove cases of `\n` chars.
-              // │ |: correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
-              // ╰─────
-              const
-                cssCodeMod = cssCode
-                  .slice(1, -1)
-                  .replace(/\\n/g, "")
-                  .replace(/\\\\/g,"\\")
-              ;
+        //       // ╭─────
+        //       // │ NOTE:
+        //       // │ |: the 'cssCode' generated contains some 'formatting' issues.
+        //       // │ WARNING: IMPORTANT
+        //       // │ |: remove 1st and last speech marks.
+        //       // │ |: remove cases of `\n` chars.
+        //       // │ |: correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
+        //       // ╰─────
+        //       const
+        //         cssCodeMod = cssCode
+        //           .slice(1, -1)
+        //           .replace(/\\n/g, "")
+        //           .replace(/\\\\/g,"\\")
+        //       ;
 
-              // ╭─────
-              // │ NOTE:
-              // │ |: output to file-system.
-              // ╰─────
-              fs.writeFile
-              (
-                objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.outputPath,
-                cssCodeMod,
-                err =>
-                {
-                  if (err) console.error(err);
-                }
-              );
+        //       // ╭─────
+        //       // │ NOTE:
+        //       // │ |: output to file-system.
+        //       // ╰─────
+        //       fs.writeFile
+        //       (
+        //         objViteConfigOptions.objPluginConfig.cssInjectedByJsPlugin.outputPath,
+        //         cssCodeMod,
+        //         err =>
+        //         {
+        //           if (err) console.error(err);
+        //         }
+        //       );
 
-              return '';
+        //       return '';
 
-              // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
-            }
-          }
-        ),
+        //       // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
+        //     }
+        //   }
+        // ),
         // ╭─────
         // │ NOTE:
         // │ │: using 'rollup-plugin-visualizer'
@@ -485,6 +484,7 @@ export default defineConfig
         // cssCodeSplit: false,
         minify: false,
         cssMinify: 'lightningcss',
+        cssCodeSplit: true,
 
         rollupOptions:
         {
@@ -636,15 +636,15 @@ export default defineConfig
         // sourcemap: "hidden"
       },
 
-      // css:
-      // {
-      //   transformer: 'lightningcss',
-      //   lightningcss:
-      //   {
-      //     unusedSymbols: false,
-      //     minify: true
-      //   }
-      // },
+      css:
+      {
+        transformer: 'lightningcss',
+        lightningcss:
+        {
+          unusedSymbols: false,
+          minify: true
+        }
+      },
 
       server:
       {
