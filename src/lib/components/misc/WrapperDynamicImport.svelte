@@ -62,7 +62,8 @@
       "$lib/components/misc/banner/Banner-Platform-Alert.svelte"),
     "Modal-Email-Subscribe": () => import(
       "$lib/components/misc/modal/Modal-Email-Subscribe.svelte"),
-    "DotLottie": () => import("$lib/components/misc/WrapperLottie.svelte"),
+    "DotLottie": () => import("$lib/components/misc/WrapperLottie.svelte')},
+    'Ad-Engine': () => {return import('@betarena/ad-engine')},
   };
 
   // #endregion ➤ 📌 VARIABLES
