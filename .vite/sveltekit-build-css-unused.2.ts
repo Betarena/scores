@@ -34,7 +34,10 @@ const
    * @description
    */
   strConsolePrefix = chalk.bgCyan(`[_betarea.vite.plugin.sveltekit-purge-css]`),
-
+  /**
+   * @description
+   * 📝 Svelte preprocessor configuration
+   */
   preprocessor = sveltePreprocess
     (
       {
@@ -50,14 +53,22 @@ let
    */
   [
     strDebugLevel,
-    strOutputFilePathPrefix,
+    objPaths,
   ] = [
     'info',
+    {
+      pathToFinalPurgedCssFile: '.',
+      pathToOutputDebugFiles: '.',
+    },
     '.',
   ]
 ;
 
 // #endregion ➤ 📌 VARIABLES
+
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 💠 │ MISCELLANEOUS                                                               │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
 
 function log
 (
@@ -86,6 +97,10 @@ function log
   return;
 }
 
+// ╭──────────────────────────────────────────────────────────────────────────────────╮
+// │ 🟥 │ MAIN                                                                        │
+// ╰──────────────────────────────────────────────────────────────────────────────────╯
+
 /**
  * @author
  *  @migbash
@@ -94,7 +109,6 @@ function log
  * @param param0
  *  ❗️ **REQUIRED** Object containing:
  *  - strGlobalCssFileContent: string - The content of the global CSS file to analyze.
- *  - strOutputFilePathPrefix?: string - Optional prefix for output file paths. Default is './css-variables-unused.json'.
  * @return { PluginOption }
  *  📤 Vite plugin option object.
  */
@@ -102,20 +116,31 @@ export function sveltekitCssPurge
 (
   {
     strGlobalCssFileContent,
-    strOutputFilePathPrefix = '.',
-    strOutputFileName = 'css-variables-unused.json',
+    _objPaths,
     _strDebugLevel = 'info',
   }:
   {
     strGlobalCssFileContent: string;
-    strOutputFilePathPrefix?: string;
-    strOutputFileName?: string;
+    _objPaths?:
+    {
+      pathToFinalPurgedCssFile: string;
+      pathToOutputDebugFiles: string;
+    };
     _strDebugLevel?: string;
   }
 ): PluginOption
 {
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 📌 │ PREPARATION                                                                 │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
   strDebugLevel = _strDebugLevel;
-  strOutputFilePathPrefix = strOutputFilePathPrefix;
+  objPaths = _objPaths ??
+    {
+      pathToFinalPurgedCssFile: '.',
+      pathToOutputDebugFiles: '.',
+    }
+  ;
 
   const
     // ╭─────
@@ -125,19 +150,16 @@ export function sveltekitCssPurge
     [
       listAllCssVars,
       listAllCssClasses,
-      //
       setDeclaredCssVars,
       setDeclaredCssClasses,
-      //
       setUsedCssVarsInSvelteFiles,
       setUsedCssClassesInSvelteFiles,
-      //
-      mapDeclaredCssVarsToMinifiedNames,
+      setUsedElementsInSvelteFiles,
+      mapDeclaredCssVarsToMinifiedNames, // TODO: future use
     ] = [
-      // strGlobalCssFileContent.matchAll(/--[A-Za-z0-9-]+:\s[A-Za-z0-9-()]+;/g),
       strGlobalCssFileContent.matchAll(/(--[A-Za-z0-9_-]+):\s+.*;/g),
-      strGlobalCssFileContent.matchAll(/\.([A-Za-z0-9_-]+)(?!.*[;%)])/g), // ❗️ innacurate regex for CSS classes
-      //
+      extractClassesFromCSS(strGlobalCssFileContent),
+      new Set<string>(),
       new Set<string>(),
       new Set<string>(),
       new Set<string>(),
@@ -146,35 +168,29 @@ export function sveltekitCssPurge
     ]
   ;
 
-  extractClassesFromCSS(strGlobalCssFileContent);
-
   // [🐞]
   // console.log('strGlobalCssFileContent', strGlobalCssFileContent);
 
   for (const element of listAllCssVars)
-  {
-    // [🐞]
-    // console.log(`${strConsolePrefix} css variable: ${element[1]}`);
     setDeclaredCssVars.add(element[1]);
-  }
+  ;
 
   for (const element of listAllCssClasses)
-  {
-    // [🐞]
-    // console.log(`${strConsolePrefix} css class: ${element[1]}`);
     setDeclaredCssClasses.add(element[1]);
-  }
+  ;
 
   // [🐞]
   log
   (
     `
     ╭──────────────────────────────────────────────────────────────────────────────────╮
-    │ 🚨 Total (unique) Declared CSS Vars :: ${setDeclaredCssVars.size}
+    │ 🚨 Total (unique) Declared CSS Vars (app.css) :: ${setDeclaredCssVars.size}
     │ 🚨 Total (unique) Used CSS Vars :: ${setUsedCssVarsInSvelteFiles.size}
     ├──────────────────────────────────────────────────────────────────────────────────┤
-    │ 🚨 Total (unique) Declared CSS Class :: ${setDeclaredCssClasses.size}
+    │ 🚨 Total (unique) Declared CSS Class (app.css) :: ${setDeclaredCssClasses.size}
     │ 🚨 Total (unique) Used CSS Class :: ${setUsedCssClassesInSvelteFiles.size}
+    ├──────────────────────────────────────────────────────────────────────────────────┤
+    │ 🚨 Total (unique) HTML Elements :: ${setUsedElementsInSvelteFiles.size}
     ╰──────────────────────────────────────────────────────────────────────────────────╯
     `.replaceAll('  ','')
   );
@@ -195,52 +211,122 @@ export function sveltekitCssPurge
       id,
     ) =>
     {
-      if (!id.endsWith('.svelte'))
-        return;
-      ;
+      // [🐞]
+      log
+      (
+        `Processing file :: ${id}`,
+        'info'
+      );
 
-      const
+      /**
+       * @author
+       *  @migbash
+       * @summary
+       *  🔹 HELPER
+       * @description
+       *  📝 Helper to check if a file is a Svelte file based on its extension.
+       * @param { string } filename
+       *  ❗️ **REQUIRED** Filename to check.
+       * @returns
+       */
+      async function _helperIsSvelteFile
+      (
+      ): Promise<void>
+      {
+        const
+          // ╭─────
+          // │ NOTE:
+          // │ |: destructure assignments
+          // ╰─────
+          [
+            _setUsedCssVarsInThisFile,
+            {
+              setClasses: _setUsedCssClassesInThisFile,
+              setElements: _setUsedElementsInThisFile,
+            },
+          ] = [
+            new Set < string >(),
+            await extractClassesFromSvelte(code, id),
+          ]
+        ;
+
         // ╭─────
         // │ NOTE:
-        // │ |: destructure assignments
+        // │ |: loop over all matches of 'var(--variable-name[..]' in the code (markup, script, style),
+        // │ |: capturing USED CSS variable name
         // ╰─────
-        [
-          _setUsedCssVarsInThisFile,
-          _setUsedCssClassesInThisFile,
-        ] = [
-          new Set < string >(),
-          await extractClassesFromSvelte(code, id),
-        ]
-      ;
+        for (const element of code.matchAll(/var\(\s*(--[A-Za-z0-9-_]+)/g))
+        {
+          //  [🐞]
+          // console.log
+          // (
+          //   `${strConsolePrefix} CSS VAR is USED : ${chalk.green(element[1])}`
+          // );
 
-      // ╭─────
-      // │ NOTE:
-      // │ |: loop over all matches of 'var(--variable-name[..]' in the code (markup, script, style),
-      // │ |: capturing USED CSS variable name
-      // ╰─────
-      for (const element of code.matchAll(/var\(\s*(--[A-Za-z0-9-_]+)/g))
-      {
-        //  [🐞]
-        // console.log
-        // (
-        //   `${strConsolePrefix} CSS VAR is USED : ${chalk.green(element[1])}`
-        // );
+          _setUsedCssVarsInThisFile.add(element[1]);
+          setUsedCssVarsInSvelteFiles.add(element[1]);
+        }
 
-        _setUsedCssVarsInThisFile.add(element[1]);
-        setUsedCssVarsInSvelteFiles.add(element[1]);
+        _setUsedCssClassesInThisFile
+          .forEach(item => setUsedCssClassesInSvelteFiles.add(item))
+        ;
+
+        _setUsedElementsInThisFile
+          .forEach(item => setUsedElementsInSvelteFiles.add(item))
+        ;
       }
 
-      _setUsedCssClassesInThisFile
-        .forEach(item => setUsedCssClassesInSvelteFiles.add(item))
+      if (id.endsWith('.svelte'))
+      {
+        await _helperIsSvelteFile();
+        // return {
+        //   code: code
+        //     .replace
+        //     (
+        //       /@import\s+['"]\.\.\/style\/app\.scss['"];/,
+        //       `@import '../style/app.purged.css';`
+        //     ),
+        //   map: null
+        // };
+      }
+      else if (id.endsWith('.css'))
+        return {
+          code: purgeCSS(code, setUsedCssClassesInSvelteFiles),
+          map: null,
+        };
       ;
 
       return;
     },
 
+    // generateBundle
+    // (
+    //   _,
+    //   bundle
+    // )
+    // {
+    //   // ╭─────
+    //   // │ NOTE:
+    //   // │ |: purge CSS classes from CSS assets based on used classes in Svelte files
+    //   // ╰─────
+    //   for (const file of Object.values(bundle))
+    //   {
+    //     console.log(`${strConsolePrefix} Processing asset :: ${file.fileName}`);
+
+    //     if (file.type === "asset" && file.fileName.endsWith(".css"))
+    //       file.source = purgeCSS(file.source as string, setUsedCssClassesInSvelteFiles);
+    //     ;
+    //   }
+    // },
+
     closeBundle
     (
     )
     {
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 📝 │ REPORTING                                                                   │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
+
       // [🐞]
       log
       (
@@ -251,6 +337,8 @@ export function sveltekitCssPurge
         ├──────────────────────────────────────────────────────────────────────────────────┤
         │ 🚨 Total Declared CSS Class :: ${setDeclaredCssClasses.size}
         │ 🚨 Total Used CSS Class :: ${setUsedCssClassesInSvelteFiles.size}
+        ├──────────────────────────────────────────────────────────────────────────────────┤
+        │ 🚨 Total (unique) HTML Elements :: ${setUsedElementsInSvelteFiles.size}
         ╰──────────────────────────────────────────────────────────────────────────────────╯
         `.replaceAll('  ',''),
         'info'
@@ -267,31 +355,28 @@ export function sveltekitCssPurge
 
       // ╭─────
       // │ NOTE:
-      // │ |: output file :: used CSS variables
+      // │ |: output file :: [debugging]
       // ╰─────
       fs.writeFile
       (
-        `${strOutputFilePathPrefix}/css-classes-used.json`,
-        JSON.stringify(Array.from(setUsedCssClassesInSvelteFiles), null, 4),
+        `${objPaths.pathToOutputDebugFiles}/svelte-debug.json`,
+        JSON.stringify
+        (
+          {
+            listUnusedVars,
+            setUsedElementsInSvelteFiles: Array.from(setUsedElementsInSvelteFiles),
+            setUsedCssClassesInSvelteFiles: Array.from(setUsedCssClassesInSvelteFiles),
+          }
+          , null, 4),
         err =>
         {
           if (err) console.error(err);
         }
       );
 
-      // ╭─────
-      // │ NOTE:
-      // │ |: output file :: unused CSS variables
-      // ╰─────
-      fs.writeFile
-      (
-        `${strOutputFilePathPrefix}/${strOutputFileName}`,
-        JSON.stringify(listUnusedVars, null, 4),
-        err =>
-        {
-          if (err) console.error(err);
-        }
-      );
+      // ╭──────────────────────────────────────────────────────────────────────────────────╮
+      // │ 📌 │ MUTATE GLOBAL CSS FILE                                                      │
+      // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
       /**
        * @author
@@ -363,16 +448,16 @@ export function sveltekitCssPurge
         }
 
         strModifiedCssClean = strModifiedCssClean
-            // .replace
-            // (
-            //   /\n\s*\n/g,
-            //   '\n'
-            // )
             .replace
             (
-              /\s+/g,
-              ''
+              /\n\s*\n/g,
+              '\n'
             )
+            // .replace
+            // (
+            //   /\s+/g,
+            //   ''
+            // )
         ;
 
         // ╭─────
@@ -381,7 +466,7 @@ export function sveltekitCssPurge
         // ╰─────
         fs.writeFile
         (
-          `${strOutputFilePathPrefix}/app.purged.css`,
+          `${objPaths.pathToOutputDebugFiles}/app.purged.css`,
           strModifiedCssCommented,
           err =>
           {
@@ -389,18 +474,11 @@ export function sveltekitCssPurge
           }
         );
 
-        // ╭─────
-        // │ NOTE:
-        // │ |: output file :: purged CSS clean (no comments, no unused vars)
-        // ╰─────
-        fs.writeFile
+        purgeCSS
         (
-          `${strOutputFilePathPrefix}/app.purged.clean.css`,
           strModifiedCssClean,
-          err =>
-          {
-            if (err) console.error(err);
-          }
+          setUsedCssClassesInSvelteFiles,
+          setUsedElementsInSvelteFiles
         );
       }
 
@@ -442,7 +520,7 @@ function extractClassesFromCSS
      * @description
      * 📝 Set of CSS class names
      */
-    classNames = new Set()
+    classNames = new Set<string>()
   ;
 
   root
@@ -493,7 +571,7 @@ function extractClassesFromCSS
   // ╰─────
   fs.writeFile
   (
-    '.temp/vite/sveltekit-build-css-unused/css-classes-extracted.json',
+    `${objPaths.pathToOutputDebugFiles}/css-classes-extracted.json`,
     JSON.stringify(Array.from(classNames), null, 4),
     err =>
     {
@@ -512,17 +590,17 @@ function extractClassesFromCSS
  * @description
  *  📝 Extract CSS classes from Svelte component source code.
  * @param { string } source
- *  ❗️ **REQUIRED** Svelte component source code.
+ *  ❗️ **REQUIRED** svelte component source code.
  * @param { string } filename
- *  ❗️ **REQUIRED** Svelte component filename.
- * @returns { Promise < Set < string > > }
+ *  ❗️ **REQUIRED** svelte component filename.
+ * @returns { Promise < { setClasses: Set<string>, setElements: Set<string> } > }
  *  📤 Set of extracted CSS class names.
  */
 async function extractClassesFromSvelte
 (
   source: string,
-  filename: string
-): Promise < Set < string > >
+  filename: string,
+): Promise < { setClasses: Set<string>, setElements: Set<string> } >
 {
   const
     /**
@@ -541,10 +619,12 @@ async function extractClassesFromSvelte
     // ╰─────
     [
       ast,
-      classes
+      setClasses,
+      setElements,
     ] = [
       parse(processed.code),
-      new Set<string>()
+      new Set<string>(),
+      new Set<string>(),
     ]
   ;
 
@@ -552,15 +632,15 @@ async function extractClassesFromSvelte
   // │ NOTE:
   // │ |: output file :: unused CSS classes
   // ╰─────
-  // fs.writeFile
-  // (
-  //   `.temp/vite/sveltekit-build-css-unused/${filename.split('Volumes/1TB_CORSAIR/projects/betarena/apps/scores')[1].replaceAll('/','_')}`,
-  //   JSON.stringify(ast, null, 4),
-  //   err =>
-  //   {
-  //     if (err) console.error(err);
-  //   }
-  // );
+  fs.writeFile
+  (
+    `.temp/vite/sveltekit-build-css-unused/${filename.split('scores/')[1]?.replaceAll('/','_')}`,
+    JSON.stringify(ast, null, 4),
+    err =>
+    {
+      if (err) console.error(err);
+    }
+  );
 
   /**
    * @author
@@ -584,54 +664,81 @@ async function extractClassesFromSvelte
     switch (node.type)
     {
       case "Fragment":
+      {
         node.children?.forEach(walk);
         break;
+      }
       case "Element":
       case "InlineComponent":
       case "Slot":
-        // attributes
-        node.attributes.forEach(attr => {
-          // class="a b"
-          if (attr.type === "Attribute" && attr.name === "class") {
-            attr.value
-              .filter(v => v.type === "Text")
-              .forEach(v =>
-                v.data.split(/\s+/).forEach(c => c && classes.add(c))
-              );
-          }
+      {
+        if (node.name[0] === node.name[0].toLowerCase()) {
+          setElements.add(node.name);
+        }
 
-          // class:active={...}
-          if (attr.type === "ClassDirective") {
-            classes.add(attr.name);
+        // attributes
+        node.attributes.forEach
+        (
+          attr =>
+          {
+            // class="a b"
+            if (attr.type === "Attribute" && attr.name === "class")
+            {
+              attr.value
+                .filter
+                (
+                  v => v.type === "Text"
+                )
+                .forEach
+                (
+                  v => v.data
+                    .split(/\s+/)
+                    .forEach(c => c && setClasses.add(c))
+                )
+              ;
+            }
+
+            // class:active={...}
+            if (attr.type === "ClassDirective")
+              setClasses.add(attr.name);
+            ;
           }
-        });
+        );
 
         node.children?.forEach(walk);
-        break;
 
+        break;
+      }
       case "IfBlock":
+      {
         walk(node.consequent);
         walk(node.alternate);
+        node.children?.forEach(walk);
         break;
-
+      }
       case "EachBlock":
+      {
         walk(node.body);
         walk(node.fallback);
         break;
-
+      }
       case "AwaitBlock":
+      {
         walk(node.pending);
         walk(node.then);
         walk(node.catch);
         break;
-
+      }
       case "KeyBlock":
+      {
         walk(node.fragment);
         break;
-
+      }
       default:
+      {
         // Text, MustacheTag, etc → ignore
         break;
+      }
     }
   }
 
@@ -650,11 +757,12 @@ async function extractClassesFromSvelte
   // ╰─────
   fs.appendFile
   (
-    `${strOutputFilePathPrefix}/extracted-from-svelte-used-classes.txt`,
+    `${objPaths.pathToOutputDebugFiles}/extracted-from-svelte-used-classes.txt`,
     `
       ──────────────────────────────────────────────────────────────────────
       file: ${filename.split('scores/')[1]}
-      ${JSON.stringify(Array.from(classes).toString(), null, 4)}
+      elements: ${JSON.stringify(Array.from(setElements).toString(), null, 4)}
+      classes: ${JSON.stringify(Array.from(setClasses).toString(), null, 4)}
     `,
     err =>
     {
@@ -662,5 +770,131 @@ async function extractClassesFromSvelte
     }
   );
 
-  return classes;
+  return {
+    setClasses,
+    setElements,
+  };
+}
+
+/**
+ * @description
+ * @param selector
+ * @param setUsedCssClassesInSvelteFiles
+ * @returns
+ */
+function selectorUsesUsedClass
+(
+  selector: string,
+  setUsedCssClassesInSvelteFiles: Set<string>
+): boolean
+{
+  let keep = false;
+
+  selectorParser
+  (
+    sel =>
+    {
+      sel.walkClasses
+      (
+        node =>
+        {
+          if (setUsedCssClassesInSvelteFiles.has(node.value)) {
+            keep = true;
+          }
+        }
+      );
+    }
+  )
+  .processSync
+  (
+    selector
+  );
+
+  return keep;
+}
+
+/**
+ * @description
+ * @param cssText
+ * @param setUsedCssClassesInSvelteFiles
+ * @returns
+ */
+function purgeCSS
+(
+  cssText: string,
+  setUsedCssClassesInSvelteFiles: Set<string>,
+  setUsedElementsInSvelteFiles?: Set<string>,
+): string
+{
+  const
+    root = postcss.parse(cssText)
+  ;
+
+  console.log('setUsedElementsInSvelteFiles', setUsedElementsInSvelteFiles?.size);
+
+  root
+    .walkRules
+    (
+      rule =>
+      {
+        // [🐞]
+        console.log(`${strConsolePrefix} Processing CSS Rule :: ${rule.selector}`);
+
+        if ([...(setUsedElementsInSvelteFiles ?? []), ':root', '*', 'html', 'body'].includes(rule.selector))
+          return;
+        ;
+
+        const
+          /**
+           * @description
+           * 📝 Kept selectors after filtering
+           */
+          keptSelectors = rule.selectors
+            .filter
+            (
+              sel =>
+                selectorUsesUsedClass(sel, setUsedCssClassesInSvelteFiles)
+            )
+        ;
+
+        // ╭─────
+        // │ NOTE:
+        // │ |: if no selectors are kept, remove the entire rule
+        // ╰─────
+        if (keptSelectors.length === 0)
+          rule.remove();
+        else
+          rule.selectors = keptSelectors;
+        ;
+      }
+    )
+  ;
+
+  root
+    .walkComments
+    (
+      comment =>
+      {
+        if (!comment.text.includes('region'))
+          comment.remove();
+        ;
+      }
+    )
+  ;
+
+  // ╭─────
+  // │ NOTE:
+  // │ |: output file :: purged CSS
+  // ╰─────
+  fs.writeFile
+  (
+    objPaths.pathToFinalPurgedCssFile,
+    root.toString(),
+    err =>
+    {
+      if (err) console.error(err);
+    }
+  );
+
+  return root.toString();
 }
