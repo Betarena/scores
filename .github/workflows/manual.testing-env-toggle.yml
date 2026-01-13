@@ -40,14 +40,13 @@ jobs:
       - name: 'STEP /:/ install heroku-cli'
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
-      - name: 'STEP /:/ login to heroku'
-        run: |
-          echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
+      - name:  'STEP /:/ login to heroku'
+        run: echo "HEROKU_API_KEY=${{ secrets.HEROKU_API_KEY }}" >> $GITHUB_ENV
       - name: 'STEP /:/ toggle testing environment'
         run: |
           if [ "${{ github.event.inputs.state }}" = "on" ]; then
-            heroku maintenance:on --app betarena-scores-platform
-          else
             heroku maintenance:off --app betarena-scores-platform
+          else
+            heroku maintenance:on --app betarena-scores-platform
           fi
 #
