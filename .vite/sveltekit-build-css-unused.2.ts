@@ -423,11 +423,11 @@ export function sveltekitCssPurge
             if (objGlobal.objValues.objCssGlobal.setCssVarsDeclared.has(element[1]))
             {
               // [🐞]
-              log
-              (
-                `❌ original variable still present :: ${chalk.yellow(element[1])} → ${chalk.green(objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1] ?? '') ?? element[1])}`,
-                'warn' // WARNING: recommended 'debug' level only
-              );
+              // log
+              // (
+              //   `❌ original variable still present :: ${chalk.yellow(element[1])} → ${chalk.green(objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1] ?? '') ?? element[1])}`,
+              //   'warn' // WARNING: recommended 'debug' level only
+              // );
               // file.source = file.source?.toString().replaceAll
               // (
               //   element[1],
