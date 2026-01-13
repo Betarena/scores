@@ -46,8 +46,8 @@ jobs:
       - name: 'STEP /:/ toggle testing environment'
         run: |
           if [ "${{ github.event.inputs.state }}" = "on" ]; then
-            heroku maintenance:on --app betarena-testing-env
+            heroku maintenance:on --app betarena-scores-platform
           else
-            heroku maintenance:off --app betarena-testing-env
+            heroku maintenance:off --app betarena-scores-platform
           fi
 #
