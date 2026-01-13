@@ -84,7 +84,7 @@ const
       },
       _customSveltekitPurgeCssPlugin:
       {
-        isEnabled: false,
+        isEnabled: true,
       },
       _customSveltekitBuildMinifyPlugin:
       {
@@ -234,8 +234,10 @@ export default defineConfig
     // │ |: for, metrics output directory exists.
     // ╰─────
     if (command === 'build')
+    {
       await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`);
-    ;
+      await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/purged-css-debug`);
+    }
 
     const
       /**
@@ -320,7 +322,7 @@ export default defineConfig
             {
               pathToFinalPurgedCssFile: './static/app.purged.min.scss',
               // pathToOutputDebugFiles: './.vite/purged-css-debug',
-              pathToOutputDebugFiles: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`
+              pathToOutputDebugFiles: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/purged-css-debug`,
             },
             _strDebugLevel: 'info',
           }
