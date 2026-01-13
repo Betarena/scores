@@ -803,10 +803,10 @@
 
 <style lang="scss">
 
-  :global
-  {
-    @import 'static/scss/themes/index.scss';
-  }
+  // :global
+  // {
+  //   @import 'static/scss/themes/index.scss';
+  // }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
