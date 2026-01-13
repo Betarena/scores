@@ -53,16 +53,26 @@
   let _DynamicComponent;
 
   const componentsMap = {
-    "Layout-Root": () => import( "$lib/svelte/page/layout.root.svelte"),
-    "Page-Author-Article": () => import( "$lib/svelte/page/page.author.svelte"),
-    "Splash-Screen": () => import( "$lib/components/misc/Splash-Screen.svelte"),
-    "Banner-Offline-Alert": () => import(
-      "$lib/components/misc/banner/Banner-Offline-Alert.svelte"),
-    "Banner-Platform-Alert": () => import(
-      "$lib/components/misc/banner/Banner-Platform-Alert.svelte"),
-    "Modal-Email-Subscribe": () => import(
-      "$lib/components/misc/modal/Modal-Email-Subscribe.svelte"),
-    "DotLottie": () => import("$lib/components/misc/WrapperLottie.svelte"),
+    'Layout-Root': () => {return import( '$lib/svelte/page/layout.root.svelte')},
+    'Page-Author-Article': () => {return import( '$lib/svelte/page/page.author.svelte')},
+    'Splash-Screen': () => {return import( '$lib/components/misc/Splash-Screen.svelte')},
+    'Banner-Offline-Alert': () =>
+    {
+      return import(
+        '$lib/components/misc/banner/Banner-Offline-Alert.svelte')
+    },
+    'Banner-Platform-Alert': () =>
+    {
+      return import(
+        '$lib/components/misc/banner/Banner-Platform-Alert.svelte')
+    },
+    'Modal-Email-Subscribe': () =>
+    {
+      return import(
+        '$lib/components/misc/modal/Modal-Email-Subscribe.svelte')
+    },
+    'DotLottie': () => {return import('$lib/components/misc/WrapperLottie.svelte')},
+    'Ad-Engine': () => {return import('@betarena/ad-engine')},
   };
 
   // #endregion ➤ 📌 VARIABLES

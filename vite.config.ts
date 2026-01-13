@@ -84,7 +84,7 @@ const
       },
       _customSveltekitPurgeCssPlugin:
       {
-        isEnabled: false,
+        isEnabled: true,
       },
       _customSveltekitBuildMinifyPlugin:
       {
@@ -234,8 +234,10 @@ export default defineConfig
     // │ |: for, metrics output directory exists.
     // ╰─────
     if (command === 'build')
+    {
       await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`);
-    ;
+      await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/purged-css-debug`);
+    }
 
     const
       /**
@@ -307,6 +309,24 @@ export default defineConfig
         //     autoUploadSourceMaps: process.env?.VITE_SENTRY_UPLOAD_SOURCEMAPS as unknown as string == 'true' ? true : false
         //   }
         // ),
+        // ╭─────
+        // │ NOTE:
+        // │ |: custom 'vite' plugin.
+        // │ |:  @description: (1) analyze 'CSS' variable usage, (2) report unused 'CSS' vars & purge unused 'CSS' vars.
+        // ╰─────
+        objViteConfigOptions.objPluginConfig._customSveltekitPurgeCssPlugin.isEnabled && sveltekitCssPurge
+        (
+          {
+            strGlobalCssFileContent,
+            _objPaths:
+            {
+              pathToFinalPurgedCssFile: './static/app.purged.min.scss',
+              // pathToOutputDebugFiles: './.vite/purged-css-debug',
+              pathToOutputDebugFiles: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/purged-css-debug`,
+            },
+            _strDebugLevel: 'info',
+          }
+        ),
         // ╭─────
         // │ IMPORTANT
         // │ │: official svelte-kit plugin
@@ -450,19 +470,6 @@ export default defineConfig
         objViteConfigOptions.objPluginConfig._customBuildSizePlugin.isEnabled && buildSizePlugin
         (
           'build',
-        ),
-        // ╭─────
-        // │ NOTE:
-        // │ |: custom 'vite' plugin.
-        // │ |:  @description: (1) analyze 'CSS' variable usage, (2) report unused 'CSS' vars & purge unused 'CSS' vars.
-        // ╰─────
-        objViteConfigOptions.objPluginConfig._customSveltekitPurgeCssPlugin.isEnabled && sveltekitCssPurge
-        (
-          {
-            strGlobalCssFileContent,
-            strOutputFilePathPrefix: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`,
-            _strDebugLevel: 'info',
-          }
         ),
         // ╭─────
         // │ NOTE:

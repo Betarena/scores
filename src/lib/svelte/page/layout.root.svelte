@@ -90,7 +90,6 @@
   import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
   import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
   import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-  import WidgetAdEngine from '@betarena/ad-engine';
   import { getRates } from '$lib/utils/web3.js';
 
   // ╭─────
@@ -683,7 +682,9 @@
     )
   }
     {#key pageRouteId}
-      <WidgetAdEngine
+      <!-- <WidgetAdEngine -->
+      <WrapperDynamicImport
+        importComponentPath='Ad-Engine'
         authorId={dataArticle?.author?.id}
         authorArticleTagIds={(dataArticle?.article?.tags ?? [])}
         isDarkTheme={theme == 'Dark'}
@@ -802,10 +803,10 @@
 
 <style lang="scss">
 
-  :global
-  {
-    @import 'static/scss/themes/index.scss';
-  }
+  // :global
+  // {
+  //   @import 'static/scss/themes/index.scss';
+  // }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
