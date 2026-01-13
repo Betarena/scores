@@ -340,7 +340,11 @@ export function sveltekitCssPurge
           _code = _code
             .replaceAll
             (
-              element[1],
+              new RegExp
+              (
+                `(?<![A-Za-z0-9-])${element[1]}(?![A-Za-z0-9-])`,
+                'g'
+              ),
               (objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1]) ?? element[1])
             )
           ;
@@ -391,6 +395,48 @@ export function sveltekitCssPurge
       // ;
 
       return;
+    },
+
+    generateBundle
+    (
+      _,
+      bundle
+    )
+    {
+      // ╭─────
+      // │ NOTE:
+      // │ |: loop over all files in the bundle to purge unused CSS from CSS assets
+      // ╰─────
+      for (const file of Object.values(bundle))
+      {
+        // [🐞]
+        log(`processing asset :: ${file.fileName}`);
+
+        if (file.type === "asset" && file.fileName.endsWith(".css"))
+        {
+          // ╭─────
+          // │ NOTE:
+          // │ |: purge UNUSED CSS classes from the global CSS asset based on used classes in Svelte files
+          // ╰─────
+          for (const element of file.source?.matchAll(/(--[A-Za-z0-9_-]+)\b/g))
+          {
+            if (objGlobal.objValues.objCssGlobal.setCssVarsDeclared.has(element[1]))
+            {
+              // [🐞]
+              log
+              (
+                `❌ original variable still present :: ${chalk.yellow(element[1])} → ${chalk.green(objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1] ?? '') ?? element[1])}`,
+                'warn' // WARNING: recommended 'debug' level only
+              );
+              // file.source = file.source?.toString().replaceAll
+              // (
+              //   element[1],
+              //   (objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1]) ?? element[1])
+              // );
+            }
+          }
+        }
+      }
     },
 
     closeBundle
