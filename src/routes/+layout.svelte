@@ -25,7 +25,6 @@
 
   import { config } from '$lib/constants/config.js';
 
-  import { page } from '$app/stores';
   import WrapperDynamicImport from '$lib/components/misc/WrapperDynamicImport.svelte';
   import Layout from '$lib/svelte/page/layout.root.svelte';
 
@@ -55,8 +54,6 @@
   ;
 
   // #endregion ➤ 📌 VARIABLES
-
-  $: console.log('Layout DATa:', $page.data);
 
 </script>
 
