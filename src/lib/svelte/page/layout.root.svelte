@@ -333,10 +333,6 @@
     return;
   }
 
-
-  function setInitialViewPortType(deviceType) {
-    $sessionStore.viewportType = deviceType;
-  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -410,7 +406,7 @@
   ;
 
   $: if (deviceType && !viewportType) {
-    setInitialViewPortType(deviceType);
+    sessionStore.updateData([["viewportType", deviceType]]);
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
