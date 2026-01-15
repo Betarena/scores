@@ -154,12 +154,12 @@
     ]
   ;
 
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window } = { ...$sessionStore });
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window, viewportType } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
   $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
-  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies, loggedIn } = $page.data);
+  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies, loggedIn, deviceType } = $page.data);
   $: ({ isEnabled: isPartytownEnabled, strCodeSampleForPartytownConfig } = config.objApp.objServiceWorkerPartytown());
 
   $: isInitliazed = false;
@@ -333,6 +333,10 @@
     return;
   }
 
+
+  function setInitialViewPortType(deviceType) {
+    $sessionStore.viewportType = deviceType;
+  }
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -404,6 +408,10 @@
   $: if (browser && uid)
     initWalletStore(uid);
   ;
+
+  $: if (deviceType && !viewportType) {
+    setInitialViewPortType(deviceType);
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
