@@ -50,17 +50,16 @@
 
   import { loginStore } from '$lib/components/section/login/login-store';
   import { config } from '$lib/constants/config.js';
-  import
-    {
-      routeIdContent,
-      routeIdLogin,
-      routeIdPageProfile,
-      routeIdPageProfileArticleCreation,
-      routeIdPageProfileEditArticle,
-      routeIdPageProfilePublication,
-      routeIdRegister,
-      routeIdSearch
-    } from '$lib/constants/paths.js';
+  import {
+    routeIdContent,
+    routeIdLogin,
+    routeIdPageProfile,
+    routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
+    routeIdRegister,
+    routeIdSearch
+  } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
   import history_store from '$lib/store/history.js';
@@ -416,7 +415,9 @@
   // │ immediately, as soon as 'this' .svelte file is ran, as a one-off       │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  helperInitializeServerEager();
+  if (browser) {
+    helperInitializeServerEager();
+  }
 
   // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 

@@ -169,7 +169,7 @@
 // │ Please keep very close attention to these methods and                  │
 // │ use them carefully.                                                    │
 // ╰────────────────────────────────────────────────────────────────────────╯
-$: if (verifiedSteps.includes("phone")) {
+$: if (browser && verifiedSteps.includes("phone")) {
   // Phone verification step is completed
   clearRecaptcha("recaptcha-container");
 }
@@ -305,7 +305,7 @@ $: if (verifiedSteps.includes("phone")) {
 
   onDestroy(() => {
     $loginStore.recaptchaVerifier?.clear();
-    clearRecaptcha("recaptcha-container");
+    browser && clearRecaptcha("recaptcha-container");
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]

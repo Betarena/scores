@@ -599,13 +599,13 @@
   }
 
   async function goBack() {
-    const canGoBack = window.history.length > 1;
+    const history = $history_store.reverse();
+    const prevPage = history.find(
+      (path) => !path.includes("login") && !path.includes("register")
+    ) || "/";
+
     $session.currentActiveModal = null;
-    if (canGoBack){
-      window.history.back();
-      return;
-    }
-    gotoSW("/", true);
+    gotoSW(prevPage, true);
     return;
   }
 
