@@ -50,17 +50,16 @@
 
   import { loginStore } from '$lib/components/section/login/login-store';
   import { config } from '$lib/constants/config.js';
-  import
-    {
-      routeIdContent,
-      routeIdLogin,
-      routeIdPageProfile,
-      routeIdPageProfileArticleCreation,
-      routeIdPageProfileEditArticle,
-      routeIdPageProfilePublication,
-      routeIdRegister,
-      routeIdSearch
-    } from '$lib/constants/paths.js';
+  import {
+    routeIdContent,
+    routeIdLogin,
+    routeIdPageProfile,
+    routeIdPageProfileArticleCreation,
+    routeIdPageProfileEditArticle,
+    routeIdPageProfilePublication,
+    routeIdRegister,
+    routeIdSearch
+  } from '$lib/constants/paths.js';
   import { scoresAdminStore } from '$lib/store/admin.js';
   import { delCookie } from '$lib/store/cookie.js';
   import history_store from '$lib/store/history.js';
@@ -155,12 +154,12 @@
     ]
   ;
 
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window } = { ...$sessionStore });
+  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window, viewportType } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
   $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
   $: ({ route: { id: pageRouteId } } = $page);
-  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies, loggedIn } = $page.data);
+  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies, loggedIn, deviceType } = $page.data);
   $: ({ isEnabled: isPartytownEnabled, strCodeSampleForPartytownConfig } = config.objApp.objServiceWorkerPartytown());
 
   $: isInitliazed = false;
@@ -406,6 +405,10 @@
     initWalletStore(uid);
   ;
 
+  $: if (deviceType && !viewportType) {
+    sessionStore.updateData([["viewportType", deviceType]]);
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🚏 ONE-OFF CONDITIONS
@@ -416,7 +419,9 @@
   // │ immediately, as soon as 'this' .svelte file is ran, as a one-off       │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  helperInitializeServerEager();
+  if (browser) {
+    helperInitializeServerEager();
+  }
 
   // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 

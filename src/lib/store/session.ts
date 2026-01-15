@@ -140,6 +140,7 @@ type IDataProp =
   | 'deviceType'
   | 'svelteKitPage'
   | 'isUserActive'
+  | 'viewportType'
 ;
 
 /**
@@ -404,6 +405,9 @@ function createLocalStore
             else if (dataTarget == 'isUserActive')
             {
               sessionStoreObj.isUserActive = dataPoint;
+            }
+            else if (dataTarget == 'viewportType') {
+              sessionStoreObj.viewportType = dataPoint;
             }
           }
 
