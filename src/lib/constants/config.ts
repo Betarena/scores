@@ -199,9 +199,13 @@ export const config = {
       // │ |: Image Optimization Service URL
       // ┣─────
       // │ |: "env/production/typical" :: https://img.betarena.com
-      // │ |: "env/staging/typical" :: https://staging-image-optimizer.betarena-fdd.workers.dev
+      // ┣─────
+      // │ |: "env/staging/typical" :: [DEV] https://staging-image-optimizer.betarena-fdd.workers.dev
+      // │ |: "env/staging/typical" :: [PROXY] img-staging.betarena.com
+      // ┣─────
+      // │ |: "env/localhost/typical" :: localhost:8787
       // ╰─────
-      strImageOptimizationServiceUrl: 'https://staging-image-optimizer.betarena-fdd.workers.dev',
+      strImageOptimizationServiceUrl: 'https://img-staging.betarena.com',
       // ╭──────────────────────────────────────────────────────────────────────────────────╮
       // │ 💠 │ CONFIGURATION BY COMPONENT                                                  │
       // ╰──────────────────────────────────────────────────────────────────────────────────╯
