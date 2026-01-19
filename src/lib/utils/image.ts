@@ -109,6 +109,11 @@ export function getOptimizedImageUrl
         'https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/',
         ''
       )
+      .replaceAll
+      (
+        '%2F',
+        '/',
+      )
       .split('?')[0]
   ;
 
