@@ -23,7 +23,10 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
   import { page } from "$app/stores";
+  import history_store from "$lib/store/history";
   import session from "$lib/store/session";
+  import userSettings from "$lib/store/user-settings";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/[[lang=lang]]/(auth)/login/$types";
   import { onMount } from "svelte";
   import { loginStore } from "./login-store";
@@ -46,13 +49,34 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   $: ({ viewportType } = $session);
-  $: ({ currentStep } = $loginStore);
+  $: ({ user } = $userSettings);
+  $: uid = user?.firebase_user_data?.uid; 
+  $: ({ currentStep, isExistedUser } = $loginStore);
   let stepMap = {
     0: LoginStep,
     1: ResetPassword,
   };
 
   // #endregion ➤ 📌 VARIABLES
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * .
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `` - **kicker**
+   */
+
+  $: if (uid) {
+    redirectToPrevPage();
+  }
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -75,6 +99,30 @@
     }));
   });
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // #region ➤ 🛠️ METHODS
+
+  // ╭────────────────────────────────────────────────────────────────────────╮
+  // │ NOTE:                                                                  │
+  // │ Please add inside 'this' region the 'methods' that are to be           │
+  // │ and are expected to be used by 'this' .svelte file / component.        │
+  // │ IMPORTANT                                                              │
+  // │ Please, structure the imports as follows:                              │
+  // │ 1. function (..)                                                       │
+  // │ 2. async function (..)                                                 │
+  // ╰────────────────────────────────────────────────────────────────────────╯
+
+  function redirectToPrevPage() {
+    if (isExistedUser) $loginStore.isExistedUser = true;
+    const history = $history_store.reverse();
+    const prev_path = history.find(
+      (path) => !path.includes("login") && !path.includes("register")
+    );
+    $session.currentActiveModal = null;
+    gotoSW(prev_path || "/", true);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
 </script>
 
 <!--
