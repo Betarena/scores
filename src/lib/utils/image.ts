@@ -94,7 +94,13 @@ export function getOptimizedImageUrl
     return strImageUrl;
   ;
 
-  if (!strImageUrl.includes('firebasestorage.googleapis.com'))
+  // ╭─────
+  // │ NOTE:
+  // │ |: Only optimize images hosted on Google Cloud Storage (Firebase Storage).
+  // │ |: [1] firebasestorage.googleapis.com
+  // │ |: [2] storage.googleapis.com
+  // ╰─────
+  if (!strImageUrl.includes('.googleapis.com'))
     return strImageUrl;
   ;
 
@@ -107,6 +113,11 @@ export function getOptimizedImageUrl
       .replace
       (
         'https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/',
+        ''
+      )
+      .replace
+      (
+        'https://storage.googleapis.com/betarena-ios.appspot.com/',
         ''
       )
       .replaceAll
