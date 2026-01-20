@@ -170,7 +170,7 @@ export async function main
   ;
 
   const userAgent = event.request.headers.get("user-agent") || "";
-  
+
   // ╭──────────────────────────────────────────────────────────────────────────────────╮
   // │ 🏗️ │ PAGE DATA BUNDLING                                                          │
   // ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -255,26 +255,62 @@ export async function main
             // │ NOTE: IMPORTANT CRITICAL
             // │ |: [0] Optimize all images in the article content.
             // ╰─────
-           ?.replaceAll(
-
+            ?.replaceAll
+            (
               /<img[^>]+src=\\["']([^\\"'>]+)(\\?["'])/g,
-              (match, src) => {
-
-                const getUrl = (width) => getOptimizedImageUrl({
-                  strImageUrl: src,
-                  intQuality: 90,
-                  intWidth: width,
-                });
-
-                const newSrc = getUrl(400);
-
-                const srcSet = [400, 800, 1200]
-                  .map(width => `${getUrl(width)} ${width}w`)
-                  .join(', ');
-
-                const sizes = '(max-width: 768px) 90vw, 720px';
-
-                const optimized_img = match.replace(src, newSrc);
+              (
+                match,
+                src
+              ) =>
+              {
+                const
+                  /**
+                   * @description
+                   *  📝 Function to get optimized image URL.
+                   */
+                  getUrl =
+                  (
+                    width
+                  ) =>
+                  getOptimizedImageUrl
+                  (
+                    {
+                      strImageUrl: src,
+                      intQuality: 90,
+                      intWidth: width,
+                    }
+                  ),
+                  /**
+                   * @description
+                   *  📝 New `src` URL.
+                   */
+                  newSrc = getUrl(400),
+                  /**
+                   * @description
+                   *  📝 New `srcSet` attribute.
+                   */
+                  srcSet = [400, 800]
+                    .map
+                    (
+                      width => `${getUrl(width)} ${width}w`
+                    )
+                    .join(', '),
+                  /**
+                   * @description
+                   *  📝 New `sizes` attribute.
+                   */
+                  sizes = '(max-width: 768px) 90vw, 720px',
+                  /**
+                   * @description
+                   *  📝 Optimized image tag.
+                   */
+                  optimized_img = match
+                    .replace
+                    (
+                      src,
+                      newSrc
+                    )
+                ;
 
                 return optimized_img + ` srcset=\\"${srcSet}\\" sizes=\\"${sizes}\\"`;
               }
