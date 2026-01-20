@@ -19,7 +19,6 @@ import { redirect, ServerLoadEvent } from '@sveltejs/kit';
 
 import { mapLangToLocaleAuthor } from '$lib/constants/instance.js';
 import { dlogv2, ERROR_CODE_INVALID } from '$lib/utils/debug.js';
-import { getOptimizedImageUrl } from '$lib/utils/image.js';
 import { preloadExitLogic, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/navigation.js';
 import { parseObject } from '$lib/utils/string.2.js';
 import { tryCatch } from '@betarena/scores-lib/dist/util/common.js';
@@ -186,45 +185,6 @@ export async function main
     parentData.langParam,
     userAgent
   );
-
-  const seo_details = objResponse.dataArticle?.article.seo_details;
-
-  if (seo_details) {
-    seo_details.opengraph = {
-      ...(seo_details.opengraph || {}),
-      images: seo_details.opengraph?.images.map(img =>
-      {
-        return {
-          ...img,
-          url: getOptimizedImageUrl(
-            {
-              strImageUrl: img.url,
-              intQuality: 90,
-              intWidth: 800,
-            }
-          )
-        }
-      })
-    };
-    if (seo_details.twitter_card)
-    {
-      seo_details.twitter_card = {
-        ...seo_details.twitter_card || {},
-        image: getOptimizedImageUrl
-          (
-            {
-              strImageUrl: seo_details.twitter_card.image,
-              intQuality: 90,
-              intWidth: 800,
-            }
-          )
-      }
-    }
-    if (objResponse.dataArticle?.article.seo_details)
-    {
-      objResponse.dataArticle.article.seo_details = seo_details;
-    }
-  }
 
   // @ts-expect-error
   objResponse.dataArticle = tryCatch
