@@ -45,6 +45,7 @@
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
   import { type IArticle, readingTime } from "../../helpers.js";
+  import { getOptimizedImageUrl } from '$lib/utils/image.js';
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
@@ -459,10 +460,95 @@
   -->
   <div class="content-wrapper">
     {#key $userSettings.theme}
-
-      <div id="content" data-betarena-zone-id="2,3" bind:this={contentContainer}>
+      <div
+        id="content"
+        data-betarena-zone-id="2,3"
+        bind:this={contentContainer}
+      >
         {#key accessGranted}
-          {@html widgetData.article.data?.content}
+          {@html
+            (
+              widgetData.article.data?.content
+                // ╭─────
+                // │ NOTE: IMPORTANT CRITICAL
+                // │ |: [0] Optimize all images in the article content.
+                // ╰─────
+                .replaceAll
+                (
+                  /<img[^>]+src=["']([^\\"'>]+)(\\?["'])/g,
+                  (
+                    match,
+                    src
+                  ) =>
+                  {
+                    // [🐞]
+                    // console.log('Optimizing image:', src);
+
+                    const
+                      /**
+                       * @description
+                       *  📝 Function to get optimized image URL.
+                       */
+                      getUrl
+                        = (
+                          width
+                        ) =>
+                        {
+                          return getOptimizedImageUrl
+                          (
+                            {
+                              strImageUrl: src,
+                              intQuality: 70,
+                              intWidth: width,
+                            }
+                          );
+                        },
+                      /**
+                       * @description
+                       *  📝 New `src` URL.
+                       */
+                      newSrc = getUrl(400),
+                      /**
+                       * @description
+                       *  📝 New `srcSet` attribute.
+                       */
+                      srcSet = [400, 800]
+                        .map
+                        (
+                          width => {return `${getUrl(width)} ${width}w`}
+                        )
+                        .join(', '),
+                      /**
+                       * @description
+                       *  📝 New `sizes` attribute.
+                       */
+                      sizes = '(max-width: 768px) 90vw, 720px',
+                      /**
+                       * @description
+                       *  📝 Optimized image tag.
+                       */
+                      strImageOptimized = match
+                        .replace
+                        (
+                          src,
+                          newSrc
+                        )
+                    ;
+
+                    return strImageOptimized + ` srcset="${srcSet}" sizes="${sizes}"`;
+                  }
+                )
+                // ╭─────
+                // │ NOTE: IMPORTANT CRITICAL
+                // │ |: [1] Optimize all images in the article content.
+                // ╰─────
+                ?.replace
+                (
+                  /<img/g,
+                  '<img fetchpriority="high" '
+                )
+            )
+          }
         {/key}
       </div>
     {/key}
