@@ -46,10 +46,10 @@ import { log_v3 } from './debug.js';
  *  ❗️ **REQUIRED** - Instance
  * @param { string } _.strImageUrl
  *  ❗️ **REQUIRED** - Image URL to be optimized.
- * @param { number } _.intWidth
- *  ❔ **OPTIONAL** - Width of the image. `(default=600)`
- * @param { number } _.intQuality
- *  ❔ **OPTIONAL** - Quality of the image. `(default=75)`
+ * @param { number } [_.intWidth=1000] _.intWidth
+ *  ❔ **OPTIONAL** - Width of the image. `(default=1000)`
+ * @param { number } [_.intQuality=70] _.intQuality
+ *  ❔ **OPTIONAL** - Quality of the image. `(default=70)`
  * @param { 'cover' | 'contain' | 'fill' | 'scale-down' } [_.strFitType='cover']
  *  ❔ **OPTIONAL** - Fit of the image. `(default: cover)`
  * @return { string }
@@ -60,7 +60,7 @@ export function getOptimizedImageUrl
   {
     strImageUrl = '',
     intWidth = 1000,
-    intQuality = 90,
+    intQuality = 70,
     strFitType = 'cover',
   }:
   {

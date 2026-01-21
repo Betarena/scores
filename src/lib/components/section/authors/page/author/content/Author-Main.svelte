@@ -498,7 +498,7 @@
                           (
                             {
                               strImageUrl: src,
-                              intQuality: 90,
+                              intQuality: 70,
                               intWidth: width,
                             }
                           );
