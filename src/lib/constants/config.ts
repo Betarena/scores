@@ -407,9 +407,10 @@ export const config = {
                         // │ |: Available Options:
                         // │ |: -> 'local' :: Locally hosted fonts
                         // │ |: -> 'local-mini' :: Locally hosted fonts (mini version)
+                        // │ |: -> 'local.v2' :: Locally hosted fonts (version 2)
                         // │ |: -> 'cdn'   :: 3rd-Party fonts loaded via CDN
                         // ╰─────
-                        strLoadingType: 'local-mini' as ILoadingType,
+                        strLoadingType: 'local.v2' as ILoadingType,
                         // ╭─────
                         // │ NOTE: IMPORTANT
                         // │ |: HTML Head Injection Point Identifier
@@ -430,6 +431,11 @@ export const config = {
                               <link
                                 href="template/html.head.fonts.local.mini.html"
                               />
+                          `,
+                          'local.v2': `
+                            <link
+                              href="template/html.head.fonts.local.2.html"
+                            />
                           `,
                           'cdn': `
                             <link
