@@ -1,0 +1,42 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: '⚡️ // promote branch to testing environment'
+
+on:
+  # ╭─────
+  # │ NOTE:
+  # │ |: Manual trigger from GitHub UI
+  # ╰─────
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Select TARGET branch to PROMOTE to testing'
+        required: true
+        type: string
+#
+
+jobs:
+  promote-branch-to-testing-environment:
+    name: '⛽️ JOB /:/ promote branch to testing environment'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+      - name: 'STEP /:/ config git'
+        run: |
+          git config --local user.name "${{ github.event.sender.login }}"
+          git config --local user.email "${{ github.event.sender.login }}@users.noreply.github.com"
+          git config --local push.default current
+          git config --local pull.rebase false
+      - name: 'STEP /:/ push branch to testing environment'
+        run: |
+          # [🐞]
+          git status
+          git branch --show-current
+          git push origin --force ${{ github.event.inputs.branch }}:ci/deploy/testing
+  #
+#
