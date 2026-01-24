@@ -26,6 +26,7 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
+          token: '${{ secrets.GH_TOKEN }}'
       - name: 'STEP /:/ config git'
         run: |
           git config --local user.name "${{ github.event.sender.login }}"
