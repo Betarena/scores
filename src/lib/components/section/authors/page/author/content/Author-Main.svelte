@@ -502,11 +502,20 @@
               widgetData.article.data?.content
                 // ╭─────
                 // │ NOTE: IMPORTANT CRITICAL
-                // │ |: [0] Optimize all images in the article content.
+                // │ |: [0] set HERO (1st) image with identifiable id
                 // ╰─────
-                .replaceAll
+                .replace
                 (
-                  /<img[^>]+src=["']([^\\"'>]+)(\\?["'])/g,
+                  /<img/,
+                  '<img id="article-hero-image" '
+                )
+                // ╭─────
+                // │ NOTE: IMPORTANT CRITICAL
+                // │ |: [0] optimize HERO (1st) image, in the article content.
+                // ╰─────
+                .replace
+                (
+                  /<img[^>]+id=["']article-hero-image["'][^>]+src=["']([^\\"'>]+)(\\?["'])/,
                   (
                     match,
                     src
@@ -536,24 +545,14 @@
                         },
                       /**
                        * @description
-                       *  📝 New `src` URL.
+                       *  📝 New `strSrcSet` attribute.
                        */
-                      newSrc = getUrl(400),
-                      /**
-                       * @description
-                       *  📝 New `srcSet` attribute.
-                       */
-                      srcSet = [400, 800]
+                      strSrcSet = [400, 800]
                         .map
                         (
                           width => {return `${getUrl(width)} ${width}w`}
                         )
                         .join(', '),
-                      /**
-                       * @description
-                       *  📝 New `sizes` attribute.
-                       */
-                      sizes = '(max-width: 768px) 90vw, 720px',
                       /**
                        * @description
                        *  📝 Optimized image tag.
@@ -562,21 +561,21 @@
                         .replace
                         (
                           src,
-                          newSrc
+                          getUrl(400)
                         )
                     ;
 
-                    return strImageOptimized + ` srcset="${srcSet}" sizes="${sizes}"`;
+                    return strImageOptimized + ` fetchpriority="high" loading="eager" srcset="${strSrcSet}" sizes="(max-width: 768px) 90vw, 720px"`;
                   }
                 )
                 // ╭─────
                 // │ NOTE: IMPORTANT CRITICAL
-                // │ |: [1] Optimize all images in the article content.
+                // │ |: [1] Optimize all other images in the article content.
                 // ╰─────
                 ?.replace
                 (
-                  /<img/g,
-                  '<img fetchpriority="high" '
+                  /<img\b(?![^>]*\bid\s*=)[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/g,
+                  '<img loading="lazy" decoding="async" '
                 )
             )
           }
