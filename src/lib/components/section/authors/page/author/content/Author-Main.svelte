@@ -44,8 +44,8 @@
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { type IArticle, readingTime } from "../../helpers.js";
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
+  import { type IArticle, readingTime } from "../../helpers.js";
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
@@ -130,6 +130,7 @@
   };
   let accessGranted = false;
   let secondP: HTMLElement | null = null;
+  let twitterScriptsInserted = false;
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
@@ -289,14 +290,17 @@
   }
 
   async function loadTweets() {
+    const blocks = Array.from(
+      contentContainer.querySelectorAll("blockquote.twitter-tweet"),
+    ) as HTMLQuoteElement[];
+    if (!blocks.length) return;
+    if (!twitterScriptsInserted) {
+      twitterScriptsInserted = true;
+    }
     if (!window.twttr?.widgets?.createTweet) {
       setTimeout(loadTweets, 200);
       return;
     }
-
-    const blocks = Array.from(
-      contentContainer.querySelectorAll("blockquote.twitter-tweet")
-    ) as HTMLQuoteElement[];
 
     for (const block of blocks) {
       const a = block.querySelector<HTMLAnchorElement>("a[href]");
@@ -370,7 +374,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
+<svelte:head>
+  {#if twitterScriptsInserted}
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8">
+    </script>
+  {/if}
+</svelte:head>
 <div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
   <div class="article-header">
     <!--

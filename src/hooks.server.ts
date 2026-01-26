@@ -590,23 +590,23 @@ export const handle: Handle = sequence
       // │ NOTE: IMPORTANT
       // │ |: rutime injection :: 3RD-PARTY for A/B testing (TWITTER)
       // ╰─────
-      if (objConfigModule.objHtmlHeadABTestingInjection?.twitter.isEnabled)
-        html = html
-          ?.replace
-          (
-            objConfigModule.objHtmlHeadABTestingInjection.twitter.strHtmlHeadForInjection,
-            (
-              _string
-            ) =>
-            {
-              return objConfigModule.objHtmlHeadABTestingInjection.twitter.objLoadingOptions
-                [
-                  objConfigModule.objHtmlHeadABTestingInjection.twitter.strLoadingType
-                ] ?? ''
-              ;
-            }
-          )
-      ;
+      // if (objConfigModule.objHtmlHeadABTestingInjection?.twitter.isEnabled)
+      //   html = html
+      //     ?.replace
+      //     (
+      //       objConfigModule.objHtmlHeadABTestingInjection.twitter.strHtmlHeadForInjection,
+      //       (
+      //         _string
+      //       ) =>
+      //       {
+      //         return objConfigModule.objHtmlHeadABTestingInjection.twitter.objLoadingOptions
+      //           [
+      //             objConfigModule.objHtmlHeadABTestingInjection.twitter.strLoadingType
+      //           ] ?? ''
+      //         ;
+      //       }
+      //     )
+      // ;
 
       // ╭─────
       // │ NOTE: IMPORTANT
