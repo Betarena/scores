@@ -565,7 +565,7 @@
                         )
                     ;
 
-                    return strImageOptimized + ` fetchpriority="high" loading="eager" srcset="${strSrcSet}" sizes="(max-width: 768px) 90vw, 720px"`;
+                    return strImageOptimized + ` fetchpriority="high" loading="eager" decoding="async" srcset="${strSrcSet}" sizes="(max-width: 768px) 90vw, 720px"`;
                   }
                 )
                 // ╭─────
