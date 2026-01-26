@@ -296,7 +296,7 @@
     const blocks = Array.from(
       contentContainer.querySelectorAll("blockquote.twitter-tweet"),
     ) as HTMLQuoteElement[];
-    
+
     if (!blocks.length) return;
 
     if (window.IntersectionObserver) {
@@ -337,7 +337,7 @@
 
       block.dataset.rendered = "true";
       block.innerHTML = "";
-      
+
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `width: 100%; display: flex; align-items: center; justify-content: center;`;
       block.appendChild(loaderWrapper);
@@ -522,7 +522,7 @@
                   ) =>
                   {
                     // [🐞]
-                    // console.log('Optimizing image:', src);
+                    console.log('optimizing image [hero]:', match, src);
 
                     const
                       /**
@@ -570,12 +570,52 @@
                 )
                 // ╭─────
                 // │ NOTE: IMPORTANT CRITICAL
-                // │ |: [1] Optimize all other images in the article content.
+                // │ |: [1] Optimize ALL OTHER image(s), in the article content.
                 // ╰─────
                 ?.replace
                 (
-                  /<img\b(?![^>]*\bid\s*=)[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/g,
-                  '<img loading="lazy" decoding="async" '
+                  /<img\b(?![^>]*\bid\s*=)[^>]*\bsrc\s*=\s*["']([^\\"']+)[\\"']/g,
+                  (
+                    match,
+                    src
+                  ) =>
+                  {
+                    // [🐞]
+                    console.log('optimizing image [standard]:', match, src);
+
+                    const
+                      /**
+                       * @description
+                       *  📝 Function to get optimized image URL.
+                       */
+                      getUrl
+                        = (
+                          width
+                        ) =>
+                        {
+                          return getOptimizedImageUrl
+                          (
+                            {
+                              strImageUrl: src,
+                              intQuality: 70,
+                              intWidth: width,
+                            }
+                          );
+                        },
+                      /**
+                       * @description
+                       *  📝 Optimized image tag.
+                       */
+                      strImageOptimized = match
+                        .replace
+                        (
+                          src,
+                          getUrl(400)
+                        )
+                    ;
+
+                    return strImageOptimized + 'loading="lazy" decoding="async"';
+                  }
                 )
             )
           }
