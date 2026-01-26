@@ -44,11 +44,12 @@
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
-  import { type IArticle, readingTime } from "../../helpers.js";
   import { getOptimizedImageUrl } from '$lib/utils/image.js';
+  import { type IArticle, readingTime } from "../../helpers.js";
 
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
 
+  import { browser } from "$app/environment";
   import CheckCircle from "$lib/components/ui/assets/check-circle.svelte";
   import Trophy from "$lib/components/ui/assets/trophy.svelte";
   import AvatarLabel from "$lib/components/ui/AvatarLabel.svelte";
@@ -130,6 +131,9 @@
   };
   let accessGranted = false;
   let secondP: HTMLElement | null = null;
+  let twitterScriptsInserted = false;
+  let observer: IntersectionObserver | null = null;
+  let tries = 0;
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
@@ -284,36 +288,58 @@
     }, 100);
   }
 
-  $: if (widgetData.article.data?.content && contentContainer) {
+  $: if (widgetData.article.data?.content && contentContainer && browser) {
     tick().then(loadTweets);
   }
 
   async function loadTweets() {
+    const blocks = Array.from(
+      contentContainer.querySelectorAll("blockquote.twitter-tweet"),
+    ) as HTMLQuoteElement[];
+    
+    if (!blocks.length) return;
+
+    if (window.IntersectionObserver) {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!document.querySelector('script[src="https://platform.twitter.com/widgets.js"]')) {
+              twitterScriptsInserted = true;
+            }
+            twitterScriptsInserted = true;
+            initTwitterWidgets(blocks);
+            observer?.disconnect();
+          }
+        });
+      }, { rootMargin: "200px" });
+
+      blocks.forEach(block => observer?.observe(block));
+    } else {
+      twitterScriptsInserted = true;
+      initTwitterWidgets(blocks);
+    }
+  }
+
+  async function initTwitterWidgets(blocks: HTMLQuoteElement[]) {
     if (!window.twttr?.widgets?.createTweet) {
-      setTimeout(loadTweets, 200);
+      if (tries++ > 50) return;
+      setTimeout(() => initTwitterWidgets(blocks), 200);
       return;
     }
 
-    const blocks = Array.from(
-      contentContainer.querySelectorAll("blockquote.twitter-tweet")
-    ) as HTMLQuoteElement[];
-
     for (const block of blocks) {
       const a = block.querySelector<HTMLAnchorElement>("a[href]");
-      if (!a) continue;
+      if (!a || block.dataset.rendered) continue;
 
       const match = a.href.match(/status\/(\d+)/);
       if (!match) continue;
       const tweetId = match[1];
 
+      block.dataset.rendered = "true";
       block.innerHTML = "";
+      
       const loaderWrapper = document.createElement("div");
-      loaderWrapper.style.cssText = `
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-      `;
+      loaderWrapper.style.cssText = `width: 100%; display: flex; align-items: center; justify-content: center;`;
       block.appendChild(loaderWrapper);
 
       const loaderComponent = new LoaderImage({
@@ -332,9 +358,8 @@
           theme: $userSettings.theme === "Dark" ? "dark" : "light",
           width: $sessionStore.viewportType === "mobile" ? 350 : 550,
         });
-        loaderWrapper.remove();
-        loaderComponent.$destroy();
       } catch (err) {
+        console.error("Twitter widget error:", err);
       } finally {
         loaderWrapper.remove();
         loaderComponent.$destroy();
@@ -355,6 +380,7 @@
 
   onDestroy(() => {
     if (unlockComponent) unlockComponent.$destroy();
+    if (observer) observer.disconnect();
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -370,7 +396,12 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-
+<svelte:head>
+  {#if twitterScriptsInserted}
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8">
+    </script>
+  {/if}
+</svelte:head>
 <div id={CNAME} data-betarena-zone-id="4" class={viewportType}>
   <div class="article-header">
     <!--

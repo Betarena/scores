@@ -504,7 +504,7 @@ export const config = {
                         // │ NOTE:
                         // │ |: toggle injection
                         // ╰─────
-                        isEnabled: true,
+                        isEnabled: false,
                         // ╭─────
                         // │ NOTE:
                         // │ |: select injection option
