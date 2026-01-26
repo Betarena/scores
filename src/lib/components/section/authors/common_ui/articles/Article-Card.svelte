@@ -242,6 +242,8 @@
         alt={images[0]?.alt || title}
         srcset={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 }) + ' 150w, ' + getOptimizedImageUrl({ strImageUrl: img, intWidth: 250 }) + ' 250w'}
         sizes='(max-width: 600px) 150px, 250px'
+        decoding="async"
+        loading="lazy"
       />
     </a>
   {/if}
