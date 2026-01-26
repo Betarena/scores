@@ -132,6 +132,7 @@
   let accessGranted = false;
   let secondP: HTMLElement | null = null;
   let twitterScriptsInserted = false;
+  let observer: IntersectionObserver | null = null;
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
@@ -294,31 +295,46 @@
     const blocks = Array.from(
       contentContainer.querySelectorAll("blockquote.twitter-tweet"),
     ) as HTMLQuoteElement[];
+    
     if (!blocks.length) return;
-    if (!twitterScriptsInserted) {
+
+    if (window.IntersectionObserver) {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            twitterScriptsInserted = true;
+            initTwitterWidgets(blocks);
+            observer?.disconnect();
+          }
+        });
+      }, { rootMargin: "200px" });
+
+      blocks.forEach(block => observer?.observe(block));
+    } else {
       twitterScriptsInserted = true;
+      initTwitterWidgets(blocks);
     }
+  }
+
+  async function initTwitterWidgets(blocks: HTMLQuoteElement[]) {
     if (!window.twttr?.widgets?.createTweet) {
-      setTimeout(loadTweets, 200);
+      setTimeout(() => initTwitterWidgets(blocks), 200);
       return;
     }
 
     for (const block of blocks) {
       const a = block.querySelector<HTMLAnchorElement>("a[href]");
-      if (!a) continue;
+      if (!a || block.dataset.rendered) continue;
 
       const match = a.href.match(/status\/(\d+)/);
       if (!match) continue;
       const tweetId = match[1];
 
+      block.dataset.rendered = "true";
       block.innerHTML = "";
+      
       const loaderWrapper = document.createElement("div");
-      loaderWrapper.style.cssText = `
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-      `;
+      loaderWrapper.style.cssText = `width: 100%; display: flex; align-items: center; justify-content: center;`;
       block.appendChild(loaderWrapper);
 
       const loaderComponent = new LoaderImage({
@@ -337,9 +353,8 @@
           theme: $userSettings.theme === "Dark" ? "dark" : "light",
           width: $sessionStore.viewportType === "mobile" ? 350 : 550,
         });
-        loaderWrapper.remove();
-        loaderComponent.$destroy();
       } catch (err) {
+        console.error("Twitter widget error:", err);
       } finally {
         loaderWrapper.remove();
         loaderComponent.$destroy();
