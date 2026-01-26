@@ -133,6 +133,7 @@
   let secondP: HTMLElement | null = null;
   let twitterScriptsInserted = false;
   let observer: IntersectionObserver | null = null;
+  let tries = 0;
 
   $: ({ windowWidth, viewportType } = $sessionStore);
   $: [VIEWPORT_MOBILE_INIT[1], VIEWPORT_TABLET_INIT[1]] = viewportChangeV2(
@@ -302,6 +303,9 @@
       observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            if (!document.querySelector('script[src="https://platform.twitter.com/widgets.js"]')) {
+              twitterScriptsInserted = true;
+            }
             twitterScriptsInserted = true;
             initTwitterWidgets(blocks);
             observer?.disconnect();
@@ -318,6 +322,7 @@
 
   async function initTwitterWidgets(blocks: HTMLQuoteElement[]) {
     if (!window.twttr?.widgets?.createTweet) {
+      if (tries++ > 50) return;
       setTimeout(() => initTwitterWidgets(blocks), 200);
       return;
     }
@@ -375,6 +380,7 @@
 
   onDestroy(() => {
     if (unlockComponent) unlockComponent.$destroy();
+    if (observer) observer.disconnect();
   });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
