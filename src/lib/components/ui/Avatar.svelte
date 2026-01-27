@@ -68,7 +68,7 @@
       rel="preload"
       as="image"
       fetchpriority="high"
-      href="{getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}}"
+      href="{getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}"
     />
   {/if}
 </svelte:head>
