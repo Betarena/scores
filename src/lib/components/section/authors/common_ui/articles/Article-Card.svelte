@@ -244,6 +244,8 @@
         sizes='(max-width: 600px) 150px, 250px'
         decoding="async"
         loading="lazy"
+        width="100%"
+        height="auto"
       />
     </a>
   {/if}
