@@ -23,30 +23,31 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import Container from "$lib/components/ui/wrappers/Container.svelte";
-  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/publication/[permalink]/[lang=lang]/$types.js";
-  import session from "$lib/store/session.js";
-  import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
-  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
-  import Tabbar from "$lib/components/ui/Tabbar.svelte";
-  import PublicationHome from "./PublicationHome.svelte";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import PublicationArticles from "./PublicationArticles.svelte";
-  import PublicationSettings from "./PublicationSettings.svelte";
-  import Button from "$lib/components/ui/Button.svelte";
-  import userSettings from "$lib/store/user-settings.js";
-  import type {
-    AuthorsAuthorsMain,
-    TranslationSportstacksSectionDataJSONSchema,
-  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { fetchArticlesBySportstack } from "$lib/components/section/authors/common_ui/helpers.js";
   import {
     type IArticle,
     prepareArticlesMap,
   } from "$lib/components/section/authors/page/helpers.js";
-  import { articleFilterStore, type IArticleFilter } from "./editor/helpers.js";
+  import Button from "$lib/components/ui/Button.svelte";
+  import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
+  import Tabbar from "$lib/components/ui/Tabbar.svelte";
+  import Container from "$lib/components/ui/wrappers/Container.svelte";
+  import session from "$lib/store/session.js";
+  import userSettings from "$lib/store/user-settings.js";
+  import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/publication/[permalink]/[lang=lang]/$types.js";
+  import type {
+    AuthorsAuthorsMain,
+    TranslationSportstacksSectionDataJSONSchema,
+  } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
   import { writable } from "svelte/store";
+  import WidgetMenuOpt from "../Widget-MenuOpt.svelte";
+  import { articleFilterStore, type IArticleFilter } from "./editor/helpers.js";
+  import PublicationArticles from "./PublicationArticles.svelte";
+  import PublicationHome from "./PublicationHome.svelte";
+  import PublicationSettings from "./PublicationSettings.svelte";
+  import PublicationSubscribers from "./PublicationSubscribers.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,6 +70,7 @@
   const viewMap = {
     home: PublicationHome,
     articles: PublicationArticles,
+    subscribers: PublicationSubscribers,
     settings: PublicationSettings,
   };
 
@@ -126,7 +128,8 @@
   $: tabs = [
     { id: 1, label: translations?.home || "Home", view: "home" },
     { id: 2, label: translations?.articles || "Articles", view: "articles" },
-    { id: 3, label: translations?.settings || "Settings", view: "settings" },
+    { id: 3, label: translations?.subscribers || "Subscribers", view: "subscribers" },
+    { id: 4, label: translations?.settings || "Settings", view: "settings" },
   ];
 
   $: view = $page.url.searchParams.get("view") || "home";
@@ -339,7 +342,7 @@
           </div>
           <Tabbar
             on:select={change}
-            type="underline"
+            type="button_brand"
             size="md"
             data={tabs}
             bind:selected
@@ -383,11 +386,7 @@
       --component-colors-components-buttons-tertiary-button-tertiary-fg: var(
         --colors-gray-400
       );
-      .header-wrapper {
-        :global(.tabbar) {
-          border-bottom: 1px solid #e6e6e6 !important;
-        }
-      }
+
     }
 
     :global(*::-webkit-scrollbar) {
@@ -419,9 +418,8 @@
         align-items: flex-start;
         gap: var(--spacing-xl, 16px);
         :global(.tabbar) {
-          border-bottom: 1px solid
-            var(--colors-border-border-secondary, #3b3b3b);
           width: 100%;
+
         }
 
         .header,
@@ -558,10 +556,7 @@
 
           .header {
             gap: var(--spacing-2xl, 20px);
-            :global(.tabbar) {
-              border-bottom: 1px solid
-                var(--colors-border-border-secondary, #3b3b3b);
-            }
+
             .title-wrapper {
               display: flex;
               justify-content: space-between;

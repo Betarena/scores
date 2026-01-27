@@ -225,16 +225,20 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:body on:click={() => (actionMenu = false)} />
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
   class="article-wrapper {viewportType}"
   on:click={openArticle}
   id="publication-article"
 >
   <div class="content">
-    <PublicationAvatar
+    <div class="img-wrapper">
+
+      <PublicationAvatar
       avatar={articlePreview}
       size={viewportType === "mobile" ? "96px" : "104px"}
-    />
+      />
+    </div>
 
     <div class="info">
       <h2>
@@ -398,6 +402,9 @@
       gap: 16px;
       flex-grow: 1;
       overflow: visible;
+      .img-wrapper {
+        transform: translate(-1px, -1px);
+      }
       .img {
         flex-shrink: 0;
         object-fit: contain;
