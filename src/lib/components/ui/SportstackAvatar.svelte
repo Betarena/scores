@@ -64,13 +64,19 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 {#if src}
-  <div
-    on:click={() => dispatch("click")}
+  <img
+    id=''
+    src='{src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}'
+    alt=''
+    title=''
+    width="48"
+    height="48"
+    decoding="async"
+    loading="eager"
     class="sportstack-image"
+    on:click={() => dispatch("click")}
     style=
     "
-    background: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}) center center / cover no-repeat;
-    background-image: url({src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })});
     {styles}
     border-radius: {radius};
     "
