@@ -69,7 +69,10 @@
     src='{src.startsWith("data")? src : getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}'
     alt=''
     title=''
-    loading='lazy'
+    width="48"
+    height="48"
+    decoding="async"
+    loading="eager"
     class="sportstack-image"
     on:click={() => dispatch("click")}
     style=
