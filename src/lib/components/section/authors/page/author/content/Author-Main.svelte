@@ -511,18 +511,18 @@
                 )
                 // ╭─────
                 // │ NOTE: IMPORTANT CRITICAL
-                // │ |: [0] optimize HERO (1st) image, in the article content.
+                // │ |: [0] optimize ALL article HTML content image(s), in the article content.
                 // ╰─────
                 .replace
                 (
-                  /<img[^>]+id=["']article-hero-image["'][^>]+src=["']([^\\"'>]+)(\\?["'])/,
+                  /<img[^>]+src=["']([^\\"'>]+)(\\?["'])/g,
                   (
                     match,
                     src
                   ) =>
                   {
                     // [🐞]
-                    console.log('optimizing image [hero]:', match, src);
+                    console.log('optimizing image', match, src);
 
                     const
                       /**
@@ -565,66 +565,28 @@
                         )
                     ;
 
-                    return strImageOptimized + ` fetchpriority="high" loading="eager" decoding="async" srcset="${strSrcSet}" sizes="(max-width: 768px) 90vw, 720px"`;
-                  }
-                )
-                // ╭─────
-                // │ NOTE: IMPORTANT CRITICAL
-                // │ |: [1] Optimize ALL OTHER image(s), in the article content.
-                // ╰─────
-                ?.replace
-                (
-                  /<img\b(?![^>]*\bid\s*=)[^>]*\bsrc\s*=\s*["']([^\\"']+)[\\"']/g,
-                  (
-                    match,
-                    src
-                  ) =>
-                  {
-                    // [🐞]
-                    console.log('optimizing image [standard]:', match, src);
-
-                    const
-                      /**
-                       * @description
-                       *  📝 Function to get optimized image URL.
-                       */
-                      getUrl
-                        = (
-                          width
-                        ) =>
-                        {
-                          return getOptimizedImageUrl
-                          (
-                            {
-                              strImageUrl: src,
-                              intQuality: 70,
-                              intWidth: width,
-                            }
-                          );
-                        },
-                      /**
-                       * @description
-                       *  📝 New `strSrcSet` attribute.
-                       */
-                      strSrcSet = [400, 800]
-                        .map
-                        (
-                          width => {return `${getUrl(width)} ${width}w`}
-                        )
-                        .join(', '),
-                      /**
-                       * @description
-                       *  📝 Optimized image tag.
-                       */
-                      strImageOptimized = match
-                        .replace
-                        (
-                          src,
-                          getUrl(400)
-                        )
+                    if (match.includes('id="article-hero-image"'))
+                      return `
+                        ${strImageOptimized}
+                        srcset="${strSrcSet}"
+                        sizes="(max-width: 768px) 90vw, 720px"
+                        fetchpriority="high"
+                        width="100%"
+                        height="auto"
+                        loading="eager"
+                        decoding="async"
+                      `;
+                    else
+                      return `
+                        ${strImageOptimized}
+                        srcset="${strSrcSet}"
+                        sizes="(max-width: 768px) 90vw, 720px"
+                        width="100%"
+                        height="auto"
+                        loading="lazy"
+                        decoding="async"
+                      `;
                     ;
-
-                    return strImageOptimized + ` loading="lazy" decoding="async" srcset="${strSrcSet}" sizes="(max-width: 768px) 90vw, 720px"`;
                   }
                 )
             )
