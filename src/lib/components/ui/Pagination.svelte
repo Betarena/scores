@@ -112,7 +112,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<div class="pagination {classname}">
+<!-- Desktop Layout -->
+<div class="pagination pagination-desktop {classname}">
   <!-- Previous Button -->
   <div class="pagination-button-wrap pagination-button-prev">
     <Button
@@ -125,7 +126,7 @@
         <div class="icon">
             <ArrowLeftIcon />
         </div>
-      Prev
+      Previous
     </Button>
   </div>
 
@@ -165,6 +166,44 @@
   </div>
 </div>
 
+<!-- Mobile Layout -->
+<div class="pagination pagination-mobile {classname}">
+  <!-- Previous Button -->
+  <div class="pagination-mobile-button">
+    <Button
+      type="secondary"
+      size="sm"
+      icon_only
+      disabled={currentPage === 1}
+      on:click={handlePrevious}
+    >
+      <div class="icon">
+        <ArrowLeftIcon />
+      </div>
+    </Button>
+  </div>
+
+  <!-- Page Info -->
+  <div class="pagination-mobile-info">
+    Page {currentPage} of {totalPages}
+  </div>
+
+  <!-- Next Button -->
+  <div class="pagination-mobile-button">
+    <Button
+      type="secondary"
+      size="sm"
+      icon_only
+      disabled={currentPage === totalPages}
+      on:click={handleNext}
+    >
+      <div class="icon">
+        <ArrowRight />
+      </div>
+    </Button>
+  </div>
+</div>
+
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 🌊 Svelte Component CSS/SCSS                                                     │
@@ -183,13 +222,50 @@
     width: 100%;
     padding: var(--spacing-lg, 12px) var(--spacing-3xl, 24px);
     border-top: 1px solid var(--colors-border-border-secondary, #3b3b3b);
+  }
 
-    /* Responsive */
+  // Desktop Layout
+  .pagination-desktop {
+    display: flex;
+
     @media (max-width: 768px) {
-      gap: var(--spacing-md, 8px);
-      padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+      display: none;
     }
   }
+
+  // Mobile Layout
+  .pagination-mobile {
+    display: none;
+    flex: 1;
+    gap: var(--spacing-md, 8px);
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+    border-top: 1px solid var(--colors-border-border-secondary, #ededed);
+
+    @media (max-width: 768px) {
+      display: flex;
+    }
+  }
+
+  .pagination-mobile-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .pagination-mobile-info {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-family-font-family-body, Roboto);
+    font-size: var(--font-size-text-sm, 14px);
+    font-weight: 500;
+    line-height: var(--line-height-text-sm, 20px);
+    color: var(--colors-text-text-secondary-700, #525252);
+  }
+
   .icon {
     width: 20px;
     height: 20px;

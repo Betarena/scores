@@ -374,6 +374,12 @@
       &.button_brand  {
         .tab-item {
           padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+          /* Text md/Semibold */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
         }
       }
     }
@@ -392,6 +398,15 @@
         font-style: normal;
         font-weight: 600;
         line-height: var(--line-height-text-sm, 20px); /* 142.857% */
+      }
+      &.button_brand  {
+        .tab-item {
+          font-family: var(--Font-family-font-family-body, Roboto);
+          font-size: var(--Font-size-text-sm, 14px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--Line-height-text-sm, 20px); /* 142.857% */
+        }
       }
     }
   }

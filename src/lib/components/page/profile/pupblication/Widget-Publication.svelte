@@ -292,7 +292,7 @@
         <WidgetMenuOpt />
       </div>
     {/if}
-    <div id="publication-home" class="{viewportType} {view}">
+    <div id="publication-home" class="{viewportType} {view} view-wrapper">
       <div class="header-wrapper">
         <div class="header">
           <div class="title-wrapper">
@@ -343,7 +343,7 @@
           <Tabbar
             on:select={change}
             type="button_brand"
-            size="md"
+            size={viewportType === "mobile" ? "sm" : "md"}
             data={tabs}
             bind:selected
           />
@@ -387,6 +387,10 @@
         --colors-gray-400
       );
 
+    }
+
+    .view-wrapper {
+      max-width: 100%;
     }
 
     :global(*::-webkit-scrollbar) {

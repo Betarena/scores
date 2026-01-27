@@ -31,8 +31,8 @@
   import Pagination from "$lib/components/ui/Pagination.svelte";
   import PopupMenu from "$lib/components/ui/PopupMenu.svelte";
   import Table from "$lib/components/ui/table/Table.svelte";
+  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import session from "$lib/store/session.js";
-  import userSettings from "$lib/store/user-settings.js";
   import type { Column, Row } from "$lib/types/types.table.js";
   import type {
     AuthorsAuthorsMain,
@@ -66,11 +66,13 @@
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
 
+
   const dispatch = createEventDispatcher();
 
   let showSortBy = false;
+  let activeStatistic: string = "";
   let node;
-  let columns: Column[] = [
+  let init_columns: Column[] = [
     { id: "subscribers", label: "Subscribers", grow: 5 },
     { id: "start_date", label: "Start Date", grow: 1 },
     { id: "rewards", label: "Rewards", grow: 1 },
@@ -81,6 +83,22 @@
     start_date: `Start Date ${i + 1}`,
     rewards: `${Math.floor(Math.random() * 1000)}`,
   }));
+
+  let columns: Column[] = [];
+  let statistic = [
+    {
+      id: "subscribers",
+      text: "Total Subscribers",
+      number: 4281,
+      change: 2.4
+    },
+    {
+      id: "revenue",
+      text: "Total Revenue",
+      number: 4281,
+      change: 2.4
+    }
+  ]
 
   $: ({ viewportType } = $session);
 
@@ -98,7 +116,14 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-
+  
+  $: if (viewportType === "mobile") {
+    columns = [...init_columns].filter((col) => col.id !== "start_date");
+    columns[0].grow = 2;
+  } else {
+    columns = init_columns;
+    columns[0].grow = 5;
+  }
   $: options = [
     {
       id: "all",
@@ -181,25 +206,13 @@
 -->
 
 <svelte:window on:scroll={handleScroll} />
-<div class="publication-articles {viewportType}" bind:this={node}>
-  {#if viewportType === "mobile"}
-    <div class="buttons-header">
-      <a
-        href="/u/author/article/create/{$userSettings.lang}?sportstack={$selectedSportstack?.permalink}"
-      >
-        <Button type="primary" full={true}
-          >+ {translations?.new_article || "New article"}</Button
-        >
-      </a>
-    </div>
-  {/if}
+<div class="publication-subscribers {viewportType}" bind:this={node}>
   <div class="statistic">
-    <div class="metric-wrapper">
-      <MetricItem4 text="Total Subscribers" number="4281" change={2.4} />
-    </div>
-    <div class="metric-wrapper">
-      <MetricItem4 text="Total Revenue" number="4281" change={2.4} />
-    </div>
+    <ScrollDataWrapper data={statistic}  let:item>
+      <button class="metric-wrapper" class:active={item.id === activeStatistic} on:click={() => activeStatistic = item.id}>
+        <MetricItem4 text={item.text} number={item.number} change={item.change} />
+      </button>
+    </ScrollDataWrapper>
   </div>
   <div class="header">
     <div class="search-wrapper">
@@ -296,14 +309,15 @@
 -->
 
 <style lang="scss">
-  .publication-articles {
+  .publication-subscribers {
     width: 100%;
     display: flex;
     flex-grow: 1;
     flex-shrink: 0;
     flex-direction: column;
     max-width: 100%;
-    gap: 24px;
+    gap: var(--spacing-3xl, 24px);
+    overflow-x: hidden;
 
     .buttons-header {
       display: flex;
@@ -328,7 +342,16 @@
       align-self: stretch;
 
       .metric-wrapper {
+        padding: 0;
+        background: none;
         width: 280px;
+        flex-shrink: 0;
+
+        &.active {
+          :global(.metric-4) {
+            border: 1px solid var(--Colors-Border-border-brand, #F5620F);
+          }
+        }
       }
     }
 
@@ -337,6 +360,7 @@
       align-items: flex-start;
       gap: var(--spacing-lg, 12px);
       align-self: stretch;
+      overflow-y: visible;
 
       .search-wrapper {
         flex-grow: 1;
@@ -406,8 +430,7 @@
     }
 
     &.desktop {
-      .header {
-      }
+
       .no-content {
         max-height: 368px;
       }
