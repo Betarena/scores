@@ -604,6 +604,16 @@
                         },
                       /**
                        * @description
+                       *  📝 New `strSrcSet` attribute.
+                       */
+                      strSrcSet = [400, 800]
+                        .map
+                        (
+                          width => {return `${getUrl(width)} ${width}w`}
+                        )
+                        .join(', '),
+                      /**
+                       * @description
                        *  📝 Optimized image tag.
                        */
                       strImageOptimized = match
@@ -614,7 +624,7 @@
                         )
                     ;
 
-                    return strImageOptimized + 'loading="lazy" decoding="async"';
+                    return strImageOptimized + ` loading="lazy" decoding="async" srcset="${strSrcSet}" sizes="(max-width: 768px) 90vw, 720px"`;
                   }
                 )
             )
