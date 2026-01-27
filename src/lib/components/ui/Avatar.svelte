@@ -77,8 +77,10 @@
       src="{!src.startsWith('data') ? getOptimizedImageUrl({ strImageUrl: src, intWidth: numSize }) : src}"
       alt=''
       title=''
-      loading='lazy'
       style="{styles}"
+      decoding="async"
+      fetchpriority="high"
+      loading="eager"
       class:size
       class="avatar-circle"
       {...$$restProps}
