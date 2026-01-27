@@ -58,23 +58,6 @@
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮
-│ 💉 Svelte Injection Tags                                                         │
-╰──────────────────────────────────────────────────────────────────────────────────╯
--->
-
-<svelte:head>
-  {#if src && !src.startsWith("data")}
-    <link
-      rel="preload"
-      as="image"
-      fetchpriority="high"
-      href="{getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 })}"
-    />
-  {/if}
-</svelte:head>
-
-<!--
-╭──────────────────────────────────────────────────────────────────────────────────╮
 │ 💠 Svelte Component HTML                                                         │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Use 'Ctrl + Space' to autocomplete global class=styles, dynamically    │
@@ -89,16 +72,25 @@
   style="{styles}  {$$restProps.wrapStyle}"
 >
   {#if src}
-    <div
+    <img
+      id=''
+      src="{!src.startsWith('data') ? getOptimizedImageUrl({ strImageUrl: src, intWidth: numSize }) : src}"
+      alt=''
+      title=''
+      loading='lazy'
+      style="{styles}"
+      class:size
       class="avatar-circle"
       {...$$restProps}
-      class:size
-      style="{styles} background-image: url({!src.startsWith("data") ? getOptimizedImageUrl({ strImageUrl: src, intWidth: 48 }) : src}); "
     />
   {:else if isLoogedIn}
-    <DefaultAvatar size={numSize} />
+    <DefaultAvatar
+      size={numSize}
+    />
   {:else}
-    <LoggedoutAvatar size={numSize} />
+    <LoggedoutAvatar
+      size={numSize}
+    />
   {/if}
 </div>
 
