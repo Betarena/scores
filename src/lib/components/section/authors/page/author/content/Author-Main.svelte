@@ -40,7 +40,6 @@
   import { page } from "$app/stores";
   import { onDestroy, tick } from "svelte";
 
-  import { getUserById } from "$lib/firebase/common.js";
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
@@ -115,15 +114,9 @@
     tagMap = new Map(widgetData.mapTag),
     /**
      * @description
-     *  📣 Wether to execute animation.
-     */
-    executeAnimation = false,
-    /**
-     * @description
      *  📣 Target `HTMLELement` for **Content*.
      */
     contentContainer: HTMLElement,
-    author,
     unlockComponent;
 
   const widgetsMap = {
@@ -187,11 +180,8 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: getAuthor(sportstack?.uid);
   $: if (contentContainer) {
     insertWidgets(contentContainer);
-  }
-  $: if (uid && !accessGranted && paid) {
   }
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
@@ -277,15 +267,6 @@
         props,
       });
     });
-  }
-
-  async function getAuthor(id: string) {
-    executeAnimation = false;
-    const [user] = await getUserById([id]);
-    author = user;
-    setTimeout(() => {
-      executeAnimation = true;
-    }, 100);
   }
 
   $: if (widgetData.article.data?.content && contentContainer && browser) {
@@ -433,14 +414,13 @@
           </Badge>
         {/if}
         <a
-          href="/a/user/{author?.usernamePermalink}"
-          class="user-box"
-          class:animate={executeAnimation}
+          href="/a/user/{widgetData.user?.usernamePermalink}"
+          class="user-box animate"
         >
           <AvatarLabel
             size="lg"
-            avatar={author?.profile_photo ?? ""}
-            name={author?.name ?? author?.username ?? ""}
+            avatar={widgetData.user?.profile_photo ?? ''}
+            name={widgetData.user?.name ?? widgetData.user?.username ?? ''}
           >
             <div slot="label">
               {timeAgo(
@@ -631,6 +611,15 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
+  @keyframes appear {
+    to
+    {
+      opacity: 1;
+      filter: none;
+      transform: none;
+    }
+  }
+
   div#author⮕w⮕author-content⮕main {
     position: relative;
     z-index: 1;
@@ -705,18 +694,15 @@
           }
         }
       }
-      .user-box {
-        :global(.avatar-wrapper) {
+      .user-box
+      {
+        :global(.avatar-wrapper)
+        {
+          opacity: 0;
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
           filter: blur(40px);
           transform: scaleX(1.1) scaleY(1.1);
-        }
-
-        &.animate {
-          :global(.avatar-wrapper) {
-            filter: none;
-            transform: none;
-          }
+          animation: appear 0.5s forwards 0.5s;
         }
       }
       .tags-wrapper {
