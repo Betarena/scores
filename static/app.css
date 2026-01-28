@@ -88,6 +88,14 @@ are generally used throughout the project in a consistant and repetetive manner.
   box-sizing: border-box;
 }
 
+html {
+  margin: 0 !important;
+  background-color: var(--white);
+  scroll-behavior: smooth !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
 body,
 html {
   margin: 0 !important;
@@ -102,6 +110,8 @@ body {
   font-family: Roboto;
   font-size: 14px;
   line-height: 1.5;
+  min-height: 100vh;
+  min-height: 100dvh;
   /*
      MOBILE
      disable pinchin & user zooming on */
@@ -116,6 +126,22 @@ body.disable-scroll {
   height: 100%;
 }
 
+/* iOS safe-area fill for status bar */
+@supports (padding: max(0px)) {
+  @media only screen and (max-width: 1024px) and (hover: none) and (-webkit-touch-callout: none) {
+    .safe-area-top {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: env(safe-area-inset-top);
+      background: var(--colors-background-bg-primary);
+      z-index: 9999;
+      pointer-events: none;
+    }
+  }
+}
 a {
   text-decoration: none !important;
   color: inherit;

@@ -678,6 +678,8 @@
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
+  <!-- iOS safe-area filler for status bar -->
+  <div class="safe-area-top"></div>
   {#if
     isBetarenaWidgetAdEngineEnabled
     && config.objApp.isBetareAgEngineEnabled

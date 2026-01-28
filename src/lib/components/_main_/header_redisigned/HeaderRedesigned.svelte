@@ -11,9 +11,9 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
   import SeoBox from "$lib/components/SEO-Box.svelte";
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
@@ -24,19 +24,19 @@
     routeIdPagePlayer,
     routeIdPageProfile,
     routeIdPageProfileAuthorCreate,
+    routeIdPageProfilePublication,
     routeIdPageTags,
-    routeIdSportstack,
-    routeIdPageProfilePublication
+    routeIdSportstack
   } from "$lib/constants/paths.js";
-  import MobileHeaderRich from "./MobileHeaderRich.svelte";
-  import Header from "./Header.svelte";
-  import { page } from "$app/stores";
+  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
   import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+  import Header from "./Header.svelte";
+  import MobileHeaderRich from "./MobileHeaderRich.svelte";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
-  import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
-  import { goto } from "$app/navigation";
+  import TabletWave from "./assets/wave-bg-tablet.svg";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -210,6 +210,14 @@
     align-items: center;
     background-color: var(--colors-background-bg-primary);
     position: relative;
+    
+    /* iOS safe-area padding*/
+    @supports (padding: max(0px)) {
+      @media only screen and (max-width: 1024px) and (hover: none) and (-webkit-touch-callout: none) {
+        padding-top: env(safe-area-inset-top);
+      }
+    }
+    
     &.desktop:not(.transparent) {
       background-color: var(--colors-background-bg-secondary);
 
