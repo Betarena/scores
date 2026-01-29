@@ -564,8 +564,8 @@
                         srcset="${strSrcSet}"
                         sizes="(max-width: 768px) 90vw, 720px"
                         fetchpriority="high"
-                        width="100%"
-                        height="auto"
+                        width="800"
+                        height="450"
                         loading="eager"
                         decoding="async"
                       `;
@@ -574,8 +574,8 @@
                         ${strImageOptimized}
                         srcset="${strSrcSet}"
                         sizes="(max-width: 768px) 90vw, 720px"
-                        width="100%"
-                        height="auto"
+                        width="800"
+                        height="450"
                         loading="lazy"
                         decoding="async"
                       `;

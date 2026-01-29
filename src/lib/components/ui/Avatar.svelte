@@ -79,7 +79,6 @@
       title=''
       style="{styles}"
       decoding="async"
-      fetchpriority="high"
       loading="eager"
       class:size
       class="avatar-circle"
