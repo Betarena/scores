@@ -820,7 +820,7 @@
   // }
 
   @supports (padding: max(0px)) {
-  @media only screen and (max-width: 1024px) and (hover: none) and (-webkit-touch-callout: none) {
+  @media only screen and (max-width: 1024px) {
     .safe-area-top
     {
       position: fixed;
@@ -829,7 +829,7 @@
       right: 0;
       width: 100%;
       height: env(safe-area-inset-top);
-      background: transparent;
+      background-color: rgba(255, 255, 255, 0.01);
       z-index: 9999;
       pointer-events: none;
     }
