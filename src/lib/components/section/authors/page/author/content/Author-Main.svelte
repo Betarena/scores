@@ -38,7 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { onDestroy, tick } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
 
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
@@ -117,7 +117,9 @@
      *  📣 Target `HTMLELement` for **Content*.
      */
     contentContainer: HTMLElement,
-    unlockComponent;
+    unlockComponent,
+    instanceAvatarLabel: HTMLElement;
+  ;
 
   const widgetsMap = {
     1: AiPredictorWidget,
@@ -359,6 +361,10 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  onMount(() => {
+    instanceAvatarLabel.classList.add('animate');
+  });
+
   onDestroy(() => {
     if (unlockComponent) unlockComponent.$destroy();
     if (observer) observer.disconnect();
@@ -415,7 +421,8 @@
         {/if}
         <a
           href="/a/user/{widgetData.user?.usernamePermalink}"
-          class="user-box animate"
+          class="user-box"
+          bind:this={instanceAvatarLabel}
         >
           <AvatarLabel
             size="lg"
@@ -702,7 +709,7 @@
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
           filter: blur(40px);
           transform: scaleX(1.1) scaleY(1.1);
-          animation: appear 1s forwards 0.5s;
+          animation: appear 1.5s forwards 0.5s;
         }
       }
       .tags-wrapper {
