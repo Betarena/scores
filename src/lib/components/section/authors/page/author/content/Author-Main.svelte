@@ -118,7 +118,7 @@
      */
     contentContainer: HTMLElement,
     unlockComponent,
-    instanceAvatarLabel: HTMLElement;
+    isRunAnimation = false
   ;
 
   const widgetsMap = {
@@ -362,7 +362,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   onMount(() => {
-    instanceAvatarLabel.classList.add('animate');
+    if (!browser) return;
+    isRunAnimation = true;
   });
 
   onDestroy(() => {
@@ -422,7 +423,7 @@
         <a
           href="/a/user/{widgetData.user?.usernamePermalink}"
           class="user-box"
-          bind:this={instanceAvatarLabel}
+          class:animate={isRunAnimation}
         >
           <AvatarLabel
             size="lg"
