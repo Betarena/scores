@@ -829,7 +829,7 @@
       right: 0;
       width: 100%;
       height: env(safe-area-inset-top);
-      background: var(--colors-background-bg-primary);
+      background: transparent;
       z-index: 9999;
       pointer-events: none;
     }
