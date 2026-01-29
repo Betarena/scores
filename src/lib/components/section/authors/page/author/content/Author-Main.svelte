@@ -619,15 +619,6 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  @keyframes appear {
-    to
-    {
-      opacity: 1;
-      filter: none;
-      transform: none;
-    }
-  }
-
   div#author⮕w⮕author-content⮕main {
     position: relative;
     z-index: 1;
@@ -704,13 +695,17 @@
       }
       .user-box
       {
-        :global(.avatar-wrapper)
-        {
-          opacity: 0;
+        :global(.avatar-wrapper) {
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
           filter: blur(40px);
           transform: scaleX(1.1) scaleY(1.1);
-          animation: appear 1.5s forwards 0.5s;
+        }
+
+        &.animate {
+          :global(.avatar-wrapper) {
+            filter: none;
+            transform: none;
+          }
         }
       }
       .tags-wrapper {
