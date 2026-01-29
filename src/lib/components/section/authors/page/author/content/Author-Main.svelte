@@ -38,7 +38,7 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { onDestroy, tick } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
 
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
@@ -112,6 +112,11 @@
      *  📣 Target data `map`.
      */
     tagMap = new Map(widgetData.mapTag),
+    /**
+     * @description
+     *  📣 Wether to execute animation.
+     */
+    executeAnimation = false,
     /**
      * @description
      *  📣 Target `HTMLELement` for **Content*.
@@ -359,6 +364,13 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  onMount(async () => {
+    // trigger animation after mount
+    setTimeout(() => {
+      executeAnimation = true;
+    }, 100);
+  });
+
   onDestroy(() => {
     if (unlockComponent) unlockComponent.$destroy();
     if (observer) observer.disconnect();
@@ -415,7 +427,8 @@
         {/if}
         <a
           href="/a/user/{widgetData.user?.usernamePermalink}"
-          class="user-box animate"
+          class="user-box"
+          class:animate={executeAnimation}
         >
           <AvatarLabel
             size="lg"
@@ -611,15 +624,6 @@
   ╰──────────────────────────────────────────────────────────────────────────────╯
   */
 
-  @keyframes appear {
-    to
-    {
-      opacity: 1;
-      filter: none;
-      transform: none;
-    }
-  }
-
   div#author⮕w⮕author-content⮕main {
     position: relative;
     z-index: 1;
@@ -694,15 +698,18 @@
           }
         }
       }
-      .user-box
-      {
-        :global(.avatar-wrapper)
-        {
-          opacity: 0;
+      .user-box {
+        :global(.avatar-wrapper) {
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
           filter: blur(40px);
           transform: scaleX(1.1) scaleY(1.1);
-          animation: appear 0.5s forwards 0.5s;
+        }
+
+        &.animate {
+          :global(.avatar-wrapper) {
+            filter: none;
+            transform: none;
+          }
         }
       }
       .tags-wrapper {
