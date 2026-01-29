@@ -418,7 +418,7 @@
           class="user-box animate"
         >
           <AvatarLabel
-            size="xxxl"
+            size="lg"
             avatar={widgetData.user?.profile_photo ?? ''}
             name={widgetData.user?.name ?? widgetData.user?.username ?? ''}
           >
@@ -702,7 +702,7 @@
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
           filter: blur(40px);
           transform: scaleX(1.1) scaleY(1.1);
-          animation: appear 0.5s forwards 0.5s;
+          animation: appear 1s forwards 0.5s;
         }
       }
       .tags-wrapper {
