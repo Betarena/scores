@@ -38,9 +38,8 @@
   // ╰────────────────────────────────────────────────────────────────────────╯
 
   import { page } from "$app/stores";
-  import { onDestroy, tick } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
 
-  import { getUserById } from "$lib/firebase/common.js";
   import sessionStore from "$lib/store/session.js";
   import { timeAgo } from "$lib/utils/dates.js";
   import { viewportChangeV2 } from "$lib/utils/device";
@@ -115,16 +114,12 @@
     tagMap = new Map(widgetData.mapTag),
     /**
      * @description
-     *  📣 Wether to execute animation.
-     */
-    executeAnimation = false,
-    /**
-     * @description
      *  📣 Target `HTMLELement` for **Content*.
      */
     contentContainer: HTMLElement,
-    author,
-    unlockComponent;
+    unlockComponent,
+    isRunAnimation = false
+  ;
 
   const widgetsMap = {
     1: AiPredictorWidget,
@@ -187,11 +182,8 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: getAuthor(sportstack?.uid);
   $: if (contentContainer) {
     insertWidgets(contentContainer);
-  }
-  $: if (uid && !accessGranted && paid) {
   }
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
@@ -279,15 +271,6 @@
     });
   }
 
-  async function getAuthor(id: string) {
-    executeAnimation = false;
-    const [user] = await getUserById([id]);
-    author = user;
-    setTimeout(() => {
-      executeAnimation = true;
-    }, 100);
-  }
-
   $: if (widgetData.article.data?.content && contentContainer && browser) {
     tick().then(loadTweets);
   }
@@ -296,7 +279,7 @@
     const blocks = Array.from(
       contentContainer.querySelectorAll("blockquote.twitter-tweet"),
     ) as HTMLQuoteElement[];
-    
+
     if (!blocks.length) return;
 
     if (window.IntersectionObserver) {
@@ -337,7 +320,7 @@
 
       block.dataset.rendered = "true";
       block.innerHTML = "";
-      
+
       const loaderWrapper = document.createElement("div");
       loaderWrapper.style.cssText = `width: 100%; display: flex; align-items: center; justify-content: center;`;
       block.appendChild(loaderWrapper);
@@ -377,6 +360,11 @@
   // │ immediately and as part of the 'lifecycle' of svelteJs,                │
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
+
+  onMount(() => {
+    if (!browser) return;
+    isRunAnimation = true;
+  });
 
   onDestroy(() => {
     if (unlockComponent) unlockComponent.$destroy();
@@ -433,14 +421,14 @@
           </Badge>
         {/if}
         <a
-          href="/a/user/{author?.usernamePermalink}"
+          href="/a/user/{widgetData.user?.usernamePermalink}"
           class="user-box"
-          class:animate={executeAnimation}
+          class:animate={isRunAnimation}
         >
           <AvatarLabel
             size="lg"
-            avatar={author?.profile_photo ?? ""}
-            name={author?.name ?? author?.username ?? ""}
+            avatar={widgetData.user?.profile_photo ?? ''}
+            name={widgetData.user?.name ?? widgetData.user?.username ?? ''}
           >
             <div slot="label">
               {timeAgo(
@@ -502,9 +490,18 @@
               widgetData.article.data?.content
                 // ╭─────
                 // │ NOTE: IMPORTANT CRITICAL
-                // │ |: [0] Optimize all images in the article content.
+                // │ |: [0] set HERO (1st) image with identifiable id
                 // ╰─────
-                .replaceAll
+                .replace
+                (
+                  /<img/,
+                  '<img id="article-hero-image" '
+                )
+                // ╭─────
+                // │ NOTE: IMPORTANT CRITICAL
+                // │ |: [0] optimize ALL article HTML content image(s), in the article content.
+                // ╰─────
+                .replace
                 (
                   /<img[^>]+src=["']([^\\"'>]+)(\\?["'])/g,
                   (
@@ -513,7 +510,7 @@
                   ) =>
                   {
                     // [🐞]
-                    // console.log('Optimizing image:', src);
+                    console.log('optimizing image', match, src);
 
                     const
                       /**
@@ -536,24 +533,14 @@
                         },
                       /**
                        * @description
-                       *  📝 New `src` URL.
+                       *  📝 New `strSrcSet` attribute.
                        */
-                      newSrc = getUrl(400),
-                      /**
-                       * @description
-                       *  📝 New `srcSet` attribute.
-                       */
-                      srcSet = [400, 800]
+                      strSrcSet = [400, 800]
                         .map
                         (
                           width => {return `${getUrl(width)} ${width}w`}
                         )
                         .join(', '),
-                      /**
-                       * @description
-                       *  📝 New `sizes` attribute.
-                       */
-                      sizes = '(max-width: 768px) 90vw, 720px',
                       /**
                        * @description
                        *  📝 Optimized image tag.
@@ -562,21 +549,33 @@
                         .replace
                         (
                           src,
-                          newSrc
+                          getUrl(400)
                         )
                     ;
 
-                    return strImageOptimized + ` srcset="${srcSet}" sizes="${sizes}"`;
+                    if (match.includes('id="article-hero-image"'))
+                      return `
+                        ${strImageOptimized}
+                        srcset="${strSrcSet}"
+                        sizes="(max-width: 768px) 90vw, 720px"
+                        fetchpriority="high"
+                        width="800"
+                        height="450"
+                        loading="eager"
+                        decoding="async"
+                      `;
+                    else
+                      return `
+                        ${strImageOptimized}
+                        srcset="${strSrcSet}"
+                        sizes="(max-width: 768px) 90vw, 720px"
+                        width="800"
+                        height="450"
+                        loading="lazy"
+                        decoding="async"
+                      `;
+                    ;
                   }
-                )
-                // ╭─────
-                // │ NOTE: IMPORTANT CRITICAL
-                // │ |: [1] Optimize all images in the article content.
-                // ╰─────
-                ?.replace
-                (
-                  /<img/g,
-                  '<img fetchpriority="high" '
                 )
             )
           }
@@ -694,7 +693,8 @@
           }
         }
       }
-      .user-box {
+      .user-box
+      {
         :global(.avatar-wrapper) {
           transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
           filter: blur(40px);
