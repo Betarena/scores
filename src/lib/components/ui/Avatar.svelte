@@ -44,6 +44,7 @@
     lg: 48,
     xl: 56,
     xxl:64,
+    xxxl:72
   }
   $: if (typeof size === "string") {
     numSize = sizeMap[size] || 38;
@@ -79,7 +80,6 @@
       title=''
       style="{styles}"
       decoding="async"
-      fetchpriority="high"
       loading="eager"
       class:size
       class="avatar-circle"

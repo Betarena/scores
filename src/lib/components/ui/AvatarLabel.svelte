@@ -10,7 +10,7 @@
 <script lang="ts">
   import Avatar from "./Avatar.svelte";
 
-  export let size: "xs" | "md" | "lg" | "xl" | "sm" = "md";
+  export let size: "xs" | "md" | "lg" | "xl" | "sm" | 'xxxl' = "md";
   export let avatar = "";
   export let name = "";
   export let label = "";

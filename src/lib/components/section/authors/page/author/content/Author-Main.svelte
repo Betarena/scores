@@ -418,7 +418,7 @@
           class="user-box animate"
         >
           <AvatarLabel
-            size="lg"
+            size="xxxl"
             avatar={widgetData.user?.profile_photo ?? ''}
             name={widgetData.user?.name ?? widgetData.user?.username ?? ''}
           >
@@ -551,8 +551,8 @@
                         srcset="${strSrcSet}"
                         sizes="(max-width: 768px) 90vw, 720px"
                         fetchpriority="high"
-                        width="100%"
-                        height="auto"
+                        width="800"
+                        height="450"
                         loading="eager"
                         decoding="async"
                       `;
@@ -561,8 +561,8 @@
                         ${strImageOptimized}
                         srcset="${strSrcSet}"
                         sizes="(max-width: 768px) 90vw, 720px"
-                        width="100%"
-                        height="auto"
+                        width="800"
+                        height="450"
                         loading="lazy"
                         decoding="async"
                       `;
