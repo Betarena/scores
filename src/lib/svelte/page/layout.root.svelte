@@ -815,6 +815,23 @@
   //   @import 'static/scss/themes/index.scss';
   // }
 
+  @supports (padding: max(0px)) {
+  @media only screen and (max-width: 1024px) and (hover: none) and (-webkit-touch-callout: none) {
+    .safe-area-top
+    {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: env(safe-area-inset-top);
+      background: var(--colors-background-bg-primary);
+      z-index: 9999;
+      pointer-events: none;
+    }
+  }
+}
+
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
