@@ -210,14 +210,6 @@
     align-items: center;
     background-color: var(--colors-background-bg-primary);
     position: relative;
-    
-    /* iOS safe-area padding*/
-    @supports (padding: max(0px)) {
-      @media only screen and (max-width: 1024px) and (hover: none) and (-webkit-touch-callout: none) {
-        padding-top: env(safe-area-inset-top);
-      }
-    }
-    
     &.desktop:not(.transparent) {
       background-color: var(--colors-background-bg-secondary);
 

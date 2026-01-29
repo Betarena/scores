@@ -119,6 +119,13 @@ body {
   /*
   SAFARI */
   -webkit-text-size-adjust: none;
+  /* iOS safe-area padding */
+}
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 body.disable-scroll {
   /* 🎨 style */
@@ -126,22 +133,6 @@ body.disable-scroll {
   height: 100%;
 }
 
-/* iOS safe-area fill for status bar */
-@supports (padding: max(0px)) {
-  @media only screen and (max-width: 1024px) {
-    .safe-area-top {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      height: env(safe-area-inset-top);
-      background-color: rgba(255, 255, 255, 0.01);
-      z-index: 9999;
-      pointer-events: none;
-    }
-  }
-}
 a {
   text-decoration: none !important;
   color: inherit;
