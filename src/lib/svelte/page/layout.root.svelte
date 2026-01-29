@@ -809,6 +809,10 @@
 -->
 
 <style lang="scss">
+  :global(html) {
+    background-color: red;
+    background: red;
+  }
 
   // :global
   // {
