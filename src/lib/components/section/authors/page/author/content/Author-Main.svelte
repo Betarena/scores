@@ -773,8 +773,9 @@
         img {
           /* 🎨 style */
           object-fit: cover;
-          max-width: 100%;
-          width: 100%;
+          max-width: 100% !important;
+          width: 100% !important;
+          height: auto !important;
           border-radius: var(--radius-xl, 12px);
         }
         a img {
