@@ -675,7 +675,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:body  class ="{theme === "Dark" ? "dark-mode" : "light-mode"}"/>
+
 
 <div
   class="app-wrapper"
@@ -757,28 +757,6 @@
     {:else}
       <EmailSubscribe />
     {/if}
-  {/if}
-
-  <!-- iOS safe-area filler for status bar -->
-  {#if
-    isBetarenaWidgetAdEngineEnabled
-    && config.objApp.isBetareAgEngineEnabled
-    && (
-      (dataArticle?.article != null && dataArticle?.article?.access_type === 'free')
-      || (dataArticle?.article == null)
-    )
-  }
-    {#key pageRouteId}
-      <!-- <WidgetAdEngine -->
-      <WrapperDynamicImport
-        importComponentPath='Ad-Engine'
-        authorId={dataArticle?.author?.id}
-        authorArticleTagIds={(dataArticle?.article?.tags ?? [])}
-        isDarkTheme={theme == 'Dark'}
-        strTranslationTarget={(lang ?? 'en')}
-        isStandalone={false}
-      />
-    {/key}
   {/if}
 
   {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
