@@ -90,7 +90,6 @@ are generally used throughout the project in a consistant and repetetive manner.
 
 html {
   margin: 0 !important;
-  background-color: red;
   scroll-behavior: smooth !important;
   min-height: 100vh;
   min-height: 100dvh;
@@ -99,13 +98,11 @@ html {
 body,
 html {
   margin: 0 !important;
-  background-color: red;
   scroll-behavior: smooth !important;
 }
 
 body {
   color: var(--black);
-  background-color: red;
   margin: 0 !important;
   font-family: Roboto;
   font-size: 14px;

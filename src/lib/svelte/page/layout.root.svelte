@@ -357,6 +357,7 @@
     helperInitializeOnMountPre();
   ;
 
+
   // ╭─────
   // │ CRITICAL
   // │ │: Hijack the 'console' object.
@@ -669,6 +670,9 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+<svelte:body  class:dark-mode={theme == 'Dark'}
+  class:light-mode={theme == 'Light'}/>
+
 <div
   class="app-wrapper"
   id="app-root-layout"
@@ -883,10 +887,9 @@
 -->
 
 <style lang="scss">
-  // :global
-  // {
-  //   @import 'static/scss/themes/index.scss';
-  // }
+  :global(body) {
+    background-color: var(--colors-background-bg-primary);
+  }
 
   @supports (padding: max(0px)) {
   @media only screen and (max-width: 1024px) {
