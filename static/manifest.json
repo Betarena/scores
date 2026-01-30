@@ -1,20 +1,20 @@
 {
-  "short_name": "betarena-scores-platform",
-  "name": "Betarena | Scores Platform",
-  "icons": [
-    {
-      "src": "/assets/img/192x192.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/512x512.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
-    }
-  ],
+	"short_name": "betarena-scores-platform",
+	"name": "Betarena | Scores Platform",
+	"icons": [
+		{
+			"src": "/assets/img/192x192.png",
+			"type": "image/png",
+			"sizes": "192x192",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/assets/img/512x512.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "any maskable"
+		}
+	],
   "related_applications": [
     {
       "platform": "play",
@@ -23,13 +23,13 @@
     }
   ],
   "prefer_related_applications": true,
-  "background_color": "#292929",
-  "display": "standalone",
+	"background_color": "#292929",
+	"display": "standalone",
   "start_url": "/",
   "scope": "/",
   "theme_color": "#292929",
   "status_bar_style": "black-translucent",
   "viewport_fit": "cover",
-  "shortcuts": [],
-  "description": "Betarena Official Scores Platform"
+	"shortcuts": [],
+	"description": "Betarena Official Scores Platform"
 }
