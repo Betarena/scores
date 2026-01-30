@@ -515,7 +515,7 @@
                   ) =>
                   {
                     // [🐞]
-                    console.log('optimizing image', match, src);
+                    // console.log('optimizing image', match, src);
 
                     const
                       /**
