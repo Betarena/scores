@@ -759,58 +759,6 @@
     {/if}
   {/if}
 
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/Splash-Screen.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Splash-Screen'
-      />
-    {:else}
-      <SplashScreen />
-    {/if}
-  {/if}
-
-  {#if currentActiveToast != null}
-    <ToastAuth />
-  {/if}
-
-  {#if $scoresAdminStore.admin}
-    <DevInfoBox />
-  {/if}
-
-  {#if currentActiveModal == 'GeneralPlatform_Error'}
-    <ModalError />
-  {/if}
-
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Banner-Offline-Alert'
-      />
-    {:else}
-      <OfflineAlert />
-    {/if}
-  {/if}
-
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Banner-Platform-Alert'
-      />
-    {:else}
-      <PlatformAlert />
-    {/if}
-  {/if}
-
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Modal-Email-Subscribe.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/modal/Modal-Email-Subscribe.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Modal-Email-Subscribe'
-      />
-    {:else}
-      <EmailSubscribe />
-    {/if}
-  {/if}
-
   {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || '' ) || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== 'mobile') }
     <HeaderRedesigned />
   {/if}
