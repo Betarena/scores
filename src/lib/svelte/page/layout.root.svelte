@@ -357,6 +357,12 @@
     helperInitializeOnMountPre();
   ;
 
+  $: if (browser && theme) {
+    const isDark = theme === "Dark";
+    document.body.classList.remove(isDark ? "light-mode": "dark-mode")
+    document.body.classList.add(isDark ? "dark-mode" : "light-mode")
+  }
+
   // ╭─────
   // │ CRITICAL
   // │ │: Hijack the 'console' object.
@@ -669,6 +675,8 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
+
+
 <div
   class="app-wrapper"
   id="app-root-layout"
@@ -807,11 +815,6 @@
 -->
 
 <style lang="scss">
-
-  // :global
-  // {
-  //   @import 'static/scss/themes/index.scss';
-  // }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
