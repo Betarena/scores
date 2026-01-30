@@ -49,14 +49,14 @@
 }
 html {
   margin: 0 !important;
-  background-color: var(--w-635);
+  background-color: red;
   scroll-behavior: smooth !important;
   min-height: 100vh;
   min-height: 100dvh;
 }
 body {
   color: var(--b-599);
-  background-color: var(--w);
+  background-color: red;
   margin: 0 !important;
   font-family: Roboto;
   font-size: 14px;
