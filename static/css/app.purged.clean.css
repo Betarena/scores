@@ -56,6 +56,7 @@ html {
 body {
   color: var(--b-599);
   margin: 0 !important;
+  background-color: var(--cbbp-2912);
   font-family: Roboto;
   font-size: 14px;
   line-height: 1.5;
