@@ -815,10 +815,6 @@
 -->
 
 <style lang="scss">
-  :global(body) {
-    background-color: var(--colors-background-bg-primary);
-  }
-
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
