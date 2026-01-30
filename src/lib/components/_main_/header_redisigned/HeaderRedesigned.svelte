@@ -11,9 +11,9 @@
   // │ 4. assets import(s)                                                    │
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
   import SeoBox from "$lib/components/SEO-Box.svelte";
+  import sessionStore from "$lib/store/session.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
   import {
     routeIdAuthorProfile,
     routeIdAuthorSubscribers,
@@ -24,19 +24,19 @@
     routeIdPagePlayer,
     routeIdPageProfile,
     routeIdPageProfileAuthorCreate,
-    routeIdPageProfilePublication,
     routeIdPageTags,
-    routeIdSportstack
+    routeIdSportstack,
+    routeIdPageProfilePublication
   } from "$lib/constants/paths.js";
-  import sessionStore from "$lib/store/session.js";
-  import userBetarenaSettings from "$lib/store/user-settings.js";
-  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-  import Header from "./Header.svelte";
   import MobileHeaderRich from "./MobileHeaderRich.svelte";
+  import Header from "./Header.svelte";
+  import { page } from "$app/stores";
+  import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
   import MobileHeaderSmall from "./MobileHeaderSmall.svelte";
+  import TabletWave from "./assets/wave-bg-tablet.svg";
   import DesktopWave from "./assets/wave-bg-desktop.svg";
   import MobileWave from "./assets/wave-bg-mobile.svg";
-  import TabletWave from "./assets/wave-bg-tablet.svg";
+  import { goto } from "$app/navigation";
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
