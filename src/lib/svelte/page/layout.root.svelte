@@ -357,6 +357,11 @@
     helperInitializeOnMountPre();
   ;
 
+  $: if (browser && theme) {
+    const isDark = theme === "Dark";
+    document.body.classList.remove(isDark ? "light-mode": "dark-mode")
+    document.body.classList.add(isDark ? "dark-mode" : "light-mode")
+  }
 
   // ╭─────
   // │ CRITICAL
@@ -670,8 +675,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-<svelte:body  class:dark-mode={theme == 'Dark'}
-  class:light-mode={theme == 'Light'}/>
+<svelte:body  class ="{theme === "Dark" ? "dark-mode" : "light-mode"}"/>
 
 <div
   class="app-wrapper"
