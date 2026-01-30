@@ -686,8 +686,6 @@
   data-page-id={currentPageRouteId}
   data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
 >
-  <!-- iOS safe-area filler for status bar -->
-  <div class="safe-area-top"></div>
   {#if
     isBetarenaWidgetAdEngineEnabled
     && config.objApp.isBetareAgEngineEnabled
@@ -895,22 +893,6 @@
     background-color: var(--colors-background-bg-primary);
   }
 
-  @supports (padding: max(0px)) {
-  @media only screen and (max-width: 1024px) {
-    .safe-area-top
-    {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      height: env(safe-area-inset-top);
-      background-color: rgba(255, 255, 255, 0.01);
-      z-index: 9999;
-      pointer-events: none;
-    }
-  }
-}
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
