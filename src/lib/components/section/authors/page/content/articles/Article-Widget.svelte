@@ -197,7 +197,7 @@
 
   {#each (objAuthorContentHome?.mapArticle ?? []) as [, article]}
     <h2>{article.data?.title}</h2>
-    <a href={`/a/${article.permalink}`}>{article.data?.title}</a>
+    <a href={`/a/${article.permalink}`} data-sveltekit-preload-data="tap">{article.data?.title}</a>
   {/each}
 
   {#each (objAuthorContentHome?.mapTag ?? []) as [, tag]}
@@ -220,7 +220,7 @@
 
   {#each (objAuthorContentForecast?.mapArticle ?? []) as [, article]}
     <h2>{article.data?.title}</h2>
-    <a href={`/a/${article.permalink}`}>{article.data?.title}</a>
+    <a href={`/a/${article.permalink}`} data-sveltekit-preload-data="tap">{article.data?.title}</a>
   {/each}
 
   {#each (objAuthorContentForecast?.mapTag ?? []) as [, tag]}
