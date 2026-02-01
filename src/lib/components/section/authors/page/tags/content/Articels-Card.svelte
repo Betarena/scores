@@ -122,10 +122,17 @@
         <ScrollDataWrapper data={tags_data} let:item={tag}>
           <div
             class="tag"
-            data-sveltekit-preload-data="hover"
+            data-sveltekit-preload-data="tap"
             in:fade={{ duration: 500 }}
           >
-            <Badge link="/a/tag/{tag?.permalink}" size="lg" color="gray">{tag?.name}</Badge>
+            <Badge
+              link="/a/tag/{tag?.permalink}"
+              size="lg"
+              color="gray"
+              data-sveltekit-preload-data="tap"
+            >
+              {tag?.name}
+            </Badge>
           </div>
         </ScrollDataWrapper>
       {:else}
@@ -133,10 +140,17 @@
           <slot slot="item" let:item={tag}>
             <div
               class="tag"
-              data-sveltekit-preload-data="hover"
+              data-sveltekit-preload-data="tap"
               in:fade={{ duration: 500 }}
             >
-              <Badge link="/a/tag/{tag?.permalink}" size="lg" color="gray">{tag?.name}</Badge>
+              <Badge
+                link="/a/tag/{tag?.permalink}"
+                size="lg"
+                color="gray"
+                data-sveltekit-preload-data="tap"
+              >
+                {tag?.name}
+              </Badge>
             </div>
           </slot>
           <slot slot="count" let:count
