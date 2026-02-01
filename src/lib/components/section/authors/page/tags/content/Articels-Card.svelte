@@ -93,7 +93,7 @@
 
 <div class="card-wrapper" class:mobile in:fade={{ duration: 500 }}>
   <div class="card-content">
-    <a href="/a/{permalink}">
+    <a href="/a/{permalink}" data-sveltekit-preload-data="tap">
       <div class="title">
         {title}
       </div>
@@ -163,7 +163,7 @@
     </div>
   </div>
   {#if img}
-    <a href="/a/{permalink}" class="preview" class:tablet class:mobile>
+    <a href="/a/{permalink}" class="preview" class:tablet class:mobile data-sveltekit-preload-data="tap">
       <img
         src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 350 })}
         alt={images[0]?.alt || title}
