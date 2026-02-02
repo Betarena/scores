@@ -1,5 +1,12 @@
 /* #region ➤ [MAIN] [CONTAINERS] Website Layout */
 
+.fixed-top {
+  top: env(safe-area-inset-top);
+}
+.fixed-bottom {
+  bottom: env(safe-area-inset-bottom);
+}
+
 .widget-component
 {
   display: grid;

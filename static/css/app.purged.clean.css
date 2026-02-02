@@ -51,12 +51,12 @@ html {
   margin: 0 !important;
   scroll-behavior: smooth !important;
   min-height: 100dvh;
-  background-color: var(--cbbp-2912, #1F1F1FFF);
+  background-color: var(--cbbp-2912, var(--cgdm9-2360));
 }
 body {
   color: var(--b-599);
   margin: 0 !important;
-  background-color: var(--cbbp-2912, #1F1F1FFF);
+  background-color: var(--cbbp-2912, var(--cgdm9-2360));
   font-family: Roboto;
   font-size: 14px;
   line-height: 1.5;
