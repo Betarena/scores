@@ -606,8 +606,8 @@
   │ NOTE:
   │ |: Integration Injection for :: Intercom
   ╰───── -->
-  {#if config.objApp.objServiceIntercom && currentPageRouteId === 'ProfilePage'}
-    <script async defer src="/scripts/service.intercom.js"></script>
+  {#if config.objApp.objServiceIntercom && pageRouteId === routeIdPageProfile}
+   {@html config.objApp.objServiceIntercom.strInjectionCode}
   {/if}
 </svelte:head>
 
