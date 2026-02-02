@@ -9,8 +9,8 @@ html
 {
   margin: 0 !important;
   scroll-behavior: smooth !important;
-  min-height: 100vh;
   min-height: 100dvh;
+  background-color: var(--colors-background-bg-primary, #1F1F1FFF);
 }
 
 body,
@@ -24,11 +24,10 @@ body
 {
   color: var(--black);
   margin: 0 !important;
-  background-color: var(--colors-background-bg-primary);
+  background-color: var(--colors-background-bg-primary, #1F1F1FFF);
   font-family: Roboto;
   font-size: 14px;
   line-height: 1.5;
-  min-height: 100vh;
   min-height: 100dvh;
   /*
      MOBILE
