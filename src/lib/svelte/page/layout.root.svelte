@@ -146,6 +146,7 @@
       = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')!
   ;
 
+  let intercomInstance: Intercom | null = null;
   let
     [
       isBetarenaWidgetAdEngineEnabled
@@ -372,8 +373,10 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom // BOOT (with user data)
   // ╰─────
-  $: if (isWindowIntercom)
-    new Intercom().lifecycle
+
+  $: if (isWindowIntercom && !intercomInstance ){
+    intercomInstance = new Intercom();  
+    intercomInstance.lifecycle
     (
       {
         uid,
@@ -385,7 +388,11 @@
         strLifecycleType: 'boot',
       }
     );
-  ;
+  }
+
+  $: if (intercomInstance) {
+    intercomInstance.changeVisibility(currentPageRouteId !== 'ProfilePage')
+  }
 
   $: if (currentActiveModal === 'Auth_Modal' && ![routeIdLogin, routeIdRegister].includes(pageRouteId || ''))
     redirectToOnBoard(false);
@@ -442,6 +449,7 @@
       window.visualViewport
         ?.removeEventListener('resize', updateVh)
       ;
+      intercomInstance = null;
       return;
     }
   );
@@ -599,7 +607,7 @@
   │ |: Integration Injection for :: Intercom
   ╰───── -->
   {#if config.objApp.objServiceIntercom && currentPageRouteId === 'ProfilePage'}
-    {@html config.objApp.objServiceIntercom.strInjectionCode}
+    <script async defer src="/scripts/service.intercom.js"></script>
   {/if}
 </svelte:head>
 
