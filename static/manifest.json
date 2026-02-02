@@ -28,8 +28,6 @@
   "start_url": "/",
   "scope": "/",
   "theme_color": "#292929",
-  "status_bar_style": "black-translucent",
-  "viewport_fit": "cover",
 	"shortcuts": [],
 	"description": "Betarena Official Scores Platform"
 }
