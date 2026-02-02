@@ -38,7 +38,7 @@ log start $strDebugPrefix
 docker run \
   --rm --detach \
   --name $strDockerContainerScoresBuildTemp \
-  --volume $strDockerScoresBuildVolume:/app/build:rw \
+  --volume $strDockerVolumeScores:/app/build:rw \
   alpine \
   sleep 30
 #
