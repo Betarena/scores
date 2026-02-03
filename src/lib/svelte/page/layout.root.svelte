@@ -613,6 +613,12 @@
   │ |: Integration Injection for :: Intercom
   ╰───── -->
   {#if config.objApp.objServiceIntercom && pageRouteId === routeIdPageProfile}
+    <script>
+      window.intercomSettings = {
+        app_id: 'yz9qn6p3',
+        api_base: 'https://api-iam.intercom.io'
+      };
+    </script>
     <script async defer src="/scripts/service.intercom.js"></script>
   {/if}
 </svelte:head>
