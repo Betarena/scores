@@ -185,9 +185,10 @@
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  $: if (contentContainer) {
-    insertWidgets(contentContainer);
+  $: if (contentContainer && widgetData.article.data?.content) {
+    tick().then(() => insertWidgets(contentContainer));
   }
+
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
   }
