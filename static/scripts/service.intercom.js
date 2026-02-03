@@ -6,7 +6,17 @@
     if (typeof ic === "function")
     {
       ic("reattach_activator");
-      ic("update", w.intercomSettings);
+      if (w.intercomSettings && w.intercomSettings.app_id)
+      {
+        ic("update", w.intercomSettings);
+      }
+      else
+      {
+        ic("update", {
+          app_id: "yz9qn6p3",
+          api_base: "https://api-iam.intercom.io"
+        });
+      }
     }
     else
     {
