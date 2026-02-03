@@ -5,22 +5,30 @@
   box-sizing: border-box;
 }
 
+html
+{
+  margin: 0 !important;
+  scroll-behavior: smooth !important;
+  min-height: 100dvh;
+  background-color: var(--colors-background-bg-primary, var(--colors-gray-dark-mode-950));
+}
+
 body,
 html
 {
   margin: 0 !important;
-  background-color: var(--white);
   scroll-behavior: smooth !important;
 }
 
 body
 {
   color: var(--black);
-  background-color: var(--whitev2);
   margin: 0 !important;
+  background-color: var(--colors-background-bg-primary, var(--colors-gray-dark-mode-950));
   font-family: Roboto;
   font-size: 14px;
   line-height: 1.5;
+  min-height: 100dvh;
   /*
      MOBILE
      disable pinchin & user zooming on */
@@ -28,6 +36,12 @@ body
   /*
   SAFARI */
   -webkit-text-size-adjust: none;
+
+  /* iOS safe-area padding */
+  @supports (padding: env(safe-area-inset-top)) {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 
   &.disable-scroll
   {
