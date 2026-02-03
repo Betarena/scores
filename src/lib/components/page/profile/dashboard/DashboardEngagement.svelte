@@ -120,7 +120,7 @@
   </div>
   <div class="metrics-wrappers">
     {#each engagements as { label, field }}
-      <MetricChart text={label} number={selectedOption[`${field}_total`]} animation={false} change={getEngagementTrend(selectedOption, field)} />
+      <MetricChart text={label} number={selectedOption[`${field}_total`] || 0} animation={false} change={getEngagementTrend(selectedOption, field)} />
     {/each}
   </div>
 </div>
