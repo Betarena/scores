@@ -146,6 +146,7 @@
       = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')!
   ;
 
+  let intercomInstance: Intercom | null = null;
   let
     [
       isBetarenaWidgetAdEngineEnabled
@@ -357,6 +358,12 @@
     helperInitializeOnMountPre();
   ;
 
+  $: if (browser && theme) {
+    const isDark = theme === "Dark";
+    document.body.classList.remove(isDark ? "light-mode": "dark-mode")
+    document.body.classList.add(isDark ? "dark-mode" : "light-mode")
+  }
+
   // ╭─────
   // │ CRITICAL
   // │ │: Hijack the 'console' object.
@@ -372,8 +379,10 @@
   // │ NOTE:
   // │ |: [3rd-party] // Intercom // BOOT (with user data)
   // ╰─────
-  $: if (isWindowIntercom)
-    new Intercom().lifecycle
+
+  $: if (isWindowIntercom && !intercomInstance ){
+    intercomInstance = new Intercom();  
+    intercomInstance.lifecycle
     (
       {
         uid,
@@ -385,7 +394,11 @@
         strLifecycleType: 'boot',
       }
     );
-  ;
+  }
+
+  $: if (intercomInstance) {
+    intercomInstance.changeVisibility(currentPageRouteId !== 'ProfilePage')
+  }
 
   $: if (currentActiveModal === 'Auth_Modal' && ![routeIdLogin, routeIdRegister].includes(pageRouteId || ''))
     redirectToOnBoard(false);
@@ -442,6 +455,7 @@
       window.visualViewport
         ?.removeEventListener('resize', updateVh)
       ;
+      intercomInstance = null;
       return;
     }
   );
@@ -598,8 +612,14 @@
   │ NOTE:
   │ |: Integration Injection for :: Intercom
   ╰───── -->
-  {#if config.objApp.objServiceIntercom && currentPageRouteId === 'ProfilePage'}
-    {@html config.objApp.objServiceIntercom.strInjectionCode}
+  {#if config.objApp.objServiceIntercom && pageRouteId === routeIdPageProfile}
+    <script>
+      window.intercomSettings = {
+        app_id: 'yz9qn6p3',
+        api_base: 'https://api-iam.intercom.io'
+      };
+    </script>
+    <script async defer src="/scripts/service.intercom.js"></script>
   {/if}
 </svelte:head>
 
@@ -668,6 +688,8 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
+
+
 
 <div
   class="app-wrapper"
@@ -807,11 +829,6 @@
 -->
 
 <style lang="scss">
-
-  // :global
-  // {
-  //   @import 'static/scss/themes/index.scss';
-  // }
 
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮

@@ -47,14 +47,27 @@
 * {
   box-sizing: border-box;
 }
+html {
+  margin: 0 !important;
+  scroll-behavior: smooth !important;
+  min-height: 100dvh;
+  background-color: var(--cbbp-2912, var(--cgdm9-2360));
+}
 body {
   color: var(--b-599);
-  background-color: var(--w);
   margin: 0 !important;
+  background-color: var(--cbbp-2912, var(--cgdm9-2360));
   font-family: Roboto;
   font-size: 14px;
   line-height: 1.5;
+  min-height: 100dvh;
   -webkit-text-size-adjust: none;
+}
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 a {
   text-decoration: none !important;
@@ -1307,7 +1320,7 @@ body {
   --cttp: var(--cgdm5);
   --cttps: var(--cgdm7);
   --cttbs7: var(--cgdm3);
-  --cttbt6: var(--cb5);
+  --cttbt6: var(--cgdm4);
   --cttep6: var(--ce4);
   --ctteph: var(--ce3);
   --cttsp6: var(--cs4);
@@ -1400,6 +1413,7 @@ body {
   --cbbw: #000000FF;
   --cttp-2561: var(--cg5-1374);
   --ctts: var(--cg3-1420);
+  --cttsh: var(--cg2-1419);
   --cttt: var(--cg4-1421);
   --cttth: var(--cg3-1420);
   --ctttob: var(--cg4-1421);

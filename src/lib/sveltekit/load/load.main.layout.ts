@@ -41,6 +41,15 @@ const
   strDebugModule = 'src/routes/+layout.server.ts'
 ;
 
+type PreloadCacheEntry =
+{
+  expiresAt: number;
+  data: IPreloadData0;
+};
+
+const PRELOAD_CACHE_TTL_MS = 2 * 60 * 1000;
+const preloadCacheByLang = new Map<string, PreloadCacheEntry>();
+
 // #endregion ➤ 📌 VARIABLES
 
 // #region ➤ ⛩️ TYPES
@@ -276,7 +285,8 @@ export async function main
   ] = await fetchData
   (
     event.fetch,
-    objResponse.langParam
+    objResponse.langParam,
+    Boolean(event.cookies.get("betarenaCookieLoggedIn"))
   );
 
   // ╭─────
@@ -374,9 +384,15 @@ export async function main
 async function fetchData
 (
   fetch: any,
-  lang: string
+  lang: string,
+  isLoggedIn: boolean
 ): Promise < IPreloadData0 >
 {
+  const cachedEntry = preloadCacheByLang.get(lang);
+  if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
+    return cachedEntry.data;
+  }
+
   const
     /**
      * @description
@@ -387,23 +403,41 @@ async function fetchData
         `/api/data/main.config`,
         `/api/data/main/navbar?lang=${lang}&decompress`,
         `/api/data/main/footer?lang=${lang}&decompress`,
-        `/api/hasura/_main_/auth?lang=${lang}`,
         `/api/data/translations?lang=${lang}&table=search`,
         `/api/data/translations?lang=${lang}&table=app_install`,
         `/api/data/translations?lang=${lang}&table=deposit&lang_type=String`,
         `/api/data/translations?lang=${lang}&table=awards`
-      ],
+      ];
+
+  if (isLoggedIn) {
+    listUrls.splice(3, 0, `/api/hasura/_main_/auth?lang=${lang}`);
+  }
+
+  const
     /**
      * @description
      *  📝 Target `data` returned.
      */
-    dataRes0
+    dataRes0Raw
       = await promiseUrlsPreload
       (
         listUrls,
         fetch
       ) as IPreloadData0
   ;
+
+  const dataRes0 = isLoggedIn ? dataRes0Raw : [
+    dataRes0Raw[0],
+    dataRes0Raw[1],
+    dataRes0Raw[2],
+    undefined,
+    dataRes0Raw[3],
+    dataRes0Raw[4],
+    dataRes0Raw[5],
+    dataRes0Raw[6]
+  ] as IPreloadData0;
+
+  preloadCacheByLang.set(lang, { data: dataRes0, expiresAt: Date.now() + PRELOAD_CACHE_TTL_MS });
 
   return dataRes0;
 }
