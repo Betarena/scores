@@ -269,6 +269,7 @@
   .icon {
     width: 20px;
     height: 20px;
+    color: var(--colors-foreground-fg-quaternary-400)
   }
 
   .pagination-button-wrap {

@@ -41,6 +41,7 @@
   import { createEventDispatcher } from "svelte";
   import type { Writable } from "svelte/store";
   import { articleFilterStore } from "./editor/helpers.js";
+  import FilterLines from "$lib/components/ui/assets/filter-lines.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -66,7 +67,6 @@
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
 
-
   const dispatch = createEventDispatcher();
 
   let showSortBy = false;
@@ -89,16 +89,16 @@
     {
       id: "subscribers",
       text: "Total Subscribers",
-      number: 4281,
-      change: 2.4
+      number: "188 BTA",
+      change: 2.4,
     },
     {
       id: "revenue",
       text: "Total Revenue",
-      number: 4281,
-      change: 2.4
-    }
-  ]
+      number: "188 BTA",
+      change: 2.4,
+    },
+  ];
 
   $: ({ viewportType } = $session);
 
@@ -116,7 +116,7 @@
   // │ Please keep very close attention to these methods and                  │
   // │ use them carefully.                                                    │
   // ╰────────────────────────────────────────────────────────────────────────╯
-  
+
   $: if (viewportType === "mobile") {
     columns = [...init_columns].filter((col) => col.id !== "start_date");
     columns[0].grow = 2;
@@ -187,7 +187,9 @@
     }
   }
 
-  function handleSort(event: CustomEvent<{column: string, direction: 'asc' | 'desc'}>) {
+  function handleSort(
+    event: CustomEvent<{ column: string; direction: "asc" | "desc" }>,
+  ) {
     const { column, direction } = event.detail;
     console.log(`Sorted by column: ${column}, direction: ${direction}`);
   }
@@ -208,26 +210,35 @@
 <svelte:window on:scroll={handleScroll} />
 <div class="publication-subscribers {viewportType}" bind:this={node}>
   <div class="statistic">
-    <ScrollDataWrapper data={statistic}  let:item>
-      <button class="metric-wrapper" class:active={item.id === activeStatistic} on:click={() => activeStatistic = item.id}>
-        <MetricItem4 text={item.text} number={item.number} change={item.change} />
+    <ScrollDataWrapper data={statistic} let:item>
+      <button
+        class="metric-wrapper"
+        class:active={item.id === activeStatistic}
+        on:click={() => (activeStatistic = item.id)}
+      >
+        <MetricItem4 text={item.text} number={item.number} change={item.change}>
+          <div class="bta" slot="number">
+            {item.number} <span class="usd">$40</span>
+          </div>
+        </MetricItem4>
       </button>
     </ScrollDataWrapper>
   </div>
   <div class="header">
     <div class="search-wrapper">
-      <Input type="leading-text" placeholder={"Search"} height="40px">
+      <Input type="leading-text" placeholder={"Search"} size="sm" height="40px">
         <svg
-          slot="leading-text"
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
+          width="17"
+          height="17"
+          stroke="currentColor"
+          viewBox="0 0 17 17"
           fill="none"
+          slot="leading-text"
         >
           <path
-            d="M17.5 17.5L12.5001 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-            stroke="currentColor"
+            d="M15.8333 15.8335L12.9167 12.9168M14.9999 7.91683C14.9999 11.8288 11.8286 15.0002 7.91659 15.0002C4.00457 15.0002 0.833252 11.8288 0.833252 7.91683C0.833252 4.00481 4.00457 0.833496 7.91659 0.833496C11.8286 0.833496 14.9999 4.00481 14.9999 7.91683Z"
+            stroke="#6A6A6A"
             stroke-width="1.66667"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -242,21 +253,9 @@
         on:click|stopPropagation={() => (showSortBy = !showSortBy)}
       >
         <Button type="secondary" size="md">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-          >
-            <path
-              d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
-              stroke-width="1.66667"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke="currentColor"
-            />
-          </svg>
+          <div class="filter-icon">
+            <FilterLines />
+            </div>
           <span>{translations?.sort_by || "Filters"}</span>
         </Button>
         <PopupMenu
@@ -318,7 +317,7 @@
     max-width: 100%;
     gap: var(--spacing-3xl, 24px);
     overflow-x: hidden;
-
+   
     .buttons-header {
       display: flex;
       align-items: flex-start;
@@ -349,7 +348,28 @@
 
         &.active {
           :global(.metric-4) {
-            border: 1px solid var(--Colors-Border-border-brand, #F5620F);
+            border: 1px solid var(--Colors-Border-border-brand, #f5620f);
+          }
+        }
+        .bta {
+          color: var(--colors-text-text-primary-900, #fff);
+
+          /* Display sm/Semibold */
+          font-family: var(--font-family-font-family-display, Roboto);
+          font-size: var(--font-size-display-sm, 30px);
+          font-style: normal;
+          font-weight: 600;
+          line-height: var(--line-height-display-sm, 38px); /* 126.667% */
+
+          .usd {
+            color: var(--colors-text-text-tertiary-600, #8c8c8c);
+
+            /* Display xs/Semibold */
+            font-family: var(--font-family-font-family-display, Roboto);
+            font-size: var(--font-size-display-xs, 24px);
+            font-style: normal;
+            font-weight: 600;
+            line-height: var(--line-height-display-xs, 32px);
           }
         }
       }
@@ -373,9 +393,11 @@
 
         .filter-button {
           position: relative;
-          :global(.button) {
-            border: none !important;
-          }
+        }
+        .filter-icon {
+          width: 20px;
+          height: 20px;
+          color: var(--colors-foreground-fg-quaternary-400);
         }
 
         span {
@@ -430,7 +452,6 @@
     }
 
     &.desktop {
-
       .no-content {
         max-height: 368px;
       }

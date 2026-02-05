@@ -33,6 +33,7 @@
   export let value: string | number = "";
   export let name = "";
   export let label = "";
+  export let size: "md" | "sm" = "md";
   export let height = inputType === "textarea" ? "100px" : "44px";
   export let node: HTMLInputElement | HTMLTextAreaElement | null = null;
   export let onInputValidation:
@@ -95,7 +96,7 @@
 │         │ abbrev.                                                                │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
-<div class="field">
+<div class="field {size}">
   {#if $$slots.label || label || required}
     <label class="label" for={name}>
       {#if $$slots.label || label}
@@ -108,7 +109,7 @@
       {/if}
     </label>
   {/if}
-  <div class="input-wrapper" class:focus class:error style="height: {height}">
+  <div class="input-wrapper {size}" class:focus class:error style="height: {height}">
     {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
@@ -305,6 +306,20 @@
       }
       &.error {
         border: 1px solid var(--colors-border-border-error_subtle, #f97066);
+      }
+      &.sm {
+        .leading-text {
+          padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+          padding-right: 0;
+          margin-right: -4px;
+        }
+        .input-element {
+          height: 40px;
+           input,
+          textarea {
+            padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+          }
+        }
       }
     }
 

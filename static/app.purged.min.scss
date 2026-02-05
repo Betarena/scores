@@ -119,9 +119,6 @@ p {
 .m-l-8 {
   margin-left: 8px;
 }
-.m-l-10 {
-  margin-left: 10px;
-}
 .m-l-24 {
   margin-left: 24px;
 }
@@ -226,11 +223,6 @@ p {
 .global.s-16,
 .global.s-16 > * {
   font-size: 16px;
-}
-.s-18,
-.global.s-18,
-.global.s-18 > * {
-  font-size: 18px;
 }
 .s-20,
 .global.s-20,
@@ -428,12 +420,6 @@ button {
   white-space: nowrap;
   display: flex;
   justify-content: center;
-}
-button.btn-primary {
-  background: var(--p);
-}
-button.btn-primary p {
-  color: var(--w-635);
 }
 button.btn-primary-v2 {
   height: 44px;
@@ -634,13 +620,6 @@ section {
   justify-items: start;
 }
 /* #endregion ➤ [MAIN] [CONTAINERS] Website Layout */
-hr {
-  width: 100%;
-  margin: 16.17px 0;
-  opacity: 0.25;
-  border: 1.46983px solid #ff5555;
-  background-color: #ff5555;
-}
 form input.v-1 {
   width: 20px;
   height: 20px;
@@ -738,8 +717,6 @@ body {
   --cmwd: 1280px;
   --cpd: 32px;
   --cpm: 16px;
-  --Ffffd: Roboto;
-  --Fsdx: 24px;
   --Fsts: 14px;
   --Fstm: 16px;
   --Lhts: 20px;
@@ -1233,7 +1210,6 @@ body {
   --lhds: 38px;
   --lhdm: 44px;
   --lhdl: 60px;
-  --lhdx-2268: 72px;
   --fsts: 14px;
   --fstm: 16px;
   --fstl: 18px;
@@ -1242,7 +1218,6 @@ body {
   --fsds: 30px;
   --fsdm: 36px;
   --fsdl: 48px;
-  --fsdx-2093: 60px;
 }
 :root {
   --gsgb: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.00) 100%);
@@ -1261,7 +1236,6 @@ body {
   --bc: #4B4B4B;
   --bhc: #4B4B4B;
   --bsb-2017: #4B4B4B;
-  --sb: 1px solid var(--bc);
   --b: 1px solid var(--bc);
   --hb: 1px solid #383838;
   --mmbc: rgba(var(--bcsrc), 0.7);
@@ -1318,7 +1292,6 @@ body {
   --cttw: var(--cbw);
   --cttd: var(--cgdm5);
   --cttp: var(--cgdm5);
-  --cttps: var(--cgdm7);
   --cttbs7: var(--cgdm3);
   --cttbt6: var(--cb5);
   --cttep6: var(--ce4);
@@ -1403,7 +1376,6 @@ body {
   --cbbbpa: var(--cbbs-3108);
   --cbbbs: var(--cb6);
   --cbbbs-3243: var(--cb6);
-  --cbbbs-3461: var(--cbbs-3108);
   --cbbep: var(--ce9-1550);
   --cbbes: var(--ce6);
   --cbbws: var(--cw6);
@@ -1420,7 +1392,6 @@ body {
   --cttw: var(--cbw);
   --cttd: var(--cg5-1422);
   --cttp: var(--cg5-1422);
-  --cttps: var(--cg7-1424);
   --cttbs: var(--cg3-1420);
   --cttbt: var(--cb5);
   --cttep: var(--ce4);
@@ -1520,7 +1491,6 @@ body {
   --cbbbs: var(--cb5);
   --cbbbs-3243: var(--cb5);
   --cbbbsh: var(--cb7);
-  --cbbbs-3461: var(--cbbs-3108);
   --cbbep: var(--ce5);
   --cbbes: var(--ce6);
   --cbbws: var(--cw6);
@@ -1544,7 +1514,6 @@ body {
   --bc: #292929;
   --bhc: #E6E6E6;
   --bsb-2017: #F0F0F0;
-  --sb: 1px solid var(--bcl);
   --b: 1px solid #CCC;
   --hb: 1px solid #CCC;
   --mmbc: rgba(var(--bcrc), 0.9);
@@ -1599,7 +1568,6 @@ body {
   --cttw: var(--cbw);
   --cttd: var(--cglm5);
   --cttp: var(--cglm5);
-  --cttps: var(--cglm3);
   --cttbs7: var(--cb7);
   --cttbt6: var(--cb6);
   --cttep6: var(--ce6);
@@ -1683,7 +1651,6 @@ body {
   --cbbbpa: var( --cgdm5-2303);
   --cbbbs: var(--cb1);
   --cbbbs-3243: var(--cb6);
-  --cbbbs-3461: var(--cb8);
   --cbbep: var(--ce5-1493);
   --cbbes: var(--ce1);
   --cbbws: var(--cw1);
@@ -1702,7 +1669,6 @@ body {
   --cttw: var(--cbw);
   --cttd: var(--cg5-1422);
   --cttp: var(--cg5-1422);
-  --cttps: var(--cg3-1420);
   --cttbs: var(--cb7);
   --cttbt: var(--cb5);
   --cttep: var(--ce6);
@@ -1803,7 +1769,6 @@ body {
   --cbbbs: var(--cb1);
   --cbbbs-3243: var(--cb5);
   --cbbbsh: var(--cb7);
-  --cbbbs-3461: var(--cb8);
   --cbbep: var(--ce5-1493);
   --cbbes: var(--ce1);
   --cbbws: var(--cw1);

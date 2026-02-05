@@ -373,6 +373,7 @@
       }
       &.button_brand  {
         .tab-item {
+          height: 44px;
           padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
           /* Text md/Semibold */
           font-family: var(--font-family-font-family-body, Roboto);

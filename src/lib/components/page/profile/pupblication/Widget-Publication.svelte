@@ -312,18 +312,19 @@
                   options={sportstacks}
                   on:change={selectSportstack}
                   value={$selectedSportstack}
+                  size="sm"
                 />
               {/if}
               {#if viewportType === "desktop"}
                 <a href="/u/author/{$page.params.lang}">
-                  <Button type="terlary-gray">{translations?.go_back}</Button>
+                  <Button type="terlary-gray" size="sm">{translations?.go_back}</Button>
                 </a>
                 {#if view === "home"}
                   <a
                     href="/a/sportstack/{$selectedSportstack?.permalink}"
                     style="margin-left: -10px !important; margin-right: -8px !important"
                   >
-                    <Button type="secondary-gray"
+                    <Button type="secondary-gray" size="sm"
                       >{translations?.view_sportstacks}</Button
                     >
                   </a>
@@ -332,7 +333,7 @@
                   <a
                     href="/u/author/article/create/{$userSettings.lang}?sportstack={$selectedSportstack?.permalink}"
                   >
-                    <Button full={true} type="primary"
+                    <Button full={true} type="primary" size="sm"
                       >+ {translations?.new_article}</Button
                     >
                   </a>

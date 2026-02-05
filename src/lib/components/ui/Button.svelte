@@ -202,9 +202,7 @@
     &.sm {
       padding: var(--spacing-md, 8px)
         calc(var(--spacing-lg, 12px) + var(--spacing-xxs, 2px));
-      &.icon_leading {
-        padding: var(--spacing-md, 8px);
-      }
+
     }
 
     &.xl {
