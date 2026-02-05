@@ -49,3 +49,19 @@ Rules:
 - Validate inputs at boundaries (API endpoints, functions, webhooks).
 - Fail closed on auth/authz (deny by default).
 - Apply least-privilege access for service credentials.
+
+## Data safety (STRICT)
+
+### Default assumption
+- Assume any configured database/project is REAL unless proven otherwise.
+- Local development must avoid touching production systems.
+
+### No-writes-by-default rule
+- Do not run, suggest, or include verification steps that can write to persistent storage unless explicitly approved by a human.
+- Explicit approval phrase required: **"writes approved"**.
+
+### High-risk operations (always require approval)
+- migrations, seeds, resets
+- deletes/truncates/backfills
+- background jobs/workers that populate or mutate data
+- scripts that "sync", "rebuild", "reindex", "populate", "invalidate"
