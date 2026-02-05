@@ -34,7 +34,7 @@
   export let name = "";
   export let label = "";
   export let size: "md" | "sm" = "md";
-  export let height = inputType === "textarea" ? "100px" : "44px";
+  export let height = inputType === "textarea" ? "100px" : null;
   export let node: HTMLInputElement | HTMLTextAreaElement | null = null;
   export let onInputValidation:
     | ((val: string | number) => boolean)
@@ -109,7 +109,7 @@
       {/if}
     </label>
   {/if}
-  <div class="input-wrapper {size}" class:focus class:error style="height: {height}">
+  <div class="input-wrapper {size}" class:focus class:error style="{height ? `height: ${height}` : ''}">
     {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
@@ -308,6 +308,7 @@
         border: 1px solid var(--colors-border-border-error_subtle, #f97066);
       }
       &.sm {
+        height: 40px;
         .leading-text {
           padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
           padding-right: 0;

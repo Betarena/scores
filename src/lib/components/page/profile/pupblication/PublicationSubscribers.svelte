@@ -3,6 +3,7 @@
 │ 🟦 Svelte Component JS/TS                                                        │
 ┣──────────────────────────────────────────────────────────────────────────────────┫
 │ ➤ HINT: │ Access snippets for '<script> [..] </script>' those found in           │
+	import { scale } from 'svelte/transition';
 │         │ '.vscode/snippets.code-snippets' via intellisense using 'doc'          │
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
@@ -42,6 +43,8 @@
   import type { Writable } from "svelte/store";
   import { articleFilterStore } from "./editor/helpers.js";
   import FilterLines from "$lib/components/ui/assets/filter-lines.svelte";
+  import SubscribersFilter from "./SubscribersFilter.svelte";
+  import { fade, scale } from "svelte/transition";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,7 +72,7 @@
 
   const dispatch = createEventDispatcher();
 
-  let showSortBy = false;
+  let showFilter = false;
   let activeStatistic: string = "";
   let node;
   let init_columns: Column[] = [
@@ -248,24 +251,21 @@
     </div>
     <div class="sort-by">
       <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <div
-        class="filter-button"
-        on:click|stopPropagation={() => (showSortBy = !showSortBy)}
-      >
-        <Button type="secondary" size="md">
+      
+        <Button type="secondary" size="md" on:click={() => showFilter = !showFilter}>
           <div class="filter-icon">
             <FilterLines />
             </div>
           <span>{translations?.sort_by || "Filters"}</span>
         </Button>
-        <PopupMenu
-          options={sortOptions}
-          bind:show={showSortBy}
-          on:click={changeSort}
-        />
-      </div>
     </div>
   </div>
+  {#if showFilter}
+  <div in:fade>
+
+    <SubscribersFilter />
+  </div>
+  {/if}
   <div class="content">
     <Table {columns} {rows} on:sort={handleSort} sortable={true}>
       <div class="cell" slot="cell" let:column let:value>
