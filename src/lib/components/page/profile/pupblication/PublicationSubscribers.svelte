@@ -87,6 +87,7 @@
     rewards: `${Math.floor(Math.random() * 1000)}`,
   }));
 
+  let filters = [];
   let columns: Column[] = [];
   let statistic = [
     {
@@ -263,7 +264,7 @@
   {#if showFilter}
   <div in:fade>
 
-    <SubscribersFilter />
+    <SubscribersFilter bind:filters />
   </div>
   {/if}
   <div class="content">

@@ -27,6 +27,7 @@ COMPONENT JS (w/ TS)
   export let dateSelect
   export let dateRange
   export let show = false;
+  export let allowRange = true;
 
   interface monthWeekObject
   {
@@ -260,10 +261,15 @@ COMPONENT JS (w/ TS)
 
     // ◾️ NOTE:
     // ◾️ Push new Date to Array.
-    selectedDays.push(newDate);
-    // ◾️ IMPORTANT
-    // ◾️ To kickstart reactive lifecycle.
-    selectedDays = selectedDays;
+    if (allowRange) {
+      selectedDays.push(newDate);
+      // ◾️ IMPORTANT
+      // ◾️ To kickstart reactive lifecycle.
+      selectedDays = selectedDays;
+    } else {
+      selectedDays = [newDate, newDate];
+
+    }
 
     // ◾️ CHECK
     // ◾️ for 2 valid dates in list, proceed.
@@ -326,10 +332,16 @@ COMPONENT JS (w/ TS)
   function checkDateStyle
   (
     date: Date,
-    type: 'start' | 'middle' | 'end',
+    type: 'start' | 'middle' | 'end' | 'select',
     _selectedDays?: [ Date?, Date? ]
   ): boolean
   {
+
+     if (type === "select" && !allowRange) {
+      return  toISOMod(date) == toISOMod(_selectedDays?.[0])
+    }
+
+    if (["middle", "end", "start"].includes(type) && !allowRange) return false;
 
     // ◾️ CHECK
     // ◾️ for 'start' date type.
@@ -348,6 +360,8 @@ COMPONENT JS (w/ TS)
       && toISOMod(date) == toISOMod(_selectedDays?.[1])
     ;
     if (if_M_1) return true;
+
+   
 
     // ◾️ CHECK
     // ◾️ for 'middle' date type.
@@ -532,6 +546,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   class:startSnake={checkDateStyle(item, 'start', selectedDays)}
                   class:middleSnake={checkDateStyle(item, 'middle', selectedDays)}
                   class:endSnake={checkDateStyle(item, 'end', selectedDays)}
+                  class:selected={checkDateStyle(item, "select", selectedDays)}
                   on:click={() => dateChange(item)}
                 >
                   {item?.getDate()}
@@ -574,7 +589,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* 📌 position */
     position: fixed;
     z-index: 999999;
-    bottom: 20px;
+    bottom: 50%;
+    transform: translateY(50%);
     right: 0;
     left: 0;
     /* 🛝 layout */
@@ -616,6 +632,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     background-color: var(--whitev2) !important;
     border-radius: 60px;
     color: var(--dark-theme) !important;
+  }
+  div#profile\/widget\/calendar-pop-up\/inner table tr td.selected
+  {
+    /* 🎨 style */
+    background-color: var(--primary);
+    color: var(--white);
+    border-radius: 60px;
   }
   div#profile\/widget\/calendar-pop-up\/inner table tr td.startSnake
   {
@@ -660,6 +683,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       position: absolute;
       top: 105%;
       right: 0;
+      transform: unset;
       bottom: unset;
       left: unset;
       z-index: 2;
