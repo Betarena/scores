@@ -1,9 +1,5 @@
 # ╭──────────────────────────────────────────────────────────────────╮
 # │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
-# ┣──────────────────────────────────────────────────────────────────┫
-# │ Responsible for:                                                 │
-# │ ➤ [1] check for correct build(s)                                 │
-# │ ➤ [2] build check of project as a Check PR Label                 │
 # ╰──────────────────────────────────────────────────────────────────╯
 
 name: '🏁 Check'
@@ -22,7 +18,7 @@ on:
 
 jobs:
 
-  npm-build-check:
+  build-check:
     name: 🧪  JOB /:/ NPM check build
     runs-on: ubuntu-22.04
     steps:
@@ -44,8 +40,36 @@ jobs:
           npm run build
   #
 
+  pull-request-check-commitlint:
+    name: 📝 JOB /:/ PR check commitlint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.19.0
+      - name: 'STEP /:/ set npm version'
+        run: |
+          npm install -g npm@10.2.3
+      - name: 'STEP /:/ install npm dependencies'
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+        run: npm ci
+      - name: 'STEP /:/ validate commits commitlint'
+        run: |
+          npx commitlint \
+            --from ${{ github.event.pull_request.base.sha }} \
+            --to ${{ github.event.pull_request.head.sha }} \
+            --verbose
+  #
+
   pull-request-check-branches:
-    name: 🏷️ JOB /:/ PR check branches
+    name: 🪾 JOB /:/ PR check branches
     runs-on: ubuntu-22.04
     steps:
       - name: 'STEP /:/ check source branch name'
