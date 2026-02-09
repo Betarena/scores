@@ -37,8 +37,8 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import ArrowLeft from "../assets/arrow-left.svelte";
-  import ArrowRight from "../assets/arrow-right.svelte";
+  import ArrowLeft from "../assets/chevron-left.svelte";
+  import ArrowRight from "../assets/chevron-right.svelte";
 
   // #endregion ➤ 📦 Package Imports
 

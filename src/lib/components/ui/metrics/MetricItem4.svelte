@@ -44,7 +44,6 @@
   export let number = "";
   export let change: number | undefined;
   export let menu = false;
-
   // #endregion ➤ 📌 VARIABLES
 </script>
 
@@ -59,9 +58,11 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <div class="metric-4">
-  <FeaturedIcon color="gray" size="md" type="modern">
-    <slot name="icon" />
-  </FeaturedIcon>
+  {#if $$slots.icon}
+     <FeaturedIcon color="gray" size="md" type="modern">
+       <slot name="icon" />
+     </FeaturedIcon>
+  {/if}
   <div class="text-wrapper">
     <div class="title">
       {text}

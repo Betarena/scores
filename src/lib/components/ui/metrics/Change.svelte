@@ -165,7 +165,7 @@
   {/if}
   <span class="text">
     {#if change}
-      <TweenedNumber number={change} fixNumber={0} needsToFormat={false} />%
+      <TweenedNumber number={change} fixNumber={1} needsToFormat={false} />%
     {:else}
       -
     {/if}
