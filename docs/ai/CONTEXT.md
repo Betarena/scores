@@ -1,6 +1,6 @@
 # AI Context — scores
 
-Playbook: Betarena/company-ai-playbook@v1.0.4
+Playbook: Betarena/company-ai-playbook@v1.0.5
 
 ## Order of authority
 1) This file: `docs/ai/CONTEXT.md`

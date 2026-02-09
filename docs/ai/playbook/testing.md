@@ -30,3 +30,26 @@ This document defines minimum expectations for tests and verification.
 - Flaky tests
 - Over-mocking critical behavior (prefer real boundaries when possible)
 - Large refactors “to make it testable” unless explicitly requested
+
+## Verification checklist policy (STRICT)
+
+### Default verification is read-only
+Unless explicitly approved, verification steps MUST be read-only:
+- build
+- lint / format check
+- typecheck
+- unit tests that do not connect to persistent storage
+
+### Write-capable verification is forbidden by default
+Any step that can write to persistent storage requires explicit approval from a human and must include:
+- the exact target environment (emulator/staging/prod)
+- why writes are required
+- what data may be modified
+- rollback plan / how to revert
+
+### Examples of write-capable steps (require approval)
+- starting dev servers that connect to real databases/projects
+- running migrations, seeds, resets, deletes, truncates
+- running backfills, rebuilds, reindex/sync scripts
+- executing background jobs (BullMQ/cron/workers) that populate or mutate data
+- cache invalidation or regeneration routines that alter persistent stores
