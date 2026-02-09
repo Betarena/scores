@@ -36,6 +36,7 @@
   export let size: "md" | "sm" = "md";
   export let height = inputType === "textarea" ? "100px" : null;
   export let node: HTMLInputElement | HTMLTextAreaElement | null = null;
+  export let maxlength: number | undefined = undefined;
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -109,6 +110,7 @@
       {/if}
     </label>
   {/if}
+  <div class="input-wrapper" class:focus class:error class:has-textarea={inputType === 'textarea'} style="height: {height}">
   <div class="input-wrapper {size}" class:focus class:error style="{height ? `height: ${height}` : ''}">
     {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
@@ -127,6 +129,7 @@
           {placeholder}
           bind:value
           {name}
+          maxlength={maxlength}
           on:change={(e) => handleEvent(e, "change")}
           on:input={(e) => handleEvent(e, "input")}
         />
@@ -138,6 +141,7 @@
           {placeholder}
           {value}
           {name}
+          maxlength={maxlength}
           on:keydown={(e) => handleEvent(e, "keydown")}
           on:focus={(e) => handleEvent(e, "focus")}
           on:blur={(e) => handleEvent(e, "blur")}
@@ -215,6 +219,7 @@
       align-items: flex-start;
       align-self: stretch;
       height: 44px;
+      position: relative;
 
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
@@ -260,6 +265,15 @@
           }
         }
 
+        textarea {
+          overflow-y: auto;
+          overflow-x: hidden;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          resize: none;
+          width: 100%;
+        }
+
         &.input-textarea {
           height: 100px;
         }
@@ -289,18 +303,29 @@
 
       .extra {
         display: flex;
-        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        padding: 10px var(--spacing-lg, 12px) 10px var(--spacing-xs, 4px);
         align-items: center;
         gap: var(--spacing-xxs, 2px);
         color: var(--colors-text-text-tertiary-600, #6A6A6A);
+        flex-shrink: 0;
+        white-space: nowrap;
 
-        /* Text md/Regular */
+        /* Text sm/Regular */
         font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-md, 16px);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
+
+      /* Position counter at bottom-right for textarea */
+      &.has-textarea .extra {
+        position: absolute;
+        bottom: 10px;
+        right: 14px;
+        padding: 0;
+      }
+
       &.focus {
         border-color: var(--colors-border-border-brand);
       }

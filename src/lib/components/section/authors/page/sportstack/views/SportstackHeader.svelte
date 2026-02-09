@@ -38,6 +38,7 @@
   $: [id, sportstack] = sportstackData;
   $: ({ data, uid } = sportstack);
   $: ({ avatar, about, username } = data || {});
+  $: truncatedAbout = about && typeof about === "string" && about.length > 300 ? about.substring(0, 300) + "..." : (about || "");
   const /**
      * @description
      *  📣 `this` component **main** `id` and `data-testid` prefix.
@@ -108,7 +109,7 @@
 
       <div class="sportstack-description">
         <div class="about-text">
-          {about}
+          {truncatedAbout}
         </div>
         <div class="actions-wrapper">
           <div class="buttons-wrapper">
