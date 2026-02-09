@@ -317,6 +317,10 @@
       }
 
       /* Position counter at bottom-right for textarea */
+      &.has-textarea textarea {
+        padding-bottom: 35px;
+      }
+
       &.has-textarea .extra {
         position: absolute;
         bottom: 10px;
