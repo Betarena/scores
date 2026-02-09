@@ -47,6 +47,7 @@
     | undefined = undefined;
   export let searchable: boolean = false;
   export let searchPlaceholder: string = "Search...";
+  export let size: "md" | "sm" = "md"
 
   const dispatch = createEventDispatcher<{ change: IOption }>();
 
@@ -133,7 +134,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 <svelte:window on:click={hide} on:resize={adjustDropdownPosition} />
-<div class="field dropdown-input {$$restProps.class}">
+<div class="field dropdown-input {$$restProps.class} {size}">
   <select {name} style="display: none;" bind:value>
     {#each options as option}
       <option value={option}>{option.label}</option>
@@ -149,7 +150,7 @@
       {/if}
     </label>
   {/if}
-  <div class="input-wrapper">
+  <div class="input-wrapper {size}">
     <div
       class="input-element"
       class:focus
@@ -403,6 +404,10 @@
         font-style: normal;
         font-weight: 400;
         line-height: var(--Line-height-text-md, 24px); /* 150% */
+      }
+
+      &.sm {
+        height: 40px;
       }
     }
 

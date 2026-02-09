@@ -25,7 +25,7 @@
 
   import { page } from "$app/stores";
   import TranslationText from "$lib/components/misc/Translation-Text.svelte";
-  import ArrowLeftIcon from "$lib/components/ui/assets/ArrowLeftIcon.svelte";
+  import ArrowLeftIcon from "$lib/components/ui/assets/arrow-left.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import Progress from "$lib/components/ui/Progress.svelte";
   import { BetarenaUserHelper } from "$lib/firebase/common";
@@ -427,6 +427,8 @@
       .icon {
         color: var(--colors-foreground-fg-primary-900);
         cursor: pointer;
+        width: 24px;
+        height: 24px;
       }
       .steps {
         flex-grow: 1;

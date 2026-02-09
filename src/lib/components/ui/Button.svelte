@@ -202,9 +202,7 @@
     &.sm {
       padding: var(--spacing-md, 8px)
         calc(var(--spacing-lg, 12px) + var(--spacing-xxs, 2px));
-      &.icon_leading {
-        padding: var(--spacing-md, 8px);
-      }
+
     }
 
     &.xl {
@@ -338,9 +336,9 @@
   }
 
   .outline {
-    color: var(--text-color);
+    color: var(--colors-text-text-primary-900);
     background: transparent;
-    border: 1px solid var(--text-color) !important;
+    border: 1px solid var(--colors-text-text-primary-900) !important;
     transition: all;
     transition-duration: 0.2s;
 
@@ -468,6 +466,18 @@
           var(--colors-effects-shadows-shadow-xs, rgba(255, 255, 255, 0)),
         0 0 0 2px var(--colors-background-bg-primary, #1f1f1f),
         0 0 0 4px var(--colors-effects-focus-rings-focus-ring, #f5620f);
+    }
+
+    &.md {
+      padding: 10px 14px;
+      font-size: var(--font-size-text-sm, 14px);
+      line-height: var(--Line-height-text-sm, 20px);
+      height: 40px;
+      &.icon_leading {
+        padding: 10px;
+        height: 20px;
+        width: 20px;
+      }
     }
   }
   .secondary-gray {
