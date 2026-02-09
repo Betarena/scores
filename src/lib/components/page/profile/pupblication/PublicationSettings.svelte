@@ -79,7 +79,7 @@
 
   let image;
 
-  $: descriptionError = desc.length >= 200;
+  $: descriptionError = desc.length > 300;
   $: translation = $page.data.RESPONSE_PROFILE_DATA?.sportstack;
   $: ({ viewportType } = $session);
   $: ({ theme } = { ...$userSettings });
@@ -318,12 +318,14 @@
     on:input={debounceValidation}
     required={true}
     error={inputError}
+    maxlength={60}
     bind:value={name}
   >
     <span slot="error"
       >{$page.data.RESPONSE_PROFILE_DATA.sportstack.alert ||
         "The name is already in use."}</span
     >
+    <span slot="extra">{name.length}/60</span>
   </Input>
 
   <div class="thumbnail-field">
@@ -377,13 +379,14 @@
     label={translations?.description || "Description"}
     inputType="textarea"
     error={descriptionError}
+    maxlength={300}
     placeholder={translations?.description_place_holder ||
       "Write your description"}
     bind:value={desc}
   >
-  <span slot="error">Max 200 chars</span>
-
-</Input>
+    <span slot="error">Max 300 chars</span>
+    <span slot="extra">{desc.length}/300</span>
+  </Input>
   <div class="button-wrapper">
     <Button
       type="primary"

@@ -135,7 +135,9 @@
       >
         <button bind:this={button} style="display: none" hidden type="submit"></button>
         <input type="hidden" id="permalink" name="permalink" value={permalink} />
-        <Input inputType="textarea" name="about" label="Description" bind:value={$loginStore.sportstack.data.about} />
+        <Input inputType="textarea" name="about" label="Description" maxlength={300} bind:value={$loginStore.sportstack.data.about}>
+          <span slot="extra">{($loginStore.sportstack?.data?.about || "").length}/300</span>
+        </Input>
         <Button
           full={true}
           submit={true}
