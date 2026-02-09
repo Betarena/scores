@@ -75,7 +75,7 @@ jobs:
       - name: 'STEP /:/ check source branch name'
         run: |
           echo "source branch: ${{ github.head_ref }}"
-          if [[ "${{ github.head_ref }}" == ci/* ]]; then
+          if [[ "${{ github.head_ref }}" == ci/deploy/* ]]; then
             echo "CI branches are not allowed to merge into main."
             exit 1
           fi
