@@ -52,27 +52,12 @@
   >();
 
   let textareaNode: HTMLTextAreaElement | null = null;
-  let rafId: number | null = null;
 
   $: focus = false;
 
   // Sync textareaNode with exported node prop
-  $: if (inputType === "textarea" && textareaNode) {
-    node = textareaNode;
-  }
+  $: if (inputType === "textarea" && textareaNode) node = textareaNode;
 
-  // Auto-grow textarea when value changes
-  $: if (textareaNode && inputType === "textarea" && value !== undefined) {
-    // Cancel any pending RAF to prevent multiple queued calls
-    if (rafId !== null) cancelAnimationFrame(rafId);
-
-    rafId = requestAnimationFrame(() => {
-      if (textareaNode) {
-        autoGrowTextarea(textareaNode);
-        rafId = null;
-      }
-    });
-  }
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -89,23 +74,19 @@
 
   function handleEvent(
     e: any,
-    type: "input" | "change" | "focus" | "blur" | "keydown"
+    type: "input" | "change" | "focus" | "blur" | "keydown",
   ) {
-    if (type === "focus") {
-      focus = true;
-    }
-    if (type === "blur") {
-      focus = false;
-    }
-    if (["focus", "blur", "keydown"].includes(type)) {
-      return dispatch(type, e);
-    }
+    if (type === "focus") focus = true;
+
+    if (type === "blur") focus = false;
+
+    if (["focus", "blur", "keydown"].includes(type)) return dispatch(type, e);
+
     value = sanitize(e.currentTarget.value);
 
     // Auto-grow textarea
-    if (inputType === "textarea" && e.currentTarget) {
+    if (inputType === "textarea" && e.currentTarget)
       autoGrowTextarea(e.currentTarget);
-    }
 
     dispatch(type, e.currentTarget);
   }
@@ -141,7 +122,13 @@
       {/if}
     </label>
   {/if}
-  <div class="input-wrapper" class:focus class:error class:has-textarea={inputType === 'textarea'} style={inputType === 'textarea' ? '' : `height: ${height}`}>
+  <div
+    class="input-wrapper"
+    class:focus
+    class:error
+    class:has-textarea={inputType === "textarea"}
+    style={inputType === "textarea" ? "" : `height: ${height}`}
+  >
     {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
@@ -160,11 +147,19 @@
           {placeholder}
           bind:value
           {name}
-          maxlength={maxlength}
-          on:focus={(e) => handleEvent(e, "focus")}
-          on:blur={(e) => handleEvent(e, "blur")}
-          on:change={(e) => handleEvent(e, "change")}
-          on:input={(e) => handleEvent(e, "input")}
+          {maxlength}
+          on:focus={(e) => {
+            return handleEvent(e, "focus");
+          }}
+          on:blur={(e) => {
+            return handleEvent(e, "blur");
+          }}
+          on:change={(e) => {
+            return handleEvent(e, "change");
+          }}
+          on:input={(e) => {
+            return handleEvent(e, "input");
+          }}
         />
       {:else}
         <input
@@ -174,18 +169,28 @@
           {placeholder}
           {value}
           {name}
-          maxlength={maxlength}
-          on:keydown={(e) => handleEvent(e, "keydown")}
-          on:focus={(e) => handleEvent(e, "focus")}
-          on:blur={(e) => handleEvent(e, "blur")}
-          on:change={(e) => handleEvent(e, "change")}
-          on:input={(e) => handleEvent(e, "input")}
+          {maxlength}
+          on:keydown={(e) => {
+            return handleEvent(e, "keydown");
+          }}
+          on:focus={(e) => {
+            return handleEvent(e, "focus");
+          }}
+          on:blur={(e) => {
+            return handleEvent(e, "blur");
+          }}
+          on:change={(e) => {
+            return handleEvent(e, "change");
+          }}
+          on:input={(e) => {
+            return handleEvent(e, "input");
+          }}
         />
       {/if}
     </div>
-    {#if $$slots["extra"]}
+    {#if $$slots.extra}
       <div class="extra">
-        <slot  name="extra"><!-- optional fallback --></slot>
+        <slot name="extra"><!-- optional fallback --></slot>
       </div>
     {/if}
   </div>
@@ -296,9 +301,12 @@
 
           &:-webkit-autofill,
           &:-internal-autofill-selected {
-            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary)
+              inset !important;
             box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
-            -webkit-text-fill-color: var(--colors-text-text-primary-900) !important;
+            -webkit-text-fill-color: var(
+              --colors-text-text-primary-900
+            ) !important;
           }
           &:focus-visible {
             outline: none;
@@ -327,9 +335,12 @@
 
           &:-webkit-autofill,
           &:-internal-autofill-selected {
-            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary)
+              inset !important;
             box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
-            -webkit-text-fill-color: var(--colors-text-text-primary-900) !important;
+            -webkit-text-fill-color: var(
+              --colors-text-text-primary-900
+            ) !important;
           }
 
           &:focus-visible {
@@ -369,7 +380,7 @@
         padding: 10px var(--spacing-lg, 12px) 10px var(--spacing-xs, 4px);
         align-items: center;
         gap: var(--spacing-xxs, 2px);
-        color: var(--colors-text-text-tertiary-600, #6A6A6A);
+        color: var(--colors-text-text-tertiary-600, #6a6a6a);
         flex-shrink: 0;
         white-space: nowrap;
 
