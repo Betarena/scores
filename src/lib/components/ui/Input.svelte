@@ -129,7 +129,7 @@
       {/if}
     </label>
   {/if}
-  <div class="input-wrapper" class:focus class:error class:has-textarea={inputType === 'textarea'} style={inputType === 'textarea' ? '' : `height: ${height}`}>
+  <div class="input-wrapper" class:focus class:error class:has-textarea={inputType === 'textarea'} style="height: {height}">
     {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
@@ -292,28 +292,12 @@
         }
 
         textarea {
-          overflow: hidden;
-          color: var(--colors-text-text-primary-900, #fbfbfb);
-          border: none;
-          padding: 10px 14px;
-          flex-grow: 1;
-          width: 100%;
-          min-height: 88px;
+          overflow-y: auto;
+          overflow-x: hidden;
           white-space: pre-wrap;
           word-wrap: break-word;
           resize: none;
-          background-color: transparent;
-
-          /* Text md/Regular */
-          font-family: var(--font-family-font-family-body, Roboto);
-          font-size: var(--font-size-text-md, 16px);
-          font-style: normal;
-          font-weight: 400;
-          line-height: var(--line-height-text-md, 24px); /* 150% */
-
-          &:focus-visible {
-            outline: none;
-          }
+          width: 100%;
         }
 
         &.input-textarea {
