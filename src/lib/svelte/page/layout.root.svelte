@@ -25,7 +25,6 @@
 -->
 
 <script lang="ts">
-
   // #region ➤ 📦 Package Imports
 
   // ╭────────────────────────────────────────────────────────────────────────╮
@@ -41,15 +40,15 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  import { browser } from '$app/environment';
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { logoutUser } from '$lib/utils/user.js';
-  import { partytownSnippet } from '@qwik.dev/partytown/integration';
-  import { onDestroy, onMount } from 'svelte';
+  import { browser } from "$app/environment";
+  import { afterNavigate, beforeNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { logoutUser } from "$lib/utils/user.js";
+  import { partytownSnippet } from "@qwik.dev/partytown/integration";
+  import { onDestroy, onMount } from "svelte";
 
-  import { loginStore } from '$lib/components/section/login/login-store';
-  import { config } from '$lib/constants/config.js';
+  import { loginStore } from "$lib/components/section/login/login-store";
+  import { config } from "$lib/constants/config.js";
   import {
     routeIdContent,
     routeIdLogin,
@@ -58,38 +57,38 @@
     routeIdPageProfileEditArticle,
     routeIdPageProfilePublication,
     routeIdRegister,
-    routeIdSearch
-  } from '$lib/constants/paths.js';
-  import { scoresAdminStore } from '$lib/store/admin.js';
-  import { delCookie } from '$lib/store/cookie.js';
-  import history_store from '$lib/store/history.js';
-  import sessionStore from '$lib/store/session.js';
-  import { initiateSubscribtions } from '$lib/store/subscribtions.js';
-  import userBetarenaSettings from '$lib/store/user-settings.js';
-  import { initWalletStore } from '$lib/store/wallets';
-  import { Browser } from '$lib/utils/browser.js';
-  import { dlogv2, log_v3 } from '$lib/utils/debug';
-  import { isPWA, viewportChangeV2 } from '$lib/utils/device.js';
-  import { setUserGeoLocation } from '$lib/utils/geo.js';
-  import { Intercom } from '$lib/utils/service.intercom.js';
-  import { initializeTopLevelConsoleController } from '$lib/utils/subscribtion.js';
-  import { gotoSW } from '$lib/utils/sveltekitWrapper';
+    routeIdSearch,
+  } from "$lib/constants/paths.js";
+  import { scoresAdminStore } from "$lib/store/admin.js";
+  import { delCookie } from "$lib/store/cookie.js";
+  import history_store from "$lib/store/history.js";
+  import sessionStore from "$lib/store/session.js";
+  import { initiateSubscribtions } from "$lib/store/subscribtions.js";
+  import userBetarenaSettings from "$lib/store/user-settings.js";
+  import { initWalletStore } from "$lib/store/wallets";
+  import { Browser } from "$lib/utils/browser.js";
+  import { dlogv2, log_v3 } from "$lib/utils/debug";
+  import { isPWA, viewportChangeV2 } from "$lib/utils/device.js";
+  import { setUserGeoLocation } from "$lib/utils/geo.js";
+  import { Intercom } from "$lib/utils/service.intercom.js";
+  import { initializeTopLevelConsoleController } from "$lib/utils/subscribtion.js";
+  import { gotoSW } from "$lib/utils/sveltekitWrapper";
 
-  import AndroidPwaBanner from '$lib/components/AndroidPWABanner.svelte';
-  import FooterWidget from '$lib/components/_main_/footer/v2/Footer.Widget.svelte';
-  import HeaderRedesigned from '$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte';
-  import MobileMenu from '$lib/components/_main_/mobile-menu/MobileMenu.svelte';
-  import SplashScreen from '$lib/components/misc/Splash-Screen.svelte';
-  import WrapperDynamicImport from '$lib/components/misc/WrapperDynamicImport.svelte';
-  import DevInfoBox from '$lib/components/misc/admin/Dev-Info-Box.svelte';
-  import OfflineAlert from '$lib/components/misc/banner/Banner-Offline-Alert.svelte';
-  import PlatformAlert from '$lib/components/misc/banner/Banner-Platform-Alert.svelte';
-  import EmailSubscribe from '$lib/components/misc/modal/Modal-Email-Subscribe.svelte';
-  import ModalError from '$lib/components/misc/modal/Modal-Error.svelte';
-  import ModalMain from '$lib/components/misc/modal/ModalMain.svelte';
-  import ToastAuth from '$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte';
-  import InfoMessages from '$lib/components/ui/infomessages/InfoMessages.svelte';
-  import { getRates } from '$lib/utils/web3.js';
+  import AndroidPwaBanner from "$lib/components/AndroidPWABanner.svelte";
+  import FooterWidget from "$lib/components/_main_/footer/v2/Footer.Widget.svelte";
+  import HeaderRedesigned from "$lib/components/_main_/header_redisigned/HeaderRedesigned.svelte";
+  import MobileMenu from "$lib/components/_main_/mobile-menu/MobileMenu.svelte";
+  import SplashScreen from "$lib/components/misc/Splash-Screen.svelte";
+  import WrapperDynamicImport from "$lib/components/misc/WrapperDynamicImport.svelte";
+  import DevInfoBox from "$lib/components/misc/admin/Dev-Info-Box.svelte";
+  import OfflineAlert from "$lib/components/misc/banner/Banner-Offline-Alert.svelte";
+  import PlatformAlert from "$lib/components/misc/banner/Banner-Platform-Alert.svelte";
+  import EmailSubscribe from "$lib/components/misc/modal/Modal-Email-Subscribe.svelte";
+  import ModalError from "$lib/components/misc/modal/Modal-Error.svelte";
+  import ModalMain from "$lib/components/misc/modal/ModalMain.svelte";
+  import ToastAuth from "$lib/components/misc/toast/Toast-Auth/Toast-Auth.svelte";
+  import InfoMessages from "$lib/components/ui/infomessages/InfoMessages.svelte";
+  import { getRates } from "$lib/utils/web3.js";
 
   // ╭─────
   // │ IMPORTANT:
@@ -113,68 +112,77 @@
   // │ 4. $: [..]                                                             │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  const
-    /**
+  const /**
      * @description
      * 📝 (required) component state object
      */
-    objComponentStandardState
-      = {
-        /**
-         * @description
-         * 📝 Holds target `component(s)` of viewport configuration.
-         */
-        viewport:
-          {
-            mobile:
-            {
-              threshold: 575,
-              state: true,
-            },
-            tablet:
-            {
-              threshold: 1160,
-              state: true,
-            }
-          }
+    objComponentStandardState = {
+      /**
+       * @description
+       * 📝 Holds target `component(s)` of viewport configuration.
+       */
+      viewport: {
+        mobile: {
+          threshold: 575,
+          state: true,
+        },
+        tablet: {
+          threshold: 1160,
+          state: true,
+        },
       },
+    },
     /**
      * @description
      * 📝 `this` component **main** `id` and `data-testid` prefix.
      */
-    objConfig
-      = config.objApp.objComponentConfiguration.get('src/routes/+layout.svelte')!
-  ;
-
-  let intercomInstance: Intercom | null = null;
-  let
-    [
-      isBetarenaWidgetAdEngineEnabled
-    ] = [
-      false
-    ]
-  ;
-
-  $: ({ currentPageRouteId, currentActiveModal, currentActiveToast, globalState, serverLang, window: _window, viewportType } = { ...$sessionStore });
+    objConfig = config.objApp.objComponentConfiguration.get(
+      "src/routes/+layout.svelte",
+    )!;
+  let intercomInstance: Intercom | null = null,
+    [isBetarenaWidgetAdEngineEnabled] = [false];
+  $: ({
+    currentPageRouteId,
+    currentActiveModal,
+    currentActiveToast,
+    globalState,
+    serverLang,
+    window: _window,
+    viewportType,
+  } = { ...$sessionStore });
   $: ({ theme } = { ...$userBetarenaSettings });
-  $: ({ username, lang, competition_number, verified } = { ...$userBetarenaSettings.user?.scores_user_data });
+  $: ({ username, lang, competition_number, verified } = {
+    ...$userBetarenaSettings.user?.scores_user_data,
+  });
   $: ({ uid, email } = { ...$userBetarenaSettings.user?.firebase_user_data });
-  $: ({ route: { id: pageRouteId } } = $page);
-  $: ({ B_NAV_T: navbarTranslationData, dataArticle,  _dev_wrong_cookies, loggedIn, deviceType } = $page.data);
-  $: ({ isEnabled: isPartytownEnabled, strCodeSampleForPartytownConfig } = config.objApp.objServiceWorkerPartytown());
+  $: ({
+    route: { id: pageRouteId },
+  } = $page);
+  $: ({
+    B_NAV_T: navbarTranslationData,
+    dataArticle,
+    _dev_wrong_cookies,
+    loggedIn,
+    deviceType,
+  } = $page.data);
+  $: ({ isEnabled: isPartytownEnabled, strCodeSampleForPartytownConfig } =
+    config.objApp.objServiceWorkerPartytown());
 
   $: isInitliazed = false;
   $: isInitializationFinished = false;
-  $: isWindowIntercom = (browser && _window?.Intercom != null && currentPageRouteId === 'ProfilePage');
+  $: isWindowIntercom =
+    browser &&
+    _window?.Intercom != null &&
+    currentPageRouteId === "ProfilePage";
 
-  $: [ objComponentStandardState.viewport.mobile.state, objComponentStandardState.viewport.tablet.state]
-    = viewportChangeV2
-    (
-      $sessionStore.windowWidth,
-      objComponentStandardState.viewport.mobile.threshold,
-      objComponentStandardState.viewport.tablet.threshold
-    )
-  ;
+  $: [
+    objComponentStandardState.viewport.mobile.state,
+    objComponentStandardState.viewport.tablet.state,
+  ] = viewportChangeV2(
+    $sessionStore.windowWidth,
+    objComponentStandardState.viewport.mobile.threshold,
+    objComponentStandardState.viewport.tablet.threshold,
+  );
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -187,25 +195,14 @@
    *  📣 Update CSS Variable `--vh` to handle viewport height changes on mobile devices with dynamic toolbars.
    * @return { void }
    */
-  function updateVh
-  (
-  ): void
-  {
-    const
-      vv = window.visualViewport
-    ;
-
+  function updateVh(): void {
+    const vv = window.visualViewport;
     if (!browser || !vv) return;
 
-    const
-      effectiveHeight = vv.height + vv.offsetTop,
+    const effectiveHeight = vv.height + vv.offsetTop,
       isKeyboardOpen = window.innerHeight - effectiveHeight > 100,
-      height = isKeyboardOpen
-        ? vv.height + vv.offsetTop
-        : window.innerHeight
-    ;
-
-    document.body.style.setProperty('--vh', `${height * 0.01}px`);
+      height = isKeyboardOpen ? vv.height + vv.offsetTop : window.innerHeight;
+    document.body.style.setProperty("--vh", `${height * 0.01}px`);
 
     return;
   }
@@ -216,48 +213,23 @@
    * @description
    *  📣 Service Worker Initialization Helper
    */
-  function initiateServiceWorker
-  (
-  ): void
-  {
-    if (config.objApp.isServiceWorkerEnabled && ('serviceWorker' in navigator))
+  function initiateServiceWorker(): void {
+    if (config.objApp.isServiceWorkerEnabled && "serviceWorker" in navigator)
       navigator.serviceWorker
-        .register
-        (
-          '/progressier.js'
-        )
-        .then
-        (
-          (
-            registration
-          ) =>
-          {
-            // [🐞]
-            // eslint-disable-next-line no-console
-            console.log
-            (
-              'Service Worker registered with scope:',
-              registration.scope
-            );
-          }
-        )
-        .catch
-        (
-          (
-            error
-          ) =>
-          {
-            // [🐞]
-            // eslint-disable-next-line no-console
-            console.error
-            (
-              'Service Worker registration failed:',
-              error
-            );
-          }
-        )
-      ;
-    ;
+        .register("/progressier.js")
+        .then((registration) => {
+          // [🐞]
+          // eslint-disable-next-line no-console
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope,
+          );
+        })
+        .catch((error) => {
+          // [🐞]
+          // eslint-disable-next-line no-console
+          console.error("Service Worker registration failed:", error);
+        });
   }
 
   /**
@@ -267,10 +239,7 @@
    *  📣 Eager Server Initialization Helper
    * @return { Promise < void > }
    */
-  async function helperInitializeServerEager
-  (
-  ): Promise < void >
-  {
+  async function helperInitializeServerEager(): Promise<void> {
     initiateSubscribtions();
     return;
   }
@@ -282,16 +251,13 @@
    *  📣 Pre-Mount Initialization Helper
    * @return { Promise < void > }
    */
-  async function helperInitializeOnMountPre
-  (
-  ): Promise < void >
-  {
+  async function helperInitializeOnMountPre(): Promise<void> {
     isInitliazed = true;
     userBetarenaSettings.useLocalStorage(serverLang);
     scoresAdminStore.useLocalStorage();
 
     if (loggedIn) {
-      const { mainDeepLinkCheck } = (await import('$lib/utils/deeplink.js'));
+      const { mainDeepLinkCheck } = await import("$lib/utils/deeplink.js");
       await mainDeepLinkCheck();
     }
     new Browser().initiateSubscription();
@@ -308,27 +274,14 @@
    *  📝 Whether to redirect to 'register' (true) or 'login' (false) page.
    * @return { Promise < void > }
    */
-  async function redirectToOnBoard
-  (
-    register: boolean = true
-  ): Promise < void >
-  {
-    const
-      lang = ($userBetarenaSettings.lang ?? $page.params.lang)
-    ;
+  async function redirectToOnBoard(register: boolean = true): Promise<void> {
+    const lang = $userBetarenaSettings.lang ?? $page.params.lang;
+    let path = "";
 
-    let path = '';
+    if (lang && lang !== "en") path += `/${lang}`;
+    path += register ? "/register" : "/login";
 
-    if (lang && lang !== 'en')
-      path += `/${lang}`;
-    ;
-
-    path += register ? '/register' : '/login';
-
-    if(register && uid)
-      $loginStore.isExistedUser = true;
-    ;
-
+    if (register && uid) $loginStore.isExistedUser = true;
     await gotoSW(path);
 
     return;
@@ -354,73 +307,61 @@
   // │ │: [instant] [once]
   // │ │: Instant critical data initialization.
   // ╰─────
-  $: if (browser && !isInitliazed)
-    helperInitializeOnMountPre();
-  ;
-
+  $: if (browser && !isInitliazed) helperInitializeOnMountPre();
   $: if (browser && theme) {
     const isDark = theme === "Dark";
-    document.body.classList.remove(isDark ? "light-mode": "dark-mode")
-    document.body.classList.add(isDark ? "dark-mode" : "light-mode")
+    document.body.classList.remove(isDark ? "light-mode" : "dark-mode");
+    document.body.classList.add(isDark ? "dark-mode" : "light-mode");
   }
 
   // ╭─────
   // │ CRITICAL
   // │ │: Hijack the 'console' object.
   // ╰─────
-  $: if (browser && document)
-    initializeTopLevelConsoleController();
-  ;
-  $: if (browser && isInitliazed && _dev_wrong_cookies)
-
-    logoutUser();
+  $: if (browser && document) initializeTopLevelConsoleController();
+  $: if (browser && isInitliazed && _dev_wrong_cookies) logoutUser();
 
   // ╭─────
   // │ NOTE:
   // │ |: [3rd-party] // Intercom // BOOT (with user data)
   // ╰─────
 
-  $: if (isWindowIntercom && !intercomInstance ){
-    intercomInstance = new Intercom();  
-    intercomInstance.lifecycle
-    (
-      {
-        uid,
-        email,
-        username,
-        lang,
-        competition_number,
-        currentPageRouteIdVisibility: (currentPageRouteId !== 'ProfilePage'),
-        strLifecycleType: 'boot',
-      }
-    );
+  $: if (isWindowIntercom && !intercomInstance) {
+    intercomInstance = new Intercom();
+    intercomInstance.lifecycle({
+      uid,
+      email,
+      username,
+      lang,
+      competition_number,
+      currentPageRouteIdVisibility: currentPageRouteId !== "ProfilePage",
+      strLifecycleType: "boot",
+    });
   }
 
-  $: if (intercomInstance) {
-    intercomInstance.changeVisibility(currentPageRouteId !== 'ProfilePage')
-  }
+  $: if (intercomInstance)
+    intercomInstance.changeVisibility(currentPageRouteId !== "ProfilePage");
 
-  $: if (currentActiveModal === 'Auth_Modal' && ![routeIdLogin, routeIdRegister].includes(pageRouteId || ''))
+  $: if (
+    currentActiveModal === "Auth_Modal" &&
+    ![routeIdLogin, routeIdRegister].includes(pageRouteId || "")
+  )
     redirectToOnBoard(false);
-  ;
-
-  $: if(![routeIdLogin, routeIdRegister].includes(pageRouteId || '') && uid && !verified && isInitializationFinished)
+  $: if (
+    ![routeIdLogin, routeIdRegister].includes(pageRouteId || "") &&
+    uid &&
+    !verified &&
+    isInitializationFinished
+  )
     redirectToOnBoard();
-  ;
-
-  $: if (browser)
-  {
+  $: if (browser) {
     updateVh();
-    window.visualViewport?.addEventListener('resize', updateVh);
+    window.visualViewport?.addEventListener("resize", updateVh);
   }
 
-  $: if (browser && uid)
-    initWalletStore(uid);
-  ;
-
-  $: if (deviceType && !viewportType) {
+  $: if (browser && uid) initWalletStore(uid);
+  $: if (deviceType && !viewportType)
     sessionStore.updateData([["viewportType", deviceType]]);
-  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -432,9 +373,7 @@
   // │ immediately, as soon as 'this' .svelte file is ran, as a one-off       │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  if (browser) {
-    helperInitializeServerEager();
-  }
+  if (browser) helperInitializeServerEager();
 
   // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 
@@ -447,123 +386,77 @@
   // │ as soon as 'this' .svelte file is ran.                                 │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
-  onDestroy
-  (
-    () =>
-    {
-      if (!browser) return;
-      window.visualViewport
-        ?.removeEventListener('resize', updateVh)
-      ;
-      intercomInstance = null;
-      return;
-    }
-  );
+  onDestroy(() => {
+    if (!browser) return;
+    window.visualViewport?.removeEventListener("resize", updateVh);
+    intercomInstance = null;
+    return;
+  });
 
-  onMount
-  (
-    async (
-    ): Promise < void > =>
-    {
-      getRates(sessionStore);
-      // ╭─────
-      // │ CRITICAL
-      // ╰─────
-      initiateServiceWorker();
-      // ╭─────
-      // │ NOTE: IMPORTANT
-      // │ |: Check if the current device is a PWA.
-      // ╰─────
-      sessionStore.updateData
-      (
-        [
-          ['windowWidth', document.documentElement.clientWidth],
-          [(isPWA() ? 'globalStateAdd' : 'globalStateRemove'), 'IsPWA'],
-        ]
+  onMount(async (): Promise<void> => {
+    getRates(sessionStore);
+    // ╭─────
+    // │ CRITICAL
+    // ╰─────
+    initiateServiceWorker();
+    // ╭─────
+    // │ NOTE: IMPORTANT
+    // │ |: Check if the current device is a PWA.
+    // ╰─────
+    sessionStore.updateData([
+      ["windowWidth", document.documentElement.clientWidth],
+      [isPWA() ? "globalStateAdd" : "globalStateRemove", "IsPWA"],
+    ]);
+
+    setUserGeoLocation(navbarTranslationData!);
+
+    if ($page.url.searchParams.get("admin"))
+      scoresAdminStore.toggleAdminState(
+        $page.url.searchParams.get("admin") == "true" ? true : false,
       );
+    setTimeout(() => {
+      isBetarenaWidgetAdEngineEnabled = true;
+    }, objConfig.intBetarenaAdEngineDelayMs ?? 0);
 
-      setUserGeoLocation(navbarTranslationData!);
+    return;
+  });
 
-      if ($page.url.searchParams.get('admin'))
-        scoresAdminStore.toggleAdminState($page.url.searchParams.get('admin') == 'true' ? true : false);
-      ;
+  beforeNavigate(async (_event): Promise<void> => {
+    if (!browser) return;
 
-      setTimeout
-      (
-        () =>
-        {
-          isBetarenaWidgetAdEngineEnabled = true;
-        },
-        (objConfig.intBetarenaAdEngineDelayMs ?? 0)
-      );
+    // [🐞]
+    dlogv2(`${objConfig.mapStrDebugPreifix?.get("beforeNavigate")} // START`, [
+      `🔹 [var] ➤ _event :: ${JSON.stringify(_event)}`,
+    ]);
 
-      return;
-    }
-  );
-
-  beforeNavigate
-  (
-    async (
-      _event
-    ): Promise < void > =>
-    {
-      if (!browser) return;
-
+    if ($page.data.setState?.has("IsAnonymousNewBurner")) {
       // [🐞]
-      dlogv2
-      (
-        `${objConfig.mapStrDebugPreifix?.get('beforeNavigate')} // START`,
-        [
-          `🔹 [var] ➤ _event :: ${JSON.stringify(_event)}`
-        ]
+      dlogv2(
+        `${objConfig.mapStrDebugPreifix?.get(
+          "beforeNavigate",
+        )} // IsAnonymousNewBurner`,
+        [],
       );
 
-      if ($page.data.setState?.has('IsAnonymousNewBurner'))
-      {
-        // [🐞]
-        dlogv2
-        (
-          `${objConfig.mapStrDebugPreifix?.get('beforeNavigate')} // IsAnonymousNewBurner`,
-          []
-        );
-
-        delCookie
-        (
-          'betarenaScoresCookie'
-        );
-      }
-
-      if (_event.from)
-        $history_store.push(_event.from.url.pathname);
-      ;
-
-      return;
+      delCookie("betarenaScoresCookie");
     }
-  );
 
-  afterNavigate
-  (
-    async (
-      e
-    ): Promise < void > =>
-    {
-      if (!browser) return;
+    if (_event.from) $history_store.push(_event.from.url.pathname);
+    return;
+  });
 
-      // [🐞]
-      dlogv2
-      (
-        `${objConfig.mapStrDebugPreifix?.get('afterNavigate')}`,
-        [
-          `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`
-        ]
-      );
+  afterNavigate(async (e): Promise<void> => {
+    if (!browser) return;
 
-      return;
-    }
-  );
+    // [🐞]
+    dlogv2(`${objConfig.mapStrDebugPreifix?.get("afterNavigate")}`, [
+      `🔹 [var] ➤ e.from :|: ${JSON.stringify(e)}`,
+    ]);
+
+    return;
+  });
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!--
@@ -578,16 +471,10 @@
   │ NOTE:
   │ |: Theme Color Meta Tag
   ╰───── -->
-  {#if theme === 'Dark'}
-    <meta
-      name="theme-color"
-      content="#1f1f1f"
-    />
+  {#if theme === "Dark"}
+    <meta name="theme-color" content="#1f1f1f" />
   {:else}
-    <meta
-      name="theme-color"
-      content="#ffffff"
-    />
+    <meta name="theme-color" content="#ffffff" />
   {/if}
 
   <!--
@@ -604,7 +491,7 @@
     {@html strCodeSampleForPartytownConfig}
 
     <!-- CRITICAL -->
-    {@html '<script>' + partytownSnippet() + '</script>'}
+    {@html "<script>" + partytownSnippet() + "</script>"}
   {/if}
 
   <!--
@@ -615,8 +502,8 @@
   {#if config.objApp.objServiceIntercom && pageRouteId === routeIdPageProfile}
     <script>
       window.intercomSettings = {
-        app_id: 'yz9qn6p3',
-        api_base: 'https://api-iam.intercom.io'
+        app_id: "yz9qn6p3",
+        api_base: "https://api-iam.intercom.io",
       };
     </script>
     <script async defer src="/scripts/service.intercom.js"></script>
@@ -624,58 +511,32 @@
 </svelte:head>
 
 <svelte:document
-  on:visibilitychange=
-  {
-    () =>
-    {
-      // [🐞]
-      if (!config.objDebug.objMeta['document.on:visibilitychange'].isEnabled)
-        log_v3
-        (
-          {
-            strGroupName: `${config.objDebug.objMeta['document.on:visibilitychange'].strLogPrefix}`,
-          }
-        );
-      ;
+  on:visibilitychange={() => {
+    // [🐞]
+    if (!config.objDebug.objMeta["document.on:visibilitychange"].isEnabled)
+      log_v3({
+        strGroupName: `${config.objDebug.objMeta["document.on:visibilitychange"].strLogPrefix}`,
+      });
+    sessionStore.updateData([["isUserActive", !document.hidden]]);
 
-      sessionStore.updateData
-      (
-        [
-          ['isUserActive', !document.hidden],
-        ]
-      );
-
-      return;
-    }
-  }
+    return;
+  }}
 />
 
 <svelte:window
-  on:resize=
-  {
-    () =>
-    {
-      // [🐞]
-      if (!config.objDebug.objMeta['window.on:resize'].isEnabled)
-        log_v3
-        (
-          {
-            strGroupName: `${config.objDebug.objMeta['window.on:resize'].strLogPrefix}`,
-          }
-        );
-      ;
+  on:resize={() => {
+    // [🐞]
+    if (!config.objDebug.objMeta["window.on:resize"].isEnabled)
+      log_v3({
+        strGroupName: `${config.objDebug.objMeta["window.on:resize"].strLogPrefix}`,
+      });
+    sessionStore.updateData([
+      ["windowWidth", document.documentElement.clientWidth],
+      [isPWA() ? "globalStateAdd" : "globalStateRemove", "IsPWA"],
+    ]);
 
-      sessionStore.updateData
-      (
-        [
-          ['windowWidth', document.documentElement.clientWidth],
-          [(isPWA() ? 'globalStateAdd' : 'globalStateRemove'), 'IsPWA'],
-        ]
-      );
-
-      return;
-    }
-  }
+    return;
+  }}
 />
 
 <!--
@@ -689,43 +550,34 @@
 ╰──────────────────────────────────────────────────────────────────────────────────╯
 -->
 
-
-
 <div
   class="app-wrapper"
   id="app-root-layout"
-  class:dark-mode={theme == 'Dark'}
-  class:light-mode={theme == 'Light'}
-  class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || '')}
+  class:dark-mode={theme == "Dark"}
+  class:light-mode={theme == "Light"}
+  class:page-content={[routeIdContent, routeIdSearch].includes(
+    pageRouteId || "",
+  )}
   data-page-id={currentPageRouteId}
-  data-mode={globalState.has('IsPWA') ? 'pwa' : 'web'}
+  data-mode={globalState.has("IsPWA") ? "pwa" : "web"}
 >
-  {#if
-    isBetarenaWidgetAdEngineEnabled
-    && config.objApp.isBetareAgEngineEnabled
-    && (
-      (dataArticle?.article != null && dataArticle?.article?.access_type === 'free')
-      || (dataArticle?.article == null)
-    )
-  }
+  {#if isBetarenaWidgetAdEngineEnabled && config.objApp.isBetareAgEngineEnabled && ((dataArticle?.article != null && dataArticle?.article?.access_type === "free") || dataArticle?.article == null)}
     {#key pageRouteId}
       <!-- <WidgetAdEngine -->
       <WrapperDynamicImport
-        importComponentPath='Ad-Engine'
+        importComponentPath="Ad-Engine"
         authorId={dataArticle?.author?.id}
-        authorArticleTagIds={(dataArticle?.article?.tags ?? [])}
-        isDarkTheme={theme == 'Dark'}
-        strTranslationTarget={(lang ?? 'en')}
+        authorArticleTagIds={dataArticle?.article?.tags ?? []}
+        isDarkTheme={theme == "Dark"}
+        strTranslationTarget={lang ?? "en"}
         isStandalone={false}
       />
     {/key}
   {/if}
 
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/Splash-Screen.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/Splash-Screen.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Splash-Screen'
-      />
+  {#if !config.objApp.objComponentConfiguration.get("src/lib/components/misc/Splash-Screen.svelte")?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get("src/lib/components/misc/Splash-Screen.svelte")?.isDynamicImport}
+      <WrapperDynamicImport importComponentPath="Splash-Screen" />
     {:else}
       <SplashScreen />
     {/if}
@@ -739,81 +591,68 @@
     <DevInfoBox />
   {/if}
 
-  {#if currentActiveModal == 'GeneralPlatform_Error'}
+  {#if currentActiveModal == "GeneralPlatform_Error"}
     <ModalError />
   {/if}
 
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Offline-Alert.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Banner-Offline-Alert'
-      />
+  {#if !config.objApp.objComponentConfiguration.get("src/lib/components/misc/banner/Banner-Offline-Alert.svelte")?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get("src/lib/components/misc/banner/Banner-Offline-Alert.svelte")?.isDynamicImport}
+      <WrapperDynamicImport importComponentPath="Banner-Offline-Alert" />
     {:else}
       <OfflineAlert />
     {/if}
   {/if}
 
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Banner-Platform-Alert.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Banner-Platform-Alert'
-      />
+  {#if !config.objApp.objComponentConfiguration.get("src/lib/components/misc/banner/Banner-Platform-Alert.svelte")?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get("src/lib/components/misc/banner/Banner-Platform-Alert.svelte")?.isDynamicImport}
+      <WrapperDynamicImport importComponentPath="Banner-Platform-Alert" />
     {:else}
       <PlatformAlert />
     {/if}
   {/if}
 
-  {#if !config.objApp.objComponentConfiguration.get('src/lib/components/misc/banner/Modal-Email-Subscribe.svelte')?.isHidden}
-    {#if config.objApp.objComponentConfiguration.get('src/lib/components/misc/modal/Modal-Email-Subscribe.svelte')?.isDynamicImport}
-      <WrapperDynamicImport
-        importComponentPath='Modal-Email-Subscribe'
-      />
+  {#if !config.objApp.objComponentConfiguration.get("src/lib/components/misc/banner/Modal-Email-Subscribe.svelte")?.isHidden}
+    {#if config.objApp.objComponentConfiguration.get("src/lib/components/misc/modal/Modal-Email-Subscribe.svelte")?.isDynamicImport}
+      <WrapperDynamicImport importComponentPath="Modal-Email-Subscribe" />
     {:else}
       <EmailSubscribe />
     {/if}
   {/if}
 
-  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || '' ) || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== 'mobile') }
+  {#if ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdSearch, routeIdLogin, routeIdRegister].includes(pageRouteId || "") || (pageRouteId === routeIdSearch && $sessionStore.viewportType !== "mobile")}
     <HeaderRedesigned />
   {/if}
 
   <main
-    class:dark-mode={theme == 'Dark'}
-    class:light-mode={theme == 'Light'}
+    class:dark-mode={theme == "Dark"}
+    class:light-mode={theme == "Light"}
     class:standard={currentPageRouteId == null}
-    class:page-profile={currentPageRouteId == 'ProfilePage'}
-    class:page-authors={currentPageRouteId == 'AuthorsPage' || currentPageRouteId == 'Standard' || pageRouteId === routeIdSearch }
-    class:page-content={[routeIdContent, routeIdSearch].includes(pageRouteId || '')}
+    class:page-profile={currentPageRouteId == "ProfilePage"}
+    class:page-authors={currentPageRouteId == "AuthorsPage" ||
+      currentPageRouteId == "Standard" ||
+      pageRouteId === routeIdSearch}
+    class:page-content={[routeIdContent, routeIdSearch].includes(
+      pageRouteId || "",
+    )}
     class:mobile={objComponentStandardState.viewport.mobile.state}
     class:tablet={objComponentStandardState.viewport.tablet.state}
   >
     <slot />
 
-    {#if
-      (
-        !globalState.has('IsPWA')
-        && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
-      )
-      || [routeIdPageProfile, routeIdPageProfilePublication].includes(pageRouteId || '')
-    }
+    {#if (!globalState.has("IsPWA") && ![routeIdPageProfileArticleCreation, routeIdPageProfileEditArticle, routeIdLogin, routeIdRegister].includes(pageRouteId || "")) || [routeIdPageProfile, routeIdPageProfilePublication].includes(pageRouteId || "")}
       <FooterWidget />
     {/if}
-
   </main>
 
   <InfoMessages />
   <ModalMain />
 
-  {#if
-    (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state)
-    && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes(pageRouteId || '')
-  }
+  {#if (objComponentStandardState.viewport.mobile.state || objComponentStandardState.viewport.tablet.state) && ![routeIdSearch, routeIdPageProfile, routeIdPageProfileEditArticle, routeIdPageProfileArticleCreation, routeIdLogin, routeIdRegister].includes(pageRouteId || "")}
     <MobileMenu
       mobile={objComponentStandardState.viewport.mobile.state}
       tablet={objComponentStandardState.viewport.tablet.state}
     />
   {/if}
-
 </div>
 
 <AndroidPwaBanner />
@@ -829,7 +668,6 @@
 -->
 
 <style lang="scss">
-
   /*
   ╭──────────────────────────────────────────────────────────────────────────────╮
   │ 📲 MOBILE-FIRST                                                              │
@@ -969,5 +807,4 @@
       }
     }
   }
-
 </style>
