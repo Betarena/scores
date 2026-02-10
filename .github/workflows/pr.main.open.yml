@@ -1,8 +1,5 @@
 # ╭──────────────────────────────────────────────────────────────────╮
 # │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
-# ┣──────────────────────────────────────────────────────────────────┫
-# │ Responsible for:                                                 │
-# │ ➤ [1] auto-commenting of project pull-request.                   │
 # ╰──────────────────────────────────────────────────────────────────╯
 
 name: '📬 Open'
@@ -13,15 +10,11 @@ on:
       - main
     types:
       - opened
+#
 
 jobs:
 
-  # ╭──────────────────────────────────────────────────────────────────╮
-  # │ NOTE:                                                            │
-  # │ ➤ [1] auto-commenting of project pull-request.                   │
-  # ╰──────────────────────────────────────────────────────────────────╯
-
-  add_comment:
+  pull-request-comment-insert:
     name: '📝 JOB /:/ PR add comment'
     runs-on: ubuntu-22.04
     steps:
@@ -29,9 +22,12 @@ jobs:
         with:
           message: |
             > [!IMPORTANT]
-            > Please set a label to **EITHER** `semver:patch`, `semver:minor`, or `semver:major` to **THIS** `Pull-Request`.
+            > Please set a **single** label , of type **`semver:[patch|minor|major]`** to **THIS** `Pull-Request`.
             >
             > If you are not sure which label to apply, please ask for help from a team member.
-            >
-            > **Ignore this message if this is a non `feature` OR `fix` change.**
+
+            > [!NOTE]
+            > **Ignore this message if this is `pull-request` does _NOT_ involve a change of type `feature` OR `fix`.**
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+  #
+#

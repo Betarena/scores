@@ -58,14 +58,6 @@
   // Sync textareaNode with exported node prop
   $: if (inputType === "textarea" && textareaNode) node = textareaNode;
 
-  // Auto-grow textarea on initial mount to fit existing content
-  onMount(async () => {
-    if (inputType === "textarea" && textareaNode) {
-      await tick();
-      autoGrowTextarea(textareaNode);
-    }
-  });
-
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
