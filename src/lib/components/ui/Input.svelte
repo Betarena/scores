@@ -51,7 +51,16 @@
     | { keydown: HTMLInputElement }
   >();
 
+  let textareaNode: HTMLTextAreaElement | null = null;
+
   $: focus = false;
+
+  // Auto-grow textarea when value changes
+  $: if (textareaNode && inputType === "textarea" && value !== undefined) {
+    setTimeout(() => {
+      if (textareaNode) autoGrowTextarea(textareaNode);
+    }, 0);
+  }
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -80,7 +89,18 @@
       return dispatch(type, e);
     }
     value = sanitize(e.currentTarget.value);
+
+    // Auto-grow textarea
+    if (inputType === "textarea" && e.currentTarget) {
+      autoGrowTextarea(e.currentTarget);
+    }
+
     dispatch(type, value);
+  }
+
+  function autoGrowTextarea(element: HTMLTextAreaElement) {
+    element.style.height = "auto";
+    element.style.height = element.scrollHeight + "px";
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -109,7 +129,7 @@
       {/if}
     </label>
   {/if}
-  <div class="input-wrapper" class:focus class:error class:has-textarea={inputType === 'textarea'} style="height: {height}">
+  <div class="input-wrapper" class:focus class:error class:has-textarea={inputType === 'textarea'} style={inputType === 'textarea' ? '' : `height: ${height}`}>
     {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
@@ -123,6 +143,7 @@
     >
       {#if inputType === "textarea"}
         <textarea
+          bind:this={textareaNode}
           class=""
           {placeholder}
           bind:value
@@ -225,6 +246,15 @@
       border: 1px solid var(--colors-border-border-primary, #6a6a6a);
       border-radius: var(--radius-md, 8px);
       background: var(--colors-background-bg-primary, #fff);
+
+      &.has-textarea {
+        height: auto;
+        min-height: 100px;
+
+        .input-element {
+          height: auto;
+        }
+      }
       .input-element {
         display: flex;
         align-items: center;
@@ -232,18 +262,16 @@
         flex: 1 0 0;
         align-self: stretch;
 
-        input,
-        textarea {
+        input {
           overflow: hidden;
           color: var(--colors-text-text-primary-900, #fbfbfb);
           text-overflow: ellipsis;
           border: none;
-          padding: 0;
-          background-color: inherit;
           padding: 10px 14px;
           flex-grow: 1;
           max-height: 100%;
           height: 100%;
+          background-color: transparent;
 
           /* Text md/Regular */
           font-family: var(--font-family-font-family-body, Roboto);
@@ -254,9 +282,9 @@
 
           &:-webkit-autofill,
           &:-internal-autofill-selected {
-            background-color: transparent !important;
-            color: inherit !important;
-            box-shadow: none !important;
+            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary, #1f1f1f) inset !important;
+            box-shadow: 0 0 0 1000px var(--colors-background-bg-primary, #1f1f1f) inset !important;
+            -webkit-text-fill-color: var(--colors-text-text-primary-900, #fbfbfb) !important;
           }
           &:focus-visible {
             outline: none;
@@ -264,12 +292,28 @@
         }
 
         textarea {
-          overflow-y: auto;
-          overflow-x: hidden;
+          overflow: hidden;
+          color: var(--colors-text-text-primary-900, #fbfbfb);
+          border: none;
+          padding: 10px 14px;
+          flex-grow: 1;
+          width: 100%;
+          min-height: 88px;
           white-space: pre-wrap;
           word-wrap: break-word;
           resize: none;
-          width: 100%;
+          background-color: transparent;
+
+          /* Text md/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+
+          &:focus-visible {
+            outline: none;
+          }
         }
 
         &.input-textarea {
