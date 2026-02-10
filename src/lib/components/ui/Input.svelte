@@ -52,14 +52,26 @@
   >();
 
   let textareaNode: HTMLTextAreaElement | null = null;
+  let rafId: number | null = null;
 
   $: focus = false;
 
+  // Sync textareaNode with exported node prop
+  $: if (inputType === "textarea" && textareaNode) {
+    node = textareaNode;
+  }
+
   // Auto-grow textarea when value changes
   $: if (textareaNode && inputType === "textarea" && value !== undefined) {
-    setTimeout(() => {
-      if (textareaNode) autoGrowTextarea(textareaNode);
-    }, 0);
+    // Cancel any pending RAF to prevent multiple queued calls
+    if (rafId !== null) cancelAnimationFrame(rafId);
+
+    rafId = requestAnimationFrame(() => {
+      if (textareaNode) {
+        autoGrowTextarea(textareaNode);
+        rafId = null;
+      }
+    });
   }
   // #endregion ➤ 📌 VARIABLES
 
@@ -95,7 +107,7 @@
       autoGrowTextarea(e.currentTarget);
     }
 
-    dispatch(type, value);
+    dispatch(type, e.currentTarget);
   }
 
   function autoGrowTextarea(element: HTMLTextAreaElement) {
@@ -149,6 +161,8 @@
           bind:value
           {name}
           maxlength={maxlength}
+          on:focus={(e) => handleEvent(e, "focus")}
+          on:blur={(e) => handleEvent(e, "blur")}
           on:change={(e) => handleEvent(e, "change")}
           on:input={(e) => handleEvent(e, "input")}
         />
@@ -271,7 +285,7 @@
           flex-grow: 1;
           max-height: 100%;
           height: 100%;
-          background-color: transparent;
+          background: transparent;
 
           /* Text md/Regular */
           font-family: var(--font-family-font-family-body, Roboto);
@@ -282,9 +296,9 @@
 
           &:-webkit-autofill,
           &:-internal-autofill-selected {
-            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary, #1f1f1f) inset !important;
-            box-shadow: 0 0 0 1000px var(--colors-background-bg-primary, #1f1f1f) inset !important;
-            -webkit-text-fill-color: var(--colors-text-text-primary-900, #fbfbfb) !important;
+            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            -webkit-text-fill-color: var(--colors-text-text-primary-900) !important;
           }
           &:focus-visible {
             outline: none;
@@ -302,7 +316,7 @@
           white-space: pre-wrap;
           word-wrap: break-word;
           resize: none;
-          background-color: transparent;
+          background: transparent;
 
           /* Text md/Regular */
           font-family: var(--font-family-font-family-body, Roboto);
@@ -310,6 +324,13 @@
           font-style: normal;
           font-weight: 400;
           line-height: var(--line-height-text-md, 24px); /* 150% */
+
+          &:-webkit-autofill,
+          &:-internal-autofill-selected {
+            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            -webkit-text-fill-color: var(--colors-text-text-primary-900) !important;
+          }
 
           &:focus-visible {
             outline: none;
