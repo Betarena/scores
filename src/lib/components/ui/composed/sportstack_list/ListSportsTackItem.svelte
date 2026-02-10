@@ -54,6 +54,7 @@
   $: ({ viewportType } = $session);
   $: ({ user: ctx } = $userSettings);
   $: ({ username, name, avatar, about } = user.data);
+  $: truncatedAbout = about && typeof about === "string" && about.length > 300 ? about.substring(0, 300) + "..." : (about || "");
   $: ({ permalink, id, uid } = user);
   $: isAuth = !!ctx;
   $: isFollow = !!(
@@ -114,7 +115,7 @@
     <div class="name-wrapp">
       <div class="user-name">{name || username}</div>
       {#if includeAbout}
-        <div class="user-about">{about}</div>
+        <div class="user-about">{truncatedAbout}</div>
       {/if}
     </div>
   </svelte:element>

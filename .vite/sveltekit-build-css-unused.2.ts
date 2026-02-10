@@ -18,6 +18,7 @@
 import chalk from 'chalk';
 import dedent from 'dedent';
 import fs from 'fs-extra';
+import path from 'path';
 import postcss from "postcss";
 import selectorParser from "postcss-selector-parser";
 import sveltePreprocess from "svelte-preprocess";
@@ -618,9 +619,20 @@ async function helperSvelteCssExtract
   // │ NOTE:
   // │ |: output file :: Svelte AST snapshot
   // ╰─────
+  const debugDir = '.temp/vite/sveltekit-build-css-unused';
+  const relativeName = filename?.includes('scores/')
+    ? filename.split('scores/')[1]
+    : path.relative(process.cwd(), filename ?? '');
+  const safeName = (relativeName && !relativeName.startsWith('..')
+    ? relativeName
+    : path.basename(filename ?? 'unknown'))
+    .replaceAll(path.sep, '_')
+    .replace(/[^a-zA-Z0-9._-]/g, '_');
+
+  await fs.ensureDir(debugDir);
   fs.writeFile
   (
-    `.temp/vite/sveltekit-build-css-unused/${filename.split('scores/')[1]?.replaceAll('/','_')}`,
+    `${debugDir}/${safeName || 'unknown'}`,
     JSON.stringify
     (
       ast,

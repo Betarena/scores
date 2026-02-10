@@ -136,10 +136,12 @@
           error={inputError}
           required={true}
           label="Username"
+          maxlength={60}
           bind:value={$loginStore.sportstack.permalink}
         >
           <span slot="leading-text">sportstack/</span>
           <span slot="error">{translations.the_name_in_use || "The name is already in use."}</span>
+          <span slot="extra">{$loginStore.sportstack.permalink.length}/60</span>
         </Input>
 
         <Button full={true} {disabled} size="lg" submit={true}>{translations.continue || "Continue"}</Button>
