@@ -591,17 +591,17 @@
     <div class="actions-buttons"></div>
   </div>
 
-  <div class="more-content">
-    <h2> <TranslationText text={widgetDataTranslation?.translation?.from_the_sportstack} fallback="from_the_sportstack"  /></h2>
-    {#if related_articles_map.size}
-        {#each [...related_articles_map.entries()] as [_id, article] (_id)}
-          <ArticleCard article={{...article, author: sportstack}} {mobile} {tablet} />
-        {/each}
-    {/if}
-    <Button href="/a/sportstack/{sportstack?.permalink}" full={mobile}>
-      <TranslationText text={widgetDataTranslation?.translation?.view_all_posts} fallback="view_all_posts" />
-    </Button>
-  </div>
+  {#if related_articles_map.size > 0}
+    <div class="more-content">
+      <h2> <TranslationText text={widgetDataTranslation?.translation?.from_the_sportstack} fallback="from_the_sportstack"  /></h2>
+      {#each [...related_articles_map.entries()] as [_id, article] (_id)}
+        <ArticleCard article={{...article, author: sportstack}} {mobile} {tablet} />
+      {/each}
+      <Button href="/a/sportstack/{sportstack?.permalink}" full={mobile}>
+        <TranslationText text={widgetDataTranslation?.translation?.view_all_posts} fallback="view_all_posts" />
+      </Button>
+    </div>
+  {/if}
 </div>
 
 <!--
