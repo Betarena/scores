@@ -96,7 +96,7 @@
     if (inputType === "textarea" && e.currentTarget)
       autoGrowTextarea(e.currentTarget);
 
-    dispatch(type, e.currentTarget);
+    dispatch(type, value);
   }
 
   function autoGrowTextarea(element: HTMLTextAreaElement) {
