@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import { sanitize } from "$lib/utils/purify.js";
-  import { createEventDispatcher, onMount, tick } from "svelte";
+  import { createEventDispatcher, tick } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -43,13 +43,13 @@
     | ((val: string | number) => boolean)
     | undefined = undefined;
 
-  const dispatch = createEventDispatcher<
-    | { input: HTMLInputElement }
-    | { change: HTMLInputElement }
-    | { focus: HTMLInputElement }
-    | { blur: HTMLInputElement }
-    | { keydown: HTMLInputElement }
-  >();
+  const dispatch = createEventDispatcher<{
+    input: string | number;
+    change: string | number;
+    focus: Event;
+    blur: Event;
+    keydown: Event;
+  }>();
 
   let textareaNode: HTMLTextAreaElement | null = null;
 
@@ -58,13 +58,12 @@
   // Sync textareaNode with exported node prop
   $: if (inputType === "textarea" && textareaNode) node = textareaNode;
 
-  // Auto-grow textarea on initial mount to fit existing content
-  onMount(async () => {
-    if (inputType === "textarea" && textareaNode) {
-      await tick();
-      autoGrowTextarea(textareaNode);
-    }
-  });
+  // Auto-grow textarea reactively for both initial mount and programmatic value updates
+  $: if (textareaNode && inputType === "textarea" && value !== undefined) {
+    tick().then(() => {
+      if (textareaNode) autoGrowTextarea(textareaNode);
+    });
+  }
 
   // #endregion ➤ 📌 VARIABLES
 
