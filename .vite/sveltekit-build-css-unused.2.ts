@@ -65,6 +65,7 @@ const
     objPaths:
     {
       pathToFinalPurgedCssFile: string;
+      pathToFinalPurgedCssFileDebug: string;
       pathToOutputDebugFiles: string;
     };
     /**
@@ -147,6 +148,7 @@ const
     objPaths:
     {
       pathToFinalPurgedCssFile: '.',
+      pathToFinalPurgedCssFileDebug: '.',
       pathToOutputDebugFiles: '.',
     },
     objValues:
@@ -229,6 +231,7 @@ export function sveltekitCssPurge
     _objPaths?:
     {
       pathToFinalPurgedCssFile: string;
+      pathToFinalPurgedCssFileDebug: string;
       pathToOutputDebugFiles: string;
     };
     _strDebugLevel?: string;
@@ -1325,11 +1328,26 @@ function helperGlobalCssPurge
 
   // ╭─────
   // │ NOTE:
-  // │ |: output file :: final purged CSS
+  // │ |: output file :: final purged CSS (+debug)
   // ╰─────
   fs.writeFile
   (
     objGlobal.objPaths.pathToFinalPurgedCssFile,
+    strModifiedCssClean
+      .replace
+      (
+        /\s+/g,
+        ' '
+      ),
+    err =>
+    {
+      if (err) console.error(err);
+    }
+  );
+
+  fs.writeFile
+  (
+    objGlobal.objPaths.pathToFinalPurgedCssFileDebug,
     strModifiedCssClean,
     err =>
     {
