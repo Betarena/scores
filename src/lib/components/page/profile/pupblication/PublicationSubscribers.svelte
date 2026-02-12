@@ -44,7 +44,7 @@
   import { articleFilterStore } from "./editor/helpers.js";
   import FilterLines from "$lib/components/ui/assets/filter-lines.svelte";
   import SubscribersFilter from "./SubscribersFilter.svelte";
-  import { fade, scale } from "svelte/transition";
+  import { fade } from "svelte/transition";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -143,21 +143,6 @@
     },
   ];
 
-  $: sortOptions = [
-    {
-      id: "sortTitle",
-      label: translations?.title || "Title",
-    },
-    {
-      id: "sortPublishDate",
-      label: translations?.published_date || "Published date",
-    },
-    {
-      id: "sortEditedDate",
-      label: translations?.last_edited || "Last edited",
-    },
-  ];
-
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🛠️ METHODS
@@ -175,12 +160,6 @@
   function changeFilter(e) {
     if (typeof e.detail === "number") return;
     $articleFilterStore.status = e.detail.id;
-  }
-  function changeSort(
-    e: CustomEvent<"sortTitle" | "sortPublishDate" | "sortEditedDate">,
-  ) {
-    if (typeof e.detail === "number") return;
-    $articleFilterStore.sortBy = e.detail;
   }
 
   function handleScroll() {

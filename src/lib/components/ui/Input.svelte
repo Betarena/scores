@@ -36,6 +36,7 @@
   export let size: "md" | "sm" = "md";
   export let height = inputType === "textarea" ? "100px" : null;
   export let node: HTMLInputElement | HTMLTextAreaElement | null = null;
+  export let readonly: boolean | undefined = undefined;
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -124,6 +125,7 @@
       {#if inputType === "textarea"}
         <textarea
           class=""
+          {readonly}
           {placeholder}
           bind:value
           {name}
@@ -134,6 +136,7 @@
         <input
           bind:this={node}
           class=""
+          {readonly}
           type={inputType}
           {placeholder}
           {value}

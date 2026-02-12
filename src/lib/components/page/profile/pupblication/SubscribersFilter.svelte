@@ -9,13 +9,12 @@
 
 <script lang="ts">
   // #region ➤ 📦 Package Imports
-  import Calendar from "$lib/components/ui/assets/calendar.svelte";
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Input from "$lib/components/ui/Input.svelte";
-  import WidgetCalendar from "../tx-history/Widget-Calendar.svelte";
   import session from "$lib/store/session";
   import { createEventDispatcher } from "svelte";
+  import DateInput from "$lib/components/ui/DateInput.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -59,12 +58,6 @@
 
   let draft = JSON.parse(JSON.stringify(filters));
 
-  let showDatepicker: number | null = null; // Track which filter's datepicker is open
-  let selectedDate = new Date();
-  let dateRange = {
-    to: new Date(),
-    from: new Date(),
-  };
 
   $: ({ viewportType } = $session);
 
@@ -113,7 +106,6 @@
     draft = [JSON.parse(JSON.stringify(default_filter))];
   }
 
-
   const dispatch = createEventDispatcher();
 
   // #endregion ➤ 📌 VARIABLES
@@ -147,27 +139,6 @@
     dispatch("addFilter");
     draft = [...draft, JSON.parse(JSON.stringify(default_filter))];
   }
-
-  function handleDateSelect(filterIndex: number) {
-    if (showDatepicker === filterIndex) {
-      showDatepicker = null;
-    } else {
-      showDatepicker = filterIndex;
-    }
-  }
-
-  $: if (selectedDate && showDatepicker !== null) {
-    handleDateChange(showDatepicker);
-  }
-
-  function handleDateChange(filterIndex: number) {
-    if (draft[filterIndex]) {
-      draft[filterIndex].date.value = selectedDate;
-      draft = [...draft]; // Trigger reactivity
-    }
-  }
-
-  $: console.log("Filters:", filters);
 
   // #endregion ➤ 🎯 METHODS
 </script>
@@ -205,32 +176,12 @@
 
       {#if filter.filter.value?.id === "start_date"}
         <div class="date-picker-wrapper">
-          <Button
-            type="secondary"
-            size="md"
-            classname="date-picker-btn"
-            on:click={() => handleDateSelect(index)}
-          >
-            <span class="calendar-icon"><Calendar /></span>
-            {#if filter.date.value}
-              <div class="selected-date">
-                {new Date(filter.date.value).toLocaleDateString()}
-              </div>
-            {:else}
-              <div class="placeholder">Select dates</div>
-            {/if}
-          </Button>
-          {#if showDatepicker === index}
-            <div class="calendar-wrapper">
-              <WidgetCalendar
-                bind:show={showDatepicker}
-                bind:dateSelect={selectedDate}
-                bind:dateRange
-                allowRange={false}
-                on:dateChange={() => handleDateChange(index)}
-              />
-            </div>
-          {/if}
+          <DateInput
+            bind:value={filter.date.value}
+            placeholder="Select dates"
+            on:select={(e) => console.log("Selected:", e.detail.date)}
+            on:apply={(e) => console.log("Applied:", e.detail.date)}
+          />
         </div>
       {:else if filter.filter.value?.id === "revenue"}
         <div class="filter-field condition-filter">
