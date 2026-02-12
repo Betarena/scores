@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import { sanitize } from "$lib/utils/purify.js";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, tick } from "svelte";
 
   // #region ➤ 📌 VARIABLES
 
@@ -37,6 +37,7 @@
   export let height = inputType === "textarea" ? "100px" : null;
   export let node: HTMLInputElement | HTMLTextAreaElement | null = null;
   export let readonly: boolean | undefined = undefined;
+  export let maxlength: number | undefined = undefined;
   export let onInputValidation:
     | ((val: string | number) => boolean)
     | undefined = undefined;
@@ -44,15 +45,28 @@
     | ((val: string | number) => boolean)
     | undefined = undefined;
 
-  const dispatch = createEventDispatcher<
-    | { input: HTMLInputElement }
-    | { change: HTMLInputElement }
-    | { focus: HTMLInputElement }
-    | { blur: HTMLInputElement }
-    | { keydown: HTMLInputElement }
-  >();
+  const dispatch = createEventDispatcher<{
+    input: string | number;
+    change: string | number;
+    focus: Event;
+    blur: Event;
+    keydown: Event;
+  }>();
+
+  let textareaNode: HTMLTextAreaElement | null = null;
 
   $: focus = false;
+
+  // Sync textareaNode with exported node prop
+  $: if (inputType === "textarea" && textareaNode) node = textareaNode;
+
+  // Auto-grow textarea reactively for both initial mount and programmatic value updates
+  $: if (textareaNode && inputType === "textarea" && value !== undefined) {
+    tick().then(() => {
+      if (textareaNode) autoGrowTextarea(textareaNode);
+    });
+  }
+
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
@@ -69,19 +83,26 @@
 
   function handleEvent(
     e: any,
-    type: "input" | "change" | "focus" | "blur" | "keydown"
+    type: "input" | "change" | "focus" | "blur" | "keydown",
   ) {
-    if (type === "focus") {
-      focus = true;
-    }
-    if (type === "blur") {
-      focus = false;
-    }
-    if (["focus", "blur", "keydown"].includes(type)) {
-      return dispatch(type, e);
-    }
+    if (type === "focus") focus = true;
+
+    if (type === "blur") focus = false;
+
+    if (["focus", "blur", "keydown"].includes(type)) return dispatch(type, e);
+
     value = sanitize(e.currentTarget.value);
+
+    // Auto-grow textarea
+    if (inputType === "textarea" && e.currentTarget)
+      autoGrowTextarea(e.currentTarget);
+
     dispatch(type, value);
+  }
+
+  function autoGrowTextarea(element: HTMLTextAreaElement) {
+    element.style.height = "auto";
+    element.style.height = element.scrollHeight + "px";
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -110,7 +131,13 @@
       {/if}
     </label>
   {/if}
-  <div class="input-wrapper {size}" class:focus class:error style="{height ? `height: ${height}` : ''}">
+  <div
+    class="input-wrapper {size}"
+    class:focus
+    class:error
+    class:has-textarea={inputType === "textarea"}
+    style={inputType === "textarea" ? "" : `height: ${height}`}
+  >
     {#if type === "leading-text" || $$slots["leading-text"]}
       <div class="leading-text">
         <slot name="leading-text" />
@@ -124,13 +151,25 @@
     >
       {#if inputType === "textarea"}
         <textarea
+          bind:this={textareaNode}
           class=""
           {readonly}
           {placeholder}
           bind:value
           {name}
-          on:change={(e) => handleEvent(e, "change")}
-          on:input={(e) => handleEvent(e, "input")}
+          {maxlength}
+          on:focus={(e) => {
+            return handleEvent(e, "focus");
+          }}
+          on:blur={(e) => {
+            return handleEvent(e, "blur");
+          }}
+          on:change={(e) => {
+            return handleEvent(e, "change");
+          }}
+          on:input={(e) => {
+            return handleEvent(e, "input");
+          }}
         />
       {:else}
         <input
@@ -141,17 +180,28 @@
           {placeholder}
           {value}
           {name}
-          on:keydown={(e) => handleEvent(e, "keydown")}
-          on:focus={(e) => handleEvent(e, "focus")}
-          on:blur={(e) => handleEvent(e, "blur")}
-          on:change={(e) => handleEvent(e, "change")}
-          on:input={(e) => handleEvent(e, "input")}
+          {maxlength}
+          on:keydown={(e) => {
+            return handleEvent(e, "keydown");
+          }}
+          on:focus={(e) => {
+            return handleEvent(e, "focus");
+          }}
+          on:blur={(e) => {
+            return handleEvent(e, "blur");
+          }}
+          on:change={(e) => {
+            return handleEvent(e, "change");
+          }}
+          on:input={(e) => {
+            return handleEvent(e, "input");
+          }}
         />
       {/if}
     </div>
-    {#if $$slots["extra"]}
+    {#if $$slots.extra}
       <div class="extra">
-        <slot  name="extra"><!-- optional fallback --></slot>
+        <slot name="extra"><!-- optional fallback --></slot>
       </div>
     {/if}
   </div>
@@ -218,6 +268,7 @@
       align-items: flex-start;
       align-self: stretch;
       height: 44px;
+      position: relative;
 
       /* Shadows/shadow-xs */
       box-shadow: 0px 1px 2px 0px
@@ -225,6 +276,15 @@
       border: 1px solid var(--colors-border-border-primary, #6a6a6a);
       border-radius: var(--radius-md, 8px);
       background: var(--colors-background-bg-primary, #fff);
+
+      &.has-textarea {
+        height: auto;
+        min-height: 100px;
+
+        .input-element {
+          height: auto;
+        }
+      }
       .input-element {
         display: flex;
         align-items: center;
@@ -232,18 +292,16 @@
         flex: 1 0 0;
         align-self: stretch;
 
-        input,
-        textarea {
+        input {
           overflow: hidden;
           color: var(--colors-text-text-primary-900, #fbfbfb);
           text-overflow: ellipsis;
           border: none;
-          padding: 0;
-          background-color: inherit;
           padding: 10px 14px;
           flex-grow: 1;
           max-height: 100%;
           height: 100%;
+          background: transparent;
 
           /* Text md/Regular */
           font-family: var(--font-family-font-family-body, Roboto);
@@ -254,10 +312,48 @@
 
           &:-webkit-autofill,
           &:-internal-autofill-selected {
-            background-color: transparent !important;
-            color: inherit !important;
-            box-shadow: none !important;
+            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary)
+              inset !important;
+            box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            -webkit-text-fill-color: var(
+              --colors-text-text-primary-900
+            ) !important;
           }
+          &:focus-visible {
+            outline: none;
+          }
+        }
+
+        textarea {
+          overflow: hidden;
+          color: var(--colors-text-text-primary-900, #fbfbfb);
+          border: none;
+          padding: 10px 14px;
+          flex-grow: 1;
+          width: 100%;
+          min-height: 88px;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          resize: none;
+          background: transparent;
+
+          /* Text md/Regular */
+          font-family: var(--font-family-font-family-body, Roboto);
+          font-size: var(--font-size-text-md, 16px);
+          font-style: normal;
+          font-weight: 400;
+          line-height: var(--line-height-text-md, 24px); /* 150% */
+
+          &:-webkit-autofill,
+          &:-internal-autofill-selected {
+            -webkit-box-shadow: 0 0 0 1000px var(--colors-background-bg-primary)
+              inset !important;
+            box-shadow: 0 0 0 1000px var(--colors-background-bg-primary) inset !important;
+            -webkit-text-fill-color: var(
+              --colors-text-text-primary-900
+            ) !important;
+          }
+
           &:focus-visible {
             outline: none;
           }
@@ -292,18 +388,33 @@
 
       .extra {
         display: flex;
-        padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+        padding: 10px var(--spacing-lg, 12px) 10px var(--spacing-xs, 4px);
         align-items: center;
         gap: var(--spacing-xxs, 2px);
-        color: var(--colors-text-text-tertiary-600, #6A6A6A);
+        color: var(--colors-text-text-tertiary-600, #6a6a6a);
+        flex-shrink: 0;
+        white-space: nowrap;
 
-        /* Text md/Regular */
+        /* Text sm/Regular */
         font-family: var(--font-family-font-family-body, Roboto);
-        font-size: var(--font-size-text-md, 16px);
+        font-size: var(--font-size-text-sm, 14px);
         font-style: normal;
         font-weight: 400;
-        line-height: var(--line-height-text-md, 24px); /* 150% */
+        line-height: var(--line-height-text-sm, 20px); /* 142.857% */
       }
+
+      /* Position counter at bottom-right for textarea */
+      &.has-textarea textarea {
+        padding-bottom: 35px;
+      }
+
+      &.has-textarea .extra {
+        position: absolute;
+        bottom: 10px;
+        right: 14px;
+        padding: 0;
+      }
+
       &.focus {
         border-color: var(--colors-border-border-brand);
       }
