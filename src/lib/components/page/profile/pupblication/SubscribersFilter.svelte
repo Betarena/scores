@@ -13,7 +13,6 @@
   import Button from "$lib/components/ui/Button.svelte";
   import DropDownInput from "$lib/components/ui/DropDownInput.svelte";
   import Input from "$lib/components/ui/Input.svelte";
-  import SelectButton from "$lib/components/ui/SelectButton.svelte";
   import WidgetCalendar from "../tx-history/Widget-Calendar.svelte";
   import session from "$lib/store/session";
   import { createEventDispatcher } from "svelte";
@@ -23,43 +22,32 @@
   // #region ➤ 📌 VARIABLES
 
   type FilterFieldConfig = {
-    start_date: {
+    filter: {
       id: string;
       type: string;
-      label: string;
-      placeholder: string;
-      value: any;
+      value: { label: string; id: string } | null;
+      placeholder?: string;
       options: Array<{ label: string; id: string }>;
-      date: {
-        id: string;
-        type: string;
-        label: string;
-        placeholder: string;
-        value: any;
-        options: Array<{ label: string; id: string }>;
-      };
     };
-    revenue: {
+    date: {
+      id: string;
+      type: string;
+      placeholder: string;
+      value: Date | null;
+    };
+    condition: {
+      type: string;
+      label: string;
+      placeholder: string;
+      value: string | null;
+      options: Array<{ label: string; id: string }>;
+    };
+    amount: {
       id: string;
       type: string;
       label: string;
       placeholder: string;
-      value: any;
-      options: Array<{ label: string; id: string }>;
-      condition: {
-        type: string;
-        label: string;
-        placeholder: string;
-        value: any;
-        options: Array<{ label: string; id: string }>;
-      };
-      amount: {
-        id: string;
-        type: string;
-        label: string;
-        placeholder: string;
-        value: string;
-      };
+      value: string;
     };
   };
 
@@ -68,6 +56,8 @@
   export let onReset: () => void = () => {};
   export let onAddFilter: () => void = () => {};
   export let filters: FilterFieldConfig[] = [];
+
+  let draft = JSON.parse(JSON.stringify(filters));
 
   let showDatepicker: number | null = null; // Track which filter's datepicker is open
   let selectedDate = new Date();
@@ -78,61 +68,51 @@
 
   $: ({ viewportType } = $session);
 
-  const date_options = [
-    { label: "Last 7 days", id: "7d" },
-    { label: "Last 30 days", id: "30d" },
-    { label: "Last 90 days", id: "90d" },
+  const field_options = [
+    { label: "Start Date", id: "start_date" },
+    { label: "Revenue", id: "revenue" },
   ];
+
   let default_filter: FilterFieldConfig = {
-    start_date: {
-      id: "startDate",
+    filter: {
+      id: "field",
+      type: "select",
+      value: field_options[0],
+      options: field_options,
+    },
+    date: {
+      id: "date",
       type: "date",
-      label: "Start Date",
       placeholder: "Select dates",
       value: null,
-      options: date_options,
-      date: {
-        id: "date",
-        type: "date",
-        label: "Start Date",
-        placeholder: "Select dates",
-        value: null,
-        options: date_options,
-      },
     },
-
-    revenue: {
-      id: "revenue",
+    condition: {
       type: "select",
-      label: "Revenue",
-      placeholder: "Select revenue",
+      label: "Condition",
+      placeholder: "Select condition",
       value: null,
       options: [
-        { label: "All", id: "all" },
-        { label: "High", id: "high" },
-        { label: "Medium", id: "medium" },
-        { label: "Low", id: "low" },
+        { label: ">", id: ">" },
+        { label: ">=", id: ">=" },
+        { label: "<", id: "<" },
+        { label: "<=", id: "<=" },
+        { label: "is", id: "is" },
+        { label: "is not", id: "is_not" },
       ],
-      condition: {
-        type: "select",
-        label: "Is",
-        placeholder: "Select condition",
-        value: null,
-        options: [
-          { label: "Equal", id: "eq" },
-          { label: "Greater than", id: "gt" },
-          { label: "Less than", id: "lt" },
-        ],
-      },
-      amount: {
-        id: "amount",
-        type: "currency",
-        label: "Amount",
-        placeholder: "0.00",
-        value: "",
-      },
+    },
+
+    amount: {
+      id: "amount",
+      type: "currency",
+      label: "Amount",
+      placeholder: "0.00",
+      value: "",
     },
   };
+  if (draft.length === 0) {
+    draft = [JSON.parse(JSON.stringify(default_filter))];
+  }
+
 
   const dispatch = createEventDispatcher();
 
@@ -145,8 +125,9 @@
   // #region ➤ 🎯 METHODS
 
   function handleSave() {
-    onSave(default_filter);
-    dispatch("save", default_filter);
+    filters = JSON.parse(JSON.stringify(draft));
+    onSave(filters);
+    dispatch("save", filters);
   }
 
   function handleCancel() {
@@ -158,12 +139,13 @@
     onReset();
     dispatch("reset");
     filters = [];
+    draft = [];
   }
 
   function handleAddFilter() {
     onAddFilter();
     dispatch("addFilter");
-    filters = [...filters, JSON.parse(JSON.stringify(default_filter))];
+    draft = [...draft, JSON.parse(JSON.stringify(default_filter))];
   }
 
   function handleDateSelect(filterIndex: number) {
@@ -179,11 +161,13 @@
   }
 
   function handleDateChange(filterIndex: number) {
-    if (filters[filterIndex]) {
-      filters[filterIndex].start_date.date.value = selectedDate;
-      filters = [...filters]; // Trigger reactivity
+    if (draft[filterIndex]) {
+      draft[filterIndex].date.value = selectedDate;
+      draft = [...draft]; // Trigger reactivity
     }
   }
+
+  $: console.log("Filters:", filters);
 
   // #endregion ➤ 🎯 METHODS
 </script>
@@ -201,93 +185,89 @@
     <button class="reset-all" on:click={handleReset}>Reset All</button>
   </div>
 
-  {#each filters as filter, index}
-    <div class="filter-row date-row">
-      <div class="filter-field date-field">
-        <DropDownInput
-          label="Start Date"
-          placeholder="Start Date"
-          size="sm"
-          options={date_options}
-          bind:value={filter.start_date.value}
-        />
-      </div>
-      <div class="date-picker-wrapper">
-        <Button
-          type="secondary"
-          size="md"
-          classname="date-picker-btn"
-          on:click={() => handleDateSelect(index)}
-        >
-          <span class="calendar-icon"><Calendar /></span>
-          {#if filter.start_date.date.value}
-            <div class="selected-date">
-              {new Date(filter.start_date.date.value).toLocaleDateString()}
-            </div>
-          {:else}
-            <div class="placeholder">Select dates</div>
-          {/if}
-        </Button>
-        {#if showDatepicker === index}
-          <div class="calendar-wrapper">
-            <WidgetCalendar
-              bind:show={showDatepicker}
-              bind:dateSelect={selectedDate}
-              bind:dateRange
-              allowRange={false}
-              on:dateChange={() => handleDateChange(index)}
-            />
-          </div>
-        {/if}
-      </div>
-    </div>
-    <!-- Second row: Revenue, Is, Amount -->
+  {#each draft as filter, index}
     <div class="filter-row">
       <div class="filter-field">
         <DropDownInput
-          label="Revenue"
-          placeholder="Revenue"
           size="sm"
-          options={filter.revenue.options}
-          bind:value={filter.revenue.value}
+          placeholder={filter.filter.placeholder}
+          options={filter.filter.options}
+          bind:value={filter.filter.value}
+          on:change={() => {
+            // Reset dependent fields when filter type changes
+            filter.date.value = null;
+            filter.condition.value = null;
+            filter.amount.value = "";
+            draft = [...draft];
+          }}
         />
       </div>
-      <div class="filter-field">
-        <DropDownInput
-          label="Is"
-          placeholder="Is"
-          size="sm"
-          options={filter.revenue.condition.options}
-          bind:value={filter.revenue.condition.value}
-        />
-      </div>
-      <div class="filter-field amount-field">
-        <Input
-          label="Amount"
-          size="sm"
-          placeholder="0.00"
-          type="leading-text"
-          bind:value={filter.revenue.amount.value}
-        >
-          <div class="icon" slot="leading-text">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-            >
-              <path
-                d="M5 13.3332C5 15.1741 6.49238 16.6665 8.33333 16.6665H11.6667C13.5076 16.6665 15 15.1741 15 13.3332C15 11.4922 13.5076 9.99984 11.6667 9.99984H8.33333C6.49238 9.99984 5 8.50745 5 6.6665C5 4.82555 6.49238 3.33317 8.33333 3.33317H11.6667C13.5076 3.33317 15 4.82555 15 6.6665M10 1.6665V18.3332"
-                stroke="#6A6A6A"
-                stroke-width="1.66667"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+
+      {#if filter.filter.value?.id === "start_date"}
+        <div class="date-picker-wrapper">
+          <Button
+            type="secondary"
+            size="md"
+            classname="date-picker-btn"
+            on:click={() => handleDateSelect(index)}
+          >
+            <span class="calendar-icon"><Calendar /></span>
+            {#if filter.date.value}
+              <div class="selected-date">
+                {new Date(filter.date.value).toLocaleDateString()}
+              </div>
+            {:else}
+              <div class="placeholder">Select dates</div>
+            {/if}
+          </Button>
+          {#if showDatepicker === index}
+            <div class="calendar-wrapper">
+              <WidgetCalendar
+                bind:show={showDatepicker}
+                bind:dateSelect={selectedDate}
+                bind:dateRange
+                allowRange={false}
+                on:dateChange={() => handleDateChange(index)}
               />
-            </svg>
-          </div>
-        </Input>
-      </div>
+            </div>
+          {/if}
+        </div>
+      {:else if filter.filter.value?.id === "revenue"}
+        <div class="filter-field condition-filter">
+          <DropDownInput
+            placeholder="Condition"
+            size="sm"
+            options={filter.condition.options}
+            bind:value={filter.condition.value}
+          />
+        </div>
+        <div class="filter-field amount-field">
+          <Input
+            size="sm"
+            placeholder="0.00"
+            type="leading-text"
+            bind:value={filter.amount.value}
+          >
+            <div class="icon" slot="leading-text">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+              >
+                <path
+                  d="M5 13.3332C5 15.1741 6.49238 16.6665 8.33333 16.6665H11.6667C13.5076 16.6665 15 15.1741 15 13.3332C15 11.4922 13.5076 9.99984 11.6667 9.99984H8.33333C6.49238 9.99984 5 8.50745 5 6.6665C5 4.82555 6.49238 3.33317 8.33333 3.33317H11.6667C13.5076 3.33317 15 4.82555 15 6.6665M10 1.6665V18.3332"
+                  stroke="#6A6A6A"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </Input>
+        </div>
+      {/if}
     </div>
   {/each}
 
@@ -425,6 +405,17 @@
         }
         .selected-date {
           color: var(--colors-text-text-primary-900, #fff);
+        }
+      }
+      .condition-filter {
+        width: 80px;
+        :global(.dropdown-input) {
+          width: 100%;
+          max-width: 100%;
+        }
+        :global(.dropdown-input .input-element) {
+          width: 100%;
+          max-width: 100%;
         }
       }
     }

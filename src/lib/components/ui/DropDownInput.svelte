@@ -188,6 +188,7 @@
         height="20"
         viewBox="0 0 20 20"
         fill="none"
+        class="chevrone-icon"
       >
         <path
           d="M5 7.5L10 12.5L15 7.5"
@@ -353,6 +354,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
+      }
+
+      .chevrone-icon {
+        flex-shrink: 0;
       }
       .text {
         flex-grow: 1;

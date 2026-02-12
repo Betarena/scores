@@ -267,7 +267,7 @@
   {#if showFilter}
   <div in:fade>
 
-    <SubscribersFilter bind:filters on:cancel={() => showFilter = false} />
+    <SubscribersFilter bind:filters on:save={() => showFilter = false} on:cancel={() => showFilter = false} />
   </div>
   {/if}
   <div class="content">
