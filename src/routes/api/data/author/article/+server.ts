@@ -19,6 +19,7 @@
 import dotenv from 'dotenv';
 
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
+import { getBaseUrl, purgeUrls, buildPurgeUrls } from '$lib/cloudflare/index.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
@@ -99,6 +100,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       access_type,
       reward_tier_id
     });
+    purgeArticleCache('upsert', articleId, permalink);
     return json({ success: true, id: articleId });
 
   } catch (e)
@@ -142,6 +144,7 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     });
+    if (permalink) purgeArticleCache(status, id, permalink);
     return json({ success: true, permalink });
 
   } catch (e)
@@ -151,3 +154,19 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
   }
   return new Response();
 };
+
+async function purgeArticleCache(action: string, articleId: number, permalink: string): Promise<void>
+{
+  try
+  {
+    const baseUrl = await getBaseUrl();
+    if (!baseUrl) return;
+    const urls = buildPurgeUrls(baseUrl, permalink);
+    await purgeUrls(baseUrl, urls);
+    console.log(`[cf-purge] action=${action} articleId=${articleId} urls=${urls.length}`);
+  }
+  catch (e)
+  {
+    console.error(`[cf-purge] failed action=${action} articleId=${articleId}`, e);
+  }
+}

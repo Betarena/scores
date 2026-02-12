@@ -1,17 +1,21 @@
 /**
  * @description
- *  📝 Purge Cloudflare cache for a list of URLs.
- *  Requires VITE_CLOUDFLARE_ZONE_ID and VITE_CLOUDFLARE_API_TOKEN env vars.
+ *  📝 Purge Cloudflare Worker cache for a list of URLs.
+ *  Posts to the Worker's /__purge endpoint which handles cache key reconstruction.
+ *  Requires VITE_CF_PURGE_SECRET env var (must match Worker's PURGE_SECRET).
  *  Logs errors but never throws.
+ * @param baseUrl
+ *  Normalized base URL (e.g. `https://betarena.com`).
+ * @param urls
+ *  Array of absolute URLs to purge.
  */
-export async function purgeUrls(urls: string[]): Promise<void>
+export async function purgeUrls(baseUrl: string, urls: string[]): Promise<void>
 {
-  const zoneId = process.env.VITE_CLOUDFLARE_ZONE_ID;
-  const apiToken = process.env.VITE_CLOUDFLARE_API_TOKEN;
+  const purgeSecret = process.env.VITE_CF_PURGE_SECRET;
 
-  if (!zoneId || !apiToken)
+  if (!purgeSecret)
   {
-    console.warn('[cf-purge] missing VITE_CLOUDFLARE_ZONE_ID or VITE_CLOUDFLARE_API_TOKEN, skipping purge');
+    console.warn('[cf-purge] missing VITE_CF_PURGE_SECRET, skipping purge');
     return;
   }
 
@@ -21,11 +25,11 @@ export async function purgeUrls(urls: string[]): Promise<void>
   try
   {
     const res = await fetch(
-      `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
+      `${baseUrl}/__purge`,
       {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiToken}`,
+          'Authorization': `Bearer ${purgeSecret}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ files: uniqueUrls })
@@ -35,11 +39,11 @@ export async function purgeUrls(urls: string[]): Promise<void>
     if (!res.ok)
     {
       const body = await res.text();
-      console.error(`[cf-purge] Cloudflare API error: status=${res.status} body=${body}`);
+      console.error(`[cf-purge] Worker purge error: status=${res.status} body=${body}`);
     }
   }
   catch (e)
   {
-    console.error('[cf-purge] Cloudflare purge request failed', e);
+    console.error('[cf-purge] Worker purge request failed', e);
   }
 }

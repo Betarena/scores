@@ -164,6 +164,21 @@ interface ImportMetaEnv
    *    WalletConnect project env
    */
   readonly VITE_WALLETCONNECT_ID?: string
+  // ╭──────────────────────────────────────────────────────────────────────────────────╮
+  // │ 🔳 │ CLOUDFLARE                                                                  │
+  // ╰──────────────────────────────────────────────────────────────────────────────────╯
+  /**
+   * @description
+   * 📝 SECRET
+   *    Shared secret for Worker /__purge endpoint
+   */
+  readonly VITE_CF_PURGE_SECRET?: string | undefined;
+  /**
+   * @description
+   * 📝 CONFIGURATION
+   *    Fallback base URL (e.g. betarena.com)
+   */
+  readonly VITE_BASE_URL?: string | undefined;
 
 }
 
