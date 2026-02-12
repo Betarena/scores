@@ -32,6 +32,7 @@
     href = "";
   export let disabled = false;
   export let blank = false;
+  export let icon_only = false;
 
   export let /**
      * @description
@@ -75,6 +76,7 @@
   <a
     {href}
     class="button {type} {classname} {size}"
+    class:icon_only
     class:full
     class:disabled
     class:loading
@@ -108,6 +110,7 @@
   <button
     class="button {type} {classname} {size}"
     class:full
+    class:icon_only
     class:disabled
     class:icon_leading
     class:loading
@@ -187,6 +190,9 @@
       &.icon_leading {
         padding: var(--spacing-lg, 12px);
       }
+      &.icon_only {
+        padding: 10px;
+      }
     }
 
     &.md {
@@ -197,12 +203,24 @@
         height: 40px;
         width: 40px;
       }
+      &.icon_only {
+        padding: 10px;
+      }
     }
 
     &.sm {
       padding: var(--spacing-md, 8px)
         calc(var(--spacing-lg, 12px) + var(--spacing-xxs, 2px));
-
+      &.icon_only {
+        padding: var(--spacing-md, 8px);
+        width: 36px;
+        height: 36px;
+      }
+      &.icon_leading {
+        padding: var(--spacing-md, 8px);
+        height: 40px;
+        width: 40px;
+      }
     }
 
     &.xl {
@@ -213,6 +231,9 @@
       line-height: var(--line-height-text-md, 24px);
       &.icon_leading {
         padding: var(--font-size-text-sm, 14px);
+      }
+      &.icon_only {
+        padding: var(--spacing-lg, 12px);
       }
     }
 

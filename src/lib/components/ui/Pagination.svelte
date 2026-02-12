@@ -173,7 +173,7 @@
     <Button
       type="secondary"
       size="sm"
-      icon_only
+      icon_only={true}
       disabled={currentPage === 1}
       on:click={handlePrevious}
     >
@@ -193,7 +193,7 @@
     <Button
       type="secondary"
       size="sm"
-      icon_only
+      icon_only={true}
       disabled={currentPage === totalPages}
       on:click={handleNext}
     >
@@ -241,7 +241,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: var(--spacing-md, 8px) var(--spacing-lg, 12px);
+    padding: var(--spacing-lg, 12px) var(--spacing-xl, 16px);
     border-top: 1px solid var(--colors-border-border-secondary, #ededed);
 
     @media (max-width: 768px) {

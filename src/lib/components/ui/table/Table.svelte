@@ -26,6 +26,7 @@
 	import type { Column, Row } from "$lib/types/types.table";
 	import { createEventDispatcher, type EventDispatcher } from "svelte";
 	import ArrowDown from "../assets/arrow-down.svelte";
+  import session from "$lib/store/session";
 	
 	// #endregion ➤ 📦 Package Imports
 
@@ -36,10 +37,13 @@
 
 	export let columns: Column[] = [];
 	export let rows: Row[] = [];
+	export let selected: Row["id"][] = []
 	export let sortable = false;
 	export let hoverable = true;
-	export let striped = true;
+	export let striped = false;
 	export let classname = '';
+
+	$: ({viewportType} = $session)
 
 	let sortColumn: string | null = null;
 	let sortDirection: 'asc' | 'desc' = 'asc';
@@ -97,7 +101,7 @@
 	// #endregion ➤ 🟦 FUNCTIONS
 </script>
 
-<div class="table-wrapper {classname}">
+<div class="table-wrapper {classname} {viewportType}">
 	<table class="table" class:striped>
 		<thead class="table-header">
 			<tr>
@@ -124,7 +128,7 @@
 		</thead>
 		<tbody class="table-body">
 			{#each rows as row (row.id)}
-				<tr class="table-row" class:hoverable>
+				<tr class="table-row" class:hoverable class:selected={selected.includes(row.id)}>
 					{#each columns as column (column.id)}
 						<td 
 							class="table-cell"
@@ -231,6 +235,9 @@
 		&:last-of-type {
 			border-bottom: none;
 		}
+		&.selected {
+			background-color: var(--colors-background-bg-secondary, #232323);
+		}
 	}
 
 	.table-cell {
@@ -246,6 +253,12 @@
 
 		&.grow {
 			width: 100%;
+		}
+	}
+
+	.mobile {
+		.table-cell {
+			padding: var(--spacing-xl, 16px);
 		}
 	}
 </style>

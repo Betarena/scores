@@ -93,7 +93,7 @@
     {
       id: "subscribers",
       text: "Total Subscribers",
-      number: "188 BTA",
+      number: "188",
       change: 2.4,
     },
     {
@@ -222,7 +222,10 @@
       >
         <MetricItem4 text={item.text} number={item.number} change={item.change}>
           <div class="bta" slot="number">
-            {item.number} <span class="usd">$40</span>
+            {item.number} 
+            {#if item.id === "revenue"}
+               <span class="usd">$40</span>
+            {/if}
           </div>
         </MetricItem4>
       </button>
@@ -264,7 +267,7 @@
   {#if showFilter}
   <div in:fade>
 
-    <SubscribersFilter bind:filters />
+    <SubscribersFilter bind:filters on:cancel={() => showFilter = false} />
   </div>
   {/if}
   <div class="content">
