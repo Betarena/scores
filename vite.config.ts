@@ -1,14 +1,14 @@
 // ╭──────────────────────────────────────────────────────────────────────────────────╮
 // │ 📌 High Order Overview                                                           │
-// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// ├──────────────────────────────────────────────────────────────────────────────────┤
 // │ ➤ Code Format   // V.8.0                                                         │
 // │ ➤ Status        // 🔒 LOCKED                                                     │
 // │ ➤ Author(s)     // @migbash                                                      │
 // │ ➤ Maintainer(s) // @migbash                                                      │
 // │ ➤ Created on    // 2024-09-10                                                    │
-// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// ├──────────────────────────────────────────────────────────────────────────────────┤
 // │ 📝 Description                                                                   │
-// ┣──────────────────────────────────────────────────────────────────────────────────┫
+// ├──────────────────────────────────────────────────────────────────────────────────┤
 // │ Betarena (Module)
 // │ |: Configuration for Vite.
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
@@ -225,18 +225,25 @@ export default defineConfig
           ['📌 [vite] |:| mode', mode],
           ['📌 [vite] |:| command', command],
           ['📌 [vite] |:| ssrBuild', ssrBuild],
+          ['__dirname', __dirname],
         ]
-      )
+      ),
+      objViteConfigOptions
     );
 
     // ╭─────
     // │ CHECK:
-    // │ |: for, metrics output directory exists.
+    // │ |: for, BUILD (a.k.a production-only) conditions
     // ╰─────
     if (command === 'build')
     {
       await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}`);
-      await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/purged-css-debug`);
+      await fs.ensureDir(`${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/debug.css-purge`);
+    }
+    else
+    {
+      objViteConfigOptions.objPluginConfig.visualizer.isEnabled = false;
+      objViteConfigOptions.objPluginConfig._customSveltekitPurgeCssPlugin.isEnabled = false;
     }
 
     const
@@ -263,37 +270,37 @@ export default defineConfig
         // ╭─────
         // │ NOTE:
         // │ │: using 'vite-plugin-chunk-split' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: ❌ DOES NOT WORK! BREAKS BUILD/COMPILE!
         // ╰─────
         // ╭─────
         // │ NOTE:
         // │ │: using 'vite-plugin-progress' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: ❌ DOES NOT WORK AS ADVERTISED!
         // ╰─────
         // ╭─────
         // │ NOTE:
         // │ │: imported from 'vite-plugin-compress' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: ❌ DOES NOT WORK AS ADVERTISED!
         // ╰─────
         // ╭─────
         // │ NOTE:
         // │ │: imported from 'vite-plugin-compression' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: ❌ DOES NOT WORK AS ADVERTISED!
         // ╰─────
         // ╭─────
         // │ NOTE:
         // │ │: imported from 'vite-plugin-preload' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: ❌ DOES NOT WORK AS ADVERTISED!
         // ╰─────
         // ╭─────
         // │ NOTE: IMPORTANT
         // │ │: imported from '@sentry/sveltekit' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: needs to be placed 'BEFORE' sveltekit compilation.
         // ╰─────
         // sentrySvelteKit
@@ -320,9 +327,9 @@ export default defineConfig
             strGlobalCssFileContent,
             _objPaths:
             {
-              pathToFinalPurgedCssFile: './static/app.purged.min.scss',
-              // pathToOutputDebugFiles: './.vite/purged-css-debug',
-              pathToOutputDebugFiles: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/purged-css-debug`,
+              pathToFinalPurgedCssFile: './static/css/app.purged.clean.css',
+              pathToFinalPurgedCssFileDebug: './static/css/app.purged.debug.css',
+              pathToOutputDebugFiles: `${objViteConfigOptions.objMetaConfig.outputMetricsPath}/${dateCurrent}/debug.css-purge`,
             },
             _strDebugLevel: 'info',
           }
@@ -335,13 +342,13 @@ export default defineConfig
         // ╭─────
         // │ NOTE:
         // │ │: imported from '@erbelion/vite-plugin-sveltekit-purgecss' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: ❔ NOT TESTED YET!
         // ╰─────
         // ╭─────
         // │ NOTE:
         // │ │: imported from 'vite-plugin-lightningcss' NPM package.
-        // ┣─────
+        // ├─────
         // │ │: ❔ NOT TESTED YET!
         // ╰─────
         // ╭─────
@@ -500,7 +507,7 @@ export default defineConfig
             // ╭─────
             // │ NOTE:
             // │ │: [disabled]
-            // ┣─────
+            // ├─────
             // │ 🔗 read-more :|: https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
             // │ 🔗 read-more :|: https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
             // ╰─────
@@ -657,7 +664,7 @@ export default defineConfig
         port: 3050,
         // ╭─────
         // │ NOTE:
-        // ┣─────
+        // ├─────
         // │ 🔗 read-more :|: https://stackoverflow.com/questions/73205096/run-sveltekit-dev-with-https
         // ╰─────
         // https:
