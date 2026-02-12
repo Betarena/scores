@@ -14,6 +14,12 @@
 // │ |: Configuration for :: Betarena Scores Project
 // ╰──────────────────────────────────────────────────────────────────────────────────╯
 
+// #region ➤ 📦 Package Imports
+
+import { dev } from "$app/environment";
+
+// #endregion ➤ 📦 Package Imports
+
 type ILoadingType =
   // ╭─────
   // │ NOTE:
@@ -361,7 +367,7 @@ export const config = {
                         // │ |: -> 'purged'    :: Purged stylesheets (critical CSS inlined, rest loaded async)
                         // │ |: -> 'standard'  :: Standard stylesheets
                         // ╰─────
-                        strLoadingType: 'purged' as ILoadingType,
+                        strLoadingType: (dev ? 'standard' : 'purged') as ILoadingType,
                         // ╭─────
                         // │ NOTE: IMPORTANT
                         // │ |: HTML Head Injection Point Identifier
