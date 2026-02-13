@@ -38,7 +38,7 @@
       type: string;
       label: string;
       placeholder: string;
-      value: string | null;
+      value: { label: string; id: string } | null;
       options: Array<{ label: string; id: string }>;
     };
     amount: {
@@ -66,6 +66,15 @@
     { label: "Revenue", id: "revenue" },
   ];
 
+  const condition_options = [
+    { label: ">", id: ">" },
+    { label: ">=", id: ">=" },
+    { label: "<", id: "<" },
+    { label: "<=", id: "<=" },
+    { label: "is", id: "is" },
+    { label: "is not", id: "is_not" },
+  ];
+
   let default_filter: FilterFieldConfig = {
     filter: {
       id: "field",
@@ -83,15 +92,8 @@
       type: "select",
       label: "Condition",
       placeholder: "Select condition",
-      value: null,
-      options: [
-        { label: ">", id: ">" },
-        { label: ">=", id: ">=" },
-        { label: "<", id: "<" },
-        { label: "<=", id: "<=" },
-        { label: "is", id: "is" },
-        { label: "is not", id: "is_not" },
-      ],
+      value: condition_options[4],
+      options: condition_options
     },
 
     amount: {
@@ -165,10 +167,6 @@
           options={filter.filter.options}
           bind:value={filter.filter.value}
           on:change={() => {
-            // Reset dependent fields when filter type changes
-            filter.date.value = null;
-            filter.condition.value = null;
-            filter.amount.value = "";
             draft = [...draft];
           }}
         />

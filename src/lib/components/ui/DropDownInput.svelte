@@ -361,6 +361,10 @@
       }
       .text {
         flex-grow: 1;
+        overflow: hidden;
+        flex-shrink: 1;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       .input-element {
         display: flex;

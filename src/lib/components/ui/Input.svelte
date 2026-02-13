@@ -290,7 +290,9 @@
         align-items: center;
         gap: var(--spacing-md, 8px);
         flex: 1 0 0;
+        max-width: 100%;
         align-self: stretch;
+        overflow: hidden;
 
         input {
           overflow: hidden;
@@ -300,6 +302,7 @@
           padding: 10px 14px;
           flex-grow: 1;
           max-height: 100%;
+          max-width: 100%;
           height: 100%;
           background: transparent;
 
