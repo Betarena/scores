@@ -32,7 +32,6 @@
   import Pagination from "$lib/components/ui/Pagination.svelte";
   import PopupMenu from "$lib/components/ui/PopupMenu.svelte";
   import Table from "$lib/components/ui/table/Table.svelte";
-  import ScrollDataWrapper from "$lib/components/ui/wrappers/ScrollDataWrapper.svelte";
   import session from "$lib/store/session.js";
   import type { Column, Row } from "$lib/types/types.table.js";
   import type {
@@ -193,7 +192,7 @@
 <svelte:window on:scroll={handleScroll} />
 <div class="publication-subscribers {viewportType}" bind:this={node}>
   <div class="statistic">
-    <ScrollDataWrapper data={statistic} let:item>
+    {#each statistic as item (item.id)}
       <button
         class="metric-wrapper"
         class:active={item.id === activeStatistic}
@@ -201,14 +200,14 @@
       >
         <MetricItem4 text={item.text} number={item.number} change={item.change}>
           <div class="bta" slot="number">
-            {item.number} 
+            {item.number}
             {#if item.id === "revenue"}
-               <span class="usd">$40</span>
+              <span class="usd">$40</span>
             {/if}
           </div>
         </MetricItem4>
       </button>
-    </ScrollDataWrapper>
+    {/each}
   </div>
   <div class="header">
     <div class="search-wrapper">
@@ -437,6 +436,24 @@
     &.desktop {
       .no-content {
         max-height: 368px;
+      }
+    }
+
+    &.mobile {
+      overflow-x: visible;
+
+      .statistic {
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding: 0 var(--spacing-lg, 12px);
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
       }
     }
   }
