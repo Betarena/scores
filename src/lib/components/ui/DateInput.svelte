@@ -3,6 +3,7 @@
   import Calendar from "./Calendar.svelte";
   import CalendarIcon from "$lib/components/ui/assets/calendar.svelte";
   import Button from "./Button.svelte";
+  import session from "$lib/store/session.js";
 
   type DateInput = Date | string | null;
 
@@ -27,6 +28,8 @@
   let selectedDate: Date | null = normalizeDateInput(value);
   let containerRef: HTMLDivElement;
   let calendarRef: HTMLDivElement;
+
+  $: isMobile = $session.viewportType === "mobile";
 
   function normalizeDateInput(input: DateInput): Date | null {
     if (input instanceof Date) {
@@ -105,21 +108,45 @@
   </Button>
 
   {#if isOpen}
-    <div class="calendar-popup" bind:this={calendarRef}>
-      <Calendar
-        bind:value={selectedDate}
-        {minDate}
-        {maxDate}
-        {minYear}
-        {maxYear}
-        {locale}
-        showActions={true}
-        showFooter={true}
-        on:select={handleCalendarSelect}
-        on:apply={handleCalendarApply}
-        on:cancel={handleCalendarCancel}
-      />
-    </div>
+    {#if isMobile}
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <div class="calendar-backdrop" on:click={closeCalendar}>
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <div class="calendar-popup calendar-popup--mobile" bind:this={calendarRef} on:click|stopPropagation>
+          <Calendar
+            bind:value={selectedDate}
+            {minDate}
+            {maxDate}
+            {minYear}
+            {maxYear}
+            {locale}
+            showActions={true}
+            showFooter={true}
+            on:select={handleCalendarSelect}
+            on:apply={handleCalendarApply}
+            on:cancel={handleCalendarCancel}
+          />
+        </div>
+      </div>
+    {:else}
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <div class="calendar-popup" bind:this={calendarRef} on:click|stopPropagation>
+        <Calendar
+          bind:value={selectedDate}
+          {minDate}
+          {maxDate}
+          {minYear}
+          {maxYear}
+          {locale}
+          showActions={true}
+          showFooter={true}
+          on:select={handleCalendarSelect}
+          on:apply={handleCalendarApply}
+          on:cancel={handleCalendarCancel}
+        />
+      </div>
+    {/if}
   {/if}
 </div>
 
@@ -127,6 +154,20 @@
   .date-input-container {
     position: relative;
     display: inline-block;
+  }
+
+  .calendar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
   }
 
   .calendar-popup {
@@ -140,6 +181,13 @@
       0 8px 8px -4px rgba(10, 13, 18, 0.03),
       0 3px 3px -1.5px rgba(10, 13, 18, 0.04);
     animation: slideUp 0.2s ease;
+  }
+
+  .calendar-popup--mobile {
+    position: relative;
+    top: auto;
+    left: auto;
+    animation: slideUpMobile 0.3s ease;
   }
   .calendar-icon {
     height: 20px;
@@ -161,6 +209,26 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUpMobile {
+    from {
+      opacity: 0;
+      transform: translateY(100px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 </style>
