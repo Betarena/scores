@@ -127,20 +127,6 @@ const
        * 📝 Set of used HTML elements.
        */
       setHtmlElementsUsed: Set<string>;
-      /**
-       * @description
-       * 📝 Map of declared CSS variables to their minified names.
-       * @example
-       * { '--my-variable': '--a', '--another-variable': '--b' }
-       */
-      mapShortenedNames: Map<string, string>;
-      /**
-       * @description
-       * 📝 Map of declared CSS variables to their minified names.
-       * @example
-       * { '--my-variable': '--a', '--another-variable': '--b' }
-       */
-      mapDeclaredCssVarsToMinifiedNames: Map<string, string>;
     }
   } = {
     strDebugLevel: 'info',
@@ -160,8 +146,6 @@ const
         setCssClassesDeclared: new Set<string>(),
       },
       setHtmlElementsUsed: new Set<string>(),
-      mapShortenedNames: new Map<string, string>(),
-      mapDeclaredCssVarsToMinifiedNames: new Map<string, string>(),
       mapSvelteFileExtractions: new Map(),
     }
   }
@@ -252,7 +236,7 @@ export function sveltekitCssPurge
   (
     dedent`\n
     ╭──────────────────────────────────────────────────────────────────────────────────╮
-    │ 📌 [variables] Declared :: ${objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.size}
+    │ 📌 [variables] Declared :: ${objGlobal.objValues.objCssGlobal.setCssVarsDeclared.size}
     │ 📌 [variables] Used :: ${objGlobal.objValues.objCssGlobal.setCssVarsUsed.size}
     ├──────────────────────────────────────────────────────────────────────────────────┤
     │ 🔹 [classes] Declared :: ${objGlobal.objValues.objCssGlobal.setCssClassesDeclared.size}
@@ -315,42 +299,16 @@ export function sveltekitCssPurge
           ]
         ;
 
-        let
-          /**
-           * @description
-           * 📝 Transformed code
-           */
-          _code = code
-        ;
-
         // ╭─────
         // │ NOTE:
         // │ |: loop over all matches of 'var(--variable-name[..]' in the code (markup, script, style),
         // │ |: capturing USED CSS variable name
         // ╰─────
-        for (const element of Array.from(code.matchAll(/var\(\s*(--[A-Za-z0-9-_]+)/g)).sort((a, b) => b[1].length - a[1].length))
+        for (const element of Array.from(code.matchAll(/var\(\s*(--[A-Za-z0-9-_]+)/g)))
         {
-          //  [🐞]
-          // log
-          // (
-          //   `CSS VAR is USED : ${chalk.green(element[1])}`
-          // );
-
           _setUsedCssVarsInThisFile.add(element[1]);
 
           objGlobal.objValues.objCssGlobal.setCssVarsUsed.add(element[1]);
-
-          _code = _code
-            .replaceAll
-            (
-              new RegExp
-              (
-                `(?<![A-Za-z0-9-])${element[1]}(?![A-Za-z0-9-])`,
-                'g'
-              ),
-              (objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1]) ?? element[1])
-            )
-          ;
         }
 
         _setUsedCssClassesInThisFile
@@ -361,7 +319,7 @@ export function sveltekitCssPurge
           .forEach(item => objGlobal.objValues.setHtmlElementsUsed.add(item))
         ;
 
-        return _code;
+        return code;
       }
 
       if (id.endsWith('.svelte'))
@@ -383,20 +341,6 @@ export function sveltekitCssPurge
             // ),
         };
       }
-      // else if (id.endsWith('.css'))
-      //   return {
-      //     code: helperGlobalCssPurge
-      //     (
-      //       code,
-      //       setCssClassesUsed,
-      //       setHtmlElementsUsed,
-      //       setCssVarsDeclared,
-      //       mapDeclaredCssVarsToMinifiedNames
-      //     ),
-      //     map: null,
-      //   };
-      // ;
-
       return;
     },
 
@@ -421,23 +365,6 @@ export function sveltekitCssPurge
           // │ NOTE:
           // │ |: purge UNUSED CSS classes from the global CSS asset based on used classes in Svelte files
           // ╰─────
-          for (const element of file.source?.matchAll(/(--[A-Za-z0-9_-]+)\b/g))
-          {
-            if (objGlobal.objValues.objCssGlobal.setCssVarsDeclared.has(element[1]))
-            {
-              // [🐞]
-              // log
-              // (
-              //   `❌ original variable still present :: ${chalk.yellow(element[1])} → ${chalk.green(objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1] ?? '') ?? element[1])}`,
-              //   'warn' // WARNING: recommended 'debug' level only
-              // );
-              // file.source = file.source?.toString().replaceAll
-              // (
-              //   element[1],
-              //   (objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element[1]) ?? element[1])
-              // );
-            }
-          }
         }
       }
     },
@@ -479,11 +406,6 @@ export function sveltekitCssPurge
                 total: listCssVarsUnused.length,
                 list: listCssVarsUnused,
               },
-              minified:
-              {
-                total: objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.size,
-                list: Array.from(objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.entries()),
-              },
             },
             'css-classes':
             {
@@ -519,7 +441,7 @@ export function sveltekitCssPurge
       (
         dedent`\n
         ╭──────────────────────────────────────────────────────────────────────────────────╮
-        │ 📌 [variables] Declared :: ${objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.size}
+        │ 📌 [variables] Declared :: ${objGlobal.objValues.objCssGlobal.setCssVarsDeclared.size}
         │ 📌 [variables] Used :: ${objGlobal.objValues.objCssGlobal.setCssVarsUsed.size}
         │ 📌 [variables] Unused :: ${listCssVarsUnused.length}
         ├──────────────────────────────────────────────────────────────────────────────────┤
@@ -871,73 +793,6 @@ function helperGlobalCssAnalyze
     objGlobal.objValues.objCssGlobal.setCssClassesDeclared.add(element[1]);
   ;
 
-  // ╭─────
-  // │ NOTE:
-  // │ |: loop over all 'declared-css-variables', generating minified names
-  // ╰─────
-  for (const cssVar of Array.from(objGlobal.objValues.objCssGlobal.setCssVarsDeclared).sort((a, b) => b.length - a.length))
-  {
-    let
-      /**
-       * @description
-       * 📝 Shortened CSS variable name
-       */
-      strCssShort = helperCssVariableShorten
-        (
-          cssVar
-        )
-    ;
-
-    // ╭─────
-    // │ NOTE:
-    // │ │: handle potential name collisions in minified CSS variable names
-    // ╰─────
-    if (objGlobal.objValues.mapShortenedNames.has(strCssShort))
-    {
-      // [🐞]
-      log
-      (
-        `variable minification conflict :: ${cssVar} → ${strCssShort}, conlicting ${objGlobal.objValues.mapShortenedNames.get(strCssShort)}`,
-        'warn'
-      );
-
-      let
-        /**
-         * @description
-         * 📝 ASCII sum of CSS variable name
-         */
-        intAsciiSum = 0
-      ;
-
-      // ╭─────
-      // │ NOTE:
-      // │ |: compute ASCII sum of CSS variable name to append to minified name for uniqueness
-      // ╰─────
-      for (var i = 0; i < cssVar.length; i++)
-        intAsciiSum += cssVar.charCodeAt(i);
-      ;
-
-      strCssShort = `${strCssShort}-${intAsciiSum}`;
-    }
-
-    // [🐞]
-    objGlobal.objValues.mapShortenedNames
-      .set
-      (
-        strCssShort,
-        cssVar
-      )
-    ;
-
-    objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames
-      .set
-      (
-        cssVar,
-        strCssShort
-      )
-    ;
-  }
-
   return;
 }
 
@@ -1156,55 +1011,6 @@ function helperGlobalCssPurge
    * @summary
    *  🔹 HELPER
    * @description
-   *  📝 Helper to shorten CSS variable names in the CSS text.
-   * @return { void }
-   *  📝 No return value.
-   */
-  function _helperCssVariableShorten
-  (
-  ): void
-  {
-    // ╭─────
-    // │ NOTE:
-    // │ |: loop over all declared CSS variables, replacing with minified names
-    // ╰─────
-    for (const element of Array.from(objGlobal.objValues.objCssGlobal.setCssVarsDeclared).sort((a, b) => b.length - a.length))
-    {
-      // ╭─────
-      // │ CHECK:
-      // │ |: if variable is NOT found in the final CSS
-      // ╰─────
-      if (!strModifiedCssClean.includes(element))
-        continue;
-      ;
-
-      // [🐞]
-      log
-      (
-        `css variable replacement :: ${chalk.yellow(element)} → ${chalk.green(objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element) ?? element)}`,
-        'debug' // WARNING: recommended 'debug' level only
-      );
-
-      strModifiedCssClean = strModifiedCssClean
-        .replace
-        (
-          new RegExp
-            (
-              `${element}\\b`,
-              'g'
-            ),
-          `${(objGlobal.objValues.mapDeclaredCssVarsToMinifiedNames.get(element) ?? element)}`
-        )
-      ;
-    }
-  }
-
-  /**
-   * @author
-   *  @migbash
-   * @summary
-   *  🔹 HELPER
-   * @description
    *  📝 Helper to batch purge unused CSS classes/selectors from the CSS text.
    * @return { void }
    *  📝 No return value.
@@ -1312,7 +1118,6 @@ function helperGlobalCssPurge
 
   _helperCssVariableUnusedRemove();
   _helperCssBatchPurge();
-  _helperCssVariableShorten();
 
   // ╭─────
   // │ NOTE:
@@ -1346,77 +1151,3 @@ function helperGlobalCssPurge
   return;
 }
 
-// ╭──────────────────────────────────────────────────────────────────────────────────╮
-// │ 💠 │ HELPER - MISCELLENOUS                                                       │
-// ╰──────────────────────────────────────────────────────────────────────────────────╯
-
-/**
- * @author
- *  @migbash
- * @summary
- *  🔹 HELPER
- * @description
- *  📝 Shorten a CSS variable name to a minified version.
- * @example
- *  helperCssVariableShorten('--primary-button-background-color') // returns '--pbcb'
- * @param { string } strName
- *  ❗️ **REQUIRED** CSS variable name (e.g., '--primary-button-background-color').
- * @return { string }
- *  📤 Minified CSS variable name (e.g., '--pbcb' for '--primary-button-background-color').
- */
-function helperCssVariableShorten
-(
-  strName: string,
-  intOption?: number = 1,
-): string
-{
-  if (!strName.startsWith("--"))
-    throw new Error("Not a CSS variable");
-  ;
-
-  const
-    /**
-     * @description
-     * 📝 Minified CSS variable name
-     */
-    strNewName
-      = '--' + strName
-        .slice
-        (
-          2
-        )
-        .replaceAll
-        (
-          '_',
-          '-'
-        )
-        .split
-        (
-          "-"
-        )
-        // ╭─────
-        // │ NOTE:
-        // │ |: map each part to its first character (or digit)
-        // ╰─────
-        .map
-        (
-          part =>
-          {
-            return part[0];
-          }
-        )
-        .join
-        (
-          ""
-        )
-  ;
-
-  // [🐞]
-  log
-  (
-    `minified css variable :: ${chalk.yellow(strName)} → ${chalk.green(strNewName)}`,
-    'info'
-  );
-
-  return strNewName;
-}
