@@ -16,7 +16,11 @@ export function buildPurgeUrls(baseUrl: string, permalink: string): string[]
     `${baseUrl}/a/${permalink}`,
     `${baseUrl}/a/${permalink}/__data.json`,
     `${baseUrl}/`,
-    ...LOCALE_ROOTS.map((locale) => `${baseUrl}/${locale}`)
+    `${baseUrl}/__data.json`,
+    ...LOCALE_ROOTS.flatMap((locale) => [
+      `${baseUrl}/${locale}`,
+      `${baseUrl}/${locale}/__data.json`
+    ])
   ];
 
   return [...new Set(urls.filter(Boolean))];
