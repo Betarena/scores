@@ -160,6 +160,12 @@ async function purgeArticleCache(origin: string, action: string, articleId: numb
 {
   try
   {
+    // Warm Redis cache with fresh data from Hasura
+    await fetch(
+      `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
+    );
+
     const urls = buildPurgeUrls(origin, permalink);
     await purgeUrls(origin, urls);
     console.log(`[cf-purge] action=${action} articleId=${articleId} urls=${urls.length}`);
