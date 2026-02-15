@@ -19,6 +19,7 @@
 import dotenv from 'dotenv';
 
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
+import { purgeUrls, buildPurgeUrls } from '$lib/cloudflare/index.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
@@ -44,13 +45,13 @@ export async function GET
 
 
 
-export const POST: RequestHandler = async ({ request, locals }) =>
+export const POST: RequestHandler = async ({ request, locals, url }) =>
 {
   try
   {
     if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
     const body = await request.json();
-    const { content, title, author_id, id, seo, tags, uid, locale, access_type, reward_tier_id } = body;
+    const { content, title, author_id, id, seo, tags, uid, locale, access_type, reward_tier_id, author_permalink } = body;
     const image = (body.image || {}) as { src: string; width: number; height: number };
     if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
 
@@ -99,6 +100,8 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       access_type,
       reward_tier_id
     });
+    const fullPermalink = author_permalink ? `${author_permalink}/${permalink}-${articleId}` : permalink;
+    purgeArticleCache(url.origin, 'upsert', articleId, fullPermalink);
     return json({ success: true, id: articleId });
 
   } catch (e)
@@ -129,7 +132,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) =>
   }
 };
 
-export const PUT: RequestHandler = async ({ locals, request }) =>
+export const PUT: RequestHandler = async ({ locals, request, url }) =>
 {
   if (!locals.uid) return json({ success: false, message: "Unauthorized" });
   const body = await request.json();
@@ -142,6 +145,7 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     });
+    if (permalink) purgeArticleCache(url.origin, status, id, permalink);
     return json({ success: true, permalink });
 
   } catch (e)
@@ -151,3 +155,23 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
   }
   return new Response();
 };
+
+async function purgeArticleCache(origin: string, action: string, articleId: number, permalink: string): Promise<void>
+{
+  try
+  {
+    // Warm Redis cache with fresh data from Hasura
+    await fetch(
+      `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
+    );
+
+    const urls = buildPurgeUrls(origin, permalink);
+    await purgeUrls(origin, urls);
+    console.log(`[cf-purge] action=${action} articleId=${articleId} urls=${urls.length}`);
+  }
+  catch (e)
+  {
+    console.error(`[cf-purge] failed action=${action} articleId=${articleId}`, e);
+  }
+}
