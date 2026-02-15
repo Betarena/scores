@@ -166,6 +166,7 @@ export async function upsert({
     title: sanitizedTitle,
     id,
     author_id: author.id,
+    author_permalink: author.permalink,
     tags,
     seo,
     image,
