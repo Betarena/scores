@@ -191,8 +191,7 @@ export async function upsert({
         goto(
           `/u/author/publication/${author.permalink}/${session.extract(
             "lang"
-          )}?view=articles`,
-          { invalidateAll: true }
+          )}?view=articles`
         );
       });
     }
@@ -275,8 +274,7 @@ export async function publish({
         goto(
           `/u/author/publication/${sportstack.permalink}/${session.extract(
             "lang"
-          )}?view=articles`,
-          { invalidateAll: true }
+          )}?view=articles`
         );
       }, 500);
     }
