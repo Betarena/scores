@@ -102,8 +102,7 @@ export const POST: RequestHandler = async ({ request, locals, url }) =>
     });
     const authorSlug = String(author_permalink || '').replace(/^\/+|\/+$/g, '');
     const fullPermalink = authorSlug ? `${authorSlug}/${permalink}-${articleId}` : permalink;
-    // Fire-and-forget: cache purge must not block the API response or cause mutation failure
-    purgeArticleCache(url.origin, 'upsert', articleId, fullPermalink);
+    await purgeArticleCache(url.origin, 'upsert', articleId, fullPermalink);
     return json({ success: true, id: articleId });
 
   } catch (e)
@@ -147,8 +146,7 @@ export const PUT: RequestHandler = async ({ locals, request, url }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     });
-    // Fire-and-forget: cache purge must not block the API response or cause mutation failure
-    if (permalink) purgeArticleCache(url.origin, status, id, permalink);
+    if (permalink) await purgeArticleCache(url.origin, status, id, permalink);
     return json({ success: true, permalink });
 
   } catch (e)
