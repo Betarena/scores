@@ -19,7 +19,6 @@
 import dotenv from 'dotenv';
 
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
-import { purgeUrls, buildPurgeUrls } from '$lib/cloudflare/index.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
@@ -51,7 +50,7 @@ export const POST: RequestHandler = async ({ request, locals, url }) =>
   {
     if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
     const body = await request.json();
-    const { content, title, author_id, id, seo, tags, uid, locale, access_type, reward_tier_id, author_permalink } = body;
+    const { content, title, author_id, id, seo, tags, uid, locale, access_type, reward_tier_id } = body;
     const image = (body.image || {}) as { src: string; width: number; height: number };
     if (locals.uid !== uid) return json({ success: false, message: "Not an owner" });
 
@@ -100,9 +99,7 @@ export const POST: RequestHandler = async ({ request, locals, url }) =>
       access_type,
       reward_tier_id
     });
-    const authorSlug = String(author_permalink || '').replace(/^\/+|\/+$/g, '');
-    const fullPermalink = authorSlug ? `${authorSlug}/${permalink}-${articleId}` : permalink;
-    await purgeArticleCache(url.origin, 'upsert', articleId, fullPermalink);
+    await warmCacheAndPurge(articleId, url.origin);
     return json({ success: true, id: articleId });
 
   } catch (e)
@@ -146,7 +143,7 @@ export const PUT: RequestHandler = async ({ locals, request, url }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     });
-    if (permalink) await purgeArticleCache(url.origin, status, id, permalink);
+    if (permalink) await warmCacheAndPurge(id, url.origin);
     return json({ success: true, permalink });
 
   } catch (e)
@@ -157,25 +154,23 @@ export const PUT: RequestHandler = async ({ locals, request, url }) =>
   return new Response();
 };
 
-async function purgeArticleCache(origin: string, action: string, articleId: number, permalink: string): Promise<void>
+/**
+ * @description
+ *  📝 Calls the cache service to warm Redis and purge Cloudflare edge cache.
+ *  The cache service handles both steps internally after the Redis write.
+ */
+async function warmCacheAndPurge(articleId: number, origin: string): Promise<void>
 {
   try
   {
-    // Step 1: Warm Redis cache with fresh data from Hasura (must complete before CF purge
-    // so the origin serves updated content when edge cache is cleared)
     await fetch(
-      `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article`,
+      `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article&purgeOrigins[]=${encodeURIComponent(origin)}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
     );
-
-    // Step 2: Purge CF edge cache (runs after Redis is warm to avoid serving stale origin data)
-    const urls = await buildPurgeUrls(origin, permalink);
-    await purgeUrls(origin, urls);
-    console.log(`[cf-purge] action=${action} articleId=${articleId} urls=${urls.length}`);
   }
   catch (e)
   {
     const message = e instanceof Error ? e.message : String(e);
-    console.error(`[cf-purge] failed action=${action} articleId=${articleId} error=${message}`);
+    console.error(`[cache-warm] failed articleId=${articleId} error=${message}`);
   }
 }
