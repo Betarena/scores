@@ -100,7 +100,9 @@ export const POST: RequestHandler = async ({ request, locals, url }) =>
       access_type,
       reward_tier_id
     });
-    const fullPermalink = author_permalink ? `${author_permalink}/${permalink}-${articleId}` : permalink;
+    const authorSlug = String(author_permalink || '').replace(/^\/+|\/+$/g, '');
+    const fullPermalink = authorSlug ? `${authorSlug}/${permalink}-${articleId}` : permalink;
+    // Fire-and-forget: cache purge must not block the API response or cause mutation failure
     purgeArticleCache(url.origin, 'upsert', articleId, fullPermalink);
     return json({ success: true, id: articleId });
 
@@ -145,6 +147,7 @@ export const PUT: RequestHandler = async ({ locals, request, url }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     });
+    // Fire-and-forget: cache purge must not block the API response or cause mutation failure
     if (permalink) purgeArticleCache(url.origin, status, id, permalink);
     return json({ success: true, permalink });
 
@@ -160,18 +163,21 @@ async function purgeArticleCache(origin: string, action: string, articleId: numb
 {
   try
   {
-    // Warm Redis cache with fresh data from Hasura
+    // Step 1: Warm Redis cache with fresh data from Hasura (must complete before CF purge
+    // so the origin serves updated content when edge cache is cleared)
     await fetch(
       `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
     );
 
+    // Step 2: Purge CF edge cache (runs after Redis is warm to avoid serving stale origin data)
     const urls = await buildPurgeUrls(origin, permalink);
     await purgeUrls(origin, urls);
     console.log(`[cf-purge] action=${action} articleId=${articleId} urls=${urls.length}`);
   }
   catch (e)
   {
-    console.error(`[cf-purge] failed action=${action} articleId=${articleId}`, e);
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(`[cf-purge] failed action=${action} articleId=${articleId} error=${message}`);
   }
 }
