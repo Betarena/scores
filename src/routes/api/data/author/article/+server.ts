@@ -166,7 +166,7 @@ async function purgeArticleCache(origin: string, action: string, articleId: numb
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
     );
 
-    const urls = buildPurgeUrls(origin, permalink);
+    const urls = await buildPurgeUrls(origin, permalink);
     await purgeUrls(origin, urls);
     console.log(`[cf-purge] action=${action} articleId=${articleId} urls=${urls.length}`);
   }
