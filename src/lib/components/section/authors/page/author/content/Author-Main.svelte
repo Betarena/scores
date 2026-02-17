@@ -167,6 +167,7 @@
   $: uid = firebase_user_data?.uid;
   $: insufficientAmount = user && $walletStore.spending.available < 1;
   $: mobile = viewportType === "mobile";
+  $: videoJsonLd = extractVideoJsonLd(widgetData.article);
   $: tablet = viewportType === "tablet";
   $: related_articles_map = new Map(related_articles) as Map<Number, IArticle>;
 
@@ -191,6 +192,9 @@
 
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
+  }
+  $: if (paid && accessGranted && contentContainer && browser) {
+    tick().then(() => loadPaidVideoPlayback(contentContainer));
   }
   $: if (secondP && paid && !accessGranted) {
     secondP.style.minHeight = `${
@@ -273,6 +277,52 @@
         props,
       });
     });
+  }
+
+  function extractVideoJsonLd(article: any): object[] {
+    const content = article?.data?.content as string | undefined;
+    if (!content) return [];
+
+    const regex = /data-asset-id="([^"]+)"[^>]*data-ext="([^"]+)"/g;
+    const results: object[] = [];
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(content)) !== null) {
+      const assetId = match[1];
+      const ext = match[2];
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://betarena.com';
+
+      results.push({
+        '@context': 'https://schema.org',
+        '@type': 'VideoObject',
+        name: article.data?.title ?? '',
+        description: article.seo_details?.main_data?.description ?? '',
+        contentUrl: `${origin}/video/${assetId}.${ext}`,
+        thumbnailUrl: `${origin}/thumb/${assetId}.jpg`,
+        uploadDate: article.published_date ?? '',
+      });
+    }
+
+    return results;
+  }
+
+  async function loadPaidVideoPlayback(container: HTMLElement) {
+    const videos = container.querySelectorAll('video[data-asset-id]') as NodeListOf<HTMLVideoElement>;
+    for (const video of videos) {
+      const assetId = video.getAttribute('data-asset-id');
+      if (!assetId || video.dataset.signedLoaded) continue;
+      try {
+        const res = await fetch(`/api/media/video/${assetId}/playback`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.srcUrl) video.src = data.srcUrl;
+          if (data.posterUrl) video.poster = data.posterUrl;
+          video.dataset.signedLoaded = 'true';
+        }
+      } catch {
+        // signed URL load failed, keep stable proxy URLs
+      }
+    }
   }
 
   $: if (widgetData.article.data?.content && contentContainer && browser) {
@@ -394,6 +444,9 @@
   {#if twitterScriptsInserted}
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8">
     </script>
+  {/if}
+  {#if videoJsonLd.length > 0}
+    {@html videoJsonLd.map(v => `<script type="application/ld+json">${JSON.stringify(v)}</script>`).join('')}
   {/if}
 </svelte:head>
 <div id={CNAME} data-betarena-zone-id="4" class={viewportType}>

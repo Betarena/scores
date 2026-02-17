@@ -21,6 +21,7 @@ import dotenv from 'dotenv';
 import { main } from '$lib/sveltekit/endpoint/author.article.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
+import { entryMediaAssetLinkToArticle } from '@betarena/scores-lib/dist/functions/v8/media.main.js';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
 
 // #endregion ➤ 📦 Package
@@ -99,6 +100,14 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       access_type,
       reward_tier_id
     });
+    // ╭─────
+    // │ NOTE: Link video assets to article if provided.
+    // ╰─────
+    const videoAssetIds = body.videoAssetIds as string[] | undefined;
+    if (videoAssetIds && videoAssetIds.length > 0) {
+      await entryMediaAssetLinkToArticle(videoAssetIds, articleId);
+    }
+
     return json({ success: true, id: articleId });
 
   } catch (e)

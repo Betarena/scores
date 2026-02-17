@@ -35,13 +35,16 @@
   import BubbleMenu from "@tiptap/extension-bubble-menu";
   import Placeholder from "@tiptap/extension-placeholder";
   import StarterKit from "@tiptap/starter-kit";
-  import { createEventDispatcher, onMount } from "svelte";
-  import { ImageWithPlaceholder, SafeLink, Tweet, WidgetNode, YouTube } from "./editor_nodes.js";
+  import { doc, onSnapshot, type Unsubscribe } from 'firebase/firestore';
+  import { db_firestore } from '$lib/firebase/init.js';
+  import { createEventDispatcher, onMount, onDestroy } from "svelte";
+  import { ImageWithPlaceholder, SafeLink, Tweet, VideoNode, WidgetNode, YouTube } from "./editor_nodes.js";
   import ImageAltModal from "./ImageAltModal.svelte";
   import InsertLinkModal from "./InsertLinkModal.svelte";
   import LinkPopup from "./LinkPopup.svelte";
   import PublishModal from "./PublishModal.svelte";
   import Toolbar from "./Toolbar.svelte";
+  import VideoUploader from "./VideoUploader.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -67,6 +70,7 @@
   export let translations:
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
+  export let authorId: number = 0;
 
   let element;
   let titleInFocus = false;
@@ -78,6 +82,8 @@
   let linkState = { url: "", text: "" };
   let textareaNode;
   let editor;
+  let showVideoUploader = false;
+  const videoSubscriptions: Map<string, Unsubscribe> = new Map();
 
   $: if ($modalStore.show) {
     linkInsertModal = false;
@@ -219,6 +225,7 @@
       content: content || "",
       extensions: [
         WidgetNode,
+        VideoNode,
         YouTube,
         Tweet,
         StarterKit,
@@ -401,6 +408,94 @@
     }
   }
 
+  function handleVideoUploadStart(e: CustomEvent<{ assetId: string; ext: string }>) {
+    const { assetId, ext } = e.detail;
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'video',
+        attrs: { assetId, ext, status: 'uploading' },
+      })
+      .run();
+  }
+
+  function handleVideoUploaded(e: CustomEvent<{ assetId: string; ext: string }>) {
+    const { assetId, ext } = e.detail;
+    // Update node to processing status
+    updateVideoNodeStatus(assetId, 'processing');
+    // Subscribe to Firestore for real-time status updates
+    subscribeToAssetStatus(assetId, ext);
+  }
+
+  function subscribeToAssetStatus(assetId: string, ext: string) {
+    // Avoid duplicate subscriptions
+    if (videoSubscriptions.has(assetId)) return;
+
+    const docRef = doc(db_firestore, 'media_assets', assetId);
+    const unsubscribe = onSnapshot(docRef, (snapshot) => {
+      const data = snapshot.data();
+      if (!data) return;
+
+      if (data.status === 'ready') {
+        updateVideoNodeStatus(assetId, 'ready');
+        // Clean up subscription
+        unsubscribe();
+        videoSubscriptions.delete(assetId);
+      } else if (data.status === 'failed') {
+        // Remove the video node on failure
+        editor
+          .chain()
+          .focus()
+          .command(({ tr }) => {
+            let found = false;
+            tr.doc.descendants((node, pos) => {
+              if (node.type.name === 'video' && node.attrs.assetId === assetId) {
+                tr.delete(pos, pos + node.nodeSize);
+                found = true;
+                return false;
+              }
+              return true;
+            });
+            return found;
+          })
+          .run();
+        unsubscribe();
+        videoSubscriptions.delete(assetId);
+      } else if (data.status === 'processing') {
+        updateVideoNodeStatus(assetId, 'processing');
+      }
+    });
+
+    videoSubscriptions.set(assetId, unsubscribe);
+  }
+
+  function updateVideoNodeStatus(assetId: string, status: string) {
+    editor
+      .chain()
+      .command(({ tr }) => {
+        let found = false;
+        tr.doc.descendants((node, pos) => {
+          if (node.type.name === 'video' && node.attrs.assetId === assetId) {
+            tr.setNodeMarkup(pos, undefined, { ...node.attrs, status });
+            found = true;
+            return false;
+          }
+          return true;
+        });
+        return found;
+      })
+      .run();
+  }
+
+  onDestroy(() => {
+    // Clean up all Firestore subscriptions
+    for (const unsub of videoSubscriptions.values()) {
+      unsub();
+    }
+    videoSubscriptions.clear();
+  });
+
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 </script>
 
@@ -431,6 +526,7 @@
         {editor}
         bind:titleInFocus
         on:showLinkPopup={() => toogleLinkPopup(true)}
+        on:showVideoUploader={() => (showVideoUploader = true)}
       />
     </div>
   </Container>
@@ -480,6 +576,7 @@
       {uploadUrl}
       bind:titleInFocus
       on:showLinkPopup={() => toogleLinkPopup(true)}
+      on:showVideoUploader={() => (showVideoUploader = true)}
     />
   </div>
 {/if}
@@ -500,6 +597,13 @@
     </Container>
   </div>
 {/if}
+
+<VideoUploader
+  {authorId}
+  bind:visible={showVideoUploader}
+  on:uploadstart={handleVideoUploadStart}
+  on:uploaded={handleVideoUploaded}
+/>
 
 <!--
 ╭──────────────────────────────────────────────────────────────────────────────────╮

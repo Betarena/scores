@@ -655,3 +655,116 @@ function normalizeYouTubeSrc(url: string): string {
 function isYouTubeShorts(url: string): boolean {
   return /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/[\w-]{11}/.test(url);
 }
+
+export const VideoNode = Node.create({
+  name: 'video',
+  group: 'block',
+  atom: true,
+  selectable: true,
+
+  addAttributes() {
+    return {
+      assetId: { default: null },
+      ext: { default: 'mp4' },
+      status: { default: 'uploading' },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'video[data-asset-id]',
+        getAttrs: (el: HTMLElement) => ({
+          assetId: el.getAttribute('data-asset-id'),
+          ext: el.getAttribute('data-ext') ?? 'mp4',
+          status: el.getAttribute('data-status') ?? 'ready',
+        }),
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const { assetId, ext, status } = HTMLAttributes;
+
+    if (status === 'uploading' || status === 'processing') {
+      return [
+        'div',
+        mergeAttributes({
+          'data-asset-id': assetId,
+          'data-ext': ext,
+          'data-status': status,
+          class: 'video-placeholder',
+        }),
+      ];
+    }
+
+    return [
+      'video',
+      mergeAttributes({
+        'data-asset-id': assetId,
+        'data-ext': ext,
+        'data-status': status,
+        src: `/video/${assetId}.${ext}`,
+        poster: `/thumb/${assetId}.jpg`,
+        controls: 'true',
+        preload: 'metadata',
+      }),
+    ];
+  },
+
+  addNodeView() {
+    return ({ node }) => {
+      const { assetId, ext, status } = node.attrs;
+      const container = document.createElement('div');
+      container.style.position = 'relative';
+      container.style.minHeight = '200px';
+
+      if (status === 'uploading' || status === 'processing') {
+        container.setAttribute('data-asset-id', assetId);
+        container.setAttribute('data-status', status);
+        container.style.borderRadius = '8px';
+        container.style.backgroundColor = '#2d2d2d';
+        container.style.display = 'flex';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
+
+        const loaderWrapper = document.createElement('div');
+        loaderWrapper.style.cssText = `
+          width: 100%; height: 300px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `;
+        container.appendChild(loaderWrapper);
+
+        new LoaderImage({
+          target: loaderWrapper,
+          props: {
+            width: '100%',
+            height: '100%',
+            borderRadius: 12,
+          },
+        });
+
+        const label = document.createElement('span');
+        label.style.cssText = 'position: absolute; color: #999; font-size: 14px;';
+        label.textContent = status === 'uploading' ? 'Uploading video...' : 'Processing video...';
+        container.appendChild(label);
+      } else {
+        const video = document.createElement('video');
+        video.setAttribute('src', `/video/${assetId}.${ext}`);
+        video.setAttribute('poster', `/thumb/${assetId}.jpg`);
+        video.setAttribute('controls', 'true');
+        video.setAttribute('preload', 'metadata');
+        video.style.width = '100%';
+        video.style.borderRadius = '8px';
+        container.appendChild(video);
+      }
+
+      return {
+        dom: container,
+        update: () => false,
+      };
+    };
+  },
+});

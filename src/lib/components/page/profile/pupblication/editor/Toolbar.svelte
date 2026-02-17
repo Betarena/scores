@@ -44,6 +44,7 @@
   import P from "./icons/P.svelte";
   import Q from "./icons/Q.svelte";
   import Upload from "./icons/Upload.svelte";
+  import Video from "./icons/Video.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -109,6 +110,11 @@
       cb: upload,
       id: "img",
     },
+    video: {
+      icon: Video,
+      cb: () => dispatch('showVideoUploader'),
+      id: "video",
+    },
     bulletList: {
       icon: List,
       cb: () => toggle("toggleBulletList"),
@@ -139,6 +145,7 @@
       toolbarButtons.blockquote,
       toolbarButtons.link,
       toolbarButtons.img,
+      toolbarButtons.video,
       toolbarButtons.bulletList,
       toolbarButtons.orderedList,
       toolbarButtons.undo,
@@ -152,7 +159,7 @@
       toolbarButtons.orderedList,
       toolbarButtons.undo,
     ],
-    second: [toolbarButtons.img, toolbarButtons.bulletList],
+    second: [toolbarButtons.img, toolbarButtons.video, toolbarButtons.bulletList],
   };
 
   $: ({ viewportType } = $session);
