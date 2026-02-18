@@ -1,4 +1,4 @@
-import { goto } from "$app/navigation";
+import { goto, invalidateAll } from "$app/navigation";
 import { postv2 } from "$lib/api/utils.js";
 import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
@@ -166,6 +166,7 @@ export async function upsert({
     title: sanitizedTitle,
     id,
     author_id: author.id,
+    author_permalink: author.permalink,
     tags,
     seo,
     image,
@@ -184,13 +185,13 @@ export async function upsert({
       type: "success",
       title: translations?.article_saved || "Article saved!",
     });
+    await invalidateAll();
     if (reload) {
       setTimeout(() => {
         goto(
           `/u/author/publication/${author.permalink}/${session.extract(
             "lang"
-          )}?view=articles`,
-          { invalidateAll: true }
+          )}?view=articles`
         );
       });
     }
@@ -259,6 +260,7 @@ export async function publish({
   const data = await res.json();
   if (data.success) {
     await checkArticle(data.permalink);
+    await invalidateAll();
     infoMessages.remove(loadingId);
     infoMessages.add({
       type: "success",
