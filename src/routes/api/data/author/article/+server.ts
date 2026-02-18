@@ -164,7 +164,7 @@ async function warmCacheAndPurge(articleId: number, origin: string): Promise<voi
   try
   {
     await fetch(
-      `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article&purgeOrigins[]=${encodeURIComponent(origin)}`,
+      `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article&sync=true&purgeOrigins[]=${encodeURIComponent(origin)}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
     );
   }
