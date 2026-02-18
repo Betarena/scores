@@ -28,12 +28,12 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
 
   const body = await request.json();
-  const { authorId, ext, mime, bytes } = body as { authorId: number; ext: string; mime: string; bytes: number };
+  const { authorId, ext, mime, bytes, articleId } = body as { authorId: number; ext: string; mime: string; bytes: number; articleId: number };
 
   // ╭─────
   // │ NOTE: Validate inputs.
   // ╰─────
-  if (!authorId || !ext || !mime || !bytes)
+  if (!authorId || !ext || !mime || !bytes || !articleId)
     return json({ success: false, message: 'Missing required fields' });
 
   if (!ALLOWED_EXTS.has(ext.toLowerCase()))
@@ -56,7 +56,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       { authorIds: [authorId] }
     )
   ;
-
+    
   const author = authorData.authors_authors?.[0];
 
   if (!author || author.uid !== locals.uid)
@@ -69,6 +69,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
     assetId = crypto.randomUUID(),
     storagePath = `Betarena_Media/authors/authors_list/${authorId}/media/videos/${assetId}/original.${ext.toLowerCase()}`
   ;
+  console.log("UPLOAD_INIT: ", { assetId, authorId, storagePath });
 
   await entryMediaAssetInit
   (
@@ -79,10 +80,11 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       original_path: storagePath,
       mime,
       ext: ext.toLowerCase(),
-      bytes
+      bytes,
+      post_id: articleId
     }
   );
-
+console.log("UPLOAD_INIT SUCCESS: ", )
   return json
   (
     {

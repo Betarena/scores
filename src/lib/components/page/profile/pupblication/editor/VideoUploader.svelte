@@ -20,6 +20,7 @@
 
   export let authorId: number;
   export let visible = false;
+  export let articleId = 0;
 
   const dispatch = createEventDispatcher();
 
@@ -136,6 +137,12 @@
 
     try
     {
+      console.log('Starting upload for', JSON.stringify({
+              authorId,
+              ext,
+              mime: file.type,
+              bytes: file.size
+            }));
       // ╭─────
       // │ STEP 1: Init API call.
       // ╰─────
@@ -151,7 +158,8 @@
               authorId,
               ext,
               mime: file.type,
-              bytes: file.size
+              bytes: file.size,
+              articleId
             }
           )
         }

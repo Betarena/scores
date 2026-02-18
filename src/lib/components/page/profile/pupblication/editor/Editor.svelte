@@ -83,6 +83,7 @@
   let textareaNode;
   let editor;
   let showVideoUploader = false;
+  $: articleId = data?.article?.id;
   const videoSubscriptions: Map<string, Unsubscribe> = new Map();
 
   $: if ($modalStore.show) {
@@ -325,6 +326,13 @@
       },
     });
     contentEditor = editor;
+
+    // Re-subscribe to any in-progress video uploads from a previous session
+    editor.state.doc.descendants((node) => {
+      if (node.type.name === 'video' && (node.attrs.status === 'processing' || node.attrs.status === 'uploading')) {
+        subscribeToAssetStatus(node.attrs.assetId, node.attrs.ext);
+      }
+    });
 
     // Update the viewport height on mount
     updateViewportHeight();
@@ -600,6 +608,7 @@
 
 <VideoUploader
   {authorId}
+  {articleId}
   bind:visible={showVideoUploader}
   on:uploadstart={handleVideoUploadStart}
   on:uploaded={handleVideoUploaded}

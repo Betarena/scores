@@ -339,6 +339,7 @@
     on:update={saveOnChange}
     {publishClick}
     {data}
+    authorId={selectedSportstack?.id}
     bind:contentEditor
   />
 </div>

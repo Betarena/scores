@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   // ╭─────
   // │ NOTE: Mark as uploaded.
   // ╰─────
-  await entryMediaAssetComplete(assetId, durationSec ?? 0);
+  await entryMediaAssetComplete(assetId, parseInt(`${durationSec ?? 0}`));
 
   return json({ success: true });
 };
