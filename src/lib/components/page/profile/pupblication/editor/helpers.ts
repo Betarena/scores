@@ -274,8 +274,7 @@ export async function publish({
         goto(
           `/u/author/publication/${sportstack.permalink}/${session.extract(
             "lang"
-          )}?view=articles`,
-          { invalidateAll: true }
+          )}?view=articles`
         );
       }, 500);
     }
