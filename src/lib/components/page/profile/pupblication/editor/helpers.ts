@@ -271,7 +271,10 @@ export async function publish({
     console.log("[publish] server response | success:", data.success, "| permalink present:", Boolean(data.permalink));
 
     if (data.success) {
-      await invalidateAll();
+      // When redirecting, skip invalidateAll() here — the goto({ invalidateAll: true }) below
+      // handles data refresh on the destination page. Calling invalidateAll() here causes
+      // reactive auto-save in CreateArticle to fire and overwrite the published status back to draft.
+      if (!redirect) await invalidateAll();
       infoMessages.remove(loadingId);
       infoMessages.add({
         type: "success",
