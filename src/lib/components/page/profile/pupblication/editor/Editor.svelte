@@ -70,6 +70,7 @@
     | TranslationSportstacksSectionDataJSONSchema
     | undefined;
   export let authorId: number = 0;
+  export let onBeforeVideoUpload: (() => Promise<void>) | undefined = undefined;
 
   let element;
   let titleInFocus = false;
@@ -527,7 +528,7 @@
         {editor}
         bind:titleInFocus
         on:showLinkPopup={() => toogleLinkPopup(true)}
-        on:showVideoUploader={() => (showVideoUploader = true)}
+        on:showVideoUploader={async () => { if (onBeforeVideoUpload) await onBeforeVideoUpload(); showVideoUploader = true; }}
       />
     </div>
   </Container>
@@ -577,7 +578,7 @@
       {uploadUrl}
       bind:titleInFocus
       on:showLinkPopup={() => toogleLinkPopup(true)}
-      on:showVideoUploader={() => (showVideoUploader = true)}
+      on:showVideoUploader={async () => { if (onBeforeVideoUpload) await onBeforeVideoUpload(); showVideoUploader = true; }}
     />
   </div>
 {/if}

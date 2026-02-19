@@ -340,6 +340,7 @@
     {publishClick}
     {data}
     authorId={selectedSportstack?.id}
+    onBeforeVideoUpload={save}
     bind:contentEditor
   />
 </div>
