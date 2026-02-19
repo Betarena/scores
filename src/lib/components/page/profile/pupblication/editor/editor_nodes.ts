@@ -759,6 +759,24 @@ export const VideoNode = Node.create({
         video.style.width = '100%';
         video.style.borderRadius = '8px';
         container.appendChild(video);
+
+        // ╭─────
+        // │ NOTE: Try signed URL first (works for paid articles too).
+        // │       Fall back to public proxy if not entitled or request fails.
+        // ╰─────
+        fetch(`/api/media/video/${assetId}/playback`)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data?.srcUrl) {
+              video.setAttribute('src', data.srcUrl);
+              if (data.posterUrl) video.setAttribute('poster', data.posterUrl);
+            } else {
+              video.setAttribute('src', `/video/${assetId}.${ext}`);
+            }
+          })
+          .catch(() => {
+            video.setAttribute('src', `/video/${assetId}.${ext}`);
+          });
       }
 
       return {
