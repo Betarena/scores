@@ -137,12 +137,6 @@
 
     try
     {
-      console.log('Starting upload for', JSON.stringify({
-              authorId,
-              ext,
-              mime: file.type,
-              bytes: file.size
-            }));
       // ╭─────
       // │ STEP 1: Init API call.
       // ╰─────

@@ -11,6 +11,41 @@ import type { B_H_COMP_HIGH_Q } from "@betarena/scores-lib/types/types.competiti
 import type { IPageAuthorTagData } from '@betarena/scores-lib/types/v8/preload.authors.js';
 import type { Writable } from 'svelte/store';
 
+// #region ➤ 📌 INLINE SUBSCRIPTIONS (not yet in scores-lib)
+
+const TableMediaAssetsSubscription0 = `
+  subscription TableMediaAssetsSubscription0
+  (
+    $id: uuid!
+  )
+  {
+    media_media_assets_by_pk
+    (
+      id: $id
+    )
+    {
+      id
+      status
+    }
+  }
+`;
+
+interface ITableMediaAssetsSubscription0Var
+{
+  id: string;
+}
+
+interface ITableMediaAssetsSubscription0Out
+{
+  media_media_assets_by_pk:
+  {
+    id: string;
+    status: string;
+  } | null;
+}
+
+// #endregion ➤ 📌 INLINE SUBSCRIPTIONS
+
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 🛠️ METHODS
@@ -524,6 +559,72 @@ export  function subscribeRevolutTransactionListen
         ['graphqlListeners', subscription?.unsubscribe]
       ]
   );
+  return subscription;
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Listens/Subscribes to status changes on a media asset via Hasura GraphQL.
+ *
+ * @param assetId: string
+ * 💠 **[required]** `media_asset` UUID to subscribe.
+ * @param onStatus: (status: string) => void
+ * 💠 **[required]** Callback invoked on every status update.
+ * @returns
+ * `{ unsubscribe: () => void }`
+ */
+export function subscribeMediaAssetStatus
+  (
+    assetId: string,
+    onStatus: (status: string) => void
+  ): { unsubscribe: () => void }
+{
+  const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
+
+  const client = new SubscriptionClient
+    (
+      GRAPHQL_ENDPOINT,
+      {
+        reconnect: true,
+        lazy: true,
+        connectionParams:
+        {
+          headers:
+          {
+            'x-hasura-admin-secret': import.meta.env?.VITE_HASURA_DB_TOKEN ?? ''
+          },
+        },
+        connectionCallback:
+          (
+            error
+          ): void =>
+          {
+            error && console.error(error);
+          },
+      }
+    );
+
+  const variables: ITableMediaAssetsSubscription0Var = { id: assetId };
+
+  const subscription = client
+    .request({ query: TableMediaAssetsSubscription0, variables })
+    .subscribe
+    (
+      {
+        next
+          (
+            { data }: { data: ITableMediaAssetsSubscription0Out }
+          ): void
+        {
+          const status = data?.media_media_assets_by_pk?.status;
+          if (status) onStatus(status);
+        },
+      }
+    );
+
   return subscription;
 }
 

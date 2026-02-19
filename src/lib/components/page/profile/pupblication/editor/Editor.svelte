@@ -35,9 +35,8 @@
   import BubbleMenu from "@tiptap/extension-bubble-menu";
   import Placeholder from "@tiptap/extension-placeholder";
   import StarterKit from "@tiptap/starter-kit";
-  import { doc, onSnapshot, type Unsubscribe } from 'firebase/firestore';
-  import { db_firestore } from '$lib/firebase/init.js';
-  import { createEventDispatcher, onMount, onDestroy } from "svelte";
+  import { subscribeMediaAssetStatus } from '$lib/graphql/graphql.common.js';
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import { ImageWithPlaceholder, SafeLink, Tweet, VideoNode, WidgetNode, YouTube } from "./editor_nodes.js";
   import ImageAltModal from "./ImageAltModal.svelte";
   import InsertLinkModal from "./InsertLinkModal.svelte";
@@ -84,7 +83,7 @@
   let editor;
   let showVideoUploader = false;
   $: articleId = data?.article?.id;
-  const videoSubscriptions: Map<string, Unsubscribe> = new Map();
+  const videoSubscriptions: Map<string, { unsubscribe: () => void }> = new Map();
 
   $: if ($modalStore.show) {
     linkInsertModal = false;
@@ -436,21 +435,16 @@
     subscribeToAssetStatus(assetId, ext);
   }
 
-  function subscribeToAssetStatus(assetId: string, ext: string) {
+  function subscribeToAssetStatus(assetId: string, _ext: string) {
     // Avoid duplicate subscriptions
     if (videoSubscriptions.has(assetId)) return;
 
-    const docRef = doc(db_firestore, 'media_assets', assetId);
-    const unsubscribe = onSnapshot(docRef, (snapshot) => {
-      const data = snapshot.data();
-      if (!data) return;
-
-      if (data.status === 'ready') {
+    const subscription = subscribeMediaAssetStatus(assetId, (status) => {
+      if (status === 'ready') {
         updateVideoNodeStatus(assetId, 'ready');
-        // Clean up subscription
-        unsubscribe();
+        subscription.unsubscribe();
         videoSubscriptions.delete(assetId);
-      } else if (data.status === 'failed') {
+      } else if (status === 'failed') {
         // Remove the video node on failure
         editor
           .chain()
@@ -468,14 +462,14 @@
             return found;
           })
           .run();
-        unsubscribe();
+        subscription.unsubscribe();
         videoSubscriptions.delete(assetId);
-      } else if (data.status === 'processing') {
+      } else if (status === 'processing') {
         updateVideoNodeStatus(assetId, 'processing');
       }
     });
 
-    videoSubscriptions.set(assetId, unsubscribe);
+    videoSubscriptions.set(assetId, subscription);
   }
 
   function updateVideoNodeStatus(assetId: string, status: string) {
@@ -497,9 +491,8 @@
   }
 
   onDestroy(() => {
-    // Clean up all Firestore subscriptions
-    for (const unsub of videoSubscriptions.values()) {
-      unsub();
+    for (const sub of videoSubscriptions.values()) {
+      sub.unsubscribe();
     }
     videoSubscriptions.clear();
   });

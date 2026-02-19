@@ -193,7 +193,7 @@
   $: if (paid && accessGranted && unlockComponent) {
     unlockComponent.$destroy();
   }
-  $: if (paid && accessGranted && contentContainer && browser) {
+  $: if (accessGranted && contentContainer && browser) {
     tick().then(() => loadPaidVideoPlayback(contentContainer));
   }
   $: if (secondP && paid && !accessGranted) {
@@ -283,13 +283,13 @@
     const content = article?.data?.content as string | undefined;
     if (!content) return [];
 
-    const regex = /data-asset-id="([^"]+)"[^>]*data-ext="([^"]+)"/g;
+    const regex = /<video[^>]*data-asset-id="([^"]+)"[^>]*data-ext="([^"]+)"|<video[^>]*data-ext="([^"]+)"[^>]*data-asset-id="([^"]+)"/g;
     const results: object[] = [];
     let match: RegExpExecArray | null;
 
     while ((match = regex.exec(content)) !== null) {
-      const assetId = match[1];
-      const ext = match[2];
+      const assetId = match[1] ?? match[4];
+      const ext = match[2] ?? match[3];
       const origin = typeof window !== 'undefined' ? window.location.origin : 'https://betarena.com';
 
       results.push({
@@ -315,8 +315,11 @@
         const res = await fetch(`/api/media/video/${assetId}/playback`);
         if (res.ok) {
           const data = await res.json();
-          if (data.srcUrl) video.src = data.srcUrl;
-          if (data.posterUrl) video.poster = data.posterUrl;
+          if (data.srcUrl) {
+            video.setAttribute('src', data.srcUrl);
+            video.load();
+          }
+          if (data.posterUrl) video.setAttribute('poster', data.posterUrl);
           video.dataset.signedLoaded = 'true';
         }
       } catch {

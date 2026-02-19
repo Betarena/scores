@@ -72,13 +72,24 @@ export const GET: RequestHandler = async ({ params, locals }) =>
       }
     );
 
+    const signRawText = await signRes.text();
+    console.log('SIGN_RES:', { status: signRes.status, ok: signRes.ok, body: signRawText });
+
     if (signRes.ok)
     {
-      const signData = await signRes.json();
-      signedUrls = signData.data?.urls ?? {};
+      try
+      {
+        const signData = JSON.parse(signRawText);
+        signedUrls = signData.success?.data?.urls ?? signData.data?.urls ?? signData.urls ?? {};
+      }
+      catch (e)
+      {
+        console.error('SIGN_RES parse error:', e);
+      }
     }
   }
 
+  console.log('SIGNED URLS:',{pathsToSign, article_gates: asset.article?.access_type, signedUrls});
   return json
   (
     {

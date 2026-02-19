@@ -7,7 +7,7 @@
 // #region ➤ 📦 Package
 
 import { error } from '@sveltejs/kit';
-import { entryMediaAssetGetForProxy } from '@betarena/scores-lib/dist/functions/v8/media.main.js';
+import { entryMediaAssetGetForPlayback } from '@betarena/scores-lib/dist/functions/v8/media.main.js';
 
 import type { RequestHandler } from './$types.js';
 
@@ -38,7 +38,7 @@ export const GET: RequestHandler = async ({ params, request }) =>
   // ╭─────
   // │ NOTE: Fetch asset metadata.
   // ╰─────
-  const asset = await entryMediaAssetGetForProxy(assetId);
+  const asset = await entryMediaAssetGetForPlayback(assetId);
 
   if (!asset || asset.status !== 'ready' || !asset.post_id)
     throw error(404, { message: 'Not found' } as App.Error);
