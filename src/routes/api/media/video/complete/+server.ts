@@ -17,13 +17,13 @@ import type { RequestHandler } from './$types.js';
 
 export const POST: RequestHandler = async ({ request, locals }) =>
 {
-  if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
+  if (!locals.uid) throw error(401, { message: 'video_unauthorized' } as App.Error);
 
   const body = await request.json();
   const { assetId, durationSec } = body as { assetId: string; durationSec: number };
 
   if (!assetId)
-    return json({ success: false, message: 'Missing assetId' });
+    return json({ success: false, message: 'video_missing_asset_id' });
 
   // ╭─────
   // │ NOTE: Verify ownership.
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   const isOwner = await entryMediaAssetVerifyOwner(assetId, locals.uid);
 
   if (!isOwner)
-    return json({ success: false, message: 'Not an owner' }, { status: 403 });
+    return json({ success: false, message: 'video_not_owner' }, { status: 403 });
 
   // ╭─────
   // │ NOTE: Mark as uploaded.

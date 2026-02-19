@@ -1,3 +1,4 @@
+import WrapperLottie from "$lib/components/misc/WrapperLottie.svelte";
 import LoaderImage from "$lib/components/ui/loaders/LoaderImage.svelte";
 import session from "$lib/store/session.js";
 import userSettings from "$lib/store/user-settings.js";
@@ -737,19 +738,19 @@ export const VideoNode = Node.create({
         `;
         container.appendChild(loaderWrapper);
 
-        new LoaderImage({
+        new WrapperLottie({
           target: loaderWrapper,
           props: {
-            width: '100%',
-            height: '100%',
-            borderRadius: 12,
+            url: '/assets/lottie/ProcessingVideo.lottie',
+            loop: true,
+            autoplay: true,
           },
         });
 
         const label = document.createElement('span');
         label.style.cssText = 'position: absolute; color: #999; font-size: 14px;';
-        label.textContent = status === 'uploading' ? 'Uploading video...' : 'Processing video...';
-        container.appendChild(label);
+        // label.textContent = status === 'uploading' ? 'Uploading video...' : 'Processing video...';
+        // container.appendChild(label);
       } else {
         const video = document.createElement('video');
         video.setAttribute('src', `/video/${assetId}.${ext}`);

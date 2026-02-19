@@ -602,6 +602,7 @@
 <VideoUploader
   {authorId}
   {articleId}
+  {translation}
   bind:visible={showVideoUploader}
   on:uploadstart={handleVideoUploadStart}
   on:uploaded={handleVideoUploaded}

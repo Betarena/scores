@@ -25,7 +25,7 @@ const
 
 export const POST: RequestHandler = async ({ request, locals }) =>
 {
-  if (!locals.uid) throw error(401, { message: 'Unauthorized' } as App.Error);
+  if (!locals.uid) throw error(401, { message: 'video_unauthorized' } as App.Error);
 
   const body = await request.json();
   const { authorId, ext, mime, bytes, articleId } = body as { authorId: number; ext: string; mime: string; bytes: number; articleId: number };
@@ -34,13 +34,13 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   // │ NOTE: Validate inputs.
   // ╰─────
   if (!authorId || !ext || !mime || !bytes || !articleId)
-    return json({ success: false, message: 'Missing required fields' });
+    return json({ success: false, message: 'video_missing_fields' });
 
   if (!ALLOWED_EXTS.has(ext.toLowerCase()))
-    return json({ success: false, message: `Invalid extension: ${ext}` });
+    return json({ success: false, message: `video_invalid_file_type` });
 
   if (bytes > MAX_BYTES)
-    return json({ success: false, message: `File too large: ${bytes} bytes exceeds ${MAX_BYTES}` });
+    return json({ success: false, message: `video_invalid_file_size` });
 
   // ╭─────
   // │ NOTE: Verify author ownership.
@@ -60,7 +60,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
   const author = authorData.authors_authors?.[0];
 
   if (!author || author.uid !== locals.uid)
-    return json({ success: false, message: 'Not an owner' });
+    return json({ success: false, message: 'video_not_owner' });
 
   // ╭─────
   // │ NOTE: Create asset record.
@@ -69,7 +69,6 @@ export const POST: RequestHandler = async ({ request, locals }) =>
     assetId = crypto.randomUUID(),
     storagePath = `Betarena_Media/authors/authors_list/${authorId}/media/videos/${assetId}/original.${ext.toLowerCase()}`
   ;
-  console.log("UPLOAD_INIT: ", { assetId, authorId, storagePath });
 
   await entryMediaAssetInit
   (
@@ -84,7 +83,6 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       post_id: articleId
     }
   );
-console.log("UPLOAD_INIT SUCCESS: ", )
   return json
   (
     {

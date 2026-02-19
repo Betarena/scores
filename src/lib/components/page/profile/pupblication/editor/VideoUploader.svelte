@@ -10,9 +10,10 @@
 <script lang="ts">
   // #region ➤ 📦 Package Imports
 
-  import { createEventDispatcher } from 'svelte';
-  import { ref, uploadBytesResumable } from 'firebase/storage';
-  import { storage } from '$lib/firebase/init.js';
+  import { createEventDispatcher } from "svelte";
+  import { ref, uploadBytesResumable } from "firebase/storage";
+  import { storage } from "$lib/firebase/init.js";
+  import { type TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -21,59 +22,59 @@
   export let authorId: number;
   export let visible = false;
   export let articleId = 0;
+  export let translations:
+    | TranslationSportstacksSectionDataJSONSchema
+    | undefined;
 
   const dispatch = createEventDispatcher();
 
-  const
-    ALLOWED_EXTS = ['mp4', 'mov', 'webm'],
-    ALLOWED_MIMES = ['video/mp4', 'video/quicktime', 'video/webm'],
+  const ALLOWED_EXTS = ["mp4", "mov", "webm"],
+    ALLOWED_MIMES = ["video/mp4", "video/quicktime", "video/webm"],
     MAX_BYTES = 6 * 1024 * 1024 * 1024,
-    MAX_DURATION_SEC = 7200
-  ;
-
-  let
-    containerEl: HTMLDivElement,
+    MAX_DURATION_SEC = 7200;
+  let containerEl: HTMLDivElement,
     uploading = false,
     progress = 0,
-    errorMessage = ''
-  ;
-
+    errorMessage = "";
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
 
-  async function handleFileSelect(event: Event)
-  {
+  async function handleFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
     if (!file) return;
 
-    errorMessage = '';
+    errorMessage = "";
 
     // ╭─────
     // │ NOTE: Client-side validation.
     // ╰─────
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
 
-    if (!ALLOWED_EXTS.includes(ext))
-    {
-      errorMessage = `Invalid file type: .${ext}. Allowed: ${ALLOWED_EXTS.join(', ')}`;
-      input.value = '';
+    if (!ALLOWED_EXTS.includes(ext)) {
+      errorMessage = translations?.video_invalid_file_type
+        ?.replace("{ext}", ext)
+        ?.replace("{allowed}", ALLOWED_EXTS.join(", ")) ||
+        `Invalid file type: .${ext}. Allowed: ${ALLOWED_EXTS.join(", ")}`;
+      input.value = "";
       return;
     }
 
-    if (!ALLOWED_MIMES.includes(file.type))
-    {
-      errorMessage = `Invalid MIME type: ${file.type}`;
-      input.value = '';
+    if (!ALLOWED_MIMES.includes(file.type)) {
+      errorMessage = translations?.video_invalid_mime_type
+        ?.replace("{type}", file.type) ||
+        `Invalid MIME type: ${file.type}`;
+      input.value = "";
       return;
     }
 
-    if (file.size > MAX_BYTES)
-    {
-      errorMessage = `File too large: ${(file.size / (1024 * 1024 * 1024)).toFixed(2)} GB. Max: 6 GB`;
-      input.value = '';
+    if (file.size > MAX_BYTES) {
+      errorMessage = translations?.video_invalid_file_size
+        ?.replace("{size}", (file.size / (1024 * 1024 * 1024)).toFixed(2)) ||
+        `File too large: ${(file.size / (1024 * 1024 * 1024)).toFixed(2)} GB. Max: 6 GB`;
+      input.value = "";
       return;
     }
 
@@ -82,19 +83,21 @@
     // ╰─────
     let durationSec = 0;
 
-    try
-    {
+    try {
       durationSec = await getVideoDuration(file);
 
-      if (durationSec > MAX_DURATION_SEC)
-      {
-        errorMessage = `Video too long: ${Math.round(durationSec)}s. Max: ${MAX_DURATION_SEC}s (2 hours)`;
-        input.value = '';
+      if (durationSec > MAX_DURATION_SEC) {
+        errorMessage =
+          translations?.video_invalid_duration
+            ?.replace("{duration}", Math.round(durationSec).toString())
+            .replace("{max_duration}", MAX_DURATION_SEC.toString()) ||
+          `Video too long: ${Math.round(
+            durationSec,
+          )}s. Max: ${MAX_DURATION_SEC}s (2 hours)`;
+        input.value = "";
         return;
       }
-    }
-    catch
-    {
+    } catch {
       // Duration check failed; proceed anyway, server will validate.
     }
 
@@ -102,68 +105,63 @@
     // │ NOTE: Start upload flow.
     // ╰─────
     await startUpload(file, ext, durationSec);
-    input.value = '';
+    input.value = "";
   }
 
-  function getVideoDuration(file: File): Promise<number>
-  {
-    return new Promise((resolve, reject) =>
-    {
-      const video = document.createElement('video');
-      video.preload = 'metadata';
+  function getVideoDuration(file: File): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      video.preload = "metadata";
 
       const url = URL.createObjectURL(file);
       video.src = url;
 
-      video.onloadedmetadata = () =>
-      {
+      video.onloadedmetadata = () => {
         URL.revokeObjectURL(url);
         resolve(video.duration);
       };
 
-      video.onerror = () =>
-      {
+      video.onerror = () => {
         URL.revokeObjectURL(url);
-        reject(new Error('Could not read video metadata'));
+        reject(new Error("Could not read video metadata"));
       };
     });
   }
 
-  async function startUpload(file: File, ext: string, durationSec: number)
-  {
+  async function startUpload(file: File, ext: string, durationSec: number) {
     uploading = true;
     progress = 0;
-    errorMessage = '';
+    errorMessage = "";
 
-    try
-    {
+    try {
       // ╭─────
       // │ STEP 1: Init API call.
       // ╰─────
-      const initRes = await fetch
-      (
-        '/api/media/video/init',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify
-          (
-            {
-              authorId,
-              ext,
-              mime: file.type,
-              bytes: file.size,
-              articleId
-            }
-          )
-        }
-      );
+      const initRes = await fetch("/api/media/video/init", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          authorId,
+          ext,
+          mime: file.type,
+          bytes: file.size,
+          articleId,
+        }),
+      });
 
       const initData = await initRes.json();
 
-      if (!initData.success)
-      {
-        errorMessage = initData.message || 'Init failed';
+      if (!initData.success) {
+        errorMessage =
+          translations?.[initData.message]
+            ?.replace("{size}", (file.size / (1024 * 1024 * 1024)).toFixed(2))
+            .replace("{type}", file.type)
+            .replace("{ext}", ext)
+            .replace("{allowed}", ALLOWED_EXTS.join(", "))
+            .replace("{duration}", durationSec.toString())
+            .replace("{max_duration}", MAX_DURATION_SEC.toString()) ||
+          translations?.video_init_failed ||
+          "Init failed";
         uploading = false;
         return;
       }
@@ -173,7 +171,7 @@
       // ╭─────
       // │ NOTE: Dispatch event so editor can insert placeholder node.
       // ╰─────
-      dispatch('uploadstart', { assetId, ext });
+      dispatch("uploadstart", { assetId, ext });
 
       // ╭─────
       // │ STEP 2: Firebase resumable upload.
@@ -181,68 +179,66 @@
       const storageRef = ref(storage, storagePath);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
-      uploadTask.on
-      (
-        'state_changed',
-        (snapshot) =>
-        {
-          progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+          );
         },
-        (err) =>
-        {
-          errorMessage = err.message || 'Upload failed';
+        (err) => {
+          errorMessage =
+            translations?.[err.message] ||
+            translations?.video_upload_failed ||
+            "Upload failed";
           uploading = false;
         },
-        async () =>
-        {
+        async () => {
           // ╭─────
           // │ STEP 3: Complete API call.
           // ╰─────
-          try
-          {
-            const completeRes = await fetch
-            (
-              '/api/media/video/complete',
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ assetId, durationSec })
-              }
-            );
+          try {
+            const completeRes = await fetch("/api/media/video/complete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ assetId, durationSec }),
+            });
 
             const completeData = await completeRes.json();
 
-            if (!completeData.success)
-            {
-              errorMessage = completeData.message || 'Complete failed';
+            if (!completeData.success) {
+              errorMessage =
+                translations?.[completeData.message] ||
+                translations?.video_upload_failed ||
+                "Upload failed";
               uploading = false;
               return;
             }
 
-            dispatch('uploaded', { assetId, ext });
+            dispatch("uploaded", { assetId, ext });
             uploading = false;
             progress = 100;
             visible = false;
-          }
-          catch (e: any)
-          {
-            errorMessage = e.message || 'Complete failed';
+          } catch (e: any) {
+            errorMessage =
+              translations?.[e.message] ||
+              translations?.video_upload_failed ||
+              "Upload failed";
             uploading = false;
           }
-        }
+        },
       );
-    }
-    catch (e: any)
-    {
-      errorMessage = e.message || 'Upload failed';
+    } catch (e: any) {
+      errorMessage =
+        translations?.[e.message] ||
+        translations?.video_upload_failed ||
+        "Upload failed";
       uploading = false;
     }
   }
 
-  function close()
-  {
-    if (!uploading)
-      visible = false;
+  function close() {
+    if (!uploading) visible = false;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -259,20 +255,22 @@
   <div
     class="video-uploader-overlay"
     on:click|self={close}
-    on:keydown={(e) => e.key === 'Escape' && close()}
+    on:keydown={(e) => e.key === "Escape" && close()}
     role="dialog"
     tabindex="-1"
   >
     <div class="video-uploader-modal" bind:this={containerEl}>
       <div class="header">
-        <span>Upload Video</span>
-        <button class="close-btn" on:click={close} disabled={uploading}>&times;</button>
+        <span>{translations?.video_upload || "Upload Video"}</span>
+        <button class="close-btn" on:click={close} disabled={uploading}
+          >&times;</button
+        >
       </div>
 
       {#if uploading}
         <div class="upload-progress">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: {progress}%"></div>
+            <div class="progress-fill" style="width: {progress}%" />
           </div>
           <span class="progress-text">{progress}%</span>
         </div>
@@ -285,8 +283,14 @@
               on:change={handleFileSelect}
               hidden
             />
-            <span>Click to select a video file</span>
-            <span class="hint">MP4, MOV, WebM — Max 6 GB, 2 hours</span>
+            <span>
+              {translations?.video_click_to_select ||
+                "Click to select a video file"}</span
+            >
+            <span class="hint"
+              >{translations?.video_upload_info ||
+                "MP4, MOV, WebM — Max 6 GB, 2 hours"}</span
+            >
           </label>
         </div>
       {/if}
@@ -365,7 +369,10 @@
     transition: border-color 0.2s;
 
     &:hover {
-      border-color: var(--component-colors-components-buttons-primary-button-primary-bg, #0066ff);
+      border-color: var(
+        --component-colors-components-buttons-primary-button-primary-bg,
+        #0066ff
+      );
     }
   }
 
@@ -399,7 +406,10 @@
 
   .progress-fill {
     height: 100%;
-    background: var(--component-colors-components-buttons-primary-button-primary-bg, #0066ff);
+    background: var(
+      --component-colors-components-buttons-primary-button-primary-bg,
+      #0066ff
+    );
     border-radius: 4px;
     transition: width 0.3s ease;
   }
