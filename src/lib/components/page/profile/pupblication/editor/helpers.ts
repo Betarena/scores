@@ -311,6 +311,37 @@ export async function publish({
   return data;
 }
 
+  return data;
+}
+
+async function checkArticle(permalink: string, retries = 0): Promise<boolean> {
+  const MAX_RETRIES = 15; // 30 seconds max (15 × 2s delay)
+
+  if (!permalink) {
+    console.warn("[publish] checkArticle: no permalink received, skipping CDN validation");
+    return false;
+  }
+
+  if (retries >= MAX_RETRIES) {
+    console.warn("[publish] checkArticle: max retries reached, proceeding without CDN validation");
+    return false;
+  }
+
+  // [debug] CDN check attempt
+  console.log(`[publish] checkArticle attempt ${retries + 1}/${MAX_RETRIES} for permalink:`, permalink);
+
+  const check = await promiseValidUrlCheck(fetch, {
+    authorArticleUrl: permalink,
+  });
+
+  if (check?.isValid) {
+    console.log("[publish] checkArticle: article is live on CDN");
+    return true;
+  }
+
+  await delay(1000 * 2);
+  return checkArticle(permalink, retries + 1);
+}
 
 export interface IArticleFilter {
   status: "published" | "unpublished" | "draft" | "all";
