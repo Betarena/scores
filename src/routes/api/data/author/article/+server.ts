@@ -45,7 +45,7 @@ export async function GET
 
 
 
-export const POST: RequestHandler = async ({ request, locals }) =>
+export const POST: RequestHandler = async ({ request, locals, url }) =>
 {
   try
   {
@@ -108,6 +108,7 @@ export const POST: RequestHandler = async ({ request, locals }) =>
       await entryMediaAssetLinkToArticle(videoAssetIds, articleId);
     }
 
+    await warmCacheAndPurge(articleId, url.origin);
     return json({ success: true, id: articleId });
 
   } catch (e)
@@ -138,7 +139,7 @@ export const DELETE: RequestHandler = async ({ request, locals }) =>
   }
 };
 
-export const PUT: RequestHandler = async ({ locals, request }) =>
+export const PUT: RequestHandler = async ({ locals, request, url }) =>
 {
   if (!locals.uid) return json({ success: false, message: "Unauthorized" });
   const body = await request.json();
@@ -151,6 +152,7 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     });
+    if (permalink) await warmCacheAndPurge(id, url.origin);
     return json({ success: true, permalink });
 
   } catch (e)
@@ -160,3 +162,24 @@ export const PUT: RequestHandler = async ({ locals, request }) =>
   }
   return new Response();
 };
+
+/**
+ * @description
+ *  📝 Calls the cache service to warm Redis and purge Cloudflare edge cache.
+ *  The cache service handles both steps internally after the Redis write.
+ */
+async function warmCacheAndPurge(articleId: number, origin: string): Promise<void>
+{
+  try
+  {
+    await fetch(
+      `http://65.109.14.126:8500/sitemap-and-preload?ids[]=${articleId}&operation[]=preload-target&category[]=author_article&sync=true&purgeOrigins[]=${encodeURIComponent(origin)}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
+    );
+  }
+  catch (e)
+  {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(`[cache-warm] failed articleId=${articleId} error=${message}`);
+  }
+}
