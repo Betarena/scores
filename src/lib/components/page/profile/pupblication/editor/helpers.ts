@@ -4,7 +4,6 @@ import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
 import { modalStore } from "$lib/store/modal.js";
 import session from "$lib/store/session.js";
-import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
 import { detectLanguage } from "$lib/utils/translation.js";
 import type {
   AuthorsAuthorsMain,
@@ -253,31 +252,50 @@ export async function publish({
     title: translations?.saving || `${status} article...`,
     autoHide: false,
   });
-  const res = await fetch(`/api/data/author/article`, {
-    method: "PUT",
-    body: JSON.stringify({ id, status, uid: sportstack.uid }),
-  });
-  const data = await res.json();
-  if (data.success) {
-    await checkArticle(data.permalink);
-    await invalidateAll();
-    infoMessages.remove(loadingId);
-    infoMessages.add({
-      type: "success",
-      title:
-        status === "publish"
-          ? translations?.article_published || "Article published!"
-          : translations?.article_unpublished || "Article unpublished!",
+
+  // [debug] publish flow start
+  console.log("[publish] action start | id:", id, "(type:", typeof id, ") | status:", status, "| sportstack.uid:", sportstack.uid);
+
+  let data: any = { success: false };
+
+  try {
+    const res = await fetch(`/api/data/author/article`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status, uid: sportstack.uid }),
     });
-    if (redirect) {
-      setTimeout(() => {
-        goto(
-          `/u/author/publication/${sportstack.permalink}/${session.extract(
-            "lang"
-          )}?view=articles`,
-          { invalidateAll: true }
-        );
-      }, 500);
+
+    data = await res.json();
+
+    // [debug] server response
+    console.log("[publish] server response | success:", data.success, "| permalink present:", Boolean(data.permalink));
+
+    if (data.success) {
+      await invalidateAll();
+      infoMessages.remove(loadingId);
+      infoMessages.add({
+        type: "success",
+        title:
+          status === "publish"
+            ? translations?.article_published || "Article published!"
+            : translations?.article_unpublished || "Article unpublished!",
+      });
+      if (redirect) {
+        setTimeout(() => {
+          goto(
+            `/u/author/publication/${sportstack.permalink}/${session.extract(
+              "lang"
+            )}?view=articles`,
+            { invalidateAll: true }
+          );
+        }, 500);
+      }
+    } else {
+      infoMessages.remove(loadingId);
+      infoMessages.add({
+        type: "error",
+        title: translations?.failed_save || `Failed to ${status} article`,
+      });
     }
   } catch (ex) {
     // [debug] unexpected error in publish flow
@@ -293,38 +311,6 @@ export async function publish({
   return data;
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function checkArticle(permalink: string, retries = 0): Promise<boolean> {
-  const MAX_RETRIES = 15; // 30 seconds max (15 × 2s delay)
-
-  if (!permalink) {
-    console.warn("[publish] checkArticle: no permalink received, skipping CDN validation");
-    return false;
-  }
-
-  if (retries >= MAX_RETRIES) {
-    console.warn("[publish] checkArticle: max retries reached, proceeding without CDN validation");
-    return false;
-  }
-
-  // [debug] CDN check attempt
-  console.log(`[publish] checkArticle attempt ${retries + 1}/${MAX_RETRIES} for permalink:`, permalink);
-
-  const check = await promiseValidUrlCheck(fetch, {
-    authorArticleUrl: permalink,
-  });
-
-  if (check?.isValid) {
-    console.log("[publish] checkArticle: article is live on CDN");
-    return true;
-  }
-
-  await delay(1000 * 2);
-  return checkArticle(permalink, retries + 1);
-}
 
 export interface IArticleFilter {
   status: "published" | "unpublished" | "draft" | "all";

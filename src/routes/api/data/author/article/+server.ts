@@ -23,6 +23,8 @@ import { purgeUrls, buildPurgeUrls } from '$lib/cloudflare/index.js';
 import { error, RequestHandler, json } from '@sveltejs/kit';
 import { entryProfileTabAuthorArticleDelete, entryProfileTabAuthorArticleUpdateStatus, entryProfileTabAuthorArticleUpsert } from '@betarena/scores-lib/dist/functions/v8/profile.main.js';
 import { mutateStringToPermalink } from '@betarena/scores-lib/dist/util/language.js';
+import { _Redis } from '@betarena/scores-lib/dist/classes/_redis.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/constant/redis.js';
 
 // #endregion ➤ 📦 Package
 
@@ -147,6 +149,11 @@ export const PUT: RequestHandler = async ({ locals, request, url }) =>
       numArticleId: id,
       enumArticleNewStatus: status
     });
+
+    // Invalidate stale article data in Redis so the next read falls back to Hasura with fresh status
+    try { await new _Redis().rHDEL(RedisKeys.SAP_C_D_A27, [String(id)]); }
+    catch (e) { console.error(`[PUT /article] Redis HDEL failed | id=${id}`, e); }
+
     if (permalink) purgeArticleCache(url.origin, status, id, permalink);
     return json({ success: true, permalink });
 
