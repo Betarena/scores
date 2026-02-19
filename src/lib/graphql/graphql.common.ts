@@ -32,6 +32,12 @@ export async function subscribeCompetitionsAllListen
   // get ready
   const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
 
+  if (!GRAPHQL_ENDPOINT)
+  {
+    console.error('[graphql] VITE_HASURA_DB_WSS is not set — skipping subscribeCompetitionsAllListen');
+    return;
+  }
+
   const query: string = B_C_COMP_M_Q_D_S;
 
   // ### NOTE:
@@ -165,6 +171,12 @@ export async function subscribeCompetitionsTargetListen
 {
   // get ready
   const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
+
+  if (!GRAPHQL_ENDPOINT)
+  {
+    console.error('[graphql] VITE_HASURA_DB_WSS is not set — skipping subscribeCompetitionsTargetListen');
+    return;
+  }
 
   const query: string = B_C_COMP_M_Q_D_ST;
 
@@ -304,6 +316,13 @@ export  function subscribeTagFollowersListen
   // get ready
   const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
 
+  if (!GRAPHQL_ENDPOINT)
+  {
+    console.error('[graphql] VITE_HASURA_DB_WSS is not set — skipping subscribeTagFollowersListen');
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return { unsubscribe: () => { return; } };
+  }
+
   const query: string = TableAuthorTagsSubscription0;
 
   // ### NOTE:
@@ -426,6 +445,13 @@ export  function subscribeRevolutTransactionListen
 {
   // get ready
   const GRAPHQL_ENDPOINT = import.meta.env?.VITE_HASURA_DB_WSS ?? '';
+
+  if (!GRAPHQL_ENDPOINT)
+  {
+    console.error('[graphql] VITE_HASURA_DB_WSS is not set — skipping subscribeRevolutTransactionListen');
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return { unsubscribe: () => { return; } };
+  }
 
   const query: string = TableTransactionsTransactionQueueSubscription0;
   const variables: ITableTransactionsTransactionQueueSubscription0Var = {refId: revolutId};

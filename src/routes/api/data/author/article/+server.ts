@@ -61,6 +61,7 @@ export const POST: RequestHandler = async ({ request, locals, url }) =>
     const permalink = mutateStringToPermalink(title);
     const link = `https://betarena.com/a/${permalink}`;
 
+    console.log(`[POST /article] upsert start | id=${id} (type=${typeof id}) | uid=${uid}`);
     const articleId = await entryProfileTabAuthorArticleUpsert({
       author_id,
       lang,
@@ -137,6 +138,7 @@ export const PUT: RequestHandler = async ({ locals, request, url }) =>
   if (!locals.uid) return json({ success: false, message: "Unauthorized" });
   const body = await request.json();
   const { id, uid, status } = body;
+  console.log(`[PUT /article] received | id=${id} (type=${typeof id}) | status=${status} | uid=${uid} | locals.uid=${locals.uid}`);
   if (uid !== locals.uid) return json({ success: false, message: "Not an owner" });
   if (!id) return json({ success: false, message: "Bad request" });
   try
@@ -150,7 +152,7 @@ export const PUT: RequestHandler = async ({ locals, request, url }) =>
 
   } catch (e)
   {
-    console.log("Error: ", e);
+    console.error(`[PUT /article] error | id=${id} | status=${status}`, e);
     throw error(500, { message: 'Internal server error' } as App.Error);
   }
   return new Response();

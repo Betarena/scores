@@ -103,12 +103,17 @@ worker.addEventListener('fetch', (event) =>
   // ... more info -> https://stackoverflow.com/questions/48463483/what-causes-a-failed-to-execute-fetch-on-serviceworkerglobalscope-only-if
   const skipBecauseNotSameOrigin =
     event.request.mode !== 'same-origin';
+  // ... never intercept Firebase / Google API streaming requests (Firestore WebChannel, etc.)
+  const skipBecauseExternalApi =
+    url.hostname.endsWith('googleapis.com') ||
+    url.hostname.endsWith('firebaseio.com');
 
   if (
     isHttp &&
     !isDevServerRequest &&
     !skipBecauseUncached &&
-    !skipBecauseNotSameOrigin
+    !skipBecauseNotSameOrigin &&
+    !skipBecauseExternalApi
   )
   {
     event.respondWith(
