@@ -269,7 +269,7 @@ export async function publish({
     data = await res.json();
 
     // [debug] server response
-    console.log("[publish] server response | success:", data.success, "| permalink present:", !!data.permalink);
+    console.log("[publish] server response | success:", data.success, "| permalink present:", Boolean(data.permalink));
 
     if (data.success) {
       if (data.permalink) {

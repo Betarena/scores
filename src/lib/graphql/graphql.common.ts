@@ -319,7 +319,8 @@ export  function subscribeTagFollowersListen
   if (!GRAPHQL_ENDPOINT)
   {
     console.error('[graphql] VITE_HASURA_DB_WSS is not set — skipping subscribeTagFollowersListen');
-    return { unsubscribe: () => {} };
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return { unsubscribe: () => { return; } };
   }
 
   const query: string = TableAuthorTagsSubscription0;
@@ -448,7 +449,8 @@ export  function subscribeRevolutTransactionListen
   if (!GRAPHQL_ENDPOINT)
   {
     console.error('[graphql] VITE_HASURA_DB_WSS is not set — skipping subscribeRevolutTransactionListen');
-    return { unsubscribe: () => {} };
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return { unsubscribe: () => { return; } };
   }
 
   const query: string = TableTransactionsTransactionQueueSubscription0;
