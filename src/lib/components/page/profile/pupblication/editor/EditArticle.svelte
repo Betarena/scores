@@ -311,6 +311,7 @@
     {uploadUrl}
     bind:title
     {content}
+    articleId={id}
     authorId={selectedSportstack?.id}
     {publishClick}
   />

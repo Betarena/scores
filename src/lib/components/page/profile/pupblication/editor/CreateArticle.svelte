@@ -339,6 +339,7 @@
     on:update={saveOnChange}
     {publishClick}
     {data}
+    articleId={id}
     authorId={selectedSportstack?.id}
     onBeforeVideoUpload={save}
     bind:contentEditor

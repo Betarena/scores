@@ -71,7 +71,7 @@
     | undefined;
   export let authorId: number = 0;
   export let onBeforeVideoUpload: (() => Promise<void>) | undefined = undefined;
-
+  export let articleId = data?.article.id;
   let element;
   let titleInFocus = false;
   let vh = "1vh";
@@ -83,7 +83,6 @@
   let textareaNode;
   let editor;
   let showVideoUploader = false;
-  $: articleId = data?.article?.id;
   const videoSubscriptions: Map<string, { unsubscribe: () => void }> = new Map();
 
   $: if ($modalStore.show) {
