@@ -216,7 +216,7 @@
         </div>
       </div>
     </div>
-    <a href="/a/{permalink}" data-sveltekit-preload-data="tap">
+    <a href="/a/{permalink}" data-sveltekit-preload-data="tap" data-sveltekit-reload>
       <div class="title">
         {title}
       </div>
@@ -236,7 +236,7 @@
     {/if}
   </div>
   {#if img}
-    <a href="/a/{permalink}" class="preview" class:tablet class:mobile data-sveltekit-preload-data="tap">
+    <a href="/a/{permalink}" class="preview" class:tablet class:mobile data-sveltekit-preload-data="tap" data-sveltekit-reload>
       <img
         src={getOptimizedImageUrl({ strImageUrl: img, intWidth: 150 })}
         alt={images[0]?.alt || title}

@@ -253,52 +253,31 @@ export async function publish({
     title: translations?.saving || `${status} article...`,
     autoHide: false,
   });
-
-  // [debug] publish flow start
-  console.log("[publish] action start | id:", id, "(type:", typeof id, ") | status:", status, "| sportstack.uid:", sportstack.uid);
-
-  let data: any = { success: false };
-
-  try {
-    const res = await fetch(`/api/data/author/article`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status, uid: sportstack.uid }),
+  const res = await fetch(`/api/data/author/article`, {
+    method: "PUT",
+    body: JSON.stringify({ id, status, uid: sportstack.uid }),
+  });
+  const data = await res.json();
+  if (data.success) {
+    await checkArticle(data.permalink);
+    await invalidateAll();
+    infoMessages.remove(loadingId);
+    infoMessages.add({
+      type: "success",
+      title:
+        status === "publish"
+          ? translations?.article_published || "Article published!"
+          : translations?.article_unpublished || "Article unpublished!",
     });
-
-    data = await res.json();
-
-    // [debug] server response
-    console.log("[publish] server response | success:", data.success, "| permalink present:", Boolean(data.permalink));
-
-    if (data.success) {
-      if (data.permalink) {
-        await checkArticle(data.permalink);
-      }
-      await invalidateAll();
-      infoMessages.remove(loadingId);
-      infoMessages.add({
-        type: "success",
-        title:
-          status === "publish"
-            ? translations?.article_published || "Article published!"
-            : translations?.article_unpublished || "Article unpublished!",
-      });
-      if (redirect) {
-        setTimeout(() => {
-          goto(
-            `/u/author/publication/${sportstack.permalink}/${session.extract(
-              "lang"
-            )}?view=articles`
-          );
-        }, 500);
-      }
-    } else {
-      infoMessages.remove(loadingId);
-      infoMessages.add({
-        type: "error",
-        title: translations?.failed_save || `Failed to ${status} article`,
-      });
+    if (redirect) {
+      setTimeout(() => {
+        goto(
+          `/u/author/publication/${sportstack.permalink}/${session.extract(
+            "lang"
+          )}?view=articles`,
+          { invalidateAll: true }
+        );
+      }, 500);
     }
   } catch (ex) {
     // [debug] unexpected error in publish flow
