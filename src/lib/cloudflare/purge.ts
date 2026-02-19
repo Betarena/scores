@@ -2,7 +2,7 @@
  * @description
  *  📝 Purge Cloudflare Worker cache for a list of URLs.
  *  Posts to the Worker's /__purge endpoint which handles cache key reconstruction.
- *  Requires VITE_CF_PURGE_SECRET env var (must match Worker's PURGE_SECRET).
+ *  Requires CF_PURGE_SECRET env var (must match Worker's PURGE_SECRET).
  *  Logs errors but never throws.
  * @param baseUrl
  *  Normalized base URL (e.g. `https://betarena.com`).
@@ -11,11 +11,14 @@
  */
 export async function purgeUrls(baseUrl: string, urls: string[]): Promise<void>
 {
-  const purgeSecret = process.env.VITE_CF_PURGE_SECRET;
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/.test(baseUrl))
+    return;
+
+  const purgeSecret = process.env.CF_PURGE_SECRET;
 
   if (!purgeSecret)
   {
-    console.warn('[cf-purge] missing VITE_CF_PURGE_SECRET, skipping purge');
+    console.warn('[cf-purge] missing CF_PURGE_SECRET, skipping purge');
     return;
   }
 
