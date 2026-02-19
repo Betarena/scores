@@ -255,7 +255,7 @@ export async function publish({
   });
 
   // [debug] publish flow start
-  console.log("[publish] action start | id:", id, "| status:", status, "| endpoint present:", true);
+  console.log("[publish] action start | id:", id, "(type:", typeof id, ") | status:", status, "| sportstack.uid:", sportstack.uid);
 
   let data: any = { success: false };
 
@@ -338,7 +338,7 @@ async function checkArticle(permalink: string, retries = 0): Promise<boolean> {
     authorArticleUrl: permalink,
   });
 
-  if (check.isValid) {
+  if (check?.isValid) {
     console.log("[publish] checkArticle: article is live on CDN");
     return true;
   }
