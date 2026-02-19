@@ -316,11 +316,25 @@
         if (res.ok) {
           const data = await res.json();
           if (data.srcUrl) {
+            const wasPlaying = !video.paused;
+            const currentTime = video.currentTime;
+
+            if (data.posterUrl) video.setAttribute('poster', data.posterUrl);
             video.setAttribute('src', data.srcUrl);
+            video.dataset.signedLoaded = 'true';
             video.load();
+
+            if (wasPlaying) {
+              await new Promise<void>((resolve) => {
+                video.addEventListener('canplay', () => resolve(), { once: true });
+              });
+              video.currentTime = currentTime;
+              video.play().catch(() => {});
+            }
+          } else {
+            if (data.posterUrl) video.setAttribute('poster', data.posterUrl);
+            video.dataset.signedLoaded = 'true';
           }
-          if (data.posterUrl) video.setAttribute('poster', data.posterUrl);
-          video.dataset.signedLoaded = 'true';
         }
       } catch {
         // signed URL load failed, keep stable proxy URLs
@@ -833,6 +847,14 @@
           max-width: 100%;
           width: 100%;
           height: auto;
+          border-radius: var(--radius-xl, 12px);
+        }
+
+        video {
+          display: block;
+          max-width: 100%;
+          height: auto;
+          margin: 0 auto;
           border-radius: var(--radius-xl, 12px);
         }
         a img {
