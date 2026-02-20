@@ -23,6 +23,7 @@
   // │ 5. type(s) imports(s)                                                  │
   // ╰────────────────────────────────────────────────────────────────────────╯
 
+  import { browser } from "$app/environment";
   import Container from "$lib/components/ui/wrappers/Container.svelte";
   import type { PageData } from ".svelte-kit/types/src/routes/(scores)/u/author/publication/[permalink]/[lang=lang]/$types.js";
   import session from "$lib/store/session.js";
@@ -139,13 +140,13 @@
 
   let previousSportstack
 
-  $: if ($selectedSportstack && $selectedSportstack?.permalink !== previousSportstack?.permalink) {
+  $: if (browser && $selectedSportstack && $selectedSportstack?.permalink !== previousSportstack?.permalink) {
     previousSportstack = $selectedSportstack;
     getResentArticles();
     updateArticles();
   }
 
-  $: if ($articleFilterStore.status && $articleFilterStore.sortBy) {
+  $: if (browser && $articleFilterStore.status && $articleFilterStore.sortBy) {
     filterArticles($articleFilterStore);
   }
 
