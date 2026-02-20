@@ -417,14 +417,47 @@
 
   function handleVideoUploadStart(e: CustomEvent<{ assetId: string; ext: string }>) {
     const { assetId, ext } = e.detail;
-    editor
-      .chain()
-      .focus()
-      .insertContent({
-        type: 'video',
-        attrs: { assetId, ext, status: 'uploading' },
-      })
-      .run();
+
+    // Insert the video node at current cursor position.
+    editor.chain().focus().insertContent({ type: 'video', attrs: { assetId, ext, status: 'uploading' } }).run();
+
+    // After insertion the cursor is right after the video node.
+    // Find the position of the video node we just inserted, then look at the node after it.
+    const { state } = editor;
+    const { doc } = state;
+
+    let videoPos = -1;
+    doc.descendants((node, pos) => {
+      if (node.type.name === 'video' && node.attrs.assetId === assetId) {
+        videoPos = pos;
+        return false;
+      }
+      return true;
+    });
+
+    if (videoPos === -1) return;
+
+    const videoNode = doc.nodeAt(videoPos);
+    if (!videoNode) return;
+
+    const afterPos = videoPos + videoNode.nodeSize;
+    const nodeAfter = doc.nodeAt(afterPos);
+
+    const TEXT_TYPES = new Set(['paragraph', 'heading', 'blockquote']);
+    const isTextNode = nodeAfter && TEXT_TYPES.has(nodeAfter.type.name);
+
+    if (isTextNode) {
+      // Focus into the existing text node that follows the video.
+      editor.chain().focus().setTextSelection(afterPos + 1).run();
+    } else {
+      // No text node after the video — insert a paragraph and focus it.
+      editor
+        .chain()
+        .focus()
+        .insertContentAt(afterPos, { type: 'paragraph' })
+        .setTextSelection(afterPos + 1)
+        .run();
+    }
   }
 
   function handleVideoUploaded(e: CustomEvent<{ assetId: string; ext: string }>) {
