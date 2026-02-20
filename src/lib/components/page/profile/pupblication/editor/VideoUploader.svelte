@@ -13,7 +13,7 @@
   import { createEventDispatcher } from "svelte";
   import { ref, uploadBytesResumable } from "firebase/storage";
   import { storage } from "$lib/firebase/init.js";
-  import { type TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0";
+  import type { TranslationSportstacksSectionDataJSONSchema } from "@betarena/scores-lib/types/v8/_HASURA-0.js";
 
   // #endregion ➤ 📦 Package Imports
 
