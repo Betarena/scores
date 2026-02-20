@@ -37,10 +37,12 @@ export const GET: RequestHandler = async ({ params, locals }) =>
   // ╭─────
   // │ NOTE: Check entitlement for paid articles.
   // ╰─────
-  if (asset.article?.access_type === 'reward_gated' && asset.post_id)
+
+  const isOwner = asset.author?.uid === locals.uid;
+
+  if (!isOwner && asset.article?.access_type === 'reward_gated' && asset.post_id)
   {
     const entitled = await entryMediaAssetCheckEntitlement(asset.post_id, locals.uid);
-
     if (!entitled)
       throw error(403, { message: 'Not entitled' } as App.Error);
   }
@@ -73,7 +75,6 @@ export const GET: RequestHandler = async ({ params, locals }) =>
     );
 
     const signRawText = await signRes.text();
-    console.log('SIGN_RES:', { status: signRes.status, ok: signRes.ok, body: signRawText });
 
     if (signRes.ok)
     {
@@ -89,7 +90,6 @@ export const GET: RequestHandler = async ({ params, locals }) =>
     }
   }
 
-  console.log('SIGNED URLS:',{pathsToSign, article_gates: asset.article?.access_type, signedUrls});
   return json
   (
     {

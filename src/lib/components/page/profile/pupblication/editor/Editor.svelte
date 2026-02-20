@@ -433,6 +433,8 @@
     updateVideoNodeStatus(assetId, 'processing');
     // Subscribe to Firestore for real-time status updates
     subscribeToAssetStatus(assetId, ext);
+    // Immediately save so the node persists if the user reloads during processing
+    dispatch('autosave');
   }
 
   function subscribeToAssetStatus(assetId: string, _ext: string) {

@@ -483,8 +483,8 @@
                   align-items: center;
 
                   img {
-                    width: 40px;
-                    height: 40px;
+                    width: 40px !important;
+                    height: 40px !important;
                     object-fit: contain;
                     flex-shrink: 0;
                   }

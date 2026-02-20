@@ -41,12 +41,6 @@ export const GET: RequestHandler = async ({ params }) =>
     throw error(404, { message: 'Not found' } as App.Error);
 
   // ╭─────
-  // │ NOTE: Block paid articles from public proxy.
-  // ╰─────
-  if (asset.article?.access_type === 'reward_gated')
-    throw error(403, { message: 'Paid content' } as App.Error);
-
-  // ╭─────
   // │ NOTE: Proxy thumbnail from firebase-services.
   // ╰─────
   const streamUrl = `${FUNCTIONS_ORIGIN}/streamStorageObject?adminToken=${ADMIN_TOKEN}&path=${encodeURIComponent(asset.thumb_path)}`;

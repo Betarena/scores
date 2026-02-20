@@ -260,7 +260,6 @@ export async function publish({
   const data = await res.json();
   if (data.success) {
     await checkArticle(data.permalink);
-    await invalidateAll();
     infoMessages.remove(loadingId);
     infoMessages.add({
       type: "success",
@@ -277,6 +276,8 @@ export async function publish({
           )}?view=articles`
         );
       }, 500);
+    } else {
+      await invalidateAll();
     }
   } else {
     infoMessages.remove(loadingId);

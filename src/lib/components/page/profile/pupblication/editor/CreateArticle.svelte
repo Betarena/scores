@@ -337,6 +337,7 @@
     content={article.data?.content}
     {title}
     on:update={saveOnChange}
+    on:autosave={save}
     {publishClick}
     {data}
     articleId={id}

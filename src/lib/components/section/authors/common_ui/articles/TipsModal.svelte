@@ -70,8 +70,6 @@
   export let article_id: number = 0;
   export let tier_id: number = 0;
   export let grantAccess = () => {};
-  let dotLottie;
-  let LottieComponent;
   let article_access =
     {} as IFirebaseFunctionArticleAccessCheck["response"]["success"]["data"];
 
@@ -716,8 +714,8 @@
                   align-items: center;
 
                   img {
-                    width: 40px;
-                    height: 40px;
+                    width: 40px !important;
+                    height: 40px !important;
                     object-fit: contain;
                     flex-shrink: 0;
                   }
