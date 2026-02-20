@@ -4,7 +4,6 @@ import type { IArticle } from "$lib/components/section/authors/page/helpers.js";
 import { infoMessages } from "$lib/components/ui/infomessages/infomessages.js";
 import { modalStore } from "$lib/store/modal.js";
 import session from "$lib/store/session.js";
-import { promiseValidUrlCheck } from "$lib/utils/navigation.js";
 import { detectLanguage } from "$lib/utils/translation.js";
 import type {
   AuthorsAuthorsMain,
@@ -255,7 +254,7 @@ export async function publish({
   });
 
   // [debug] publish flow start
-  console.log("[publish] action start | id:", id, "| status:", status, "| endpoint present:", true);
+  console.log("[publish] action start | id:", id, "(type:", typeof id, ") | status:", status, "| sportstack.uid:", sportstack.uid);
 
   let data: any = { success: false };
 
@@ -272,10 +271,10 @@ export async function publish({
     console.log("[publish] server response | success:", data.success, "| permalink present:", Boolean(data.permalink));
 
     if (data.success) {
-      if (data.permalink) {
-        await checkArticle(data.permalink);
-      }
-      await invalidateAll();
+      // When redirecting, skip invalidateAll() here — the goto({ invalidateAll: true }) below
+      // handles data refresh on the destination page. Calling invalidateAll() here causes
+      // reactive auto-save in CreateArticle to fire and overwrite the published status back to draft.
+      if (!redirect) await invalidateAll();
       infoMessages.remove(loadingId);
       infoMessages.add({
         type: "success",
@@ -289,7 +288,8 @@ export async function publish({
           goto(
             `/u/author/publication/${sportstack.permalink}/${session.extract(
               "lang"
-            )}?view=articles`
+            )}?view=articles`,
+            { invalidateAll: true }
           );
         }, 500);
       }
@@ -314,38 +314,6 @@ export async function publish({
   return data;
 }
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function checkArticle(permalink: string, retries = 0): Promise<boolean> {
-  const MAX_RETRIES = 15; // 30 seconds max (15 × 2s delay)
-
-  if (!permalink) {
-    console.warn("[publish] checkArticle: no permalink received, skipping CDN validation");
-    return false;
-  }
-
-  if (retries >= MAX_RETRIES) {
-    console.warn("[publish] checkArticle: max retries reached, proceeding without CDN validation");
-    return false;
-  }
-
-  // [debug] CDN check attempt
-  console.log(`[publish] checkArticle attempt ${retries + 1}/${MAX_RETRIES} for permalink:`, permalink);
-
-  const check = await promiseValidUrlCheck(fetch, {
-    authorArticleUrl: permalink,
-  });
-
-  if (check.isValid) {
-    console.log("[publish] checkArticle: article is live on CDN");
-    return true;
-  }
-
-  await delay(1000 * 2);
-  return checkArticle(permalink, retries + 1);
-}
 
 export interface IArticleFilter {
   status: "published" | "unpublished" | "draft" | "all";
