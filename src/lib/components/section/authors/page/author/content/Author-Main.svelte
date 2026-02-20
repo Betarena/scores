@@ -307,6 +307,7 @@
   }
 
   async function loadPaidVideoPlayback(container: HTMLElement) {
+    if (!paid) return;
     const videos = container.querySelectorAll('video[data-asset-id]') as NodeListOf<HTMLVideoElement>;
     for (const video of videos) {
       const assetId = video.getAttribute('data-asset-id');
